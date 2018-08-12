@@ -7,7 +7,7 @@
     #define INSCRIPTION_SIZE_TRACKER_ID std::uint32_t
 #endif
 
-namespace inscription
+namespace Inscription
 {
     typedef INSCRIPTION_SIZE_TRACKER_ID TrackerID;
 }

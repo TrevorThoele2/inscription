@@ -1,7 +1,7 @@
 
 #include "SimpleFile.h"
 
-namespace inscription
+namespace Inscription
 {
     SimpleInFile::SimpleInFile(const Path &path) : SimpleFile(path, std::ios::in | std::ios::binary)
     {}

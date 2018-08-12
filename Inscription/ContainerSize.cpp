@@ -2,7 +2,7 @@
 #include "ContainerSize.h"
 #include "Scribe.h"
 
-namespace inscription
+namespace Inscription
 {
     void ContainerSize::Serialize(Scribe &scribe)
     {

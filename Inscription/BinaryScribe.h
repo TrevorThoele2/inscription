@@ -5,7 +5,7 @@
 #include "BinaryOutputFile.h"
 #include "BinaryInputFile.h"
 
-namespace inscription
+namespace Inscription
 {
     class BinaryScribeMarkerException : public Exception
     {

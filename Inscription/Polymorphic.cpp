@@ -2,7 +2,7 @@
 #include "Polymorphic.h"
 #include "Scribe.h"
 
-namespace inscription
+namespace Inscription
 {
     PolymorphicTypeNotFoundException::PolymorphicTypeNotFoundException() : Exception("Class type not found in the polymorphic handler.")
     {}

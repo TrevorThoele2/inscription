@@ -2,7 +2,7 @@
 #include "TextFile.h"
 #include <iomanip>
 
-namespace inscription
+namespace Inscription
 {
     TextInFile::TextInFile(const Path &path) : SimpleFile(path, std::ios::in)
     {}

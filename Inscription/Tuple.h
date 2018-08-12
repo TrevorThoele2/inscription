@@ -8,7 +8,7 @@
 #include "StackConstructor.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     namespace detail

@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace inscription
+namespace Inscription
 {
     template<class... FuncArgs>
     class FunctionBase

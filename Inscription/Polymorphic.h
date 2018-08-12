@@ -17,7 +17,7 @@
 
 #include "Exception.h"
 
-namespace inscription
+namespace Inscription
 {
     class PolymorphicTypeNotFoundException : public Exception
     {

@@ -5,7 +5,7 @@
 #include "Scribe.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     void Save(Scribe &scribe, const std::string &obj)
     {

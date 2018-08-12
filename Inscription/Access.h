@@ -4,7 +4,7 @@
 #include <type_traits>
 #include "Inscripter.h"
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     // Serialize

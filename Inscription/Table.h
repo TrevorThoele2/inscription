@@ -14,7 +14,7 @@
 #include "Exception.h"
 #include "Assert.h"
 
-namespace inscription
+namespace Inscription
 {
     class TableNotLinkedException : public Exception
     {

@@ -7,7 +7,7 @@
 #include "StackConstructor.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class Key, class Pred, class Alloc>
     void Save(Scribe &scribe, std::multiset<Key, Pred, Alloc> &obj)

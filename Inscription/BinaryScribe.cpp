@@ -5,7 +5,7 @@
 #include "ContainerSize.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     BinaryScribeMarkerException::BinaryScribeMarkerException() : Exception("The marker in the file was not identical to the marker given. The file is either corrupt or not the right file type.")
     {}

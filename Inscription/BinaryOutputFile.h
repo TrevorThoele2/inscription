@@ -5,7 +5,7 @@
 #include "Stream.h"
 #include "Buffer.h"
 
-namespace inscription
+namespace Inscription
 {
     class BinaryOutputFile : public Stream<std::ofstream>
     {

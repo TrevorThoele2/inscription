@@ -6,7 +6,7 @@
 #include "ContainerSize.h"
 #include "StackConstructor.h"
 
-namespace inscription
+namespace Inscription
 {
     namespace detail
     {

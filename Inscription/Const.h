@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace inscription
+namespace Inscription
 {
     template<class T>
     struct IsConst : public std::false_type {};

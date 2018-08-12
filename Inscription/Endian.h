@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-namespace inscription
+namespace Inscription
 {
     bool IsLittleEndian();
 

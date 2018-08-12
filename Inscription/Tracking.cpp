@@ -2,7 +2,7 @@
 #include "Tracking.h"
 #include "Scribe.h"
 
-namespace inscription
+namespace Inscription
 {
     namespace detail
     {

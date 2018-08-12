@@ -2,7 +2,7 @@
 #include <utility>
 #include "Buffer.h"
 
-namespace inscription
+namespace Inscription
 {
     Buffer::Buffer() : size(0), value(nullptr)
     {}

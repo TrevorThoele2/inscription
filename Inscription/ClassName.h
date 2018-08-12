@@ -9,7 +9,7 @@
 #include "Version.h"
 #include "Enum.h"
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     class ClassNameContainer

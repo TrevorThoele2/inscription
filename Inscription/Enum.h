@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace inscription
+namespace Inscription
 {
     template<class EnumT>
     typename std::underlying_type<EnumT>::type CastEnumToUnderlying(EnumT e)

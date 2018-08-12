@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     template<class T, class Delete>
