@@ -13,8 +13,8 @@ namespace Inscription
         typedef ::Inscription::Path Path;
         typedef std::ios_base::openmode Mode;
         typedef T StreamT;
-        typedef std::streampos StreamPos;
-        typedef StreamPos SizeT;
+        typedef std::streampos StreamPosition;
+        typedef StreamPosition SizeT;
     private:
         Path path;
         Mode mode;

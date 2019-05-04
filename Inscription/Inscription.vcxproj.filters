@@ -4,9 +4,6 @@
     <ClInclude Include="Access.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClassName.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Const.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -28,9 +25,6 @@
     <ClInclude Include="Function.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inscripter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Numeric.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -41,9 +35,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Stream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TypeTable.h">
@@ -121,20 +112,11 @@
     <ClInclude Include="Tracking.h">
       <Filter>Header Files\Tracking</Filter>
     </ClInclude>
-    <ClInclude Include="TrackingTraits.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
     <ClInclude Include="Memory.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
     <ClInclude Include="PolymorphicID.h">
-      <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
-    <ClInclude Include="Polymorphic.h">
-      <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
-    <ClInclude Include="PolymorphicDefinitions.h">
-      <Filter>Header Files\Polymorphic</Filter>
+      <Filter>Header Files\Pointer</Filter>
     </ClInclude>
     <ClInclude Include="Array.h">
       <Filter>Header Files\Types\Containers</Filter>
@@ -151,7 +133,106 @@
     <ClInclude Include="UndefAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IsDefaultConstructible.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pointer.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
     <ClInclude Include="InscripterBase.h">
+      <Filter>Header Files\Inscripter</Filter>
+    </ClInclude>
+    <ClInclude Include="Inscripter.h">
+      <Filter>Header Files\Inscripter</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerInput.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerOutput.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerSpecialIDs.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerDelegate.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="PolymorphicTypeNotFoundException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerDefinitions.h">
+      <Filter>Header Files\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotLinkedException.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotConstructedException.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableVariableNotHereException.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryInherit.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryBasic.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryOwningPointer.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryUnowningPointer.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryInscripter.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableLinkable.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableLinkableClass.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableLinkableNonClass.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableImposterClass.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableImposterNonClass.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableEntryBase.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="Convert.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvertHeap.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Assign.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassNameResolver.h">
+      <Filter>Header Files\ClassNameResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassName.h">
+      <Filter>Header Files\ClassNameResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisteredTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisteredTypeNotFoundException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -177,8 +258,29 @@
     <Filter Include="Header Files\Tracking">
       <UniqueIdentifier>{bc0ace39-c741-4690-a87e-8143d975203b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Polymorphic">
+    <Filter Include="Header Files\Pointer">
       <UniqueIdentifier>{a110410e-fbd2-45b5-bdb6-258ce6c08af2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Inscripter">
+      <UniqueIdentifier>{45b67b72-7559-4c58-8acd-b0aacadb3b55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pointer">
+      <UniqueIdentifier>{bdd6846f-1fc5-4d9d-a4f8-70f642c16880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table">
+      <UniqueIdentifier>{76953421-881c-4130-b4bd-b6fbb9f4102b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Table">
+      <UniqueIdentifier>{9bfe4788-9f15-4f98-8665-a4fa6b8a826d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Table\Entries">
+      <UniqueIdentifier>{79516121-504c-4185-9fe6-6fa6be72c48f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ClassNameResolver">
+      <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ClassNameResolver">
+      <UniqueIdentifier>{f101bc9b-c06e-499c-a039-3e6cebdb572a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -191,16 +293,10 @@
     <ClCompile Include="BinaryScribe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClassName.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ContainerSize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Endian.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Polymorphic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scribe.cpp">
@@ -218,13 +314,43 @@
     <ClCompile Include="Tracking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Table.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pointer.cpp">
+      <Filter>Source Files\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="PointerDelegate.cpp">
+      <Filter>Source Files\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="PointerOutput.cpp">
+      <Filter>Source Files\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="PointerInput.cpp">
+      <Filter>Source Files\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="PolymorphicTypeNotFoundException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotLinkedException.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotConstructedException.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableVariableNotHereException.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassNameResolver.cpp">
+      <Filter>Source Files\ClassNameResolver</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisteredTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisteredTypeNotFoundException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

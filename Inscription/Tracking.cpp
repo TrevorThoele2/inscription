@@ -4,70 +4,25 @@
 
 namespace Inscription
 {
-    namespace detail
+    TrackingEntry::TrackingEntry() : id(TrackerGroup::nullID), obj(nullptr), hasBeenSerialized(false)
+    {}
+
+    TrackingEntry::TrackingEntry(ID id, void *obj) : id(id), obj(obj), hasBeenSerialized(false)
+    {}
+
+    TrackingEntry::TrackingEntry(const TrackingEntry &arg) : id(arg.id), obj(arg.obj), hasBeenSerialized(arg.hasBeenSerialized)
+    {}
+
+    TrackingLookAheadEntry::TrackingLookAheadEntry(void** position) : position(position)
+    {}
+
+    TrackingLookAheadGroup::TrackingLookAheadGroup(TrackingLookAheadGroup&& arg) : list(std::move(arg.list))
+    {}
+
+    TrackingLookAheadGroup& TrackingLookAheadGroup::operator=(TrackingLookAheadGroup&& arg)
     {
-        TrackerInstancer& TrackerInstancer::Instance()
-        {
-            static TrackerInstancer instance;
-            return instance;
-        }
-    }
-
-    TrackingEntry::TrackingEntry() : id(TrackerGroup::nullID), obj(nullptr)
-    {}
-
-    TrackingEntry::TrackingEntry(ID id, void *obj) : id(id), obj(obj)
-    {}
-
-    TrackingEntry::TrackingEntry(const TrackingEntry &arg) : id(arg.id), obj(arg.obj)
-    {}
-
-    TrackingEntry& TrackingEntry::operator=(const TrackingEntry &arg)
-    {
-        id = arg.id;
-        obj = arg.obj;
+        list = std::move(arg.list);
         return *this;
-    }
-
-    TrackingEntry::ID TrackingEntry::GetID()
-    {
-        return id;
-    }
-
-    void* TrackingEntry::Get()
-    {
-        return obj;
-    }
-
-    const void* TrackingEntry::Get() const
-    {
-        return obj;
-    }
-
-    std::pair<bool, Tracker::Entry&> Tracker::Add(ID id, void *add, bool section)
-    {
-        typedef std::pair<bool, Tracker::Entry&> Return;
-        if (!checker.empty())
-        {
-            auto checkerFound = checker.find(add);
-            if (checkerFound != checker.end())
-                return Return(false, checkerFound->second->second);
-        }
-
-        auto emplaced = map.emplace(id, Entry(id, add));
-        checker.emplace(add, emplaced.first);
-        if (section)
-            this->section.emplace(add, emplaced.first);
-
-        return Return(emplaced.second, emplaced.first->second);
-    }
-
-    Tracker::ID Tracker::NextID() const
-    {
-        if (!map.empty())
-            return static_cast<Tracker::ID>(map.size() + 1);
-        else
-            return TrackerGroup::nullID + 1;
     }
 
     Tracker::Tracker(Tracker &&arg) : map(std::move(arg.map)), checker(std::move(arg.checker)), section(std::move(arg.section))
@@ -81,9 +36,35 @@ namespace Inscription
         return *this;
     }
 
-    std::pair<bool, Tracker::Entry&> Tracker::Add(void *add, bool section)
+    Tracker::ID Tracker::Add(void *add, bool section)
     {
-        return Add(NextID(), add, section);
+        if (IsTracking(add))
+        {
+            auto id = Find(add)->id;
+            LinkLookAheads(add, id);
+            return id;
+        }
+
+        return Add(add, section, NextID());
+    }
+
+    Tracker::ID Tracker::Add(void *add, bool section, ID id)
+    {
+        auto emplaced = map.emplace(id, Entry(id, add));
+        checker.emplace(add, emplaced.first);
+        if (section)
+            this->section.emplace(add, emplaced.first);
+
+        LinkLookAheads(add, id);
+        return id;
+    }
+
+    void Tracker::AddLookAhead(void** position)
+    {
+        if (IsTracking(*position))
+            return;
+
+        AddLookAhead(position, NextID());
     }
 
     void Tracker::ReplaceObject(void *here, void *newObj, bool section)
@@ -95,17 +76,22 @@ namespace Inscription
             map.erase(found->second);
             checker.erase(here);
             this->section.erase(here);
-            Add(id, newObj, section);
+            Add(newObj, section, id);
         }
     }
 
-    Tracker::Entry* Tracker::Find(void *find)
+    Tracker::Entry* Tracker::Find(const void *find)
     {
         auto checkerFound = checker.find(find);
         if (checkerFound == checker.end())
             return nullptr;
         else
             return &checkerFound->second->second;
+    }
+
+    const Tracker::Entry* Tracker::Find(const void *find) const
+    {
+        return const_cast<Tracker*>(this)->Find(find);
     }
 
     Tracker::Entry* Tracker::Find(ID id)
@@ -115,6 +101,11 @@ namespace Inscription
             return nullptr;
         else
             return &found->second;
+    }
+
+    const Tracker::Entry* Tracker::Find(ID id) const
+    {
+        return const_cast<Tracker*>(this)->Find(id);
     }
 
     void Tracker::Clear()
@@ -130,7 +121,7 @@ namespace Inscription
         {
             for (auto &loop : section)
             {
-                checker.erase(loop.second->second.Get());
+                checker.erase(loop.second->second.obj);
                 map.erase(loop.second);
             }
         }
@@ -138,9 +129,54 @@ namespace Inscription
         section.clear();
     }
 
+    bool Tracker::IsTracking(const void* obj) const
+    {
+        return Find(obj) != nullptr;
+    }
+
+    void Tracker::AddLookAhead(void** position, ID id)
+    {
+        TrackingLookAheadEntry madeLookAhead(position);
+
+        auto found = FindLookAheadList(id);
+        if (found == lookAheads.end())
+        {
+            LookAheadGroup group;
+            group.list.push_back(std::move(madeLookAhead));
+            lookAheads.emplace(id, std::move(group));
+        }
+        else
+            found->second.list.push_back(std::move(madeLookAhead));
+    }
+
+    Tracker::LookAheadMap::iterator Tracker::FindLookAheadList(ID id)
+    {
+        return lookAheads.find(id);
+    }
+
+    void Tracker::LinkLookAheads(void* toObj, ID id)
+    {
+        auto foundLookAheadList = FindLookAheadList(id);
+        if (foundLookAheadList != lookAheads.end())
+        {
+            for (auto &loop : foundLookAheadList->second.list)
+                *loop.position = toObj;
+
+            lookAheads.erase(foundLookAheadList);
+        }
+    }
+
+    Tracker::ID Tracker::NextID() const
+    {
+        if (!map.empty())
+            return static_cast<Tracker::ID>(map.size() + 1);
+        else
+            return TrackerGroup::nullID + 1;
+    }
+
     TrackerGroup::TrackerGroup() : active(true), usingSection(false)
     {
-        detail::TrackerInstancer::Push(*this);
+        RegisteredTypes::PushToTracking(*this);
     }
 
     TrackerGroup::TrackerGroup(TrackerGroup &&arg) : active(arg.active), table(std::move(arg.table)), usingSection(arg.usingSection)
@@ -165,30 +201,17 @@ namespace Inscription
         return active;
     }
 
-    std::pair<bool, Tracker::Entry*> TrackerGroup::Add(void *add, const std::type_index &type, std::true_type)
+    TrackerGroup::ID TrackerGroup::Add(void *add, const std::type_index &type)
     {
-        typedef std::pair<bool, Tracker::Entry*> Return;
-
-        static Tracker::Entry nullEntry(nullID, nullptr);
-        static const Return falseRet(false, &nullEntry);
-
         // Find the tracker
         auto found = table.Find(type);
         if (!found)
-            return falseRet;
+            return nullID;
 
         if (!IsActive())
-            return Return(false, found->Find(add));
-        else
-        {
-            auto &added = found->Add(add, usingSection);
-            return Return(added.first, &added.second);
-        }
-    }
+            return nullID;
 
-    std::pair<bool, Tracker::Entry*> TrackerGroup::Add(void *add, const std::type_index &type, std::false_type)
-    {
-        return std::pair<bool, Tracker::Entry*>(false, nullptr);
+        return found->Add(add, usingSection);
     }
 
     void TrackerGroup::Clear()

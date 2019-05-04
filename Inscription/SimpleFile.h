@@ -12,7 +12,7 @@ namespace Inscription
         using typename Stream<T>::Path;
         using typename Stream<T>::Mode;
         using typename Stream<T>::StreamT;
-        using typename Stream<T>::StreamPos;
+        using typename Stream<T>::StreamPosition;
         using typename Stream<T>::SizeT;
     protected:
         // This constructor will not open the stream automatically

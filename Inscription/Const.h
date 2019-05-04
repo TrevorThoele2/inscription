@@ -52,13 +52,13 @@ namespace Inscription
     };
 
     template<class T>
-    inline typename RemoveConstTrait<T>::type&& RemoveConst(T &&obj)
+    inline typename RemoveConstTrait<T>::type&& RemoveConst(T&& obj)
     {
         return const_cast<typename RemoveConstTrait<T>::type&&>(obj);
     }
 
     template<class T>
-    inline typename RemoveConstTrait<T>::type& RemoveConst(T &obj)
+    inline typename RemoveConstTrait<T>::type& RemoveConst(T& obj)
     {
         return const_cast<typename RemoveConstTrait<T>::type&>(obj);
     }

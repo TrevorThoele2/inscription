@@ -29,7 +29,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{93A2633A-46A4-4A08-AA6A-2C4DD75990B5}</ProjectGuid>
     <RootNamespace>LevelEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -103,6 +103,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -178,14 +179,18 @@
     <ClInclude Include="Access.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Assert.h" />
+    <ClInclude Include="Assign.h" />
     <ClInclude Include="BinaryInputFile.h" />
     <ClInclude Include="BinaryOutputFile.h" />
     <ClInclude Include="BinaryScribe.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ClassName.h" />
+    <ClInclude Include="ClassNameResolver.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="ContainerSize.h" />
     <ClInclude Include="Convenience.h" />
+    <ClInclude Include="Convert.h" />
+    <ClInclude Include="ConvertHeap.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Endian.h" />
     <ClInclude Include="Enum.h" />
@@ -194,6 +199,14 @@
     <ClInclude Include="Function.h" />
     <ClInclude Include="Inscripter.h" />
     <ClInclude Include="InscripterBase.h" />
+    <ClInclude Include="IsDefaultConstructible.h" />
+    <ClInclude Include="RegisteredTypeNotFoundException.h" />
+    <ClInclude Include="RegisteredTypes.h" />
+    <ClInclude Include="TableEntryBase.h" />
+    <ClInclude Include="TableImposterClass.h" />
+    <ClInclude Include="TableImposterNonClass.h" />
+    <ClInclude Include="TableLinkableClass.h" />
+    <ClInclude Include="TableLinkableNonClass.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Memory.h" />
@@ -201,9 +214,14 @@
     <ClInclude Include="Multiset.h" />
     <ClInclude Include="Numeric.h" />
     <ClInclude Include="Path.h" />
-    <ClInclude Include="Polymorphic.h" />
-    <ClInclude Include="PolymorphicDefinitions.h" />
+    <ClInclude Include="Pointer.h" />
+    <ClInclude Include="PointerDefinitions.h" />
+    <ClInclude Include="PointerDelegate.h" />
+    <ClInclude Include="PointerInput.h" />
+    <ClInclude Include="PointerOutput.h" />
+    <ClInclude Include="PointerSpecialIDs.h" />
     <ClInclude Include="PolymorphicID.h" />
+    <ClInclude Include="PolymorphicTypeNotFoundException.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Scribe.h" />
     <ClInclude Include="Set.h" />
@@ -213,11 +231,21 @@
     <ClInclude Include="Stream.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Table.h" />
+    <ClInclude Include="TableEntry.h" />
+    <ClInclude Include="TableEntryBasic.h" />
+    <ClInclude Include="TableEntryInherit.h" />
+    <ClInclude Include="TableEntryInscripter.h" />
+    <ClInclude Include="TableEntryOwningPointer.h" />
+    <ClInclude Include="TableEntryUnowningPointer.h" />
+    <ClInclude Include="TableLinkable.h" />
+    <ClInclude Include="TableNotConstructedException.h" />
+    <ClInclude Include="TableNotLinkedException.h" />
+    <ClInclude Include="TableVariableNotHereException.h" />
     <ClInclude Include="TextFile.h" />
     <ClInclude Include="TrackerID.h" />
     <ClInclude Include="Tracking.h" />
-    <ClInclude Include="TrackingTraits.h" />
     <ClInclude Include="Tuple.h" />
+    <ClInclude Include="Type.h" />
     <ClInclude Include="TypeTable.h" />
     <ClInclude Include="UndefAssert.h" />
     <ClInclude Include="UnorderedMap.h" />
@@ -232,15 +260,23 @@
     <ClCompile Include="BinaryOutputFile.cpp" />
     <ClCompile Include="BinaryScribe.cpp" />
     <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="ClassName.cpp" />
+    <ClCompile Include="ClassNameResolver.cpp" />
     <ClCompile Include="ContainerSize.cpp" />
     <ClCompile Include="Endian.cpp" />
     <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="Polymorphic.cpp" />
+    <ClCompile Include="Pointer.cpp" />
+    <ClCompile Include="PointerDelegate.cpp" />
+    <ClCompile Include="PointerInput.cpp" />
+    <ClCompile Include="PointerOutput.cpp" />
+    <ClCompile Include="PolymorphicTypeNotFoundException.cpp" />
+    <ClCompile Include="RegisteredTypeNotFoundException.cpp" />
+    <ClCompile Include="RegisteredTypes.cpp" />
     <ClCompile Include="Scribe.cpp" />
     <ClCompile Include="SimpleFile.cpp" />
     <ClCompile Include="String.cpp" />
-    <ClCompile Include="Table.cpp" />
+    <ClCompile Include="TableNotConstructedException.cpp" />
+    <ClCompile Include="TableNotLinkedException.cpp" />
+    <ClCompile Include="TableVariableNotHereException.cpp" />
     <ClCompile Include="TextFile.cpp" />
     <ClCompile Include="Tracking.cpp" />
   </ItemGroup>
