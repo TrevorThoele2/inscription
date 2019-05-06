@@ -2,8 +2,8 @@
 #pragma once
 
 #include "Scribe.h"
-#include "BinaryOutputFile.h"
-#include "BinaryInputFile.h"
+#include "OutputBinaryFile.h"
+#include "InputBinaryFile.h"
 
 namespace Inscription
 {
@@ -33,8 +33,8 @@ namespace Inscription
         void SeekStream(StreamPosition pos) override;
         StreamPosition TellStream() override;
     private:
-        typedef BinaryOutputFile OutputFileT;
-        typedef BinaryInputFile InputFileT;
+        typedef OutputBinaryFile OutputFileT;
+        typedef InputBinaryFile InputFileT;
 
         union FileT
         {

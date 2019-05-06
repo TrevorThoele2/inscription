@@ -13,7 +13,7 @@ namespace Inscription
     BinaryScribe::BinaryScribe(const Path& path, const Marker& marker, Version version) :
         Scribe(Direction::OUTPUT), marker(marker), version(version), postHeaderPosition(0)
     {
-        file.out = new BinaryOutputFile(path);
+        file.out = new OutputBinaryFile(path);
 
         ContainerSize size(marker.size());
         (*this)(size);
@@ -27,7 +27,7 @@ namespace Inscription
     BinaryScribe::BinaryScribe(const Path& path, const Marker& marker) :
         Scribe(Direction::INPUT), postHeaderPosition(0)
     {
-        file.in = new BinaryInputFile(path);
+        file.in = new InputBinaryFile(path);
 
         Marker loadMarker;
         ContainerSize size;
