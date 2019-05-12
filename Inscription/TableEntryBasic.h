@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "TableEntryInherit.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 #include "Const.h"
 
 namespace Inscription
@@ -22,7 +22,7 @@ namespace Inscription
         void Construct(Scribe& scribe) override;
         void Clear() override;
     private:
-        std::unique_ptr<StackConstructor<StoreT>> constructor;
+        std::unique_ptr<ScopedConstructor<StoreT>> constructor;
     };
 
     template<class ClassT, class T, T ClassT::*var>
@@ -46,7 +46,7 @@ namespace Inscription
     template<class ClassT, class T, T ClassT::*var>
     void TableEntryBasic<ClassT, T, var>::Construct(Scribe& scribe)
     {
-        constructor.reset(new StackConstructor<StoreT>(scribe));
+        constructor.reset(new ScopedConstructor<StoreT>(scribe));
     }
 
     template<class ClassT, class T, T ClassT::*var>

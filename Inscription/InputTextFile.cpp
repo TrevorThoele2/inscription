@@ -1,4 +1,3 @@
-
 #include "InputTextFile.h"
 
 namespace Inscription
@@ -6,29 +5,35 @@ namespace Inscription
     InputTextFile::InputTextFile(const Path& path) : SimpleFile(path, std::ios::in)
     {}
 
-    InputTextFile& InputTextFile::operator>>(std::string& str)
+    void InputTextFile::ReadData(std::string& string)
     {
-        stream >> str;
-        return *this;
+        stream >> string;
     }
 
-    InputTextFile& InputTextFile::operator>>(char& ch)
+    void InputTextFile::ReadData(char& character)
     {
-        stream >> ch;
-        return *this;
+        stream >> character;
     }
 
-    std::string InputTextFile::GetLine()
+    std::string InputTextFile::ReadLine()
     {
-        std::string str;
-        std::getline(stream, str);
-        return str;
+        std::string string;
+        std::getline(stream, string);
+        return string;
     }
 
-    std::string InputTextFile::GetLine(char delimiter)
+    std::string InputTextFile::ReadLine(char delimiter)
     {
-        std::string str;
-        std::getline(stream, str, delimiter);
-        return str;
+        std::string string;
+        std::getline(stream, string, delimiter);
+        return string;
+    }
+
+    std::string InputTextFile::ReadSize(size_t size)
+    {
+        std::string string;
+        string.resize(size);
+        stream.get(string.data(), size + 1);
+        return string;
     }
 }

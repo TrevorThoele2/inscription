@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <cstdint>
@@ -9,5 +8,7 @@
 
 namespace Inscription
 {
-    typedef INSCRIPTION_SIZE_TRACKER_ID TrackerID;
+    typedef INSCRIPTION_SIZE_TRACKER_ID TrackingID;
+
+    const TrackingID invalidTrackingID = 0;
 }

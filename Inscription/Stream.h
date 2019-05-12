@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <fstream>
@@ -15,48 +14,34 @@ namespace Inscription
         typedef T StreamT;
         typedef std::streampos StreamPosition;
         typedef StreamPosition SizeT;
-    private:
-        Path path;
-        Mode mode;
-        bool open;
-
-        Stream() = delete;
-        Stream(const Stream &arg) = delete;
-        void Open();
-    protected:
-        StreamT stream;
-        // This constructor will not open the stream automatically
-        // Be sure to ChangeMode into something that actually makes sense
-        // Call reopen when you're ready to open the stream
-        Stream(const Path &path);
-        Stream(const Path &path, Mode mode);
     public:
         virtual ~Stream() = 0;
+
         void Close();
         void ChangeMode(Mode set);
         void Reopen();
         bool IsOpen() const;
+    protected:
+        StreamT stream;
+    protected:
+        // This constructor will not open the stream automatically
+        // Be sure to ChangeMode into something that actually makes sense
+        // Call reopen when you're ready to open the stream
+        Stream(const Path& path);
+        Stream(const Path& path, Mode mode);
+        Stream(Stream&& arg);
+
+        Stream& operator=(Stream&& arg);
+    private:
+        Path path;
+        Mode mode;
+        bool open;
+    private:
+        Stream() = delete;
+        Stream(const Stream& arg) = delete;
+
+        void Open();
     };
-
-    template<class T>
-    void Stream<T>::Open()
-    {
-        if (open)
-            return;
-
-        stream.open(path.c_str(), mode);
-        open = false;
-    }
-
-    template<class T>
-    Stream<T>::Stream(const Path &path) : path(path), open(false)
-    {}
-
-    template<class T>
-    Stream<T>::Stream(const Path &path, Mode mode) : path(path), mode(mode), open(false)
-    {
-        Open();
-    }
 
     template<class T>
     Stream<T>::~Stream()
@@ -93,5 +78,38 @@ namespace Inscription
     bool Stream<T>::IsOpen() const
     {
         return open;
+    }
+
+    template<class T>
+    Stream<T>::Stream(const Path& path) : path(path), open(false)
+    {}
+
+    template<class T>
+    Stream<T>::Stream(const Path& path, Mode mode) : path(path), mode(mode), open(false)
+    {
+        Open();
+    }
+
+    template<class T>
+    Stream<T>::Stream(Stream&& arg) : path(std::move(arg.path)), mode(std::move(arg.mode)), open(std::move(arg.open))
+    {}
+
+    template<class T>
+    Stream<T>& Stream<T>::operator=(Stream&& arg)
+    {
+        path = std::move(arg.path);
+        mode = std::move(arg.mode);
+        open = std::move(arg.open);
+        return *this;
+    }
+
+    template<class T>
+    void Stream<T>::Open()
+    {
+        if (open)
+            return;
+
+        stream.open(path.c_str(), mode);
+        open = false;
     }
 }

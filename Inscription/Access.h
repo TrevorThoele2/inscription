@@ -1,39 +1,42 @@
-
 #pragma once
 
 #include <type_traits>
+
 #include "Inscripter.h"
+
 #include "IsDefaultConstructible.h"
 
 namespace Inscription
 {
-    class Scribe;
     template<class T>
     class InscripterBase;
 
     // Serialize
-    template<class T>
-    void Serialize(Scribe& scribe, T& obj);
+    template<class ScribeT, class T>
+    void Serialize(ScribeT& scribe, T& obj);
 
     // Base Serialize
-    template<class BaseT, class T>
-    void BaseSerialize(Scribe& scribe, T& obj);
+    template<class BaseT, class ScribeT, class T>
+    void BaseSerialize(ScribeT& scribe, T& obj);
 
     // Construct
-    template<class T>
-    void Construct(Scribe& scribe, T*& obj);
+    template<class ScribeT, class T >
+    void Construct(ScribeT& scribe, T*& obj);
 
-    template<class T>
-    typename InscripterBase<T>::TableT MakeAndSerializeTable(Scribe& scribe, typename InscripterBase<T>::ManagedT& obj);
+    template<class ScribeT, class T>
+    typename InscripterBase<T>::TableT MakeAndSerializeTable(ScribeT& scribe, typename InscripterBase<T>::ManagedT& obj);
 
-    template<class T>
-    typename InscripterBase<T>::TableT MakeAndConstructTable(Scribe& scribe);
+    template<class ScribeT, class T>
+    typename InscripterBase<T>::TableT MakeAndConstructTable(ScribeT& scribe);
 
     class Access
     {
     private:
         template<class T>
-        struct Void { typedef void type; };
+        struct Void
+        { 
+            typedef void type;
+        };
 
         template <class T, class = void>
         struct HasInternalInscripter : std::false_type
@@ -91,8 +94,8 @@ namespace Inscription
         struct HasClassNameResolver<T, decltype((void)InscripterT<T>::classNameResolver, 0)> : std::true_type
         {};
 
-        template<class T, typename std::enable_if<!InscripterT<T>::exists, int>::type = 0>
-        static void Serialize(Scribe& scribe, T& obj)
+        template<class ScribeT, class T, typename std::enable_if<!InscripterT<T>::exists, int>::type = 0>
+        static void Serialize(ScribeT& scribe, T& obj)
         {
 #ifdef INSCRIPTION_SERIALIZE_SYMBOL
             obj.INSCRIPTION_SERIALIZE_SYMBOL(scribe);
@@ -101,48 +104,45 @@ namespace Inscription
 #endif
         }
 
-        template<class T, typename std::enable_if<InscripterT<T>::exists, int>::type = 0>
-        static void Serialize(Scribe& scribe, T& obj)
+        template<class ScribeT, class T, typename std::enable_if<InscripterT<T>::exists, int>::type = 0>
+        static void Serialize(ScribeT& scribe, T& obj)
         {
             MakeAndSerializeTable<T>(scribe, obj);
         }
 
-        template<class T, class ScribeT = Scribe, typename std::enable_if<!InscripterT<T>::exists, int>::type = 0>
+        template<class T, class ScribeT, typename std::enable_if<!InscripterT<T>::exists, int>::type = 0>
         static void Construct(ScribeT& scribe, T*& obj)
         {
-            static_assert(std::is_same<ScribeT, Scribe>::value, "This type must be a scribe.");
             static_assert(IsDefaultConstructible<T>::value, "Non-default constructible objects must have an inscripter to be constructed.");
 
             obj = new T();
             scribe(*obj);
         }
 
-        template<class T, class ScribeT = Scribe, typename std::enable_if<InscripterT<T>::exists, int>::type = 0>
+        template<class T, class ScribeT, typename std::enable_if<InscripterT<T>::exists, int>::type = 0>
         static void Construct(ScribeT& scribe, T*& obj)
         {
-            static_assert(std::is_same<ScribeT, Scribe>::value, "This type must be a scribe.");
-
             InscripterT<T>::ConstructObjectInstance(scribe, obj);
             InscripterT<T>::PostConstruct(*obj);
             scribe.TrackObject(obj);
         }
     };
 
-    template<class T>
-    void Serialize(Scribe& scribe, T& obj)
+    template<class ScribeT, class T>
+    void Serialize(ScribeT& scribe, T& obj)
     {
         Access::Serialize(scribe, obj);
     }
 
-    template<class BaseT, class T>
-    void BaseSerialize(Scribe& scribe, T& obj)
+    template<class BaseT, class ScribeT, class T>
+    void BaseSerialize(ScribeT& scribe, T& obj)
     {
         static_assert(!std::is_same<BaseT, T>::value, "A type has been attempted to be converted to itself and serialized.");
         Access::Serialize(scribe, static_cast<BaseT&>(obj));
     }
 
-    template<class T>
-    void Construct(Scribe& scribe, T*& obj)
+    template<class ScribeT, class T>
+    void Construct(ScribeT& scribe, T*& obj)
     {
         Access::Construct(scribe, obj);
     }

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <algorithm>
@@ -6,17 +5,18 @@
 namespace Inscription
 {
     bool IsLittleEndian();
+    bool IsBigEndian();
 
     namespace detail
     {
         template<class T>
-        void ByteSwapImplementation(T &t)
+        void ByteSwapImplementation(T& t)
         {
             size_t size = sizeof(t);
             if (size < 2)
                 return;
 
-            char *byteArray = reinterpret_cast<char*>(&t);
+            char* byteArray = reinterpret_cast<char*>(&t);
 
             const auto halfSize = size / 2;
             const auto sizeCompare = --size;
@@ -26,7 +26,7 @@ namespace Inscription
     }
 
     template<class T>
-    void ByteSwap(T &t)
+    void ByteSwap(T& t)
     {
         if (IsLittleEndian())
             return;

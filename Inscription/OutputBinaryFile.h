@@ -1,7 +1,7 @@
-
 #pragma once
 
 #include <fstream>
+
 #include "Stream.h"
 #include "Buffer.h"
 
@@ -10,13 +10,16 @@ namespace Inscription
     class OutputBinaryFile : public Stream<std::ofstream>
     {
     public:
-        OutputBinaryFile(const Path &path);
+        OutputBinaryFile(const Path& path);
+        OutputBinaryFile(OutputBinaryFile&& arg);
 
-        void WriteData(const Buffer &buffer);
+        OutputBinaryFile& operator=(OutputBinaryFile&& arg);
+
+        void WriteData(const Buffer& buffer);
         template<class T>
         void WriteData(const T var);
 
-        void SeekStream(StreamPosition pos);
+        void SeekStream(StreamPosition position);
         StreamPosition TellStream();
     };
 

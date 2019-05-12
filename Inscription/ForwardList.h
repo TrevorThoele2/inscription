@@ -1,15 +1,16 @@
-
 #pragma once
 
 #include <forward_list>
-#include "Scribe.h"
+
+#include "BinaryScribe.h"
+
 #include "ContainerSize.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 
 namespace Inscription
 {
     template<class T, class Alloc>
-    void Save(Scribe &scribe, std::forward_list<T, Alloc> &obj)
+    void Save(BinaryScribe& scribe, std::forward_list<T, Alloc>& obj)
     {
         ContainerSize size(std::distance(obj.begin(), obj.end()));
         scribe.Save(size);
@@ -18,7 +19,7 @@ namespace Inscription
     }
 
     template<class T, class Alloc>
-    void Load(Scribe &scribe, std::forward_list<T, Alloc> &obj)
+    void Load(BinaryScribe& scribe, std::forward_list<T, Alloc>& obj)
     {
         typedef std::forward_list<T, Alloc> ContainerT;
 
@@ -28,14 +29,14 @@ namespace Inscription
         obj.clear();
         while (size-- > 0)
         {
-            StackConstructor<typename ContainerT::value_type> constructor(scribe);
+            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
             obj.push_front(std::move(constructor.GetMove()));
             scribe.ReplaceTrackedObject(*constructor.Get(), obj.front());
         }
     }
 
     template<class T, class Alloc>
-    void Serialize(Scribe &scribe, std::forward_list<T, Alloc> &obj)
+    void Serialize(BinaryScribe& scribe, std::forward_list<T, Alloc>& obj)
     {
         (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
     }

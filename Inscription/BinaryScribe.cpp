@@ -1,78 +1,75 @@
-
-#include <exception>
 #include "BinaryScribe.h"
-
-#include "ContainerSize.h"
-#include "Const.h"
 
 namespace Inscription
 {
-    BinaryScribeMarkerException::BinaryScribeMarkerException() : Exception("The marker in the file was not identical to the marker given. The file is either corrupt or not the right file type.")
-    {}
-
-    BinaryScribe::BinaryScribe(const Path& path, const Marker& marker, Version version) :
-        Scribe(Direction::OUTPUT), marker(marker), version(version), postHeaderPosition(0)
-    {
-        file.out = new OutputBinaryFile(path);
-
-        ContainerSize size(marker.size());
-        (*this)(size);
-        for (auto &loop : marker)
-            Save(RemoveConst(loop));
-
-        (*this)(version);
-        postHeaderPosition = TellStream();
-    }
-
-    BinaryScribe::BinaryScribe(const Path& path, const Marker& marker) :
-        Scribe(Direction::INPUT), postHeaderPosition(0)
-    {
-        file.in = new InputBinaryFile(path);
-
-        Marker loadMarker;
-        ContainerSize size;
-        Load(size);
-
-        loadMarker.resize(size.Get());
-        ContainerSize::ValueT address = 0;
-        while (address < size.Get())
-        {
-            Load(loadMarker[address]);
-            ++address;
-        }
-
-        // If the marker in the file is not identical to the marker given, throw an exception
-        if (loadMarker != marker)
-            throw BinaryScribeMarkerException();
-
-        Load(version);
-        this->marker = loadMarker;
-        postHeaderPosition = TellStream();
-    }
-
-    BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
-        Scribe(std::move(arg)), file(std::move(arg.file)), marker(std::move(arg.marker)),
-        version(std::move(arg.version)), postHeaderPosition(std::move(arg.postHeaderPosition))
-    {}
-
-    BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
-    {
-        Scribe::operator=(std::move(arg));
-        file = std::move(arg.file);
-        marker = std::move(arg.marker);
-        version = std::move(arg.version);
-        postHeaderPosition = std::move(arg.postHeaderPosition);
-        return *this;
-    }
-
     BinaryScribe::~BinaryScribe()
+    {}
+
+    void BinaryScribe::WriteBuffer(const Buffer& write)
     {
-        (IsOutput()) ? delete file.out : delete file.in;
+        WriteImpl(write);
     }
 
-    const BinaryScribe::Marker& BinaryScribe::GetMarker() const
+    void BinaryScribe::ReadBuffer(Buffer& read)
     {
-        return marker;
+        ReadImpl(read);
+    }
+
+    Buffer BinaryScribe::ReadBuffer()
+    {
+        Buffer buffer;
+        ReadBuffer(buffer);
+        return buffer;
+    }
+
+    bool BinaryScribe::TrackObjects(bool set)
+    {
+        auto ret = trackers.IsActive();
+        trackers.SetActive(set);
+        return ret;
+    }
+
+    void BinaryScribe::StartTrackingSection()
+    {
+        trackers.StartSection();
+    }
+
+    void BinaryScribe::StopTrackingSection(bool clear)
+    {
+        if (clear)
+            trackers.ClearSection();
+
+        trackers.StopSection();
+    }
+
+    void BinaryScribe::ClearTrackingSection()
+    {
+        trackers.ClearSection();
+    }
+
+    void BinaryScribe::CopyTrackersTo(BinaryScribe& scribe) const
+    {
+        scribe.trackers = trackers;
+    }
+
+    void BinaryScribe::MoveTrackersTo(BinaryScribe& scribe)
+    {
+        scribe.trackers = std::move(trackers);
+    }
+
+    bool BinaryScribe::IsOutput() const
+    {
+        return direction == Direction::OUTPUT;
+    }
+
+    bool BinaryScribe::IsInput() const
+    {
+        return direction == Direction::INPUT;
+    }
+
+    const BinaryScribe::Signature& BinaryScribe::GetSignature() const
+    {
+        return signature;
     }
 
     Version BinaryScribe::GetVersion() const
@@ -80,29 +77,32 @@ namespace Inscription
         return version;
     }
 
-    void BinaryScribe::SeekStream(StreamPosition pos)
+    void BinaryScribe::MovePositionToStart()
     {
-        switch (GetDirection())
-        {
-        case Direction::OUTPUT:
-            file.out->SeekStream(pos);
-            break;
-        case Direction::INPUT:
-            file.in->SeekStream(pos);
-            break;
-        }
+        trackers.Clear();
+        SeekStream(postHeaderPosition);
     }
 
-    BinaryScribe::StreamPosition BinaryScribe::TellStream()
-    {
-        if (GetDirection() == Direction::OUTPUT)
-            return file.out->TellStream();
-        else
-            return file.in->TellStream();
-    }
+    BinaryScribe::BinaryScribe(Direction direction, const Signature& signature, Version version) :
+        direction(direction), signature(signature), version(version),
+        pointerManager(direction),
+        postHeaderPosition(0)
+    {}
 
-    BinaryScribe::StreamPosition BinaryScribe::GetPostHeaderPosition() const
+    BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
+        Scribe(std::move(arg)),
+        direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
+        pointerManager(arg.direction),
+        postHeaderPosition(std::move(arg.postHeaderPosition))
+    {}
+
+    BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
     {
-        return postHeaderPosition;
+        Scribe::operator=(std::move(arg));
+        signature = std::move(arg.signature);
+        version = std::move(arg.version);
+        pointerManager = std::move(arg.pointerManager);
+        postHeaderPosition = std::move(arg.postHeaderPosition);
+        return *this;
     }
 }

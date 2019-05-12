@@ -1,11 +1,10 @@
-
 #include "PointerDelegate.h"
 
-#include "PointerSpecialIDs.h"
+#include "PointerSpecialID.h"
 
 namespace Inscription
 {
-    PointerDelegate::PointerDelegate() : nextID(PointerSpecialIDs::ID_START) {}
+    PointerDelegate::PointerDelegate() : nextID(PointerSpecialID::ID_START) {}
 
     PointerDelegate::~PointerDelegate()
     {}

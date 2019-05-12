@@ -4,7 +4,7 @@
 
 namespace Inscription
 {
-    enum PointerSpecialIDs : PolymorphicID
+    enum PointerSpecialID : PolymorphicID
     {
         NULLPTR = 0,
         HANDLE_NONPOLYMORPHICALLY = 1,

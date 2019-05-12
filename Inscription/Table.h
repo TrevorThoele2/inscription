@@ -21,7 +21,7 @@
 #include "TableNotConstructedException.h"
 #include "TableVariableNotHereException.h"
 
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 #include "Access.h"
 #include "Const.h"
 

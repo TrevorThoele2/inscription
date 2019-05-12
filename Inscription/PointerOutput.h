@@ -6,33 +6,31 @@
 #include <functional>
 
 #include "PointerDelegate.h"
-#include "PointerSpecialIDs.h"
-
-#include "Tracking.h"
+#include "PointerSpecialID.h"
 
 #include "ClassName.h"
-#include "TrackerID.h"
+#include "TrackingID.h"
 
 #include "Const.h"
 #include "Type.h"
 
-#include "PolymorphicTypeNotFoundException.h"
+#include "PolymorphicTypeNotFound.h"
 
 namespace Inscription
 {
-    class Scribe;
-    class TrackerGroup;
+    class BinaryScribe;
+    class TrackerMap;
 
     class PointerOutput : public PointerDelegate
     {
     public:
         template<class T>
-        void HandleOwning(T* obj, Scribe& scribe, TrackerGroup& trackers);
+        void HandleOwning(T* obj, BinaryScribe& scribe, TrackerMap& trackers);
         template<class T>
-        void HandleUnowning(T* obj, Scribe& scribe, TrackerGroup& trackers);
+        void HandleUnowning(T* obj, BinaryScribe& scribe, TrackerMap& trackers);
 
         template<class T>
-        void Push(const ClassName &name);
+        void Push(const ClassName& name);
     private:
         class PolymorphicEntry
         {
@@ -42,18 +40,18 @@ namespace Inscription
             PointerOutput* owner;
 
             template<class T>
-            PolymorphicEntry(const ClassName &className, PointerOutput& owner, Type<T>);
+            PolymorphicEntry(const ClassName& className, PointerOutput& owner, Type<T>);
 
-            void SaveID(Scribe &scribe);
-            void SaveClassName(Scribe& scribe);
+            void SaveID(BinaryScribe& scribe);
+            void SaveClassName(BinaryScribe& scribe);
 
-            void SaveObject(const void* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
-            TrackerID FindFromTracker(const void* obj, TrackerGroup& trackers);
-            TrackerID Track(const void* obj, TrackerGroup& trackers);
+            void SaveObject(const void* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
+            TrackingID FindFromTracker(const void* obj, TrackerMap& trackers);
+            TrackingID Track(const void* obj, TrackerMap& trackers);
         private:
-            std::function<void(const void*, Scribe&, TrackerGroup&, bool)> _saveObject;
-            std::function<TrackerID(const void*, TrackerGroup&)> _findFromTracker;
-            std::function<TrackerID(const void*, TrackerGroup&)> _track;
+            std::function<void(const void*, BinaryScribe&, TrackerMap&, bool)> _saveObject;
+            std::function<TrackingID(const void*, TrackerMap&)> _findFromTracker;
+            std::function<TrackingID(const void*, TrackerMap&)> _track;
         };
     private:
         typedef std::list<PolymorphicEntry> PolymorphicEntryList;
@@ -65,15 +63,15 @@ namespace Inscription
         void AddEntry(const PolymorphicEntry& add, const std::type_index& type);
     private:
         template<class T>
-        void Handle(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
+        void Handle(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
 
-        void HandleNullptr(Scribe& scribe);
+        void HandleNullptr(BinaryScribe& scribe);
         template<class T, typename std::enable_if<!std::is_abstract<T>::value, int>::type = 0>
-        void HandleNonpolymorphically(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
+        void HandleNonpolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
         template<class T, typename std::enable_if<std::is_abstract<T>::value, int>::type = 0>
-        void HandleNonpolymorphically(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
+        void HandleNonpolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
         template<class T>
-        void HandlePolymorphically(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
+        void HandlePolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
 
         template<class T>
         bool ShouldHandleNullptr(T* obj);
@@ -81,7 +79,7 @@ namespace Inscription
         bool ShouldHandleNonpolymorphically(T* obj);
     private:
         template<class T>
-        void SaveTracked(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns);
+        void SaveTracked(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns);
     private:
         template<class T>
         std::type_index TypeOf(T* obj);
@@ -90,34 +88,34 @@ namespace Inscription
     };
 
     template<class T>
-    void PointerOutput::HandleOwning(T* obj, Scribe& scribe, TrackerGroup& trackers)
+    void PointerOutput::HandleOwning(T* obj, BinaryScribe& scribe, TrackerMap& trackers)
     {
         Handle(obj, scribe, trackers, true);
     }
 
     template<class T>
-    void PointerOutput::HandleUnowning(T* obj, Scribe& scribe, TrackerGroup& trackers)
+    void PointerOutput::HandleUnowning(T* obj, BinaryScribe& scribe, TrackerMap& trackers)
     {
         Handle(obj, scribe, trackers, false);
     }
 
     template<class T>
-    PointerOutput::PolymorphicEntry::PolymorphicEntry(const ClassName &className, PointerOutput& owner, Type<T>) :
+    PointerOutput::PolymorphicEntry::PolymorphicEntry(const ClassName& className, PointerOutput& owner, Type<T>) :
         id(PointerSpecialIDs::NULLPTR), className(className), owner(&owner)
     {
-        _saveObject = [this](const void* obj, Scribe& scribe, TrackerGroup& trackers, bool owns)
+        _saveObject = [this](const void* obj, Scribe& scribe, TrackerMap& trackers, bool owns)
         {
             auto casted = static_cast<T*>(RemoveConst(obj));
             this->owner->SaveTracked(casted, scribe, trackers, owns);
             trackers.SignalSerialized(casted);
         };
 
-        _findFromTracker = [this](const void* obj, TrackerGroup& trackers) -> TrackerID
+        _findFromTracker = [this](const void* obj, TrackerMap& trackers) -> TrackingID
         {
             return trackers.FindID(static_cast<T*>(RemoveConst(obj)));
         };
 
-        _track = [this](const void* obj, TrackerGroup& trackers) -> TrackerID
+        _track = [this](const void* obj, TrackerMap& trackers) -> TrackingID
         {
             return trackers.Add(static_cast<T*>(RemoveConst(obj)));
             return 0;
@@ -125,13 +123,13 @@ namespace Inscription
     }
 
     template<class T>
-    void PointerOutput::Push(const ClassName &name)
+    void PointerOutput::Push(const ClassName& name)
     {
         AddEntry(PolymorphicEntry(name, *this, Type<T>{}), typeid(T));
     }
 
     template<class T>
-    void PointerOutput::Handle(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns)
+    void PointerOutput::Handle(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         if (ShouldHandleNullptr(obj))
             HandleNullptr(scribe);
@@ -142,14 +140,14 @@ namespace Inscription
     }
 
     template<class T, typename std::enable_if<!std::is_abstract<T>::value, int>::type>
-    void PointerOutput::HandleNonpolymorphically(T *obj, Scribe &scribe, TrackerGroup &trackers, bool owns)
+    void PointerOutput::HandleNonpolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         auto trackerID = trackers.FindID(obj);
-        bool didFindTrackerID = trackerID != TrackerGroup::nullID;
+        bool didFindTrackerID = trackerID != invalidTrackingID;
         if (!didFindTrackerID)
             trackerID = trackers.Add(obj);
 
-        scribe.Save(PolymorphicID(PointerSpecialIDs::HANDLE_NONPOLYMORPHICALLY));
+        scribe.Save(PolymorphicID(PointerSpecialID::HANDLE_NONPOLYMORPHICALLY));
         scribe.Save(trackerID);
         // If just added and owns
         if (owns && !trackers.HasBeenSerialized(obj))
@@ -160,20 +158,20 @@ namespace Inscription
     }
 
     template<class T, typename std::enable_if<std::is_abstract<T>::value, int>::type>
-    void PointerOutput::HandleNonpolymorphically(T *obj, Scribe &scribe, TrackerGroup &trackers, bool owns)
+    void PointerOutput::HandleNonpolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {}
 
     template<class T>
-    void PointerOutput::HandlePolymorphically(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns)
+    void PointerOutput::HandlePolymorphically(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         // Find the derived type
         auto polymorphicEntry = FindRequiredPolymorphicEntry(obj);
 
-        TrackerID trackerID = TrackerGroup::nullID;
+        TrackingID trackerID = invalidTrackingID;
         if (RegisteredTypes::Has<T>())
         {
             trackerID = polymorphicEntry->FindFromTracker(obj, trackers);
-            bool didFindTrackerID = trackerID != TrackerGroup::nullID;
+            bool didFindTrackerID = trackerID != invalidTrackingID;
 
             if (!didFindTrackerID)
                 trackerID = polymorphicEntry->Track(obj, trackers);
@@ -181,7 +179,7 @@ namespace Inscription
 
         // Check if should set ID
         bool shouldSaveClassName = false;
-        if (polymorphicEntry->id == PointerSpecialIDs::NULLPTR)
+        if (polymorphicEntry->id == PointerSpecialID::NULLPTR)
         {
             polymorphicEntry->id = nextID++;
             shouldSaveClassName = true;
@@ -215,7 +213,7 @@ namespace Inscription
     }
 
     template<class T>
-    void PointerOutput::SaveTracked(T* obj, Scribe& scribe, TrackerGroup& trackers, bool owns)
+    void PointerOutput::SaveTracked(T* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         scribe.Save(*obj);
     }
@@ -231,7 +229,7 @@ namespace Inscription
     {
         auto found = types.find(typeid(*obj));
         if (found == types.end())
-            throw PolymorphicTypeNotFoundException();
+            throw PolymorphicTypeNotFound();
 
         return &*found->second;
     }

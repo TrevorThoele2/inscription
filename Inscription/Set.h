@@ -1,16 +1,17 @@
-
 #pragma once
 
 #include <set>
-#include "Scribe.h"
+
+#include "BinaryScribe.h"
+
 #include "ContainerSize.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
     template<class Key, class Pred, class Alloc>
-    void Save(Scribe &scribe, std::set<Key, Pred, Alloc> &obj)
+    void Save(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -19,7 +20,7 @@ namespace Inscription
     }
 
     template<class Key, class Pred, class Alloc>
-    void Load(Scribe &scribe, std::set<Key, Pred, Alloc> &obj)
+    void Load(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
         typedef std::set<Key, Pred, Alloc> ContainerT;
 
@@ -29,7 +30,7 @@ namespace Inscription
         obj.clear();
         while (size-- > 0)
         {
-            StackConstructor<typename ContainerT::value_type> constructor(scribe);
+            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
 
             auto emplaced = obj.emplace(std::move(constructor.GetMove()));
             if (emplaced.second)
@@ -38,7 +39,7 @@ namespace Inscription
     }
 
     template<class Key, class Pred, class Alloc>
-    void Serialize(Scribe &scribe, std::set<Key, Pred, Alloc> &obj)
+    void Serialize(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
         (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
     }

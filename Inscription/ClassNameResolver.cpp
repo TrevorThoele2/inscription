@@ -1,4 +1,3 @@
-
 #include "ClassNameResolver.h"
 
 #include "Scribe.h"

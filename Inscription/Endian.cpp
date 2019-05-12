@@ -1,4 +1,3 @@
-
 #include "Endian.h"
 
 namespace Inscription
@@ -8,5 +7,10 @@ namespace Inscription
         static long long n = 1;
         static bool value = *(char *)&n == 1;
         return value;
+    }
+
+    bool IsBigEndian()
+    {
+        return !IsLittleEndian();
     }
 }

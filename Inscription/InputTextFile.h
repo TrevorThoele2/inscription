@@ -9,10 +9,13 @@ namespace Inscription
     {
     public:
         InputTextFile(const Path& path);
-        InputTextFile& operator>>(std::string& str);
-        InputTextFile& operator>>(char& ch);
 
-        std::string GetLine();
-        std::string GetLine(char delimiter);
+        void ReadData(std::string& string);
+        void ReadData(char& character);
+
+        std::string ReadLine();
+        std::string ReadLine(char delimiter);
+
+        std::string ReadSize(size_t size);
     };
 }

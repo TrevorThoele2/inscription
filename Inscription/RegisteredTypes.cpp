@@ -1,17 +1,16 @@
-
 #include "RegisteredTypes.h"
 
-#include "Tracking.h"
+#include "TrackerMap.h"
 
 namespace Inscription
 {
-    void RegisteredTypes::PushToTracking(TrackerGroup& group)
+    void RegisteredTypes::CopyRegisteredTo(TrackerMap& group)
     {
         for (auto& loop : Instance().bases)
-            group.table.Add(::Inscription::Tracker(), loop->Type());
+            group.table.Add(Tracker(), loop->Type());
     }
 
-    void RegisteredTypes::PushToPolymorphic(PointerManager& manager, Scribe& scribe)
+    void RegisteredTypes::CopyRegisteredTo(PointerManager& manager, BinaryScribe& scribe)
     {
         for (auto& loop : Instance().bases)
             loop->FillPolymorphic(manager, scribe);
