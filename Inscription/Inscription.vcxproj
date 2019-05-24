@@ -177,9 +177,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Access.h" />
+    <ClInclude Include="BaseClassTableEntryBase.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Assign.h" />
+    <ClInclude Include="BinaryConvenience.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="InputBinaryFile.h" />
     <ClInclude Include="InputBinaryScribe.h" />
@@ -211,11 +213,12 @@
     <ClInclude Include="RegisteredTypeNotFound.h" />
     <ClInclude Include="RegisteredTypes.h" />
     <ClInclude Include="ScopedTrackingChanger.h" />
-    <ClInclude Include="TableEntryBase.h" />
-    <ClInclude Include="TableImposterClass.h" />
-    <ClInclude Include="TableImposterNonClass.h" />
-    <ClInclude Include="TableLinkableClass.h" />
-    <ClInclude Include="TableLinkableNonClass.h" />
+    <ClInclude Include="TableBase.h" />
+    <ClInclude Include="BaseClassTableEntry.h" />
+    <ClInclude Include="ClassTableImposter.h" />
+    <ClInclude Include="NonClassTableImposter.h" />
+    <ClInclude Include="ClassLinkableTableEntry.h" />
+    <ClInclude Include="NonClassLinkableTableEntry.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Memory.h" />
@@ -241,15 +244,15 @@
     <ClInclude Include="String.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TableEntry.h" />
-    <ClInclude Include="TableEntryBasic.h" />
-    <ClInclude Include="TableEntryInherit.h" />
-    <ClInclude Include="TableEntryInscripter.h" />
-    <ClInclude Include="TableEntryOwningPointer.h" />
-    <ClInclude Include="TableEntryUnowningPointer.h" />
-    <ClInclude Include="TableLinkable.h" />
-    <ClInclude Include="TableNotConstructedException.h" />
-    <ClInclude Include="TableNotLinkedException.h" />
-    <ClInclude Include="TableVariableNotHereException.h" />
+    <ClInclude Include="BasicTableEntry.h" />
+    <ClInclude Include="GettableTableEntry.h" />
+    <ClInclude Include="InscripterTableEntry.h" />
+    <ClInclude Include="OwningPointerTableEntry.h" />
+    <ClInclude Include="UnowningPointerTableEntry.h" />
+    <ClInclude Include="LinkableTableEntry.h" />
+    <ClInclude Include="TableNotConstructed.h" />
+    <ClInclude Include="TableNotLinked.h" />
+    <ClInclude Include="TableVariableNotHere.h" />
     <ClInclude Include="OutputTextFile.h" />
     <ClInclude Include="TextScribe.h" />
     <ClInclude Include="Tracker.h" />
@@ -280,7 +283,6 @@
     <ClCompile Include="OutputBinaryFile.cpp" />
     <ClCompile Include="BinaryScribe.cpp" />
     <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="ClassNameResolver.cpp" />
     <ClCompile Include="Endian.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="OutputBinaryScribe.cpp" />

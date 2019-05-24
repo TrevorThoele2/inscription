@@ -4,8 +4,8 @@
 
 namespace Inscription
 {
-    template<class ClassT, class T>
-    class TableEntryInherit : public TableEntry<ClassT>
+    template<class ScribeT, class ClassT, class T>
+    class GettableTableEntry : public TableEntry<ScribeT, ClassT>
     {
     public:
         virtual T& Get() = 0;

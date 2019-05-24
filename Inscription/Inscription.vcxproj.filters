@@ -10,9 +10,6 @@
     <ClInclude Include="ContainerSize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Convenience.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Endian.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,49 +118,7 @@
     <ClInclude Include="Table.h">
       <Filter>Header Files\Table</Filter>
     </ClInclude>
-    <ClInclude Include="TableNotLinkedException.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableNotConstructedException.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableVariableNotHereException.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
     <ClInclude Include="TableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryInherit.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryBasic.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryOwningPointer.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryUnowningPointer.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryInscripter.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableLinkable.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableLinkableClass.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableLinkableNonClass.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableImposterClass.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableImposterNonClass.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntryBase.h">
       <Filter>Header Files\Table\Entries</Filter>
     </ClInclude>
     <ClInclude Include="Convert.h">
@@ -277,6 +232,60 @@
     <ClInclude Include="NumericTraits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TableBase.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="GettableTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseClassTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="InscripterTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="OwningPointerTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="UnowningPointerTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassTableImposter.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="NonClassTableImposter.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkableTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassLinkableTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="NonClassLinkableTableEntry.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseClassTableEntryBase.h">
+      <Filter>Header Files\Table\Entries</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotConstructed.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotLinked.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableVariableNotHere.h">
+      <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Convenience.h">
+      <Filter>Header Files\Convenience</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryConvenience.h">
+      <Filter>Header Files\Convenience</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -314,9 +323,6 @@
     </Filter>
     <Filter Include="Header Files\ClassNameResolver">
       <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ClassNameResolver">
-      <UniqueIdentifier>{f101bc9b-c06e-499c-a039-3e6cebdb572a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Scribe">
       <UniqueIdentifier>{1c7926d8-bc53-4c3b-bf6e-bad708f92962}</UniqueIdentifier>
@@ -372,6 +378,9 @@
     <Filter Include="Source Files\Types">
       <UniqueIdentifier>{c2af1fe6-4b31-4af2-bcdf-f378967fc23c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Convenience">
+      <UniqueIdentifier>{3d094007-d6ae-4914-82bf-c0199b009bb5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
@@ -397,9 +406,6 @@
     </ClCompile>
     <ClCompile Include="TableVariableNotHereException.cpp">
       <Filter>Source Files\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassNameResolver.cpp">
-      <Filter>Source Files\ClassNameResolver</Filter>
     </ClCompile>
     <ClCompile Include="RegisteredTypes.cpp">
       <Filter>Source Files</Filter>

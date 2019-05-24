@@ -1,8 +1,8 @@
-#include "TableNotLinkedException.h"
+#include "TableNotLinked.h"
 
 namespace Inscription
 {
-    TableNotLinkedException::TableNotLinkedException() :
+    TableNotLinked::TableNotLinked() :
         Exception("This variable was not linked when the table was serializing it. Link it from the inscripter's serialization function.")
     {}
 }

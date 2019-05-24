@@ -104,7 +104,7 @@ namespace Inscription
     PointerInput::PolymorphicEntry::PolymorphicEntry(const ClassName& className, PointerInput& owner, Type<T>) :
         className(className), owner(&owner)
     {
-        _loadObject = [this](void*& obj, Scribe& scribe, TrackerMap& trackers, bool owns)
+        _loadObject = [this](void*& obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
         {
             this->owner->LoadTracked(reinterpret_cast<T*&>(obj), scribe, trackers, owns);
         };

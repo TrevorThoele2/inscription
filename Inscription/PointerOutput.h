@@ -101,9 +101,9 @@ namespace Inscription
 
     template<class T>
     PointerOutput::PolymorphicEntry::PolymorphicEntry(const ClassName& className, PointerOutput& owner, Type<T>) :
-        id(PointerSpecialIDs::NULLPTR), className(className), owner(&owner)
+        id(PointerSpecialID::NULLPTR), className(className), owner(&owner)
     {
-        _saveObject = [this](const void* obj, Scribe& scribe, TrackerMap& trackers, bool owns)
+        _saveObject = [this](const void* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
         {
             auto casted = static_cast<T*>(RemoveConst(obj));
             this->owner->SaveTracked(casted, scribe, trackers, owns);

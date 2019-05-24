@@ -4,9 +4,9 @@
 
 namespace Inscription
 {
-    class TableNotLinkedException : public Exception
+    class TableVariableNotHere : public Exception
     {
     public:
-        TableNotLinkedException();
+        TableVariableNotHere();
     };
 }

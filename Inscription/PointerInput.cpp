@@ -2,8 +2,6 @@
 
 #include "BinaryScribe.h"
 
-#include "PointerSpecialID.h"
-
 namespace Inscription
 {
     void PointerInput::PolymorphicEntry::LoadObject(void*& obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
