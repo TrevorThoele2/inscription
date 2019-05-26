@@ -14,7 +14,29 @@ namespace Inscription
         OutputBinaryScribe(OutputBinaryScribe&& arg);
 
         OutputBinaryScribe& operator=(OutputBinaryScribe&& arg);
+    public:
+        template<class T>
+        inline OutputBinaryScribe& Save(T&& arg);
 
+        /*
+        Call this if the pointer owns its resource
+        Creates the resource
+        */
+        template<class T>
+        inline OutputBinaryScribe& SaveOwningPointer(T* arg);
+
+        /*
+        Call this if the pointer does not own its own resource
+        Never creates the resource
+        */
+        template<class T>
+        inline OutputBinaryScribe& SaveUnowningPointer(T* arg);
+
+        template<class T>
+        void WriteNumeric(T arg);
+
+        void WriteBuffer(const Buffer& write);
+    public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
     protected:
@@ -60,4 +82,31 @@ namespace Inscription
 
         inline void ThrowInvalidDirection() { throw InvalidScribeDirection(); }
     };
+
+    template<class T>
+    OutputBinaryScribe& OutputBinaryScribe::Save(T&& arg)
+    {
+        ProcessSave(arg);
+        return *this;
+    }
+
+    template<class T>
+    OutputBinaryScribe& OutputBinaryScribe::SaveOwningPointer(T* arg)
+    {
+        ProcessSaveOwningPointerImpl(arg);
+        return *this;
+    }
+
+    template<class T>
+    OutputBinaryScribe& OutputBinaryScribe::SaveUnowningPointer(T* arg)
+    {
+        ProcessSaveUnowningPointerImpl(arg);
+        return *this;
+    }
+
+    template<class T>
+    void OutputBinaryScribe::WriteNumeric(T arg)
+    {
+        WriteNumericImplementation(arg);
+    }
 }

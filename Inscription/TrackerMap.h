@@ -65,6 +65,7 @@ namespace Inscription
         template<class T>
         TrackingEntry* FindEntry(T* obj);
     private:
+        template<class ScribeT>
         friend class RegisteredTypes;
     };
 

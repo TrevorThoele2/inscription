@@ -5,7 +5,7 @@
 #include "BinaryScribe.h"
 
 #include "ContainerSize.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 
 namespace Inscription
 {
@@ -14,7 +14,7 @@ namespace Inscription
         template<class T, class Container>
         struct StackSaver : public std::stack<T, Container>
         {
-            void operator()(BinaryScribe& scribe)
+            void operator()(OutputBinaryScribe& scribe)
             {
                 ContainerSize size(c.size());
                 scribe.Save(size);
@@ -26,7 +26,7 @@ namespace Inscription
         template<class T, class Container>
         struct StackLoader : public std::stack<T, Container>
         {
-            void operator()(BinaryScribe& scribe)
+            void operator()(InputBinaryScribe& scribe)
             {
                 typedef std::stack<T, Container> ContainerT;
 
@@ -45,13 +45,13 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    void Save(BinaryScribe& scribe, std::stack<T, Container>& obj)
+    void Save(OutputBinaryScribe& scribe, std::stack<T, Container>& obj)
     {
         static_cast<detail::StackSaver<T, Container>&>(obj)(scribe);
     }
 
     template<class T, class Container>
-    void Load(BinaryScribe& scribe, std::stack<T, Container>& obj)
+    void Load(InputBinaryScribe& scribe, std::stack<T, Container>& obj)
     {
         static_cast<detail::StackLoader<T, Container>&>(obj)(scribe);
     }
@@ -59,6 +59,6 @@ namespace Inscription
     template<class T, class Container>
     void Serialize(BinaryScribe& scribe, std::stack<T, Container>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

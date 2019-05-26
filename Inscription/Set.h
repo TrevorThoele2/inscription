@@ -11,7 +11,7 @@
 namespace Inscription
 {
     template<class Key, class Pred, class Alloc>
-    void Save(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
+    void Save(OutputBinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -20,7 +20,7 @@ namespace Inscription
     }
 
     template<class Key, class Pred, class Alloc>
-    void Load(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
+    void Load(InputBinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
         typedef std::set<Key, Pred, Alloc> ContainerT;
 
@@ -41,6 +41,6 @@ namespace Inscription
     template<class Key, class Pred, class Alloc>
     void Serialize(BinaryScribe& scribe, std::set<Key, Pred, Alloc>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

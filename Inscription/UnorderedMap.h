@@ -11,7 +11,7 @@
 namespace Inscription
 {
     template<class Key, class T, class Hash, class Pred, class Alloc>
-    void Save(BinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    void Save(OutputBinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -23,7 +23,7 @@ namespace Inscription
     }
 
     template<class Key, class T, class Hash, class Pred, class Alloc>
-    void Load(BinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    void Load(InputBinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
         typedef std::unordered_map<Key, T, Hash, Pred, Alloc> ContainerT;
 
@@ -48,6 +48,6 @@ namespace Inscription
     template<class Key, class T, class Hash, class Pred, class Alloc>
     void Serialize(BinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

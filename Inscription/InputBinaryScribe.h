@@ -14,7 +14,32 @@ namespace Inscription
         InputBinaryScribe(InputBinaryScribe&& arg);
 
         InputBinaryScribe& operator=(InputBinaryScribe&& arg);
+    public:
+        template<class T>
+        inline InputBinaryScribe& Load(T&& arg);
 
+        /*
+        Call this if the pointer owns its resource
+        Creates the resource
+        */
+        template<class T>
+        inline InputBinaryScribe& LoadOwningPointer(T*& arg);
+
+        /*
+        Call this if the pointer does not own its own resource
+        Never creates the resource
+        */
+        template<class T>
+        inline InputBinaryScribe& LoadUnowningPointer(T*& arg);
+
+        template<class T>
+        void ReadNumeric(T& arg);
+        template<class T>
+        T ReadNumeric();
+
+        void ReadBuffer(Buffer& read);
+        Buffer ReadBuffer();
+    public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
     protected:
@@ -60,4 +85,37 @@ namespace Inscription
 
         inline void ThrowInvalidDirection() { throw InvalidScribeDirection(); }
     };
+
+    template<class T>
+    InputBinaryScribe& InputBinaryScribe::Load(T&& arg)
+    {
+        ProcessLoad(arg);
+        return *this;
+    }
+
+    template<class T>
+    InputBinaryScribe& InputBinaryScribe::LoadOwningPointer(T*& arg)
+    {
+        ProcessLoadOwningPointerImpl(arg);
+        return *this;
+    }
+
+    template<class T>
+    InputBinaryScribe& InputBinaryScribe::LoadUnowningPointer(T*& arg)
+    {
+        ProcessLoadUnowningPointerImpl(arg);
+        return *this;
+    }
+
+    template<class T>
+    void InputBinaryScribe::ReadNumeric(T& arg)
+    {
+        ReadNumericImplementation(arg);
+    }
+
+    template<class T>
+    T InputBinaryScribe::ReadNumeric()
+    {
+        return ReadNumericImplementation<T>();
+    }
 }

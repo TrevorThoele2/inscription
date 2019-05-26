@@ -26,6 +26,11 @@ namespace Inscription
         return *this;
     }
 
+    void OutputBinaryScribe::WriteBuffer(const Buffer& write)
+    {
+        WriteImpl(write);
+    }
+
     void OutputBinaryScribe::SeekStream(StreamPosition position)
     {
         file.SeekStream(position);
