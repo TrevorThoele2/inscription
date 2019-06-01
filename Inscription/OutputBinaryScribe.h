@@ -11,6 +11,7 @@ namespace Inscription
     {
     public:
         OutputBinaryScribe(const Path& path, const Signature& signature, Version version);
+        OutputBinaryScribe(const Path& path, const Signature& signature, Version version, const TypeRegistrationContext& typeRegistrationContext);
         OutputBinaryScribe(OutputBinaryScribe&& arg);
 
         OutputBinaryScribe& operator=(OutputBinaryScribe&& arg);
@@ -73,6 +74,8 @@ namespace Inscription
         inline void ReadImpl(Buffer& arg) override { ThrowInvalidDirection(); }
     private:
         OutputBinaryFile file;
+    private:
+        void InitialSetup();
     private:
         template<class T>
         inline void WriteToFile(T& arg)

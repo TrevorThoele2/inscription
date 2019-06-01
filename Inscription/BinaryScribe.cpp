@@ -103,32 +103,35 @@ namespace Inscription
 
     BinaryScribe::BinaryScribe(Direction direction, const Signature& signature, Version version) :
         direction(direction), signature(signature), version(version),
-        pointerManager(direction, registeredTypes),
+        pointerManager(direction),
+        postHeaderPosition(0)
+    {}
+
+    BinaryScribe::BinaryScribe(Direction direction, const Signature& signature, Version version, TypeRegistrationContext typeRegistrationContext) :
+        direction(direction), signature(signature), version(version),
+        pointerManager(direction), typeRegistrationContext(typeRegistrationContext),
         postHeaderPosition(0)
     {
-        registeredTypes.CopyRegisteredTo(trackers);
-        registeredTypes.CopyRegisteredTo(pointerManager, *this);
+        typeRegistrationContext.PushAll(*this);
     }
 
     BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
         Scribe(std::move(arg)),
         direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
-        pointerManager(arg.direction, registeredTypes),
+        trackers(std::move(arg.trackers)), pointerManager(std::move(arg.pointerManager)),
+        typeRegistrationContext(std::move(arg.typeRegistrationContext)),
         postHeaderPosition(std::move(arg.postHeaderPosition))
-    {
-        registeredTypes.CopyRegisteredTo(trackers);
-        registeredTypes.CopyRegisteredTo(pointerManager, *this);
-    }
+    {}
 
     BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
     {
         Scribe::operator=(std::move(arg));
         signature = std::move(arg.signature);
         version = std::move(arg.version);
+        trackers = std::move(arg.trackers);
         pointerManager = std::move(arg.pointerManager);
+        typeRegistrationContext = std::move(arg.typeRegistrationContext);
         postHeaderPosition = std::move(arg.postHeaderPosition);
         return *this;
     }
-
-    RegisteredTypes<BinaryScribe> BinaryScribe::registeredTypes;
 }

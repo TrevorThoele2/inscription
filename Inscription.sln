@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Inscription", "Inscription\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InscriptionTests", "InscriptionTests\InscriptionTests.vcxproj", "{5F334BF4-BED5-440A-8FFA-F09FF3F513DE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFramework", "..\..\..\source\repos\TestFramework\TestFramework\TestFramework.vcxproj", "{2CD5963B-8857-4AF5-ADEF-9374AA1BA6EC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFramework", "..\TestFramework\TestFramework\TestFramework.vcxproj", "{2CD5963B-8857-4AF5-ADEF-9374AA1BA6EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

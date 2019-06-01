@@ -17,15 +17,22 @@ namespace Inscription
     void InputBinaryFile::ReadData(Buffer& buffer)
     {
         stream.read(buffer.value, buffer.size);
+        if (FailedStream())
+            throw FileEncounteredError();
     }
 
     void InputBinaryFile::SeekStream(StreamPosition position)
     {
         stream.seekg(position);
+        if (FailedStream())
+            throw FileEncounteredError();
     }
 
     InputBinaryFile::StreamPosition InputBinaryFile::TellStream()
     {
-        return stream.tellg();
+        auto told = stream.tellg();
+        if (FailedStream())
+            throw FileEncounteredError();
+        return told;
     }
 }

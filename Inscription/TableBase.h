@@ -20,6 +20,7 @@
 
 #include "TableNotConstructed.h"
 #include "TableVariableNotHere.h"
+#include "BaseClassNotInTable.h"
 
 #include "ScopedConstructor.h"
 #include "Access.h"
@@ -376,7 +377,7 @@ namespace Inscription
     {
         auto found = entryMap.find(name);
         if (found == entryMap.end())
-            throw TableVariableNotHere();
+            throw TableVariableNotHere(name);
 
 #ifndef INSCRIPTION_DEBUG
         return static_cast<T*>(found->second.get());
@@ -393,7 +394,7 @@ namespace Inscription
     {
         auto found = baseClassMap.find(typeid(BaseT));
         if (found == baseClassMap.end())
-            throw TableVariableNotHere();
+            throw BaseClassNotInTable(typeid(BaseT));
 
 #ifndef INSCRIPTION_DEBUG
         return static_cast<BaseClassEntry<BaseT>*>(found->second.get());

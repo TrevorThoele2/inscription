@@ -2,8 +2,6 @@
 
 #include "Version.h"
 
-#include "RegisteredTypes.h"
-
 namespace Inscription
 {
     class Scribe

@@ -1,7 +1,11 @@
 #pragma once
 
 #include <fstream>
+
 #include "Path.h"
+
+#include "UnopenableFile.h"
+#include "FileEncounteredError.h"
 
 namespace Inscription
 {
@@ -17,10 +21,11 @@ namespace Inscription
     public:
         virtual ~Stream() = 0;
 
+        void Open();
         void Close();
-        void ChangeMode(Mode set);
-        void Reopen();
         bool IsOpen() const;
+
+        void ChangeMode(Mode set);
     protected:
         StreamT stream;
     protected:
@@ -32,15 +37,15 @@ namespace Inscription
         Stream(Stream&& arg);
 
         Stream& operator=(Stream&& arg);
+    protected:
+        bool FailedStream() const;
     private:
         Path path;
         Mode mode;
-        bool open;
+        bool isOpen;
     private:
         Stream() = delete;
         Stream(const Stream& arg) = delete;
-
-        void Open();
     };
 
     template<class T>
@@ -48,20 +53,42 @@ namespace Inscription
     {}
 
     template<class T>
+    void Stream<T>::Open()
+    {
+        if (isOpen)
+            return;
+
+        stream.open(path.c_str(), mode);
+        if (FailedStream())
+            throw UnopenableFile(path);
+
+        isOpen = true;
+    }
+
+    template<class T>
     void Stream<T>::Close()
     {
-        if (!open)
+        if (!isOpen)
             return;
 
         stream.close();
-        open = false;
+        if (FailedStream())
+            throw FileEncounteredError();
+
+        isOpen = false;
+    }
+
+    template<class T>
+    bool Stream<T>::IsOpen() const
+    {
+        return isOpen;
     }
 
     template<class T>
     void Stream<T>::ChangeMode(Mode set)
     {
         mode = set;
-        if (!open)
+        if (!isOpen)
             return;
 
         Close();
@@ -69,29 +96,19 @@ namespace Inscription
     }
 
     template<class T>
-    void Stream<T>::Reopen()
-    {
-        Open();
-    }
-
-    template<class T>
-    bool Stream<T>::IsOpen() const
-    {
-        return open;
-    }
-
-    template<class T>
-    Stream<T>::Stream(const Path& path) : path(path), open(false)
+    Stream<T>::Stream(const Path& path) : path(path), isOpen(false)
     {}
 
     template<class T>
-    Stream<T>::Stream(const Path& path, Mode mode) : path(path), mode(mode), open(false)
+    Stream<T>::Stream(const Path& path, Mode mode) : path(path), mode(mode), isOpen(false)
     {
         Open();
     }
 
     template<class T>
-    Stream<T>::Stream(Stream&& arg) : path(std::move(arg.path)), mode(std::move(arg.mode)), open(std::move(arg.open))
+    Stream<T>::Stream(Stream&& arg) :
+        stream(std::move(arg.stream)), path(std::move(arg.path)),
+        mode(std::move(arg.mode)), isOpen(std::move(arg.isOpen))
     {}
 
     template<class T>
@@ -99,17 +116,13 @@ namespace Inscription
     {
         path = std::move(arg.path);
         mode = std::move(arg.mode);
-        open = std::move(arg.open);
+        isOpen = std::move(arg.isOpen);
         return *this;
     }
 
     template<class T>
-    void Stream<T>::Open()
+    bool Stream<T>::FailedStream() const
     {
-        if (open)
-            return;
-
-        stream.open(path.c_str(), mode);
-        open = false;
+        return stream.bad();
     }
 }

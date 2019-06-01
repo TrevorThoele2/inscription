@@ -17,15 +17,22 @@ namespace Inscription
     void OutputBinaryFile::WriteData(const Buffer& buffer)
     {
         stream.write(buffer.value, buffer.size);
+        if (FailedStream())
+            throw FileEncounteredError();
     }
 
     void OutputBinaryFile::SeekStream(StreamPosition position)
     {
         stream.seekp(position);
+        if (FailedStream())
+            throw FileEncounteredError();
     }
 
     OutputBinaryFile::StreamPosition OutputBinaryFile::TellStream()
     {
-        return stream.tellp();
+        auto told = stream.tellp();
+        if (FailedStream())
+            throw FileEncounteredError();
+        return told;
     }
 }

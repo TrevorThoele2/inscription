@@ -7,7 +7,7 @@
 namespace Inscription
 {
     template<class ScribeT>
-    PointerManager<ScribeT>::PointerManager(Direction direction, RegisteredTypesT& registeredTypes) : direction(direction), registeredTypes(&registeredTypes)
+    PointerManager<ScribeT>::PointerManager(Direction direction) : direction(direction)
     {
         Setup(direction);
     }
@@ -55,22 +55,8 @@ namespace Inscription
     }
 
     template<class ScribeT>
-    void PointerManager<ScribeT>::Setup(Direction direction)
-    {
-        switch (direction)
-        {
-        case Direction::OUTPUT:
-            delegate.reset(new OutputDelegate(*registeredTypes));
-            break;
-        case Direction::INPUT:
-            delegate.reset(new InputDelegate());
-            break;
-        }
-    }
-
-    template<class ScribeT>
     template<class T>
-    void PointerManager<ScribeT>::Add(const ClassName &name)
+    void PointerManager<ScribeT>::Register(const ClassName& name)
     {
         switch (direction)
         {
@@ -79,6 +65,20 @@ namespace Inscription
             break;
         case Direction::INPUT:
             static_cast<InputDelegate*>(delegate.get())->Push<T>(name);
+            break;
+        }
+    }
+
+    template<class ScribeT>
+    void PointerManager<ScribeT>::Setup(Direction direction)
+    {
+        switch (direction)
+        {
+        case Direction::OUTPUT:
+            delegate.reset(new OutputDelegate());
+            break;
+        case Direction::INPUT:
+            delegate.reset(new InputDelegate());
             break;
         }
     }

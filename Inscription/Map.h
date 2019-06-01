@@ -2,16 +2,14 @@
 
 #include <map>
 
-#include "BinaryScribe.h"
-
 #include "ContainerSize.h"
 #include "ScopedConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    template<class Key, class T, class Hash, class Alloc>
-    void Save(OutputBinaryScribe& scribe, std::map<Key, T, Hash, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Alloc>
+    void Save(ScribeT& scribe, std::map<Key, T, Hash, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -22,8 +20,8 @@ namespace Inscription
         }
     }
 
-    template<class Key, class T, class Hash, class Alloc>
-    void Load(InputBinaryScribe& scribe, std::map<Key, T, Hash, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Alloc>
+    void Load(ScribeT& scribe, std::map<Key, T, Hash, Alloc>& obj)
     {
         typedef std::map<Key, T, Hash, Alloc> ContainerT;
 
@@ -45,8 +43,8 @@ namespace Inscription
         }
     }
 
-    template<class Key, class T, class Hash, class Alloc>
-    void Serialize(BinaryScribe& scribe, std::map<Key, T, Hash, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Alloc>
+    void Serialize(ScribeT& scribe, std::map<Key, T, Hash, Alloc>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }

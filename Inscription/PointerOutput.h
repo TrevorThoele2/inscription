@@ -24,9 +24,7 @@ namespace Inscription
     class PointerOutput : public PointerDelegate
     {
     public:
-        typedef RegisteredTypes<ScribeT> RegisteredTypesT;
-    public:
-        PointerOutput(RegisteredTypesT& registeredTypes);
+        PointerOutput();
 
         template<class T>
         void HandleOwning(T* obj, ScribeT& scribe, TrackerMap& trackers);
@@ -65,8 +63,6 @@ namespace Inscription
         typedef std::unordered_map<std::type_index, EntryListIterator> TypeMap;
         TypeMap types;
     private:
-        RegisteredTypesT* registeredTypes;
-    private:
         void AddEntry(const PolymorphicEntry& add, const std::type_index& type);
     private:
         template<class T>
@@ -95,7 +91,7 @@ namespace Inscription
     };
 
     template<class ScribeT>
-    PointerOutput<ScribeT>::PointerOutput(RegisteredTypesT& registeredTypes) : registeredTypes(&registeredTypes)
+    PointerOutput<ScribeT>::PointerOutput()
     {}
 
     template<class ScribeT>
@@ -229,12 +225,9 @@ namespace Inscription
         // Find the derived type
         auto polymorphicEntry = FindRequiredPolymorphicEntry(obj);
 
-        TrackingID trackerID = invalidTrackingID;
-        if (registeredTypes->Has<T>())
+        TrackingID trackerID = polymorphicEntry->FindFromTracker(obj, trackers);
         {
-            trackerID = polymorphicEntry->FindFromTracker(obj, trackers);
             bool didFindTrackerID = trackerID != invalidTrackingID;
-
             if (!didFindTrackerID)
                 trackerID = polymorphicEntry->Track(obj, trackers);
         }

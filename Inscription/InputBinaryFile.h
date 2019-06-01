@@ -27,5 +27,7 @@ namespace Inscription
     void InputBinaryFile::ReadData(T& var)
     {
         stream.read(reinterpret_cast<char*>(&var), sizeof(var));
+        if (stream.bad())
+            throw FileEncounteredError();
     }
 }

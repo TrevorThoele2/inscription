@@ -283,11 +283,17 @@
     <ClInclude Include="BinaryConvenience.h">
       <Filter>Header Files\Convenience</Filter>
     </ClInclude>
-    <ClInclude Include="TypeRegisterableScribe.h">
-      <Filter>Header Files\Scribe</Filter>
+    <ClInclude Include="TypeRegistrationContext.h">
+      <Filter>Header Files\RegisteredTypes</Filter>
     </ClInclude>
-    <ClInclude Include="RegisteredTypes.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="FileEncounteredError.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="UnopenableFile.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseClassNotInTable.h">
+      <Filter>Header Files\Table</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -384,6 +390,9 @@
     <Filter Include="Header Files\Convenience">
       <UniqueIdentifier>{3d094007-d6ae-4914-82bf-c0199b009bb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RegisteredTypes">
+      <UniqueIdentifier>{a94282ab-0153-40db-9e6e-d5084e869824}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
@@ -391,15 +400,6 @@
     </ClCompile>
     <ClCompile Include="Buffer.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TableNotLinkedException.cpp">
-      <Filter>Source Files\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="TableNotConstructedException.cpp">
-      <Filter>Source Files\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="TableVariableNotHereException.cpp">
-      <Filter>Source Files\Table</Filter>
     </ClCompile>
     <ClCompile Include="Scribe.cpp">
       <Filter>Source Files\Scribe</Filter>
@@ -479,8 +479,23 @@
     <ClCompile Include="PointerDelegate.cpp">
       <Filter>Source Files\Pointer</Filter>
     </ClCompile>
-    <ClCompile Include="TypeRegisterableScribe.cpp">
-      <Filter>Source Files\Scribe</Filter>
+    <ClCompile Include="FileEncounteredError.cpp">
+      <Filter>Source Files\File</Filter>
+    </ClCompile>
+    <ClCompile Include="UnopenableFile.cpp">
+      <Filter>Source Files\File</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseClassNotInTable.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableVariableNotHere.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotLinked.cpp">
+      <Filter>Source Files\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotConstructed.cpp">
+      <Filter>Source Files\Table</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
