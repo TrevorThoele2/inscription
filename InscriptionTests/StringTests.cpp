@@ -11,21 +11,21 @@ BOOST_FIXTURE_TEST_SUITE(StringTests, StringTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    auto string = dataGeneration.Generator<std::string>().Random();
+    auto saved = dataGeneration.Generator<std::string>().Random();
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(string);
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
-    std::string n_string;
+    std::string loaded;
 
     {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_string);
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
     }
 
-    BOOST_REQUIRE(n_string == string);
+    BOOST_REQUIRE(loaded == saved);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

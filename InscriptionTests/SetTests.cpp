@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/Set.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,29 +12,29 @@ BOOST_FIXTURE_TEST_SUITE(SetTests, SetTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::set<int> set;
+    using TestedObject = std::set<int>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
         for (auto& loop : startingGroup)
-            set.emplace(loop);
+            saved.emplace(loop);
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(set);
+        std::set<int> loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::set<int> n_set;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_set);
-    }
-
-    BOOST_REQUIRE(!n_set.empty());
-    BOOST_REQUIRE(n_set == set);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

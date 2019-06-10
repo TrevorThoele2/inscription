@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/Array.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,31 +12,31 @@ BOOST_FIXTURE_TEST_SUITE(ArrayTests, ArrayTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::array<int, 5> array;
+    using TestedObject = std::array<int, 5>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
-        BOOST_REQUIRE(array.size() == startingGroup.size());
+        BOOST_REQUIRE(saved.size() == startingGroup.size());
 
         for (size_t i = 0; i < startingGroup.size(); ++i)
-            array[i] = startingGroup[i];
+            saved[i] = startingGroup[i];
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(array);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::array<int, 5> n_array;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_array);
-    }
-
-    BOOST_REQUIRE(!n_array.empty());
-    BOOST_REQUIRE(n_array == array);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

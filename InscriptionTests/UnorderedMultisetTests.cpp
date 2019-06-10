@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/UnorderedMultiSet.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,29 +12,29 @@ BOOST_FIXTURE_TEST_SUITE(UnorderedMultiSetTests, UnorderedMultiSetTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::unordered_multiset<int> unorderedMultiSet;
+    using TestedObject = std::unordered_multiset<int>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
         for (auto& loop : startingGroup)
-            unorderedMultiSet.emplace(loop);
+            saved.emplace(loop);
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(unorderedMultiSet);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::unordered_multiset<int> n_unorderedMultiSet;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_unorderedMultiSet);
-    }
-
-    BOOST_REQUIRE(!n_unorderedMultiSet.empty());
-    BOOST_REQUIRE(n_unorderedMultiSet == unorderedMultiSet);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

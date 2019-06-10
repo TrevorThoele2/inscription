@@ -2,42 +2,63 @@
 
 #include <forward_list>
 
+#include "Composite.h"
+
 #include "ContainerSize.h"
-#include "ScopedConstructor.h"
+#include "ScopeConstructor.h"
 
 namespace Inscription
 {
-    template<class ScribeT, class T, class Alloc>
-    void Save(ScribeT& scribe, std::forward_list<T, Alloc>& obj)
+    class BinaryArchive;
+
+    template<class T, class Allocator>
+    class Scribe<std::forward_list<T, Allocator>, BinaryArchive> final :
+        public CompositeScribe<std::forward_list<T, Allocator>, BinaryArchive>
     {
-        ContainerSize size(std::distance(obj.begin(), obj.end()));
-        scribe.Save(size);
-        for (auto loop = obj.begin(); loop != obj.end(); ++loop)
-            scribe.Save(*loop);
+    private:
+        using BaseT = CompositeScribe<std::forward_list<T, Allocator>, BinaryArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    private:
+        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
     }
 
-    template<class ScribeT, class T, class Alloc>
-    void Load(ScribeT& scribe, std::forward_list<T, Alloc>& obj)
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        typedef std::forward_list<T, Alloc> ContainerT;
+        ContainerSize size(std::distance(object.begin(), object.end()));
+        archive(size);
+        for (auto loop = object.begin(); loop != object.end(); ++loop)
+            archive(*loop);
+    }
 
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    {
         ContainerSize size;
-        scribe.Load(size);
+        archive(size);
 
-        obj.clear();
+        object.clear();
         while (size-- > 0)
         {
-            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
-            obj.push_front(std::move(constructor.GetMove()));
-            scribe.ReplaceTrackedObject(*constructor.Get(), obj.front());
+            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+            object.push_front(std::move(constructor.GetMove()));
+            archive.ReplaceTrackedObject(*constructor.Get(), object.front());
         }
 
-        obj.reverse();
-    }
-
-    template<class ScribeT, class T, class Alloc>
-    void Serialize(ScribeT& scribe, std::forward_list<T, Alloc>& obj)
-    {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
+        object.reverse();
     }
 }

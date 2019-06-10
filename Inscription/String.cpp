@@ -1,42 +1,46 @@
 #include "String.h"
 
-#include "OutputBinaryScribe.h"
-#include "InputBinaryScribe.h"
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
 
 #include "ContainerSize.h"
-#include "ScopedTrackingChanger.h"
+#include "ScopeTrackingModifier.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    void Save(OutputBinaryScribe& scribe, const std::string& obj)
+    void Scribe<std::string, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
-        ScopedTrackingChanger tracking(scribe, false);
-
-        ContainerSize size(obj.size());
-        scribe.Save(size);
-        for (auto &loop : obj)
-            scribe.Save(RemoveConst(loop));
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
     }
 
-    void Load(InputBinaryScribe& scribe, std::string& obj)
+    void Scribe<std::string, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        ScopedTrackingChanger tracking(scribe, false);
+        ScopeTrackingModifier tracking(archive, false);
+
+        ContainerSize size(object.size());
+        archive(size);
+        for (auto& loop : object)
+            archive(loop);
+    }
+
+    void Scribe<std::string, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        ScopeTrackingModifier tracking(archive, false);
 
         ContainerSize size;
-        scribe.Load(size);
+        archive(size);
 
-        obj.resize(size);
+        object.resize(size);
+
         ContainerSize address = 0;
         while (address < size)
         {
-            scribe.Load(obj[address]);
+            archive(object[address]);
             ++address;
         }
-    }
-
-    void Serialize(BinaryScribe& scribe, std::string& obj)
-    {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

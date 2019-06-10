@@ -1,8 +1,11 @@
 #include <boost/test/unit_test.hpp>
 
-#include "BinaryFixture.h"
-
+#include <Inscription/Numeric.h>
+#include <Inscription/Pointer.h>
+#include <Inscription/String.h>
 #include <Inscription/ContainerSize.h>
+
+#include "BinaryFixture.h"
 
 class ListPolymorphicBinarySerializationTestsFixture : public BinaryFixture
 {
@@ -11,9 +14,6 @@ public:
     {
         typeRegistrationContext.RegisterType<Base>();
         typeRegistrationContext.RegisterType<Derived>();
-
-        typeRegistrationContext.RegisterType<BaseRequiredConstruction>();
-        typeRegistrationContext.RegisterType<DerivedRequiredConstruction>();
     }
 
     class Base
@@ -50,116 +50,90 @@ public:
     private:
         INSCRIPTION_ACCESS;
     };
-
-    class BaseRequiredConstruction
-    {
-    public:
-        BaseRequiredConstruction(int baseValue = 0) : baseValue(baseValue)
-        {}
-
-        INSCRIPTION_BINARY_TABLE_CONSTRUCTOR_DECLARE(BaseRequiredConstruction) :
-            INSCRIPTION_TABLE_GET_MEM(baseValue)
-        {}
-
-        virtual ~BaseRequiredConstruction() = 0;
-
-        int BaseValue() const
-        {
-            return baseValue;
-        }
-    private:
-        int baseValue;
-    private:
-        INSCRIPTION_ACCESS;
-    };
-
-    class DerivedRequiredConstruction : public BaseRequiredConstruction
-    {
-    public:
-        DerivedRequiredConstruction(int baseValue, const std::string& derivedValue) :
-            BaseRequiredConstruction(baseValue), derivedValue(derivedValue)
-        {}
-
-        INSCRIPTION_BINARY_TABLE_CONSTRUCTOR_DECLARE(DerivedRequiredConstruction) :
-            INSCRIPTION_TABLE_GET_BASE(BaseRequiredConstruction), INSCRIPTION_TABLE_GET_MEM(derivedValue)
-        {}
-
-        const std::string& DerivedValue() const
-        {
-            return derivedValue;
-        }
-    private:
-        std::string derivedValue;
-    private:
-        INSCRIPTION_ACCESS;
-    };
 };
 
 ListPolymorphicBinarySerializationTestsFixture::Base::~Base()
 {}
 
-ListPolymorphicBinarySerializationTestsFixture::BaseRequiredConstruction::~BaseRequiredConstruction()
-{}
+namespace Inscription
+{
+    template<>
+    class Scribe<::ListPolymorphicBinarySerializationTestsFixture::Base, BinaryArchive> :
+        public CompositeScribe<::ListPolymorphicBinarySerializationTestsFixture::Base, BinaryArchive>
+    {
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<>
+    class Scribe<::ListPolymorphicBinarySerializationTestsFixture::Derived, BinaryArchive> :
+        public CompositeScribe<::ListPolymorphicBinarySerializationTestsFixture::Derived, BinaryArchive>
+    {
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static const ClassNameResolver classNameResolver;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(ListPolymorphicBinarySerializationTests, ListPolymorphicBinarySerializationTestsFixture)
 
 BOOST_AUTO_TEST_CASE(PolymorphicOwningPointer_SavesAndLoads)
 {
-    std::vector<Base*> owning;
+    std::vector<Base*> savedOwning;
     {
         auto startingGroup = dataGeneration.Generator<Derived>().RandomHeapGroup(3);
         for (auto& loop : startingGroup)
-            owning.push_back(loop);
+            savedOwning.push_back(loop);
     }
 
     std::vector<Derived*> castedOwning;
-    for (auto& loop : owning)
+    for (auto& loop : savedOwning)
         castedOwning.push_back(dynamic_cast<Derived*>(loop));
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
+        auto outputArchive = CreateRegistered<OutputArchive>();
 
-        ::Inscription::ContainerSize containerSize(owning.size());
-        outputScribe.Save(containerSize);
-        for (auto& loop : owning)
-            outputScribe.SaveOwningPointer(loop);
+        ::Inscription::ContainerSize containerSize(savedOwning.size());
+        outputArchive(containerSize);
+        for (auto& loop : savedOwning)
+            outputArchive(loop);
     }
 
-    std::vector<Base*> n_owning;
+    std::vector<Base*> loadedOwning;
 
     {
-        auto inputScribe = CreateRegistered<InputScribe>();
+        auto inputArchive = CreateRegistered<InputArchive>();
 
         ::Inscription::ContainerSize containerSize;
-        inputScribe.Load(containerSize);
+        inputArchive(containerSize);
         while (containerSize-- > 0)
         {
-            Base* ptr;
-            inputScribe.LoadOwningPointer(ptr);
-            n_owning.push_back(ptr);
+            Base* ptr = nullptr;
+            inputArchive(ptr);
+            loadedOwning.push_back(ptr);
         }
     }
 
-    std::vector<Derived*> n_castedOwning;
-    for (auto& loop : n_owning)
-        n_castedOwning.push_back(dynamic_cast<Derived*>(loop));
+    std::vector<Derived*> loadedCastedOwning;
+    for (auto& loop : loadedOwning)
+        loadedCastedOwning.push_back(dynamic_cast<Derived*>(loop));
 
-    BOOST_REQUIRE(!n_owning.empty());
-    BOOST_REQUIRE(n_owning.size() == owning.size());
-    for (size_t i = 0; i < owning.size(); ++i)
+    BOOST_REQUIRE(!loadedOwning.empty());
+    BOOST_REQUIRE(loadedOwning.size() == savedOwning.size());
+    for (size_t i = 0; i < savedOwning.size(); ++i)
     {
-        auto owningElement = owning[i];
-        auto n_owningElement = n_owning[i];
-        auto castedOwningElement = castedOwning[i];
-        auto n_castedOwningElement = n_castedOwning[i];
+        auto savedOwningElement = savedOwning[i];
+        auto loadedOwningElement = loadedOwning[i];
+        auto savedCastedOwningElement = castedOwning[i];
+        auto loadedCastedOwningElement = loadedCastedOwning[i];
 
-        BOOST_REQUIRE(owningElement->BaseValue() == n_owningElement->BaseValue());
-        BOOST_REQUIRE(castedOwningElement->DerivedValue() == n_castedOwningElement->DerivedValue());
+        BOOST_REQUIRE(savedOwningElement->BaseValue() == loadedOwningElement->BaseValue());
+        BOOST_REQUIRE(savedCastedOwningElement->DerivedValue() == loadedCastedOwningElement->DerivedValue());
     }
 
-    for (auto& loop : owning)
+    for (auto& loop : savedOwning)
         delete loop;
-    for (auto& loop : n_owning)
+    for (auto& loop : loadedOwning)
         delete loop;
 }
 
@@ -167,59 +141,17 @@ BOOST_AUTO_TEST_SUITE_END()
 
 namespace Inscription
 {
-    INSCRIPTION_INSCRIPTER_DECLARE(::ListPolymorphicBinarySerializationTestsFixture::Base)
+    void Scribe<::ListPolymorphicBinarySerializationTestsFixture::Base, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
-    public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
-        {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD(baseValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
-    };
+        archive(object.baseValue);
+    }
 
-    INSCRIPTION_INSCRIPTER_DECLARE(::ListPolymorphicBinarySerializationTestsFixture::Derived)
+    void Scribe<::ListPolymorphicBinarySerializationTestsFixture::Derived, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
-    public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
-        {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD_BASE(::ListPolymorphicBinarySerializationTestsFixture::Base);
-            INSCRIPTION_TABLE_ADD(derivedValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
+        BaseScriven<::ListPolymorphicBinarySerializationTestsFixture::Base>(object, archive);
+        archive(object.derivedValue);
+    }
 
-        INSCRIPTION_BINARY_DECLARE_CLASS_NAME_RESOLVER;
-    };
-
-    INSCRIPTION_BINARY_DEFINE_SIMPLE_CLASS_NAME_RESOLVER(
-        ::ListPolymorphicBinarySerializationTestsFixture::Derived, "Derived")
-
-        INSCRIPTION_INSCRIPTER_DECLARE(::ListPolymorphicBinarySerializationTestsFixture::BaseRequiredConstruction)
-    {
-    public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
-        {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD(baseValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
-    };
-
-    INSCRIPTION_INSCRIPTER_DECLARE(::ListPolymorphicBinarySerializationTestsFixture::DerivedRequiredConstruction)
-    {
-    public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
-        {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD_BASE(::ListPolymorphicBinarySerializationTestsFixture::BaseRequiredConstruction);
-            INSCRIPTION_TABLE_ADD(derivedValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
-
-        INSCRIPTION_BINARY_DECLARE_CLASS_NAME_RESOLVER;
-    };
-
-    INSCRIPTION_BINARY_DEFINE_SIMPLE_CLASS_NAME_RESOLVER(
-        ::ListPolymorphicBinarySerializationTestsFixture::DerivedRequiredConstruction, "DerivedRequiredConstruction")
+    const Scribe<::ListPolymorphicBinarySerializationTestsFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::ListPolymorphicBinarySerializationTestsFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("Derived");
 }

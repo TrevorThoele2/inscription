@@ -2,50 +2,71 @@
 
 #include <unordered_map>
 
+#include "Composite.h"
+
 #include "ContainerSize.h"
-#include "ScopedConstructor.h"
+#include "ScopeConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
-    void Save(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    class BinaryArchive;
+
+    template<class Key, class T, class Hash, class Predicate, class Allocator>
+    class Scribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive> final :
+        public CompositeScribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive>
     {
-        ContainerSize size(obj.size());
-        scribe.Save(size);
-        for (auto loop = obj.begin(); loop != obj.end(); ++loop)
+    private:
+        using BaseT = CompositeScribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    private:
+        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class Key, class T, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
+    }
+
+    template<class Key, class T, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        ContainerSize size(object.size());
+        archive(size);
+        for (auto loop = object.begin(); loop != object.end(); ++loop)
         {
-            scribe.Save(RemoveConst(loop->first));
-            scribe.Save(loop->second);
+            archive(loop->first);
+            archive(loop->second);
         }
     }
 
-    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
-    void Load(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    template<class Key, class T, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_map<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
-        typedef std::unordered_map<Key, T, Hash, Pred, Alloc> ContainerT;
-
         ContainerSize size;
-        scribe.Load(size);
+        archive(size);
 
-        obj.clear();
+        object.clear();
         while (size-- > 0)
         {
-            ScopedConstructor<typename ContainerT::key_type> key(scribe);
-            ScopedConstructor<typename ContainerT::mapped_type> mapped(scribe);
+            ScopeConstructor<typename ObjectT::key_type> key(archive);
+            ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
 
-            auto emplaced = obj.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
+            auto emplaced = object.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
             if (emplaced.second)
             {
-                scribe.ReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
-                scribe.ReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
+                archive.ReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
+                archive.ReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
             }
         }
-    }
-
-    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
-    void Serialize(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
-    {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }
