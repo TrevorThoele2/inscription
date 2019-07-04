@@ -2,8 +2,8 @@
 
 namespace Inscription
 {
-    UnopenableFile::UnopenableFile(const Path& path) : Exception(
+    UnopenableFile::UnopenableFile(const FilePath& path) : Exception(
         ("The file encountered an error while opening. "
-        "The file path: " + path + ".").c_str())
+        "The file path: " + path.GetValue() + ".").c_str())
     {}
 }

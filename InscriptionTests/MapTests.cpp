@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/Map.h>
-#include <Inscription/Numeric.h>
-#include <Inscription/String.h>
+#include <Inscription/MapScribe.h>
+#include <Inscription/NumericScribe.h>
+#include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
 

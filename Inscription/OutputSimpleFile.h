@@ -7,7 +7,7 @@ namespace Inscription
     class OutputSimpleFile : public SimpleFile<std::ofstream>
     {
     public:
-        OutputSimpleFile(const Path& path, bool append = false);
+        OutputSimpleFile(const FilePath& path, bool append = false);
 
         template<class T>
         OutputSimpleFile& operator<<(T& var);

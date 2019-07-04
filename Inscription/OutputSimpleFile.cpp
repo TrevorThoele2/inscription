@@ -2,7 +2,7 @@
 
 namespace Inscription
 {
-    OutputSimpleFile::OutputSimpleFile(const Path& path, bool append) :
+    OutputSimpleFile::OutputSimpleFile(const FilePath& path, bool append) :
         SimpleFile(path, (!append) ? std::ios::out | std::ios::binary : std::ios::out | std::ios::binary | std::ios::app)
     {}
 

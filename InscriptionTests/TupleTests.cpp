@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/Tuple.h>
-#include <Inscription/Numeric.h>
-#include <Inscription/String.h>
+#include <Inscription/TupleScribe.h>
+#include <Inscription/NumericScribe.h>
+#include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
 

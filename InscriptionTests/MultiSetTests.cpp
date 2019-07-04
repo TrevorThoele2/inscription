@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/MultiSet.h>
-#include <Inscription/Numeric.h>
+#include <Inscription/MultiSetScribe.h>
+#include <Inscription/NumericScribe.h>
 
 #include "BinaryFixture.h"
 

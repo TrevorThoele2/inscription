@@ -6,13 +6,20 @@
 
 namespace Inscription
 {
-    InputBinaryArchive::InputBinaryArchive(const Path& path, const Signature& signature) :
+    InputBinaryArchive::InputBinaryArchive(
+        const FilePath& path,
+        const Signature& signature) :
+
         BinaryArchive(Direction::INPUT, signature, 0), file(path)
     {
         InitialSetup();
     }
 
-    InputBinaryArchive::InputBinaryArchive(const Path& path, const Signature& signature, const TypeRegistrationContext& typeRegistrationContext) :
+    InputBinaryArchive::InputBinaryArchive(
+        const FilePath& path,
+        const Signature& signature,
+        const TypeRegistrationContext& typeRegistrationContext) :
+
         BinaryArchive(Direction::INPUT, signature, 0, typeRegistrationContext), file(path)
     {
         InitialSetup();

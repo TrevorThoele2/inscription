@@ -1,27 +1,12 @@
 #include "TextArchive.h"
 
+#include "OutputTextArchive.h"
+#include "InputTextArchive.h"
+
 namespace Inscription
 {
     TextArchive::~TextArchive()
     {}
-
-    TextArchive& TextArchive::LoadLine(std::string& arg)
-    {
-        ReadLineImpl(arg);
-        return *this;
-    }
-
-    TextArchive& TextArchive::LoadLine(std::string& arg, char delimiter)
-    {
-        ReadLineImpl(arg, delimiter);
-        return *this;
-    }
-
-    TextArchive& TextArchive::LoadSize(std::string& arg, size_t size)
-    {
-        ReadSizeImpl(arg, size);
-        return *this;
-    }
 
     bool TextArchive::IsOutput() const
     {
@@ -33,6 +18,47 @@ namespace Inscription
         return direction == Direction::INPUT;
     }
 
+    OutputTextArchive* TextArchive::AsOutput()
+    {
+        if (!IsOutput())
+            return nullptr;
+
+        return static_cast<OutputTextArchive*>(this);
+    }
+
+    InputTextArchive* TextArchive::AsInput()
+    {
+        if (!IsInput())
+            return nullptr;
+
+        return static_cast<InputTextArchive*>(this);
+    }
+
+    const OutputTextArchive* TextArchive::AsOutput() const
+    {
+        if (!IsOutput())
+            return nullptr;
+
+        return static_cast<const OutputTextArchive*>(this);
+    }
+
+    const InputTextArchive* TextArchive::AsInput() const
+    {
+        if (!IsInput())
+            return nullptr;
+
+        return static_cast<const InputTextArchive*>(this);
+    }
+
     TextArchive::TextArchive(Direction direction) : direction(direction)
     {}
+    
+    TextArchive::TextArchive(TextArchive&& arg) : Archive(std::move(arg)), direction(std::move(arg.direction))
+    {}
+
+    TextArchive& TextArchive::operator=(TextArchive&& arg)
+    {
+        Archive::operator=(std::move(arg));
+        return *this;
+    }
 }

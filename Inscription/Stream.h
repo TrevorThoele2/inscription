@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "Path.h"
+#include "FilePath.h"
 
 #include "UnopenableFile.h"
 #include "FileEncounteredError.h"
@@ -13,7 +13,7 @@ namespace Inscription
     class Stream
     {
     public:
-        typedef ::Inscription::Path Path;
+        typedef ::Inscription::FilePath FilePath;
         typedef std::ios_base::openmode Mode;
         typedef T StreamT;
         typedef std::streampos StreamPosition;
@@ -32,15 +32,15 @@ namespace Inscription
         // This constructor will not open the stream automatically
         // Be sure to ChangeMode into something that actually makes sense
         // Call reopen when you're ready to open the stream
-        Stream(const Path& path);
-        Stream(const Path& path, Mode mode);
+        Stream(const FilePath& path);
+        Stream(const FilePath& path, Mode mode);
         Stream(Stream&& arg);
 
         Stream& operator=(Stream&& arg);
     protected:
         bool FailedStream() const;
     private:
-        Path path;
+        FilePath path;
         Mode mode;
         bool isOpen;
     private:
@@ -96,11 +96,11 @@ namespace Inscription
     }
 
     template<class T>
-    Stream<T>::Stream(const Path& path) : path(path), isOpen(false)
+    Stream<T>::Stream(const FilePath& path) : path(path), isOpen(false)
     {}
 
     template<class T>
-    Stream<T>::Stream(const Path& path, Mode mode) : path(path), mode(mode), isOpen(false)
+    Stream<T>::Stream(const FilePath& path, Mode mode) : path(path), mode(mode), isOpen(false)
     {
         Open();
     }

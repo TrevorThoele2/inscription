@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Exception.h"
-#include "Path.h"
+#include "FilePath.h"
 
 namespace Inscription
 {
     class UnopenableFile : public Exception
     {
     public:
-        UnopenableFile(const Path& path);
+        UnopenableFile(const FilePath& path);
     };
 }

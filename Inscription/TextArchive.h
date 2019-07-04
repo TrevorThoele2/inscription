@@ -3,70 +3,48 @@
 #include <string>
 
 #include "Archive.h"
+
+#include "Scribe.h"
+
 #include "Direction.h"
+#include "Const.h"
 
 namespace Inscription
 {
+    class OutputTextArchive;
+    class InputTextArchive;
+
     class TextArchive : public Archive
     {
     public:
         virtual ~TextArchive() = 0;
     public:
         template<class T>
-        inline TextArchive& operator()(T&& arg);
-        template<class T>
-        inline TextArchive& Save(T&& arg);
-        template<class T>
-        inline TextArchive& Load(T&& arg);
-
-        TextArchive& LoadLine(std::string& arg);
-        TextArchive& LoadLine(std::string& arg, char delimiter);
-        TextArchive& LoadSize(std::string& arg, size_t size);
+        TextArchive& operator()(T& object);
     public:
         bool IsOutput() const;
         bool IsInput() const;
+
+        OutputTextArchive* AsOutput();
+        InputTextArchive* AsInput();
+        const OutputTextArchive* AsOutput() const;
+        const InputTextArchive* AsInput() const;
     protected:
         TextArchive(Direction direction);
-    protected:
-        virtual void WriteImpl(const std::string& arg) = 0;
-        virtual void WriteImpl(const char arg) = 0;
+        TextArchive(TextArchive&& arg);
 
-        virtual void ReadImpl(std::string& arg) = 0;
-        virtual void ReadImpl(char& arg) = 0;
-        virtual void ReadLineImpl(std::string& arg) = 0;
-        virtual void ReadLineImpl(std::string& arg, char delimiter) = 0;
-        virtual void ReadSizeImpl(std::string& arg, size_t size) = 0;
+        TextArchive& operator=(TextArchive&& arg);
+    private:
+        template<class T>
+        using KnownScribe = Scribe<T, TextArchive>;
     private:
         const Direction direction;
     };
 
     template<class T>
-    TextArchive& TextArchive::operator()(T&& arg)
+    TextArchive& TextArchive::operator()(T& object)
     {
-        switch (direction)
-        {
-        case Direction::OUTPUT:
-            Save(std::move(arg));
-            break;
-        case Direction::INPUT:
-            Load(std::move(arg));
-            break;
-        }
-
-        return *this;
-    }
-
-    template<class T>
-    TextArchive& TextArchive::Save(T&& arg)
-    {
-        WriteImpl(std::move(arg));
-        return *this;
-    }
-
-    template<class T>
-    TextArchive& TextArchive::Load(T&& arg)
-    {
-        ReadImpl(arg);
+        KnownScribe<typename RemoveConstTrait<T>::type>::Scriven(RemoveConst(object), *this);
         return *this;
     }
 }

@@ -2,8 +2,17 @@
 
 namespace Inscription
 {
-    InputTextFile::InputTextFile(const Path& path) : SimpleFile(path, std::ios::in)
+    InputTextFile::InputTextFile(const FilePath& path) : SimpleFile(path, std::ios::in)
     {}
+
+    InputTextFile::InputTextFile(InputTextFile&& arg) : SimpleFile(std::move(arg))
+    {}
+
+    InputTextFile& InputTextFile::operator=(InputTextFile&& arg)
+    {
+        SimpleFile::operator=(std::move(arg));
+        return *this;
+    }
 
     void InputTextFile::ReadData(std::string& string)
     {

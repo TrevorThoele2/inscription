@@ -10,7 +10,7 @@ namespace Inscription
     class OutputBinaryFile : public Stream<std::ofstream>
     {
     public:
-        OutputBinaryFile(const Path& path);
+        OutputBinaryFile(const FilePath& path);
         OutputBinaryFile(OutputBinaryFile&& arg);
 
         OutputBinaryFile& operator=(OutputBinaryFile&& arg);
