@@ -240,9 +240,6 @@
     <ClInclude Include="ScopeConstructor.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="StringScribe.h" />
-    <ClInclude Include="Table.h" />
-    <ClInclude Include="TableBase.h" />
-    <ClInclude Include="TableData.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataEntry.h" />
     <ClInclude Include="TypeTracker.h" />
