@@ -107,6 +107,9 @@
     <ClCompile Include="TextTests.cpp">
       <Filter>Source Files\Tests\Text</Filter>
     </ClCompile>
+    <ClCompile Include="BinaryPointerTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="InscriptionTests.runsettings" />

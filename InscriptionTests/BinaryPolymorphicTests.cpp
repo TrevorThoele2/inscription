@@ -77,6 +77,46 @@ namespace Inscription
 
 BOOST_FIXTURE_TEST_SUITE(BinaryPolymorphicTests, BinaryPolymorphicFixture)
 
+BOOST_AUTO_TEST_CASE(PolymorphicBaseNullPointer_SavesAndLoads)
+{
+    Base* saved = nullptr;
+
+    {
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
+    }
+
+    Base* loaded = nullptr;
+
+    {
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+    }
+
+    Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
+
+    BOOST_REQUIRE(loadedCasted == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(PolymorphicDerivedNullPointer_SavesAndLoads)
+{
+    Derived* saved = nullptr;
+
+    {
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
+    }
+
+    Derived* loaded = nullptr;
+
+    {
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+    }
+
+    BOOST_REQUIRE(loaded == nullptr);
+}
+
 BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 {
     Base* saved = dataGeneration.Generator<Derived>().RandomHeap();
@@ -121,5 +161,5 @@ namespace Inscription
 
     const Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ClassNameResolver
         Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("Derived");
+        CreateSingleNameResolver("CustomConstructionDerived");
 }

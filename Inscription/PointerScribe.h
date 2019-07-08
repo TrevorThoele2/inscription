@@ -12,9 +12,6 @@
 #include "PolymorphicManager.h"
 
 #include "NumericScribe.h"
-#include "String.h"
-
-#include "Optional.h"
 
 namespace Inscription
 {
@@ -111,6 +108,12 @@ namespace Inscription
         archive(objectID);
         archive(typeID);
 
+        if (objectID == SpecialObjectTrackingID::NULLPTR)
+        {
+            object = nullptr;
+            return;
+        }
+
         auto foundObject = archive.objectTracker.FindObject<Object>(objectID);
         if (foundObject)
         {
@@ -122,7 +125,8 @@ namespace Inscription
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::SaveConstruction(ObjectT& object, ArchiveT& archive, TrackingID typeID, std::true_type)
+    void PointerScribe<Object, Archive>::SaveConstruction(
+        ObjectT& object, ArchiveT& archive, TrackingID typeID, std::true_type)
     {
         auto& polymorphicManager = archive.polymorphicManager;
 
@@ -133,13 +137,15 @@ namespace Inscription
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::SaveConstruction(ObjectT& object, ArchiveT& archive, TrackingID typeID, std::false_type)
+    void PointerScribe<Object, Archive>::SaveConstruction(
+        ObjectT& object, ArchiveT& archive, TrackingID typeID, std::false_type)
     {
         BareScribe::Scriven(*object, archive);
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::LoadConstruction(ObjectT& object, ArchiveT& archive, TrackingID typeID, std::true_type)
+    void PointerScribe<Object, Archive>::LoadConstruction(
+        ObjectT& object, ArchiveT& archive, TrackingID typeID, std::true_type)
     {
         ClassName className;
         archive(className);
@@ -150,7 +156,8 @@ namespace Inscription
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::LoadConstruction(ObjectT& object, ArchiveT& archive, TrackingID typeID, std::false_type)
+    void PointerScribe<Object, Archive>::LoadConstruction(
+        ObjectT& object, ArchiveT& archive, TrackingID typeID, std::false_type)
     {
         BareScribe::Construct(object, archive);
     }

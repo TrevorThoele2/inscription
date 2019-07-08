@@ -10,6 +10,8 @@
 
 #include "Optional.h"
 
+#include "RegisteredTypeNotFound.h"
+
 namespace Inscription
 {
     class ObjectTracker
@@ -74,7 +76,7 @@ namespace Inscription
             return Optional<ID>();
 
         if (!IsTypeInside<T>())
-            return Optional<ID>();
+            throw RegisteredTypeNotFound(typeid(T));
 
         return Add(RemoveConst(add), typeid(*add));
     }

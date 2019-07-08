@@ -90,5 +90,5 @@ namespace Inscription
     };
 
     Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("Derived");
+        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("CustomConstructionDerived");
 }

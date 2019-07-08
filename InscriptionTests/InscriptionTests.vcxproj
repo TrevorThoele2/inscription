@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArrayTests.cpp" />
+    <ClCompile Include="BinaryPointerTests.cpp" />
     <ClCompile Include="BinaryTests.cpp" />
     <ClCompile Include="BinaryTableTests.cpp" />
     <ClCompile Include="ForwardListTests.cpp" />
