@@ -21,6 +21,8 @@ namespace Inscription
 
     std::string PolymorphicTypeNotFound::DefaultString()
     {
-        return std::string("Type was not found in the PolymorphicManager. The type may not have been registered polymorphically.");
+        return std::string(
+            "Type was not found in the PolymorphicManager. "
+            "The type may not have been registered polymorphically.");
     }
 }

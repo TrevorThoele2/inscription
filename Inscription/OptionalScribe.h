@@ -19,14 +19,14 @@ namespace Inscription
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     private:
         static void SaveImplementation(ObjectT& object, ArchiveT& archive);
         static void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<class T>
-    void Scribe<Optional<T>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<Optional<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             SaveImplementation(object, archive);

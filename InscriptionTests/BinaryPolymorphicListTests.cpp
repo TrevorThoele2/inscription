@@ -62,7 +62,7 @@ namespace Inscription
         public CompositeScribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<>
@@ -70,7 +70,7 @@ namespace Inscription
         public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
     };
 }
@@ -141,12 +141,14 @@ BOOST_AUTO_TEST_SUITE_END()
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         archive(object.baseValue);
     }
 
-    void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         BaseScriven<::BinaryPolymorphicListFixture::Base>(object, archive);
         archive(object.derivedValue);

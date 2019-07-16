@@ -31,6 +31,8 @@ namespace Inscription
 
         template<class T>
         Optional<ID> Add(T* add);
+        template<class T>
+        Optional<ID> AttemptAdd(T* add);
         Optional<ID> Add(void* add, const std::type_index& type);
 
         template<class T>
@@ -77,6 +79,18 @@ namespace Inscription
 
         if (!IsTypeInside<T>())
             throw RegisteredTypeNotFound(typeid(T));
+
+        return Add(RemoveConst(add), typeid(*add));
+    }
+
+    template<class T>
+    Optional<ObjectTracker::ID> ObjectTracker::AttemptAdd(T* add)
+    {
+        if (!add)
+            return Optional<ID>();
+
+        if (!IsTypeInside<T>())
+            return Optional<ID>();
 
         return Add(RemoveConst(add), typeid(*add));
     }

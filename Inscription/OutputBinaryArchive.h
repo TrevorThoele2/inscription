@@ -59,7 +59,9 @@ namespace Inscription
     template<class T>
     OutputBinaryArchive& OutputBinaryArchive::Write(T& object)
     {
-        static_assert(std::is_arithmetic_v<T>, "The T given to Write was not arithmetic.");
+        static_assert(
+            std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,
+            "The T given to Write was not arithmetic or a Buffer.");
 
         if (!IsLittleEndian())
             ByteSwap(object);

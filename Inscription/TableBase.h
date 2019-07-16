@@ -3,20 +3,22 @@
 #include <type_traits>
 #include <vector>
 
+#include "TableData.h"
+#include "TableDataBase.h"
 #include "AutoTableDataEntry.h"
 
 #include "Scribe.h"
 
 namespace Inscription
 {
-    template<class Object, class Archive, class Data>
+    template<class Object, class Archive>
     class TableBase
     {
     public:
         using ObjectT = Object;
         using ArchiveT = Archive;
     public:
-        using DataT = Data;
+        using DataT = TableData<ObjectT, ArchiveT>;
         DataT data;
     public:
         template<class T>
@@ -58,8 +60,7 @@ namespace Inscription
         template<class T, std::enable_if_t<shouldDataConstruct<T>, int> = 0>
         ObjectT* DoConstruct(ArchiveT& archive)
         {
-            using DerivedData = typename Scribe<ObjectT, ArchiveT>::Data;
-            return DataConstructionImplementation<Data, DerivedData>::template Do<T>(data);
+            return DataConstructionImplementation<T>(data);
         }
 
         template<class T, std::enable_if_t<shouldIgnoreConstruct<T>, int> = 0>
@@ -72,34 +73,29 @@ namespace Inscription
             return nullptr;
         }
 
-        template<class BaseData, class DerivedData>
-        struct DataConstructionImplementation
+        template<class T, std::enable_if_t<std::is_constructible_v<T, const DataT&>, int> = 0>
+        static ObjectT* DataConstructionImplementation(DataT& data)
         {
-            template<class T, std::enable_if_t<std::is_constructible_v<T, const DerivedData&>, int> = 0>
-            static ObjectT* Do(BaseData& data)
-            {
-                auto& derivedData = static_cast<const DerivedData&>(data);
-                return new ObjectT(derivedData);
-            }
+            return new ObjectT(data);
+        }
 
-            template<class T, std::enable_if_t<!std::is_constructible_v<T, const DerivedData&>, int> = 0>
-            static ObjectT* Do(BaseData& table)
-            {
-                static_assert(
-                    false,
-                    "Non-shadowed construction requires either a"
-                    "default constructor or a constructor taking a (const DataT&) on ObjectT. "
+        template<class T, std::enable_if_t<!std::is_constructible_v<T, const DataT&>, int> = 0>
+        static ObjectT* DataConstructionImplementation(DataT& table)
+        {
+            static_assert(
+                false,
+                "Non-shadowed construction requires either a"
+                "default constructor or a constructor taking a (const DataT&) on ObjectT. "
 
-                    "Create one of these constructors or shadow Construct.");
-            }
-        };
+                "Create one of these constructors or shadow Construct.");
+        }
     private:
         template<class Object, class Archive>
         friend class TableScribe;
     };
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::Scriven(ArchiveT& archive)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::Scriven(ArchiveT& archive)
     {
         for (auto& loop : dataEntryList)
             loop.Scriven(*this, archive);
@@ -107,8 +103,8 @@ namespace Inscription
         ScrivenImplementation(archive);
     }
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::ObjectScriven(ObjectT& object, ArchiveT& archive)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::ObjectScriven(ObjectT& object, ArchiveT& archive)
     {
         for (auto& loop : dataEntryList)
             loop.ObjectScriven(*this, object, archive);
@@ -116,14 +112,14 @@ namespace Inscription
         ObjectScrivenImplementation(object, archive);
     }
 
-    template<class Object, class Archive, class Data>
-    auto TableBase<Object, Archive, Data>::Construct(ArchiveT& archive) -> ObjectT*
+    template<class Object, class Archive>
+    auto TableBase<Object, Archive>::Construct(ArchiveT& archive) -> ObjectT*
     {
         return DoConstruct<ObjectT>(archive);
     }
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::PushToObject(ObjectT& object)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::PushToObject(ObjectT& object)
     {
         for (auto& loop : dataEntryList)
             loop.PushToObject(*this, object);
@@ -131,8 +127,8 @@ namespace Inscription
         PushToObjectImplementation(object);
     }
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::PullFromObject(ObjectT& object)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::PullFromObject(ObjectT& object)
     {
         for (auto& loop : dataEntryList)
             loop.PullFromObject(*this, object);
@@ -140,34 +136,34 @@ namespace Inscription
         PullFromObjectImplementation(object);
     }
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::ScrivenImplementation(
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::ScrivenImplementation(
         ArchiveT& archive)
     {}
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::ObjectScrivenImplementation(
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::ObjectScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {}
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::PushToObjectImplementation(
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::PushToObjectImplementation(
         ObjectT& object)
     {}
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::PullFromObjectImplementation(
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::PullFromObjectImplementation(
         ObjectT& object)
     {}
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::AddDataEntry(DataEntry&& entry)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::AddDataEntry(DataEntry&& entry)
     {
         dataEntryList.push_back(std::move(entry));
     }
 
-    template<class Object, class Archive, class Data>
-    void TableBase<Object, Archive, Data>::MergeDataEntries(DataEntryList&& entries)
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::MergeDataEntries(DataEntryList&& entries)
     {
         dataEntryList.insert(
             dataEntryList.end(),

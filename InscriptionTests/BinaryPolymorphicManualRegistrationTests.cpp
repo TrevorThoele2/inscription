@@ -89,7 +89,7 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<>
@@ -97,7 +97,7 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
     };
 }
@@ -135,12 +135,14 @@ BOOST_AUTO_TEST_SUITE_END()
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         archive(object.baseValue);
     }
 
-    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
         archive(object.derivedValue);

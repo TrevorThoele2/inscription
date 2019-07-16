@@ -12,6 +12,6 @@ namespace Inscription
         public CompositeScribe<::Chroma::FilePath, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     };
 }

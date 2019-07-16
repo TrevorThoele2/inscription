@@ -22,14 +22,15 @@ namespace Inscription
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     private:
         static void SaveImplementation(ObjectT& object, ArchiveT& archive);
         static void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             SaveImplementation(object, archive);
@@ -38,7 +39,8 @@ namespace Inscription
     }
 
     template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         ContainerSize size(object.size());
         archive(size);
@@ -47,7 +49,8 @@ namespace Inscription
     }
 
     template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unordered_multiset<Key, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
         ContainerSize size;
         archive(size);

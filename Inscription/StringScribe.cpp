@@ -12,7 +12,7 @@
 
 namespace Inscription
 {
-    void Scribe<std::string, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::string, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             SaveImplementation(object, archive);
@@ -47,7 +47,7 @@ namespace Inscription
         }
     }
 
-    void Scribe<std::string, TextArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::string, TextArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             SaveImplementation(object, archive);

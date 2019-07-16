@@ -5,7 +5,7 @@
 
 namespace Inscription
 {
-    void Scribe<::Chroma::FileName, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::Chroma::FileName, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             archive(object.GetValue());

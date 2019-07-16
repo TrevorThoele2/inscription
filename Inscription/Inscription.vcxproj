@@ -188,7 +188,9 @@
     <ClInclude Include="Assert.h" />
     <ClInclude Include="BaseScriven.h" />
     <ClInclude Include="BaseTableDataEntry.h" />
+    <ClInclude Include="BufferScribe.h" />
     <ClInclude Include="CompositeScribe.h" />
+    <ClInclude Include="EnumScribe.h" />
     <ClInclude Include="FileName.h" />
     <ClInclude Include="FileNameScribe.h" />
     <ClInclude Include="FilePath.h" />
@@ -244,6 +246,8 @@
     <ClInclude Include="Stream.h" />
     <ClInclude Include="StringScribe.h" />
     <ClInclude Include="TableBase.h" />
+    <ClInclude Include="TableData.h" />
+    <ClInclude Include="TableDataBase.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataEntry.h" />
     <ClInclude Include="TypeTracker.h" />
@@ -273,6 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseClassNotInTable.cpp" />
+    <ClCompile Include="BufferScribe.cpp" />
     <ClCompile Include="FileEncounteredError.cpp" />
     <ClCompile Include="FileNameScribe.cpp" />
     <ClCompile Include="FilePathScribe.cpp" />

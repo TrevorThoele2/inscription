@@ -29,20 +29,30 @@ public:
 namespace Inscription
 {
     template<>
+    struct TableData<::BinaryTableFixture::Base, BinaryArchive> :
+        public TableDataBase<::BinaryTableFixture::Base, BinaryArchive>
+    {
+        int baseValue;
+    };
+
+    template<>
     class Scribe<::BinaryTableFixture::Base, BinaryArchive> : public
         TableScribe<::BinaryTableFixture::Base, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            int baseValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
         };
+    };
+
+    template<>
+    struct TableData<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive> :
+        public TableDataBase<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
+    {
+        Base<::BinaryTableFixture::Base> base;
+        std::string derivedValue;
     };
 
     template<>
@@ -50,19 +60,21 @@ namespace Inscription
         TableScribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            Base<::BinaryTableFixture::Base> base;
-            std::string derivedValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
         };
     public:
         static const ClassNameResolver classNameResolver;
+    };
+
+    template<>
+    struct TableData<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive> : public
+        TableDataBase<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>
+    {
+        Base<::BinaryTableFixture::Base> base;
+        std::string derivedValue;
     };
 
     template<>
@@ -70,13 +82,7 @@ namespace Inscription
         TableScribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            Base<::BinaryTableFixture::Base> base;
-            std::string derivedValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
@@ -85,6 +91,13 @@ namespace Inscription
         };
     public:
         static const ClassNameResolver classNameResolver;
+    };
+
+    template<>
+    struct TableData<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive> : public
+        TableDataBase<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>
+    {
+        int baseValue;
     };
 
     template<>
@@ -92,12 +105,7 @@ namespace Inscription
         TableScribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            int baseValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
@@ -107,17 +115,19 @@ namespace Inscription
     };
 
     template<>
+    struct TableData<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> : public
+        TableDataBase<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>
+    {
+        Base<::BinaryTableFixture::ObjectScrivenBase> base;
+        std::string derivedValue;
+    };
+
+    template<>
     class Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> : public
         TableScribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            Base<::BinaryTableFixture::ObjectScrivenBase> base;
-            std::string derivedValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
@@ -131,16 +141,18 @@ namespace Inscription
     };
 
     template<>
+    struct TableData<::BinaryTableFixture::TableConstructionBase, BinaryArchive> : public
+        TableDataBase<::BinaryTableFixture::TableConstructionBase, BinaryArchive>
+    {
+        int baseValue;
+    };
+
+    template<>
     class Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive> : public
         TableScribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            int baseValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
@@ -148,17 +160,19 @@ namespace Inscription
     };
 
     template<>
+    struct TableData<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> : public
+        TableDataBase<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>
+    {
+        Base<::BinaryTableFixture::TableConstructionBase> base;
+        std::string derivedValue;
+    };
+
+    template<>
     class Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> : public
         TableScribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>
     {
     public:
-        struct Data
-        {
-            Base<::BinaryTableFixture::TableConstructionBase> base;
-            std::string derivedValue;
-        };
-
-        class Table : public TableBase<Data>
+        class Table : public TableBase
         {
         public:
             Table();
@@ -193,7 +207,10 @@ public:
     virtual ~Base() = 0;
 };
 
-class BinaryTableFixture::CustomConstructionDerived : public BinaryTableFixture::Base
+BinaryTableFixture::Base::~Base()
+{}
+
+class BinaryTableFixture::CustomConstructionDerived : public Base
 {
 public:
     std::string derivedValue;
@@ -215,7 +232,10 @@ public:
     virtual ~ObjectScrivenBase() = 0;
 };
 
-class BinaryTableFixture::ObjectScrivenDerived : public BinaryTableFixture::ObjectScrivenBase
+BinaryTableFixture::ObjectScrivenBase::~ObjectScrivenBase()
+{}
+
+class BinaryTableFixture::ObjectScrivenDerived : public ObjectScrivenBase
 {
 public:
     std::string derivedValue;
@@ -226,7 +246,7 @@ public:
     {}
 };
 
-class BinaryTableFixture::DefaultConstructionDerived : public BinaryTableFixture::Base
+class BinaryTableFixture::DefaultConstructionDerived : public Base
 {
 public:
     std::string derivedValue;
@@ -248,12 +268,15 @@ public:
         baseValue(baseValue)
     {}
 
-    TableConstructionBase(const ::Inscription::BinaryScribe<TableConstructionBase>::Data& data) :
+    TableConstructionBase(const ::Inscription::BinaryTableData<TableConstructionBase>& data) :
         baseValue(data.baseValue)
     {}
 
     virtual ~TableConstructionBase() = 0;
 };
+
+BinaryTableFixture::TableConstructionBase::~TableConstructionBase()
+{}
 
 class BinaryTableFixture::TableConstructionDerived : public BinaryTableFixture::TableConstructionBase
 {
@@ -264,19 +287,10 @@ public:
         TableConstructionBase(baseValue), derivedValue(derivedValue)
     {}
 
-    TableConstructionDerived(const ::Inscription::BinaryScribe<TableConstructionDerived>::Data& data) :
+    TableConstructionDerived(const ::Inscription::TableData<TableConstructionDerived, ::Inscription::BinaryArchive>& data) :
         TableConstructionBase(data.base), derivedValue(data.derivedValue)
     {}
 };
-
-BinaryTableFixture::Base::~Base()
-{}
-
-BinaryTableFixture::ObjectScrivenBase::~ObjectScrivenBase()
-{}
-
-BinaryTableFixture::TableConstructionBase::~TableConstructionBase()
-{}
 
 BOOST_FIXTURE_TEST_SUITE(BinaryTableTests, BinaryTableFixture)
 
