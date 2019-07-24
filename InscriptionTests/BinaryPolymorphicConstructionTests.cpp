@@ -59,7 +59,7 @@ namespace Inscription
     {
     public:
         static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
-        static void Construct(ObjectT*& object, ArchiveT& archive);
+        static void Construct(ObjectT* storage, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
     };
 }
@@ -74,14 +74,14 @@ BOOST_AUTO_TEST_CASE(ManualConstruction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -112,7 +112,7 @@ namespace Inscription
     }
 
     void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::Construct(
-        ObjectT*& object, ArchiveT& archive)
+        ObjectT* storage, ArchiveT& archive)
     {
         int baseValue;
         archive(baseValue);
@@ -120,7 +120,7 @@ namespace Inscription
         std::string derivedValue;
         archive(derivedValue);
 
-        object = new ObjectT(baseValue, derivedValue);
+        new (storage) ObjectT(baseValue, derivedValue);
     }
 
     const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver

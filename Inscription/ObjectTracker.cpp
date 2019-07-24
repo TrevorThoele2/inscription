@@ -1,19 +1,31 @@
 #include "ObjectTracker.h"
 
+#include "Memory.h"
+
 namespace Inscription
 {
-    ObjectTracker::ObjectTracker() : active(true), usingSection(false)
+    ObjectTracker::ObjectTracker(const ObjectTracker& arg)
+    {
+        for (auto& loop : arg.map)
+            map.emplace(loop.first, EntryBasePtr(loop.second->Clone()));
+    }
+
+    ObjectTracker::ObjectTracker(ObjectTracker&& arg) :
+        active(arg.active), map(std::move(arg.map))
     {}
 
-    ObjectTracker::ObjectTracker(ObjectTracker&& arg) : active(arg.active), typeMap(std::move(arg.typeMap)), usingSection(arg.usingSection)
-    {}
+    ObjectTracker& ObjectTracker::operator=(const ObjectTracker& arg)
+    {
+        for (auto& loop : arg.map)
+            map.emplace(loop.first, EntryBasePtr(loop.second->Clone()));
+
+        return *this;
+    }
 
     ObjectTracker& ObjectTracker::operator=(ObjectTracker&& arg)
     {
         active = arg.active;
-        typeMap = std::move(arg.typeMap);
-
-        usingSection = arg.usingSection;
+        map = std::move(arg.map);
         return *this;
     }
 
@@ -27,40 +39,136 @@ namespace Inscription
         return active;
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add, const std::type_index& type)
+    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add)
     {
-        auto found = typeMap.Find(type);
-        if (!found)
-            return Optional<ID>();
-
         if (!IsActive())
             return Optional<ID>();
 
-        return found->Add(add, usingSection);
+        return Add(add, NextID());
+    }
+
+    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(size_t memorySize)
+    {
+        if (!IsActive())
+            return Optional<ID>();
+
+        auto id = NextID();
+        auto memory = CreateStorage(memorySize);
+        auto entry = EntryBasePtr(new LookaheadEntry(id, memory, memorySize));
+
+        map.emplace(id, std::move(entry));
+
+        return id;
+    }
+
+    void* ObjectTracker::LookaheadMemory(ID id)
+    {
+        if (!IsActive())
+            return nullptr;
+
+        auto entry = FindLookaheadEntry(id);
+        if (!entry)
+            return nullptr;
+
+        return entry->memory;
+    }
+
+    void ObjectTracker::ActualizeLookahead(ID id)
+    {
+        if (!IsActive())
+            return;
+
+        auto iterator = map.find(id);
+        if (iterator == map.end())
+            return;
+
+        auto entry = dynamic_cast<LookaheadEntry*>(iterator->second.get());
+        if (!entry)
+            return;
+
+        map.erase(iterator);
+        Add(entry->memory, id);
+    }
+
+    void* ObjectTracker::FindObject(ID id)
+    {
+        auto entry = FindEntry(id);
+        if (!entry)
+            return nullptr;
+
+        return entry->object;
+    }
+
+    Optional<ObjectTracker::ID> ObjectTracker::FindID(void* object)
+    {
+        auto iterator = FindIterator(object);
+        if (iterator == map.end())
+            return Optional<ID>();
+
+        return Optional<ID>(iterator->first);
+    }
+
+    void ObjectTracker::ReplaceObject(void* here, void* newObject)
+    {
+        auto iterator = FindIterator(here);
+        if (iterator == map.end())
+        {
+            Add(newObject);
+            return;
+        }
+
+        auto id = iterator->first;
+        map.erase(iterator);
+        Add(newObject, id);
     }
 
     void ObjectTracker::Clear()
     {
-        usingSection = false;
-        for (auto& loop : typeMap)
-            loop.second.Clear();
+        map.clear();
     }
 
-    void ObjectTracker::StartSection()
+    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add, ID id)
     {
-        usingSection = true;
+        auto entry = EntryBasePtr(new Entry(id, add));
+        map.emplace(id, std::move(entry));
+        return id;
     }
 
-    void ObjectTracker::StopSection()
+    ObjectTracker::Entry* ObjectTracker::FindEntry(ID id)
     {
-        usingSection = false;
-        for (auto& loop : typeMap)
-            loop.second.ClearSection(false);
+        auto entry = map.find(id);
+        if (entry == map.end())
+            return nullptr;
+
+        return dynamic_cast<Entry*>(entry->second.get());
     }
 
-    void ObjectTracker::ClearSection()
+    ObjectTracker::LookaheadEntry* ObjectTracker::FindLookaheadEntry(ID id)
     {
-        for (auto& loop : typeMap)
-            loop.second.ClearSection(true);
+        auto entry = map.find(id);
+        if (entry == map.end())
+            return nullptr;
+
+        return dynamic_cast<LookaheadEntry*>(entry->second.get());
+    }
+
+    ObjectTracker::iterator ObjectTracker::FindIterator(void* object)
+    {
+        for (auto loop = map.begin(); loop != map.end(); ++loop)
+        {
+            auto casted = dynamic_cast<Entry*>(loop->second.get());
+            if (!casted)
+                continue;
+
+            if (casted->object == object)
+                return loop;
+        }
+
+        return map.end();
+    }
+
+    ObjectTracker::ID ObjectTracker::NextID() const
+    {
+        return map.size();
     }
 }

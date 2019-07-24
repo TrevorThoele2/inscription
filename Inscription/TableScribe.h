@@ -23,7 +23,7 @@ namespace Inscription
         using ComposingScribe = typename BaseScribeT::template ComposingScribe<T>;
     public:
         static void Scriven(ObjectT& object, ArchiveT& archive);
-        static void Construct(ObjectT*& object, ArchiveT& archive);
+        static void Construct(ObjectT* storage, ArchiveT& archive);
     public:
         using TableBase = TableBase<ObjectT, ArchiveT>;
     private:
@@ -56,15 +56,15 @@ namespace Inscription
     }
 
     template<class Object, class Archive>
-    void TableScribe<Object, Archive>::Construct(ObjectT*& object, ArchiveT& archive)
+    void TableScribe<Object, Archive>::Construct(ObjectT* storage, ArchiveT& archive)
     {
         using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
 
         auto table = TableT();
         table.Scriven(archive);
-        object = table.Construct(archive);
-        table.PushToObject(*object);
-        table.ObjectScriven(*object, archive);
+        table.Construct(storage, archive);
+        table.PushToObject(*storage);
+        table.ObjectScriven(*storage, archive);
     }
 }
 

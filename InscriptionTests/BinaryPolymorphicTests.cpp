@@ -50,9 +50,21 @@ public:
     private:
         INSCRIPTION_ACCESS;
     };
+
+    class UnregisteredBase
+    {
+    public:
+        virtual ~UnregisteredBase() = 0;
+    };
+
+    class UnregisteredDerived : public UnregisteredBase
+    {};
 };
 
 BinaryPolymorphicFixture::Base::~Base()
+{}
+
+BinaryPolymorphicFixture::UnregisteredBase::~UnregisteredBase()
 {}
 
 namespace Inscription
@@ -72,6 +84,24 @@ namespace Inscription
     public:
         static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
+    };
+
+    template<>
+    class Scribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive> : public
+        CompositeScribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive>
+    {
+    public:
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+        {}
+    };
+
+    template<>
+    class Scribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive> : public
+        CompositeScribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive>
+    {
+    public:
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+        {}
     };
 }
 
@@ -124,14 +154,14 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -142,6 +172,17 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 
     delete saved;
     delete loaded;
+}
+
+BOOST_AUTO_TEST_CASE(UnregisteredType_ThrowsExceptionOnSave)
+{
+    UnregisteredBase* saved = dataGeneration.Generator<UnregisteredDerived>().RandomHeap();
+
+    auto outputArchive = CreateRegistered<OutputArchive>();
+
+    BOOST_REQUIRE_THROW(outputArchive(saved, ::Inscription::Pointer::Owning), ::Inscription::PolymorphicTypeNotFound);
+
+    delete saved;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -15,24 +15,6 @@ namespace Inscription
         return ret;
     }
 
-    void BinaryArchive::StartTrackingSection()
-    {
-        objectTracker.StartSection();
-    }
-
-    void BinaryArchive::StopTrackingSection(bool clear)
-    {
-        if (clear)
-            objectTracker.ClearSection();
-
-        objectTracker.StopSection();
-    }
-
-    void BinaryArchive::ClearTrackingSection()
-    {
-        objectTracker.ClearSection();
-    }
-
     void BinaryArchive::CopyTrackersTo(BinaryArchive& scribe) const
     {
         scribe.objectTracker = objectTracker;

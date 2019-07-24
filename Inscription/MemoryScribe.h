@@ -4,6 +4,8 @@
 
 #include "CompositeScribe.h"
 
+#include "Pointer.h"
+
 namespace Inscription
 {
     class BinaryArchive;
@@ -37,14 +39,14 @@ namespace Inscription
     void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
         T* saved = object.get();
-        archive(saved);
+        archive(saved, Pointer::Owning);
     }
 
     template<class T, class Deleter>
     void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
         T* loaded = nullptr;
-        archive(loaded);
+        archive(loaded, Pointer::Owning);
         object.reset(loaded);
     }
 }
