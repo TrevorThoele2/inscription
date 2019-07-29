@@ -89,4 +89,33 @@ BOOST_AUTO_TEST_CASE(Loads_ObjectSavedBeforehand)
     BOOST_REQUIRE(loadedPointer == &loadedObject);
 }
 
+BOOST_AUTO_TEST_CASE(OwnedLoad_CausesUnownedToBePopulated)
+{
+    Object* savedOwned = dataGeneration.Generator<Object>().RandomHeap<int>();
+    Object* savedUnowned = savedOwned;
+
+    {
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(savedUnowned, ::Inscription::Pointer::Unowning);
+        outputArchive(savedOwned, ::Inscription::Pointer::Owning);
+    }
+
+    Object* loadedOwned = nullptr;
+    Object* loadedUnowned = nullptr;
+
+    {
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loadedUnowned, ::Inscription::Pointer::Unowning);
+        inputArchive(loadedOwned, ::Inscription::Pointer::Owning);
+    }
+
+    BOOST_REQUIRE(loadedUnowned != nullptr);
+    BOOST_REQUIRE(loadedOwned != nullptr);
+    BOOST_REQUIRE(loadedOwned == loadedUnowned);
+    BOOST_REQUIRE(loadedOwned->value == savedOwned->value);
+
+    delete savedOwned;
+    delete loadedOwned;
+}
+
 BOOST_AUTO_TEST_SUITE_END()

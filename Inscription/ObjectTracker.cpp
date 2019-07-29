@@ -1,6 +1,6 @@
 #include "ObjectTracker.h"
 
-#include "Memory.h"
+#include "Storage.h"
 
 namespace Inscription
 {
@@ -47,21 +47,24 @@ namespace Inscription
         return Add(add, NextID());
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(size_t memorySize)
+    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(size_t storageSize)
+    {
+        return CreateLookahead(NextID(), storageSize);
+    }
+
+    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(ID id, size_t storageSize)
     {
         if (!IsActive())
             return Optional<ID>();
 
-        auto id = NextID();
-        auto memory = CreateStorage(memorySize);
-        auto entry = EntryBasePtr(new LookaheadEntry(id, memory, memorySize));
+        auto entry = EntryBasePtr(new LookaheadEntry(id, storageSize));
 
         map.emplace(id, std::move(entry));
 
         return id;
     }
 
-    void* ObjectTracker::LookaheadMemory(ID id)
+    void* ObjectTracker::LookaheadStorage(ID id)
     {
         if (!IsActive())
             return nullptr;
@@ -70,10 +73,10 @@ namespace Inscription
         if (!entry)
             return nullptr;
 
-        return entry->memory;
+        return entry->storage;
     }
 
-    void ObjectTracker::ActualizeLookahead(ID id)
+    void ObjectTracker::MaterializeLookahead(ID id)
     {
         if (!IsActive())
             return;
@@ -86,8 +89,34 @@ namespace Inscription
         if (!entry)
             return;
 
+        auto storage = entry->storage;
+        entry->storage = nullptr;
         map.erase(iterator);
-        Add(entry->memory, id);
+        Add(storage, id);
+    }
+
+    void ObjectTracker::SignalSavedConstruction(ID id)
+    {
+        if (!IsActive())
+            return;
+
+        auto iterator = map.find(id);
+        if (iterator == map.end())
+            return;
+
+        iterator->second->hasSavedConstruction = true;
+    }
+
+    bool ObjectTracker::HasSavedConstruction(ID id) const
+    {
+        if (!IsActive())
+            return false;
+
+        auto iterator = map.find(id);
+        if (iterator == map.end())
+            return false;
+
+        return iterator->second->hasSavedConstruction;
     }
 
     void* ObjectTracker::FindObject(ID id)
@@ -103,6 +132,19 @@ namespace Inscription
     {
         auto iterator = FindIterator(object);
         if (iterator == map.end())
+            return Optional<ID>();
+
+        return Optional<ID>(iterator->first);
+    }
+
+    Optional<ObjectTracker::ID> ObjectTracker::FindEntryID(void* object)
+    {
+        auto iterator = FindIterator(object);
+        if (iterator == map.end())
+            return Optional<ID>();
+        
+        auto casted = dynamic_cast<Entry*>(iterator->second.get());
+        if (!casted)
             return Optional<ID>();
 
         return Optional<ID>(iterator->first);

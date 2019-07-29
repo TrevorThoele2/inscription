@@ -195,7 +195,7 @@
     <ClInclude Include="FileNameScribe.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
-    <ClInclude Include="Memory.h" />
+    <ClInclude Include="Storage.h" />
     <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
     <ClInclude Include="Direction.h" />

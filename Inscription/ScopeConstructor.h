@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scribe.h"
-#include "Memory.h"
+#include "Storage.h"
 
 namespace Inscription
 {
@@ -29,7 +29,7 @@ namespace Inscription
     template<class Archive>
     ScopeConstructor<T>::ScopeConstructor(Archive& archive) : object(nullptr)
     {
-        object = CreateStorage<T>();
+        object = reinterpret_cast<T*>(CreateStorage(sizeof(T)));
         Scribe<T, Archive>::Construct(object, archive);
     }
 
