@@ -5,8 +5,8 @@ namespace Inscription
     // The buffer has ownership over the value while it is within this
     struct Buffer
     {
-        typedef size_t SizeT;
-        typedef char* T;
+        using SizeT = size_t ;
+        using T = char*;
 
         SizeT size;
         T value;

@@ -20,11 +20,20 @@ namespace Inscription
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+
+        using BaseT::Scriven;
+        using BaseT::Construct;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
+
+        using BaseT::DoBasicConstruction;
     private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<class T, class Allocator>
@@ -56,7 +65,7 @@ namespace Inscription
         {
             ScopeConstructor<typename ObjectT::value_type> constructor(archive);
             object.push_back(std::move(constructor.GetMove()));
-            archive.ReplaceTrackedObject(*constructor.Get(), object.back());
+            archive.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
         }
     }
 }

@@ -136,16 +136,10 @@
     <ClInclude Include="InvalidArchiveDirection.h">
       <Filter>Header Files\Archive</Filter>
     </ClInclude>
-    <ClInclude Include="ScopeTrackingModifier.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
     <ClInclude Include="ScopeConstructor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scribe.h">
-      <Filter>Header Files\Scribe</Filter>
-    </ClInclude>
-    <ClInclude Include="ScribeBase.h">
       <Filter>Header Files\Scribe</Filter>
     </ClInclude>
     <ClInclude Include="BaseScriven.h">
@@ -268,20 +262,20 @@
     <ClInclude Include="TableDataBase.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
     </ClInclude>
-    <ClInclude Include="Pointer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectTrackerLookaheadEntry.h">
-      <Filter>Header Files\Tracking\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTrackerEntry.h">
-      <Filter>Header Files\Tracking\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectTrackerEntryBase.h">
       <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Storage.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScribeBase.h">
+      <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackingContext.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackingTraits.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -500,9 +494,6 @@
     <ClCompile Include="InvalidArchiveDirection.cpp">
       <Filter>Source Files\Archive</Filter>
     </ClCompile>
-    <ClCompile Include="ScopeTrackingModifier.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
     <ClCompile Include="PolymorphicTypeNotFound.cpp">
       <Filter>Source Files\Polymorphic</Filter>
     </ClCompile>
@@ -521,13 +512,10 @@
     <ClCompile Include="BufferScribe.cpp">
       <Filter>Source Files\Types\Base</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectTrackerLookaheadEntry.cpp">
-      <Filter>Source Files\Tracking\Object</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectTrackerEntry.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectTrackerEntryBase.cpp">
+    <ClCompile Include="ObjectTrackingContext.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
     </ClCompile>
   </ItemGroup>

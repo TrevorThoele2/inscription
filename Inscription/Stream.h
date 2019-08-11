@@ -13,11 +13,10 @@ namespace Inscription
     class Stream
     {
     public:
-        typedef ::Inscription::FilePath FilePath;
-        typedef std::ios_base::openmode Mode;
-        typedef T StreamT;
-        typedef std::streampos StreamPosition;
-        typedef StreamPosition SizeT;
+        using Mode = std::ios_base::openmode;
+        using StreamT = T;
+        using StreamPosition = std::streampos;
+        using SizeT = StreamPosition;
     public:
         virtual ~Stream() = 0;
 

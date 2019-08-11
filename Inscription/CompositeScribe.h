@@ -6,10 +6,16 @@
 #include "BaseScriven.h"
 #include "ClassNameResolver.h"
 
+#include "Optional.h"
+#include "TrackingID.h"
+#include "ObjectTrackingContext.h"
+
+#include "Assert.h"
+
+#include "BinaryArchive.h"
+
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class Object, class Archive>
     class CompositeScribe : public ScribeBase<Object, Archive>
     {
@@ -21,21 +27,12 @@ namespace Inscription
     public:
         using ClassNameResolver = ClassNameResolver<ArchiveT>;
     public:
-        template<class T>
-        using ComposingScribe = Scribe<T, ArchiveT>;
-    public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        void Scriven(ObjectT& object, ArchiveT& archive) override;
     protected:
-        static ClassNameResolver CreateSingleNameResolver(const std::string& name);
-    private:
-        using DerivedScribe = Scribe<ObjectT, ArchiveT>;
-    private:
-        static void DoTrackObject(ObjectT& object, ArchiveT& archive, std::true_type);
-        static void DoTrackObject(ObjectT& object, ArchiveT& archive, std::false_type);
-    private:
-        CompositeScribe() = delete;
-        CompositeScribe(const CompositeScribe& arg) = delete;
-        CompositeScribe& operator=(const CompositeScribe& arg) = delete;
+        CompositeScribe() = default;
+        CompositeScribe(const CompositeScribe& arg) = default;
+
+        using BaseT::ScrivenImplementation;
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a CompositeScribe was not a composite.");
@@ -44,27 +41,73 @@ namespace Inscription
     template<class Object, class Archive>
     void CompositeScribe<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
-        DoTrackObject(object, archive, std::bool_constant<std::is_same_v<ArchiveT, BinaryArchive>>{});
-        DerivedScribe::ScrivenImplementation(object, archive);
+        ScrivenImplementation(object, archive);
     }
 
-    template<class Object, class Archive>
-    typename CompositeScribe<Object, Archive>::ClassNameResolver
-        CompositeScribe<Object, Archive>::CreateSingleNameResolver(const std::string& name)
+    template<class Object>
+    class CompositeScribe<Object, BinaryArchive> : public ScribeBase<Object, BinaryArchive>
+    {
+    private:
+        using BaseT = typename ScribeBase<Object, BinaryArchive>;
+    public:
+        using ObjectT = typename BaseT::ObjectT;
+        using ArchiveT = typename BaseT::ArchiveT;
+    public:
+        using ClassNameResolver = ClassNameResolver<ArchiveT>;
+    public:
+        void Scriven(ObjectT& object, ArchiveT& archive) override;
+        void Construct(ObjectT* storage, ArchiveT& archive) override;
+    protected:
+        CompositeScribe() = default;
+        CompositeScribe(const CompositeScribe& arg) = default;
+
+        using BaseT::ScrivenImplementation;
+        using BaseT::ConstructImplementation;
+        using BaseT::DoBasicConstruction;
+    protected:
+        static ClassNameResolver CreateSingleNameResolver(const std::string& name);
+    private:
+        static_assert(std::is_class_v<ObjectT>,
+            "The Object given to a CompositeScribe was not a composite.");
+    };
+
+    template<class Object>
+    void CompositeScribe<Object, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        {
+            auto trackingID = archive.AttemptTrackObject(&object);
+            if (trackingID.IsValid())
+                archive.TrackSavedConstruction(*trackingID);
+        }
+
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            ScrivenImplementation(object, archive);
+        }
+    }
+
+    template<class Object>
+    void CompositeScribe<Object, BinaryArchive>::Construct(ObjectT* storage, ArchiveT& archive)
+    {
+        {
+            archive.AttemptTrackObject(storage);
+        }
+
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            ConstructImplementation(storage, archive);
+        }
+    }
+
+    template<class Object>
+    auto CompositeScribe<Object, BinaryArchive>::CreateSingleNameResolver(const std::string& name)
+        -> CompositeScribe<Object, BinaryArchive>::ClassNameResolver
     {
         return ClassNameResolver([name](ArchiveT& archive)
         {
             return name;
         });
     }
-
-    template<class Object, class Archive>
-    void CompositeScribe<Object, Archive>::DoTrackObject(ObjectT& object, ArchiveT& archive, std::true_type)
-    {
-        archive.TrackObject(&object);
-    }
-
-    template<class Object, class Archive>
-    void CompositeScribe<Object, Archive>::DoTrackObject(ObjectT& object, ArchiveT& archive, std::false_type)
-    {}
 }
+
+#include "UndefAssert.h"

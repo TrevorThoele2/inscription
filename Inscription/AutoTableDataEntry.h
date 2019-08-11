@@ -5,6 +5,8 @@
 #include "BaseTableDataEntry.h"
 #include "Type.h"
 
+#include "ObjectTrackingContext.h"
+
 namespace Inscription
 {
     template<class Table, class Object, class Archive>
@@ -33,8 +35,8 @@ namespace Inscription
         void Scriven(TableT& table, ArchiveT& archive);
         void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive);
 
-        void PullFromObject(TableT& table, ObjectT& object);
-        void PushToObject(TableT& table, ObjectT& object);
+        void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive);
+        void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive);
     private:
         template<class ObjectMemberT, class DataMemberT>
         AutoTableDataEntry(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
@@ -53,8 +55,8 @@ namespace Inscription
             virtual void Scriven(TableT& table, ArchiveT& archive) = 0;
             virtual void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
 
-            virtual void PullFromObject(TableT& table, ObjectT& object) = 0;
-            virtual void PushToObject(TableT& table, ObjectT& object) = 0;
+            virtual void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
+            virtual void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
         };
 
         template<class ObjectMemberT, class DataMemberT>
@@ -71,8 +73,8 @@ namespace Inscription
             void Scriven(TableT& table, ArchiveT& archive) override;
             void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
 
-            void PullFromObject(TableT& table, ObjectT& object) override;
-            void PushToObject(TableT& table, ObjectT& object) override;
+            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
         };
 
         template<class T>
@@ -89,8 +91,8 @@ namespace Inscription
             void Scriven(TableT& table, ArchiveT& archive) override;
             void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
 
-            void PullFromObject(TableT& table, ObjectT& object) override;
-            void PushToObject(TableT& table, ObjectT& object) override;
+            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
         };
 
         template<class BaseT>
@@ -105,8 +107,8 @@ namespace Inscription
             void Scriven(TableT& table, ArchiveT& archive) override;
             void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
 
-            void PullFromObject(TableT& table, ObjectT& object) override;
-            void PushToObject(TableT& table, ObjectT& object) override;
+            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
         };
 
         template<class BaseT>
@@ -123,8 +125,8 @@ namespace Inscription
             void Scriven(TableT& table, ArchiveT& archive) override;
             void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
 
-            void PullFromObject(TableT& table, ObjectT& object) override;
-            void PushToObject(TableT& table, ObjectT& object) override;
+            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
         };
 
         using ImplementationPtr = std::unique_ptr<Implementation>;
@@ -206,15 +208,15 @@ namespace Inscription
     }
 
     template<class Data, class Object, class Archive>
-    void AutoTableDataEntry<Data, Object, Archive>::PullFromObject(TableT& table, ObjectT& object)
+    void AutoTableDataEntry<Data, Object, Archive>::PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        implementation->PullFromObject(table, object);
+        implementation->PullFromObject(table, object, archive);
     }
 
     template<class Data, class Object, class Archive>
-    void AutoTableDataEntry<Data, Object, Archive>::PushToObject(TableT& table, ObjectT& object)
+    void AutoTableDataEntry<Data, Object, Archive>::PushToObject(TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        implementation->PushToObject(table, object);
+        implementation->PushToObject(table, object, archive);
     }
 
     template<class Data, class Object, class Archive>
@@ -260,6 +262,7 @@ namespace Inscription
     void AutoTableDataEntry<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Scriven(
         TableT& table, ArchiveT& archive)
     {
+        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
         archive(table.data.*dataMember);
     }
 
@@ -272,17 +275,25 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class ObjectMemberT, class DataMemberT>
     void AutoTableDataEntry<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PullFromObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        RemoveConst((table.data.*dataMember)) = DataMemberT((object.*objectMember));
+        auto& extractedDataMember = RemoveConst(table.data.*dataMember); 
+        auto extractedObjectMember = RemoveConst(object.*objectMember);
+        extractedDataMember = extractedObjectMember;
+
+        archive.AttemptTrackObject(&RemoveConst(object.*objectMember));
     }
 
     template<class Data, class Object, class Archive>
     template<class ObjectMemberT, class DataMemberT>
     void AutoTableDataEntry<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PushToObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        RemoveConst((object.*objectMember)) = ObjectMemberT((table.data.*dataMember));
+        auto& extractedObjectMember = RemoveConst(object.*objectMember);
+        std::remove_const_t<ObjectMemberT> extractedDataMember(table.data.*dataMember);
+        extractedObjectMember = extractedDataMember;
+
+        archive.AttemptReplaceTrackedObject(extractedDataMember, extractedObjectMember);
     }
 
     template<class Data, class Object, class Archive>
@@ -306,6 +317,7 @@ namespace Inscription
     void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::Scriven(
         TableT& table, ArchiveT& archive)
     {
+        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
         archive(table.data.*dataMember);
     }
 
@@ -318,17 +330,25 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class T>
     void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::PullFromObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        RemoveConst((table.data.*dataMember)) = (object.*objectMember);
+        auto& extractedDataMember = RemoveConst(table.data.*dataMember);
+        auto& extractedObjectMember = (object.*objectMember);
+        extractedDataMember = extractedObjectMember;
+        
+        archive.AttemptTrackObject(&extractedObjectMember);
     }
 
     template<class Data, class Object, class Archive>
     template<class T>
     void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::PushToObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        RemoveConst((object.*objectMember)) = (table.data.*dataMember);
+        auto& extractedObjectMember = RemoveConst((object.*objectMember));
+        auto& extractedDataMember = (table.data.*dataMember);
+        extractedObjectMember = extractedDataMember;
+
+        archive.AttemptReplaceTrackedObject(extractedDataMember, extractedObjectMember);
     }
 
     template<class Data, class Object, class Archive>
@@ -358,17 +378,17 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class BaseT>
     void AutoTableDataEntry<Data, Object, Archive>::BaseImplementation<BaseT>::PullFromObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        baseEntry.PullFromObject(object);
+        baseEntry.PullFromObject(object, archive);
     }
 
     template<class Data, class Object, class Archive>
     template<class BaseT>
     void AutoTableDataEntry<Data, Object, Archive>::BaseImplementation<BaseT>::PushToObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        baseEntry.PushToObject(object);
+        baseEntry.PushToObject(object, archive);
     }
 
     template<class Data, class Object, class Archive>
@@ -404,16 +424,16 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class BaseT>
     void AutoTableDataEntry<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::PullFromObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        baseEntry->PullFromObject(object);
+        baseEntry->PullFromObject(object, archive);
     }
 
     template<class Data, class Object, class Archive>
     template<class BaseT>
     void AutoTableDataEntry<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::PushToObject(
-        TableT& table, ObjectT& object)
+        TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        baseEntry->PushToObject(object);
+        baseEntry->PushToObject(object, archive);
     }
 }

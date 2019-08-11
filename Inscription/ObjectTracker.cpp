@@ -7,7 +7,7 @@ namespace Inscription
     ObjectTracker::ObjectTracker(const ObjectTracker& arg)
     {
         for (auto& loop : arg.map)
-            map.emplace(loop.first, EntryBasePtr(loop.second->Clone()));
+            map.emplace(loop.first, Entry(loop.second));
     }
 
     ObjectTracker::ObjectTracker(ObjectTracker&& arg) :
@@ -17,7 +17,7 @@ namespace Inscription
     ObjectTracker& ObjectTracker::operator=(const ObjectTracker& arg)
     {
         for (auto& loop : arg.map)
-            map.emplace(loop.first, EntryBasePtr(loop.second->Clone()));
+            map.emplace(loop.first, Entry(loop.second));
 
         return *this;
     }
@@ -29,9 +29,14 @@ namespace Inscription
         return *this;
     }
 
-    void ObjectTracker::SetActive(bool set)
+    void ObjectTracker::Activate(bool set)
     {
         active = set;
+    }
+
+    void ObjectTracker::Deactivate()
+    {
+        active = false;
     }
 
     bool ObjectTracker::IsActive() const
@@ -41,58 +46,44 @@ namespace Inscription
 
     Optional<ObjectTracker::ID> ObjectTracker::Add(void* add)
     {
-        if (!IsActive())
-            return Optional<ID>();
-
         return Add(add, NextID());
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(size_t storageSize)
-    {
-        return CreateLookahead(NextID(), storageSize);
-    }
-
-    Optional<ObjectTracker::ID> ObjectTracker::CreateLookahead(ID id, size_t storageSize)
+    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add, ID id)
     {
         if (!IsActive())
             return Optional<ID>();
 
-        auto entry = EntryBasePtr(new LookaheadEntry(id, storageSize));
+        {
+            auto foundObject = FindObject(id);
+            if (foundObject)
+                return id;
 
+            auto foundID = FindID(add);
+            if (foundID.IsValid())
+                return foundID;
+        }
+
+        Entry entry(id, add);
         map.emplace(id, std::move(entry));
-
         return id;
     }
 
-    void* ObjectTracker::LookaheadStorage(ID id)
-    {
-        if (!IsActive())
-            return nullptr;
-
-        auto entry = FindLookaheadEntry(id);
-        if (!entry)
-            return nullptr;
-
-        return entry->storage;
-    }
-
-    void ObjectTracker::MaterializeLookahead(ID id)
+    void ObjectTracker::ReplaceObject(void* here, void* newObject)
     {
         if (!IsActive())
             return;
 
-        auto iterator = map.find(id);
+        auto iterator = FindIterator(here);
         if (iterator == map.end())
+        {
+            Add(newObject);
             return;
+        }
 
-        auto entry = dynamic_cast<LookaheadEntry*>(iterator->second.get());
-        if (!entry)
-            return;
-
-        auto storage = entry->storage;
-        entry->storage = nullptr;
+        auto id = iterator->first;
         map.erase(iterator);
-        Add(storage, id);
+        Add(newObject, id);
     }
 
     void ObjectTracker::SignalSavedConstruction(ID id)
@@ -104,19 +95,16 @@ namespace Inscription
         if (iterator == map.end())
             return;
 
-        iterator->second->hasSavedConstruction = true;
+        iterator->second.hasSavedConstruction = true;
     }
 
     bool ObjectTracker::HasSavedConstruction(ID id) const
     {
-        if (!IsActive())
-            return false;
-
         auto iterator = map.find(id);
         if (iterator == map.end())
             return false;
 
-        return iterator->second->hasSavedConstruction;
+        return iterator->second.hasSavedConstruction;
     }
 
     void* ObjectTracker::FindObject(ID id)
@@ -137,43 +125,12 @@ namespace Inscription
         return Optional<ID>(iterator->first);
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::FindEntryID(void* object)
-    {
-        auto iterator = FindIterator(object);
-        if (iterator == map.end())
-            return Optional<ID>();
-        
-        auto casted = dynamic_cast<Entry*>(iterator->second.get());
-        if (!casted)
-            return Optional<ID>();
-
-        return Optional<ID>(iterator->first);
-    }
-
-    void ObjectTracker::ReplaceObject(void* here, void* newObject)
-    {
-        auto iterator = FindIterator(here);
-        if (iterator == map.end())
-        {
-            Add(newObject);
-            return;
-        }
-
-        auto id = iterator->first;
-        map.erase(iterator);
-        Add(newObject, id);
-    }
-
     void ObjectTracker::Clear()
     {
-        map.clear();
-    }
+        if (!IsActive())
+            return;
 
-    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add, ID id)
-    {
-        auto entry = EntryBasePtr(new Entry(id, add));
-        map.emplace(id, std::move(entry));
-        return id;
+        map.clear();
     }
 
     ObjectTracker::Entry* ObjectTracker::FindEntry(ID id)
@@ -182,29 +139,14 @@ namespace Inscription
         if (entry == map.end())
             return nullptr;
 
-        return dynamic_cast<Entry*>(entry->second.get());
-    }
-
-    ObjectTracker::LookaheadEntry* ObjectTracker::FindLookaheadEntry(ID id)
-    {
-        auto entry = map.find(id);
-        if (entry == map.end())
-            return nullptr;
-
-        return dynamic_cast<LookaheadEntry*>(entry->second.get());
+        return &entry->second;
     }
 
     ObjectTracker::iterator ObjectTracker::FindIterator(void* object)
     {
         for (auto loop = map.begin(); loop != map.end(); ++loop)
-        {
-            auto casted = dynamic_cast<Entry*>(loop->second.get());
-            if (!casted)
-                continue;
-
-            if (casted->object == object)
+            if (loop->second.object == object)
                 return loop;
-        }
 
         return map.end();
     }

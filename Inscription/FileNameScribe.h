@@ -11,7 +11,11 @@ namespace Inscription
     class Scribe<::Chroma::FileName, BinaryArchive> final :
         public CompositeScribe<::Chroma::FileName, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 }

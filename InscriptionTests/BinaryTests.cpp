@@ -47,10 +47,15 @@ namespace Inscription
     class Scribe<::BinaryTestsFixture::TestClass, BinaryArchive> :
         public CompositeScribe<::BinaryTestsFixture::TestClass, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
             archive(object.value);
+        }
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
         }
     };
 }

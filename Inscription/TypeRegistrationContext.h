@@ -46,8 +46,8 @@ namespace Inscription
             void PushTo(Archive& archive) const override;
         };
 
-        typedef std::unique_ptr<EntryBase> EntryBasePtr;
-        typedef std::vector<EntryBasePtr> EntryList;
+        using EntryBasePtr = std::unique_ptr<EntryBase>;
+        using EntryList = std::vector<EntryBasePtr>;
         EntryList entryList;
 
         static void CopyEntryList(const EntryList& from, EntryList& to);

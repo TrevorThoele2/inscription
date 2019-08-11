@@ -13,7 +13,7 @@ BOOST_FIXTURE_TEST_SUITE(TupleTests, TupleTestsFixture)
 
 BOOST_AUTO_TEST_CASE(BasicTuple_SavesAndLoads)
 {
-    typedef std::tuple<int, std::string, unsigned short> TestedObject;
+    using TestedObject = std::tuple<int, std::string, unsigned short>;
     auto saved = dataGeneration.Generator<TestedObject>().RandomStack<int, std::string, unsigned short>();
 
     {

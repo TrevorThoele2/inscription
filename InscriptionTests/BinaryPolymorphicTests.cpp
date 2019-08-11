@@ -73,8 +73,12 @@ namespace Inscription
     class Scribe<::BinaryPolymorphicFixture::Base, BinaryArchive> : public
         CompositeScribe<::BinaryPolymorphicFixture::Base, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
@@ -82,26 +86,41 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>
     {
     public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
     class Scribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive> : public
         CompositeScribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {}
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
     class Scribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive> : public
         CompositeScribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {}
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 }
 
@@ -154,14 +173,14 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -180,7 +199,7 @@ BOOST_AUTO_TEST_CASE(UnregisteredType_ThrowsExceptionOnSave)
 
     auto outputArchive = CreateRegistered<OutputArchive>();
 
-    BOOST_REQUIRE_THROW(outputArchive(saved, ::Inscription::Pointer::Owning), ::Inscription::PolymorphicTypeNotFound);
+    BOOST_REQUIRE_THROW(outputArchive(saved), ::Inscription::PolymorphicTypeNotFound);
 
     delete saved;
 }
@@ -195,14 +214,14 @@ namespace Inscription
         archive(object.baseValue);
     }
 
+    const Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
+
     void Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
-
-    const Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
 }

@@ -21,37 +21,37 @@ namespace Inscription
     template<class T>
     struct RemoveConstTrait
     {
-        typedef T type;
+        using type = T;
     };
 
     template<class T>
     struct RemoveConstTrait<const T>
     {
-        typedef T type;
+        using type = T;
     };
 
     template<class T>
     struct RemoveConstTrait<const T*>
     {
-        typedef T* type;
+        using type = T*;
     };
 
     template<class T>
     struct RemoveConstTrait<T* const>
     {
-        typedef T* type;
+        using type = T*;
     };
 
     template<class T>
     struct RemoveConstTrait<const T* const>
     {
-        typedef T* type;
+        using type = T*;
     };
 
     template<class T>
     struct RemoveConstTrait<const T&>
     {
-        typedef T& type;
+        using type = T&;
     };
 
     template<class T>

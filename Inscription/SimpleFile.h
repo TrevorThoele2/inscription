@@ -8,7 +8,6 @@ namespace Inscription
     class SimpleFile : public Stream<T>
     {
     public:
-        using typename Stream<T>::FilePath;
         using typename Stream<T>::Mode;
         using typename Stream<T>::StreamT;
         using typename Stream<T>::StreamPosition;

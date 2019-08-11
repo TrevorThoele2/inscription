@@ -7,23 +7,27 @@
 #include "InputTextArchive.h"
 
 #include "ContainerSize.h"
-#include "ScopeTrackingModifier.h"
+#include "ObjectTrackingContext.h"
 #include "Const.h"
 
 namespace Inscription
 {
     void Scribe<std::string, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
+        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
         if (archive.IsOutput())
             SaveImplementation(object, archive);
         else
             LoadImplementation(object, archive);
     }
 
+    void Scribe<std::string, BinaryArchive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
+    {
+        DoBasicConstruction(storage, archive);
+    }
+
     void Scribe<std::string, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        ScopeTrackingModifier tracking(archive, false);
-
         ContainerSize size(object.size());
         archive(size);
         for (auto& loop : object)
@@ -32,8 +36,6 @@ namespace Inscription
 
     void Scribe<std::string, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
-        ScopeTrackingModifier tracking(archive, false);
-
         ContainerSize size;
         archive(size);
 

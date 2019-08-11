@@ -28,6 +28,19 @@ public:
         Object(int baseValue) : value(value)
         {}
     };
+
+    class CyclicObject
+    {
+    public:
+        int value = 0;
+        CyclicObject* next = nullptr;
+    public:
+        CyclicObject()
+        {}
+
+        CyclicObject(int value) : value(value)
+        {}
+    };
 };
 
 namespace Inscription
@@ -36,10 +49,32 @@ namespace Inscription
     class Scribe<::BinaryPointerFixture::Object, BinaryArchive> : public
         CompositeScribe<::BinaryPointerFixture::Object, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
             archive(object.value);
+        }
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
+    };
+
+    template<>
+    class Scribe<::BinaryPointerFixture::CyclicObject, BinaryArchive> : public
+        CompositeScribe<::BinaryPointerFixture::CyclicObject, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.value);
+            archive(object.next);
+        }
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
         }
     };
 }
@@ -89,33 +124,39 @@ BOOST_AUTO_TEST_CASE(Loads_ObjectSavedBeforehand)
     BOOST_REQUIRE(loadedPointer == &loadedObject);
 }
 
-BOOST_AUTO_TEST_CASE(OwnedLoad_CausesUnownedToBePopulated)
+BOOST_AUTO_TEST_CASE(Loads_CyclicObject)
 {
-    Object* savedOwned = dataGeneration.Generator<Object>().RandomHeap<int>();
-    Object* savedUnowned = savedOwned;
+    CyclicObject* savedObject1 = dataGeneration.Generator<CyclicObject>().RandomHeap<int>();
+    CyclicObject* savedObject2 = dataGeneration.Generator<CyclicObject>().RandomHeap<int>();
+    savedObject1->next = savedObject2;
+    savedObject2->next = savedObject1;
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(savedUnowned, ::Inscription::Pointer::Unowning);
-        outputArchive(savedOwned, ::Inscription::Pointer::Owning);
+        outputArchive(savedObject1);
     }
 
-    Object* loadedOwned = nullptr;
-    Object* loadedUnowned = nullptr;
+    CyclicObject* loadedObject1 = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loadedUnowned, ::Inscription::Pointer::Unowning);
-        inputArchive(loadedOwned, ::Inscription::Pointer::Owning);
+        inputArchive(loadedObject1);
     }
 
-    BOOST_REQUIRE(loadedUnowned != nullptr);
-    BOOST_REQUIRE(loadedOwned != nullptr);
-    BOOST_REQUIRE(loadedOwned == loadedUnowned);
-    BOOST_REQUIRE(loadedOwned->value == savedOwned->value);
+    BOOST_REQUIRE(loadedObject1 != nullptr);
+    BOOST_REQUIRE(loadedObject1->next != nullptr);
 
-    delete savedOwned;
-    delete loadedOwned;
+    auto loadedObject2 = loadedObject1->next;
+
+    BOOST_REQUIRE(loadedObject1->next == loadedObject2);
+    BOOST_REQUIRE(loadedObject2->next == loadedObject1);
+    BOOST_REQUIRE(loadedObject1->value == savedObject1->value);
+    BOOST_REQUIRE(loadedObject2->value == savedObject2->value);
+
+    delete savedObject1;
+    delete savedObject2;
+    delete loadedObject1;
+    delete loadedObject2;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

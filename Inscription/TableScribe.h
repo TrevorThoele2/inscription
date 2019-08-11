@@ -9,63 +9,89 @@
 
 namespace Inscription
 {
+    class BinaryArchive;
+
     template<class Object, class Archive>
-    class TableScribe : public CompositeScribe<Object, Archive>
+    class TableScribe;
+
+    template<class Object>
+    class TableScribe<Object, BinaryArchive> : public CompositeScribe<Object, BinaryArchive>
     {
     private:
-        using BaseScribeT = typename CompositeScribe<Object, Archive>;
+        using BaseScribeT = typename CompositeScribe<Object, BinaryArchive>;
     public:
         using ObjectT = typename BaseScribeT::ObjectT;
         using ArchiveT = typename BaseScribeT::ArchiveT;
         using ClassNameResolver = typename BaseScribeT::ClassNameResolver;
     public:
-        template<class T>
-        using ComposingScribe = typename BaseScribeT::template ComposingScribe<T>;
-    public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
-        static void Construct(ObjectT* storage, ArchiveT& archive);
+        void Scriven(ObjectT& object, ArchiveT& archive) override final;
+        void Construct(ObjectT* storage, ArchiveT& archive) override final;
     public:
         using TableBase = TableBase<ObjectT, ArchiveT>;
-    private:
-        TableScribe() = delete;
-        TableScribe(const TableScribe& arg) = delete;
-        TableScribe& operator=(const TableScribe& arg) = delete;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override final;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override final;
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a TableScribe was not a composite.");
     };
 
-    template<class Object, class Archive>
-    void TableScribe<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive)
+    template<class Object>
+    void TableScribe<Object, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
-        using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
-
-        auto table = TableT();
-        if (archive.IsOutput())
+        
         {
-            table.PullFromObject(object);
-            table.Scriven(archive);
-            table.ObjectScriven(object, archive);
+            auto trackingID = archive.AttemptTrackObject(&object);
+            if (trackingID.IsValid())
+                archive.TrackSavedConstruction(*trackingID);
         }
-        else
+
         {
-            table.Scriven(archive);
-            table.PushToObject(object);
-            table.ObjectScriven(object, archive);
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
+
+            TableT table;
+            if (archive.IsOutput())
+            {
+                table.PullFromObject(object, archive);
+                table.Scriven(archive);
+                table.ObjectScriven(object, archive);
+            }
+            else
+            {
+                table.Scriven(archive);
+                table.PushToObject(object, archive);
+                table.ObjectScriven(object, archive);
+            }
         }
     }
 
-    template<class Object, class Archive>
-    void TableScribe<Object, Archive>::Construct(ObjectT* storage, ArchiveT& archive)
+    template<class Object>
+    void TableScribe<Object, BinaryArchive>::Construct(ObjectT* storage, ArchiveT& archive)
     {
-        using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
+        {
+            archive.AttemptTrackObject(storage);
+        }
 
-        auto table = TableT();
-        table.Scriven(archive);
-        table.Construct(storage, archive);
-        table.PushToObject(*storage);
-        table.ObjectScriven(*storage, archive);
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
+
+            TableT table;
+            table.Scriven(archive);
+            table.Construct(storage, archive);
+            table.PushToObject(*storage, archive);
+            table.ObjectScriven(*storage, archive);
+        }
     }
+
+    template<class Object>
+    void TableScribe<Object, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {}
+
+    template<class Object>
+    void TableScribe<Object, BinaryArchive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
+    {}
 }
 
 #include "UndefAssert.h"

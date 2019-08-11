@@ -10,7 +10,12 @@ namespace Inscription
         const FilePath& path,
         const Signature& signature) :
 
-        BinaryArchive(Direction::INPUT, signature, 0), file(path)
+        BinaryArchive(
+            Direction::INPUT,
+            signature,
+            0,
+            0),
+        file(path)
     {
         InitialSetup();
     }
@@ -20,7 +25,13 @@ namespace Inscription
         const Signature& signature,
         const TypeRegistrationContext& typeRegistrationContext) :
 
-        BinaryArchive(Direction::INPUT, signature, 0, typeRegistrationContext), file(path)
+        BinaryArchive(
+            Direction::INPUT,
+            signature,
+            0,
+            0,
+            typeRegistrationContext),
+        file(path)
     {
         InitialSetup();
     }
@@ -48,20 +59,21 @@ namespace Inscription
 
     void InputBinaryArchive::InitialSetup()
     {
-        auto size = signature.size();
-        Signature loadSignature(size, '\000');
+        auto size = clientSignature.size();
+        Signature loadedClientSignature(size, '\000');
         ContainerSize address = 0;
         while (address < size)
         {
-            ReadImpl(loadSignature[address]);
+            ReadImpl(loadedClientSignature[address]);
             ++address;
         }
 
-        if (loadSignature != signature)
+        if (loadedClientSignature != clientSignature)
             throw InvalidSignature();
 
-        ReadImpl(version);
-        this->signature = loadSignature;
+        ReadImpl(inscriptionVersion);
+        ReadImpl(clientVersion);
+        this->clientSignature = loadedClientSignature;
         postHeaderPosition = TellStream();
     }
 }

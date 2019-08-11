@@ -61,8 +61,12 @@ namespace Inscription
     class Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive> :
         public CompositeScribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
@@ -70,8 +74,13 @@ namespace Inscription
         public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
     {
     public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 }
 
@@ -96,7 +105,7 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
         ::Inscription::ContainerSize containerSize(savedOwning.size());
         outputArchive(containerSize);
         for (auto& loop : savedOwning)
-            outputArchive(loop, ::Inscription::Pointer::Owning);
+            outputArchive(loop);
     }
 
     std::vector<Base*> loadedOwning;
@@ -109,7 +118,7 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
         while (containerSize-- > 0)
         {
             Base* ptr = nullptr;
-            inputArchive(ptr, ::Inscription::Pointer::Owning);
+            inputArchive(ptr);
             loadedOwning.push_back(ptr);
         }
     }
@@ -147,13 +156,14 @@ namespace Inscription
         archive(object.baseValue);
     }
 
+    const Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
+
     void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         BaseScriven<::BinaryPolymorphicListFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
-
-    const Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("CustomConstructionDerived");
 }

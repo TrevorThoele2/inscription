@@ -6,11 +6,11 @@
 #include "TypeTracker.h"
 #include "PolymorphicManager.h"
 #include "TypeRegistrationContext.h"
+#include "ObjectTrackingTraits.h"
 
 #include "Scribe.h"
 #include "TableData.h"
 
-#include "Pointer.h"
 #include "Direction.h"
 #include "Endian.h"
 #include "Const.h"
@@ -25,11 +25,9 @@ namespace Inscription
     class BinaryArchive : public Archive
     {
     public:
-        typedef std::string Signature;
-
-        typedef unsigned long long StreamPosition;
-        
-        typedef TypeRegistrationContext<BinaryArchive> TypeRegistrationContext;
+        using Signature = std::string;
+        using StreamPosition = unsigned long long;
+        using TypeRegistrationContext = TypeRegistrationContext<BinaryArchive>;
     public:
         virtual ~BinaryArchive() = 0;
     public:
@@ -37,14 +35,15 @@ namespace Inscription
         BinaryArchive& operator()(T& object);
         template<class T>
         BinaryArchive& operator()(T*& object);
-        template<class T>
-        BinaryArchive& operator()(T*& object, Pointer pointerType);
     public:
         template<class T>
-        void TrackObject(T* arg);
+        Optional<TrackingID> AttemptTrackObject(T* arg);
         template<class T>
-        void ReplaceTrackedObject(T& here, T& newObj);
+        void AttemptReplaceTrackedObject(T& here, T& newObject);
+        void AttemptReplaceTrackedObject(void* here, void *newObject);
         bool TrackObjects(bool set = true);
+
+        void TrackSavedConstruction(TrackingID trackingID);
 
         // Will remove all of the target's tracking history
         // For this reason, this should probably be called at the beginning of the target's lifetime
@@ -62,8 +61,9 @@ namespace Inscription
         const OutputBinaryArchive* AsOutput() const;
         const InputBinaryArchive* AsInput() const;
     public:
-        const Signature& GetSignature() const;
-        Version GetVersion() const;
+        const Signature& ClientSignature() const;
+        Version ClientVersion() const;
+        Version InscriptionVersion() const;
 
         void MovePositionToStart();
 
@@ -73,18 +73,21 @@ namespace Inscription
         template<class T>
         void RegisterType();
     protected:
-        Signature signature;
-        Version version;
+        Signature clientSignature;
+        Version clientVersion;
+        Version inscriptionVersion;
         StreamPosition postHeaderPosition;
     protected:
         BinaryArchive(
             Direction direction,
-            const Signature& signature,
-            Version version);
+            const Signature& clientSignature,
+            Version clientVersion,
+            Version inscriptionVersion);
         BinaryArchive(
             Direction direction,
-            const Signature& signature,
-            Version version,
+            const Signature& clientSignature,
+            Version clientVersion,
+            Version inscriptionVersion,
             TypeRegistrationContext typeRegistrationContext);
         BinaryArchive(BinaryArchive&& arg);
 
@@ -119,34 +122,35 @@ namespace Inscription
     template<class T>
     BinaryArchive& BinaryArchive::operator()(T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type>::Scriven(RemoveConst(object), *this);
+        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
+        scribe.Scriven(RemoveConst(object), *this);
         return *this;
     }
 
     template<class T>
     BinaryArchive& BinaryArchive::operator()(T*& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type*>::Scriven(RemoveConst(object), *this);
+        KnownScribe<typename RemoveConstTrait<T>::type*> scribe;
+        scribe.Scriven(RemoveConst(object), *this);
         return *this;
     }
 
     template<class T>
-    BinaryArchive& BinaryArchive::operator()(T*& object, Pointer pointerType)
+    Optional<TrackingID> BinaryArchive::AttemptTrackObject(T* arg)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type*>::Scriven(RemoveConst(object), *this, pointerType);
-        return *this;
+        if (!ObjectTrackingTraits<T, BinaryArchive>::shouldTrack)
+            return Optional<TrackingID>();
+
+        return objectTracker.Add(arg);
     }
 
     template<class T>
-    void BinaryArchive::TrackObject(T* arg)
+    void BinaryArchive::AttemptReplaceTrackedObject(T& here, T& newObject)
     {
-        objectTracker.Add(arg);
-    }
+        if (!ObjectTrackingTraits<T, BinaryArchive>::shouldTrack)
+            return;
 
-    template<class T>
-    void BinaryArchive::ReplaceTrackedObject(T& here, T& newObj)
-    {
-        objectTracker.ReplaceObject(&here, &newObj);
+        objectTracker.ReplaceObject(&here, &newObject);
     }
 
     template<class T>

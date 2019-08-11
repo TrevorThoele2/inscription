@@ -88,8 +88,12 @@ namespace Inscription
     class Scribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive> : public
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
@@ -97,8 +101,13 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
     {
     public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 }
 
@@ -111,14 +120,14 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -141,14 +150,14 @@ namespace Inscription
         archive(object.baseValue);
     }
 
+    const Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
+
     void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
-
-    const Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
 }

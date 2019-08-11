@@ -28,19 +28,22 @@ namespace Inscription
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
         void Construct(ObjectT* storage, ArchiveT& archive);
 
-        void PushToObject(ObjectT& object);
-        void PullFromObject(ObjectT& object);
+        void PushToObject(ObjectT& object, ArchiveT& archive);
+        void PullFromObject(ObjectT& object, ArchiveT& archive);
     protected:
         virtual void ScrivenImplementation(ArchiveT& archive);
         virtual void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive);
+        virtual void ConstructImplementation(ObjectT* storage, ArchiveT& archive) = 0;
 
-        virtual void PushToObjectImplementation(ObjectT& object);
-        virtual void PullFromObjectImplementation(ObjectT& object);
+        virtual void PushToObjectImplementation(ObjectT& object, ArchiveT& archive);
+        virtual void PullFromObjectImplementation(ObjectT& object, ArchiveT& archive);
     protected:
         using DataEntry = AutoTableDataEntry<TableBase, ObjectT, ArchiveT>;
         using DataEntryList = std::vector<DataEntry>;
         void AddDataEntry(DataEntry&& entry);
         void MergeDataEntries(DataEntryList&& entries);
+    protected:
+        void DoBasicConstruction(ObjectT* storage, ArchiveT& archive);
     private:
         DataEntryList dataEntryList;
     private:
@@ -52,26 +55,20 @@ namespace Inscription
         constexpr static bool shouldIgnoreConstruct = std::is_abstract_v<T>;
 
         template<class T, std::enable_if_t<shouldDefaultConstruct<T>, int> = 0>
-        void DoConstruct(ObjectT* storage, ArchiveT& archive)
+        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
         {
             new (storage) ObjectT();
         }
 
         template<class T, std::enable_if_t<shouldDataConstruct<T>, int> = 0>
-        void DoConstruct(ObjectT* storage, ArchiveT& archive)
+        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
         {
             DataConstructionImplementation<T>(storage, data);
         }
 
         template<class T, std::enable_if_t<shouldIgnoreConstruct<T>, int> = 0>
-        void DoConstruct(ObjectT* storage, ArchiveT& archive)
-        {
-            static_assert(false,
-                "Non-shadowed construction requires either a default constructor or a constructor taking a TableT. "
-                "Create one of these constructors or shadow Construct.");
-
-            return nullptr;
-        }
+        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
+        {}
 
         template<class T, std::enable_if_t<std::is_constructible_v<T, const DataT&>, int> = 0>
         static void DataConstructionImplementation(ObjectT* storage, DataT& data)
@@ -84,10 +81,10 @@ namespace Inscription
         {
             static_assert(
                 false,
-                "Non-shadowed construction requires either a"
+                "Basic table construction requires either a "
                 "default constructor or a constructor taking a (const DataT&) on ObjectT. "
 
-                "Create one of these constructors or shadow Construct.");
+                "Create one of these constructors or manually construct in ConstructImplementation.");
         }
     private:
         template<class Object, class Archive>
@@ -115,25 +112,25 @@ namespace Inscription
     template<class Object, class Archive>
     void TableBase<Object, Archive>::Construct(ObjectT* storage, ArchiveT& archive)
     {
-        DoConstruct<ObjectT>(storage, archive);
+        ConstructImplementation(storage, archive);
     }
 
     template<class Object, class Archive>
-    void TableBase<Object, Archive>::PushToObject(ObjectT& object)
+    void TableBase<Object, Archive>::PushToObject(ObjectT& object, ArchiveT& archive)
     {
         for (auto& loop : dataEntryList)
-            loop.PushToObject(*this, object);
+            loop.PushToObject(*this, object, archive);
 
-        PushToObjectImplementation(object);
+        PushToObjectImplementation(object, archive);
     }
 
     template<class Object, class Archive>
-    void TableBase<Object, Archive>::PullFromObject(ObjectT& object)
+    void TableBase<Object, Archive>::PullFromObject(ObjectT& object, ArchiveT& archive)
     {
         for (auto& loop : dataEntryList)
-            loop.PullFromObject(*this, object);
+            loop.PullFromObject(*this, object, archive);
 
-        PullFromObjectImplementation(object);
+        PullFromObjectImplementation(object, archive);
     }
 
     template<class Object, class Archive>
@@ -147,13 +144,17 @@ namespace Inscription
     {}
 
     template<class Object, class Archive>
+    void TableBase<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
+    {}
+
+    template<class Object, class Archive>
     void TableBase<Object, Archive>::PushToObjectImplementation(
-        ObjectT& object)
+        ObjectT& object, ArchiveT& archive)
     {}
 
     template<class Object, class Archive>
     void TableBase<Object, Archive>::PullFromObjectImplementation(
-        ObjectT& object)
+        ObjectT& object, ArchiveT& archive)
     {}
 
     template<class Object, class Archive>
@@ -170,5 +171,11 @@ namespace Inscription
             std::make_move_iterator(entries.begin()),
             std::make_move_iterator(entries.end()));
         entries.clear();
+    }
+
+    template<class Object, class Archive>
+    void TableBase<Object, Archive>::DoBasicConstruction(ObjectT* storage, ArchiveT& archive)
+    {
+        BasicConstructionImplementation<ObjectT>(storage, archive);
     }
 }
