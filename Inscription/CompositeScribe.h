@@ -1,16 +1,10 @@
 #pragma once
 
-#include "Scribe.h"
 #include "ScribeBase.h"
 
-#include "BaseScriven.h"
 #include "ClassNameResolver.h"
 
-#include "Optional.h"
-#include "TrackingID.h"
 #include "ObjectTrackingContext.h"
-
-#include "Assert.h"
 
 #include "BinaryArchive.h"
 
@@ -20,7 +14,7 @@ namespace Inscription
     class CompositeScribe : public ScribeBase<Object, Archive>
     {
     private:
-        using BaseT = typename ScribeBase<Object, Archive>;
+        using BaseT = ScribeBase<Object, Archive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -48,7 +42,7 @@ namespace Inscription
     class CompositeScribe<Object, BinaryArchive> : public ScribeBase<Object, BinaryArchive>
     {
     private:
-        using BaseT = typename ScribeBase<Object, BinaryArchive>;
+        using BaseT = ScribeBase<Object, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -101,7 +95,7 @@ namespace Inscription
 
     template<class Object>
     auto CompositeScribe<Object, BinaryArchive>::CreateSingleNameResolver(const std::string& name)
-        -> CompositeScribe<Object, BinaryArchive>::ClassNameResolver
+        -> ClassNameResolver
     {
         return ClassNameResolver([name](ArchiveT& archive)
         {
@@ -109,5 +103,3 @@ namespace Inscription
         });
     }
 }
-
-#include "UndefAssert.h"

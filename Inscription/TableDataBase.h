@@ -1,6 +1,7 @@
 #pragma once
 
-#include "BaseTableDataEntry.h"
+#include "TableDataEntry.h"
+#include "BaseTableDataLink.h"
 
 namespace Inscription
 {
@@ -11,6 +12,8 @@ namespace Inscription
         using ArchiveT = Archive;
 
         template<class T>
-        using Base = BaseTableDataEntry<T, ObjectT, ArchiveT>;
+        using Entry = TableDataEntry<T>;
+        template<class T>
+        using Base = BaseTableDataLink<T, ObjectT, ArchiveT>;
     };
 }

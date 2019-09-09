@@ -3,8 +3,8 @@
 #include "CompositeScribe.h"
 
 #include "TableBase.h"
-#include "AutoTableDataEntry.h"
-#include "BaseTableDataEntry.h"
+#include "AutoTableDataLink.h"
+#include "BaseTableDataLink.h"
 #include "NullTableData.h"
 
 namespace Inscription
