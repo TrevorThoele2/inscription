@@ -3,8 +3,6 @@
 #include "BinaryArchive.h"
 #include "InputBinaryFile.h"
 
-#include "InvalidArchiveDirection.h"
-
 namespace Inscription
 {
     class InputBinaryArchive : public BinaryArchive
