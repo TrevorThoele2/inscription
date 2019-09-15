@@ -8,10 +8,10 @@ namespace Inscription
     class InputTextFile : public SimpleFile<std::ifstream>
     {
     public:
-        InputTextFile(const FilePath& path);
-        InputTextFile(InputTextFile&& arg);
+        explicit InputTextFile(const FilePath& path);
+        InputTextFile(InputTextFile&& arg) noexcept;
 
-        InputTextFile& operator=(InputTextFile&& arg);
+        InputTextFile& operator=(InputTextFile&& arg) noexcept;
 
         void ReadData(std::string& string);
         void ReadData(char& character);

@@ -2,10 +2,10 @@
 
 namespace Inscription
 {
-    TypeTracker::TypeTracker(TypeTracker&& arg) : entryList(std::move(arg.entryList))
+    TypeTracker::TypeTracker(TypeTracker&& arg) noexcept : entryList(std::move(arg.entryList))
     {}
 
-    TypeTracker& TypeTracker::operator=(TypeTracker&& arg)
+    TypeTracker& TypeTracker::operator=(TypeTracker&& arg) noexcept
     {
         entryList = std::move(arg.entryList);
         return *this;
@@ -30,7 +30,7 @@ namespace Inscription
 
     void TypeTracker::SignalSavedConstruction(ID id)
     {
-        auto found = FindEntry(id);
+        const auto found = FindEntry(id);
         if (!found)
             return;
 
@@ -39,7 +39,7 @@ namespace Inscription
 
     bool TypeTracker::HasSavedConstruction(ID id) const
     {
-        auto found = FindEntry(id);
+        const auto found = FindEntry(id);
         if (!found)
             return false;
 

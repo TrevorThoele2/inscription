@@ -3,9 +3,6 @@
 #include "CompositeScribe.h"
 
 #include "TableBase.h"
-#include "AutoTableDataLink.h"
-#include "BaseTableDataLink.h"
-#include "NullTableData.h"
 
 namespace Inscription
 {
@@ -18,19 +15,18 @@ namespace Inscription
     class TableScribe<Object, BinaryArchive> : public CompositeScribe<Object, BinaryArchive>
     {
     private:
-        using BaseScribeT = typename CompositeScribe<Object, BinaryArchive>;
+        using BaseScribeT = CompositeScribe<Object, BinaryArchive>;
     public:
         using ObjectT = typename BaseScribeT::ObjectT;
         using ArchiveT = typename BaseScribeT::ArchiveT;
         using ClassNameResolver = typename BaseScribeT::ClassNameResolver;
     public:
         void Scriven(ObjectT& object, ArchiveT& archive) override final;
-        void Construct(ObjectT* storage, ArchiveT& archive) override final;
+        void Construct(ObjectT* storage, ArchiveT& archive);
     public:
         using TableBase = TableBase<ObjectT, ArchiveT>;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override final;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override final;
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a TableScribe was not a composite.");
@@ -88,10 +84,4 @@ namespace Inscription
     template<class Object>
     void TableScribe<Object, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {}
-
-    template<class Object>
-    void TableScribe<Object, BinaryArchive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {}
 }
-
-#include "UndefAssert.h"

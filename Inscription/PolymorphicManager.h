@@ -3,9 +3,9 @@
 #include <functional>
 
 #include "ObjectTracker.h"
-#include "TypeTracker.h"
 
 #include "Scribe.h"
+#include "Access.h"
 
 #include "Storage.h"
 #include "ClassName.h"
@@ -46,7 +46,7 @@ namespace Inscription
 
             void SaveConstruction(const void* object, ArchiveT& archive);
             void ConstructFromLoad(void*& storage, ArchiveT& archive);
-            void* CreateStorage();
+            [[nodiscard]] void* CreateStorage() const;
         private:
             std::function<void(const void*, ArchiveT&)> _saveConstruction;
             std::function<void(void*&, ArchiveT&)> _constructFromLoad;
@@ -131,7 +131,7 @@ namespace Inscription
         {
             DerivedT* castedStorage = reinterpret_cast<DerivedT*>(storage);
             DerivedScribe derivedScribe;
-            derivedScribe.Construct(castedStorage, archive);
+            Access::Construct(castedStorage, archive, derivedScribe);
         };
 
         _createStorage = []() -> void*
@@ -153,7 +153,7 @@ namespace Inscription
     }
 
     template<class Archive>
-    void* PolymorphicManager<Archive>::Entry::CreateStorage()
+    void* PolymorphicManager<Archive>::Entry::CreateStorage() const
     {
         return _createStorage();
     }

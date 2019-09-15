@@ -3,6 +3,8 @@
 #include "BinaryArchive.h"
 #include "InputBinaryFile.h"
 
+#include "Endian.h"
+
 namespace Inscription
 {
     class InputBinaryArchive : public BinaryArchive
@@ -15,9 +17,9 @@ namespace Inscription
             const FilePath& path,
             const Signature& signature,
             const TypeRegistrationContext& typeRegistrationContext);
-        InputBinaryArchive(InputBinaryArchive&& arg);
+        InputBinaryArchive(InputBinaryArchive&& arg) noexcept;
 
-        InputBinaryArchive& operator=(InputBinaryArchive&& arg);
+        InputBinaryArchive& operator=(InputBinaryArchive&& arg) noexcept;
 
         template<class T>
         InputBinaryArchive& Read(T& object);
@@ -25,28 +27,28 @@ namespace Inscription
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
     protected:
-        inline void ReadImpl(bool& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(signed char& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(char& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(short& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(int& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(long& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(long long& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(unsigned char& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(unsigned short& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(unsigned int& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(unsigned long& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(unsigned long long&  arg) { ReadFromFile(arg); }
-        inline void ReadImpl(float& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(double& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(Buffer& arg) { ReadFromFile(arg); }
+        void ReadImpl(bool& arg) { ReadFromFile(arg); }
+        void ReadImpl(signed char& arg) { ReadFromFile(arg); }
+        void ReadImpl(char& arg) { ReadFromFile(arg); }
+        void ReadImpl(short& arg) { ReadFromFile(arg); }
+        void ReadImpl(int& arg) { ReadFromFile(arg); }
+        void ReadImpl(long& arg) { ReadFromFile(arg); }
+        void ReadImpl(long long& arg) { ReadFromFile(arg); }
+        void ReadImpl(unsigned char& arg) { ReadFromFile(arg); }
+        void ReadImpl(unsigned short& arg) { ReadFromFile(arg); }
+        void ReadImpl(unsigned int& arg) { ReadFromFile(arg); }
+        void ReadImpl(unsigned long& arg) { ReadFromFile(arg); }
+        void ReadImpl(unsigned long long&  arg) { ReadFromFile(arg); }
+        void ReadImpl(float& arg) { ReadFromFile(arg); }
+        void ReadImpl(double& arg) { ReadFromFile(arg); }
+        void ReadImpl(Buffer& arg) { ReadFromFile(arg); }
     private:
         InputBinaryFile file;
     private:
         void InitialSetup();
     private:
         template<class T>
-        inline void ReadFromFile(T& arg)
+        void ReadFromFile(T& arg)
         {
             file.ReadData(arg);
         }
@@ -59,14 +61,10 @@ namespace Inscription
             std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,
             "The T given to Read was not arithmetic or a Buffer.");
 
-#ifdef INSCRIPTION_COMMON_NUMERICS
-        ReadImpl(reinterpret_cast<typename NumericTraits<T>::Size&>(object));
-#else
         ReadImpl(object);
-#endif
 
         if (!IsLittleEndian())
-            ByteSwap(object);
+            EnsureCorrectEndianness(object);
 
         return *this;
     }

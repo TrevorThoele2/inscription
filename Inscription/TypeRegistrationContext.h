@@ -12,16 +12,16 @@ namespace Inscription
     public:
         TypeRegistrationContext();
         TypeRegistrationContext(const TypeRegistrationContext& arg);
-        TypeRegistrationContext(TypeRegistrationContext&& arg);
+        TypeRegistrationContext(TypeRegistrationContext&& arg) noexcept;
 
         TypeRegistrationContext& operator=(const TypeRegistrationContext& arg);
-        TypeRegistrationContext& operator=(TypeRegistrationContext&& arg);
+        TypeRegistrationContext& operator=(TypeRegistrationContext&& arg) noexcept;
 
         template<class T>
         void RegisterType();
 
         template<class T>
-        bool HasStored() const;
+        [[nodiscard]] bool HasStored() const;
 
         void PushAll(Archive& archive);
     private:
@@ -32,7 +32,7 @@ namespace Inscription
 
             virtual EntryBase* Clone() const = 0;
 
-            virtual std::type_index Type() const = 0;
+            [[nodiscard]] virtual std::type_index Type() const = 0;
             virtual void PushTo(Archive& archive) const = 0;
         };
 
@@ -40,9 +40,11 @@ namespace Inscription
         class Entry : public EntryBase
         {
         public:
+            ~Entry() = default;
+
             Entry* Clone() const override;
 
-            std::type_index Type() const override;
+            [[nodiscard]] std::type_index Type() const override;
             void PushTo(Archive& archive) const override;
         };
 
@@ -64,7 +66,8 @@ namespace Inscription
     }
 
     template<class Archive>
-    TypeRegistrationContext<Archive>::TypeRegistrationContext(TypeRegistrationContext&& arg) : entryList(std::move(arg.entryList))
+    TypeRegistrationContext<Archive>::TypeRegistrationContext(TypeRegistrationContext&& arg) noexcept :
+        entryList(std::move(arg.entryList))
     {}
 
     template<class Archive>
@@ -75,7 +78,7 @@ namespace Inscription
     }
 
     template<class Archive>
-    TypeRegistrationContext<Archive>& TypeRegistrationContext<Archive>::operator=(TypeRegistrationContext&& arg)
+    TypeRegistrationContext<Archive>& TypeRegistrationContext<Archive>::operator=(TypeRegistrationContext&& arg) noexcept
     {
         entryList = std::move(arg.entryList);
         return *this;

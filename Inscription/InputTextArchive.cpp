@@ -3,14 +3,14 @@
 namespace Inscription
 {
     InputTextArchive::InputTextArchive(const FilePath& path) :
-        TextArchive(Direction::INPUT), file(path)
+        TextArchive(Direction::Input), file(path)
     {}
 
-    InputTextArchive::InputTextArchive(InputTextArchive&& arg) :
+    InputTextArchive::InputTextArchive(InputTextArchive&& arg) noexcept :
         TextArchive(std::move(arg)), file(std::move(arg.file))
     {}
 
-    InputTextArchive& InputTextArchive::operator=(InputTextArchive&& arg)
+    InputTextArchive& InputTextArchive::operator=(InputTextArchive&& arg) noexcept
     {
         TextArchive::operator=(std::move(arg));
         file = std::move(arg.file);

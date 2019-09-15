@@ -12,9 +12,4 @@ namespace Inscription
         else
             archive.AsInput()->Read(object);
     }
-
-    void Scribe<Buffer, BinaryArchive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
-    }
 }

@@ -5,7 +5,6 @@
 
 #include "TypeTrackerEntry.h"
 #include "TrackingID.h"
-#include "SpecialTypeTrackingID.h"
 
 #include "Optional.h"
 
@@ -18,9 +17,9 @@ namespace Inscription
         using Type = std::type_index;
     public:
         TypeTracker() = default;
-        TypeTracker(TypeTracker&& arg);
+        TypeTracker(TypeTracker&& arg) noexcept;
 
-        TypeTracker& operator=(TypeTracker&& arg);
+        TypeTracker& operator=(TypeTracker&& arg) noexcept;
 
         template<class T>
         ID Add();
@@ -28,26 +27,26 @@ namespace Inscription
         ID Add(const Type& type, ID id);
 
         void SignalSavedConstruction(ID id);
-        bool HasSavedConstruction(ID id) const;
+        [[nodiscard]] bool HasSavedConstruction(ID id) const;
 
         template<class T>
-        bool IsTypeIn() const;
-        bool IsTypeIn(const Type& type) const;
-        bool IsIDIn(ID id) const;
+        [[nodiscard]] bool IsTypeIn() const;
+        [[nodiscard]] bool IsTypeIn(const Type& type) const;
+        [[nodiscard]] bool IsIDIn(ID id) const;
         template<class T>
-        Optional<ID> FindID() const;
-        Optional<ID> FindID(const Type& type) const;
+        [[nodiscard]] Optional<ID> FindID() const;
+        [[nodiscard]] Optional<ID> FindID(const Type& type) const;
 
-        Optional<Type> FindType(ID id) const;
+        [[nodiscard]] Optional<Type> FindType(ID id) const;
     private:
         using Entry = TypeTrackerEntry;
         using EntryList = std::vector<Entry>;
         EntryList entryList;
 
-        Entry* FindEntry(ID id);
-        const Entry* FindEntry(ID id) const;
+        [[nodiscard]] Entry* FindEntry(ID id);
+        [[nodiscard]] const Entry* FindEntry(ID id) const;
     private:
-        ID NextID() const;
+        [[nodiscard]] ID NextID() const;
     private:
         template<class T>
         static Type TypeFor();

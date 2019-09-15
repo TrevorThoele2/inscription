@@ -18,7 +18,7 @@ namespace Inscription
         memcpy(value, arg.value, size);
     }
 
-    Buffer::Buffer(Buffer&& arg) : size(std::move(arg.size)), value(std::move(arg.value))
+    Buffer::Buffer(Buffer&& arg) noexcept : size(arg.size), value(arg.value)
     {
         arg.size = 0;
         arg.value = nullptr;
@@ -26,8 +26,7 @@ namespace Inscription
 
     Buffer::~Buffer()
     {
-        if (value)
-            delete[] value;
+        delete[] value;
     }
 
     Buffer& Buffer::operator=(const Buffer& arg)
@@ -38,10 +37,10 @@ namespace Inscription
         return *this;
     }
 
-    Buffer& Buffer::operator=(Buffer&& arg)
+    Buffer& Buffer::operator=(Buffer&& arg) noexcept
     {
-        size = std::move(arg.size);
-        value = std::move(arg.value);
+        size = arg.size;
+        value = arg.value;
         arg.size = 0;
         arg.value = nullptr;
         return *this;
@@ -66,16 +65,6 @@ namespace Inscription
     {
         this->size = size;
         this->value = value;
-    }
-
-    Buffer::SizeT Buffer::GetSize() const
-    {
-        return size;
-    }
-
-    Buffer::T Buffer::GetValue() const
-    {
-        return value;
     }
 
     bool Buffer::IsOccupied() const

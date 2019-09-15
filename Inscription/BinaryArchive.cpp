@@ -1,12 +1,12 @@
 #include "BinaryArchive.h"
+#include <utility>
 
 #include "OutputBinaryArchive.h"
 #include "InputBinaryArchive.h"
 
 namespace Inscription
 {
-    BinaryArchive::~BinaryArchive()
-    {}
+    BinaryArchive::~BinaryArchive() = default;
 
     void BinaryArchive::AttemptReplaceTrackedObject(void* here, void *newObject)
     {
@@ -15,9 +15,9 @@ namespace Inscription
 
     bool BinaryArchive::TrackObjects(bool set)
     {
-        auto ret = objectTracker.IsActive();
+        const auto isActive = objectTracker.IsActive();
         objectTracker.Activate(set);
-        return ret;
+        return isActive;
     }
 
     void BinaryArchive::TrackSavedConstruction(TrackingID trackingID)
@@ -37,47 +37,35 @@ namespace Inscription
 
     bool BinaryArchive::IsOutput() const
     {
-        return direction == Direction::OUTPUT;
+        return direction == Direction::Output;
     }
 
     bool BinaryArchive::IsInput() const
     {
-        return direction == Direction::INPUT;
+        return direction == Direction::Input;
     }
 
     OutputBinaryArchive* BinaryArchive::AsOutput()
     {
-        if (!IsOutput())
-            return nullptr;
-
-        return static_cast<OutputBinaryArchive*>(this);
+        return dynamic_cast<OutputBinaryArchive*>(this);
     }
 
     InputBinaryArchive* BinaryArchive::AsInput()
     {
-        if (!IsInput())
-            return nullptr;
-
-        return static_cast<InputBinaryArchive*>(this);
+        return dynamic_cast<InputBinaryArchive*>(this);
     }
 
     const OutputBinaryArchive* BinaryArchive::AsOutput() const
     {
-        if (!IsOutput())
-            return nullptr;
-
-        return static_cast<const OutputBinaryArchive*>(this);
+        return dynamic_cast<const OutputBinaryArchive*>(this);
     }
 
     const InputBinaryArchive* BinaryArchive::AsInput() const
     {
-        if (!IsInput())
-            return nullptr;
-
-        return static_cast<const InputBinaryArchive*>(this);
+        return dynamic_cast<const InputBinaryArchive*>(this);
     }
 
-    const BinaryArchive::Signature& BinaryArchive::ClientSignature() const
+    auto BinaryArchive::ClientSignature() const -> Signature
     {
         return clientSignature;
     }
@@ -113,24 +101,25 @@ namespace Inscription
         const Signature& clientSignature,
         Version clientVersion,
         Version inscriptionVersion,
-        TypeRegistrationContext typeRegistrationContext) :
-
-        direction(direction), clientSignature(clientSignature), clientVersion(clientVersion),
-        inscriptionVersion(inscriptionVersion), typeRegistrationContext(typeRegistrationContext), postHeaderPosition(0)
+        TypeRegistrationContext typeRegistrationContext)
+        :
+        clientSignature(clientSignature), clientVersion(clientVersion), inscriptionVersion(inscriptionVersion),
+        postHeaderPosition(0), direction(direction), typeRegistrationContext(typeRegistrationContext)
     {
         typeRegistrationContext.PushAll(*this);
     }
 
-    BinaryArchive::BinaryArchive(BinaryArchive&& arg) :
+    BinaryArchive::BinaryArchive(BinaryArchive&& arg) noexcept :
         Archive(std::move(arg)),
-        direction(arg.direction), clientSignature(std::move(arg.clientSignature)),
-        clientVersion(std::move(arg.clientVersion)), objectTracker(std::move(arg.objectTracker)),
-        typeTracker(std::move(arg.typeTracker)), polymorphicManager(std::move(arg.polymorphicManager)),
-        typeRegistrationContext(std::move(arg.typeRegistrationContext)),
-        postHeaderPosition(std::move(arg.postHeaderPosition))
+        clientSignature(std::move(arg.clientSignature)), clientVersion(std::move(arg.clientVersion)),
+        inscriptionVersion(std::move(arg.inscriptionVersion)),
+        postHeaderPosition(std::move(arg.postHeaderPosition)), direction(arg.direction),
+        objectTracker(std::move(arg.objectTracker)), typeTracker(std::move(arg.typeTracker)),
+        polymorphicManager(std::move(arg.polymorphicManager)),
+        typeRegistrationContext(std::move(arg.typeRegistrationContext))
     {}
 
-    BinaryArchive& BinaryArchive::operator=(BinaryArchive&& arg)
+    BinaryArchive& BinaryArchive::operator=(BinaryArchive&& arg) noexcept
     {
         Archive::operator=(std::move(arg));
         clientSignature = std::move(arg.clientSignature);

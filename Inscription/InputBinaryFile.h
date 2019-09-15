@@ -10,10 +10,10 @@ namespace Inscription
     class InputBinaryFile : public Stream<std::ifstream>
     {
     public:
-        InputBinaryFile(const FilePath& path);
-        InputBinaryFile(InputBinaryFile&& arg);
+        explicit InputBinaryFile(const FilePath& path);
+        InputBinaryFile(InputBinaryFile&& arg) noexcept;
 
-        InputBinaryFile& operator=(InputBinaryFile&& arg);
+        InputBinaryFile& operator=(InputBinaryFile&& arg) noexcept;
 
         void ReadData(Buffer& buffer);
         template<class T>

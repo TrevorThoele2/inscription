@@ -36,7 +36,7 @@ public:
             return new ProtectedConstructor(value);
         }
 
-        int Value() const
+        [[nodiscard]] int Value() const
         {
             return value;
         }
@@ -57,7 +57,7 @@ public:
             return new PrivateConstructor(value);
         }
 
-        int Value() const
+        [[nodiscard]] int Value() const
         {
             return value;
         }
@@ -82,11 +82,6 @@ namespace Inscription
         {
             archive(object.value);
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -99,11 +94,6 @@ namespace Inscription
             archive(object.value);
             archive(object.next);
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -115,11 +105,6 @@ namespace Inscription
         {
             archive(object.value);
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -130,11 +115,6 @@ namespace Inscription
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
             archive(object.value);
-        }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
         }
     };
 }

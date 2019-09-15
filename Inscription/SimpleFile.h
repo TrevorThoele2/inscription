@@ -15,16 +15,16 @@ namespace Inscription
     public:
         virtual ~SimpleFile() = 0;
 
-        bool IsAtEndOfFile() const;
+        [[nodiscard]] bool IsAtEndOfFile() const;
     protected:
         // This constructor will not open the stream automatically
         // Be sure to ChangeMode into something that actually makes sense
         // Call reopen when you're ready to open the stream
-        SimpleFile(const FilePath& path);
+        explicit SimpleFile(const FilePath& path);
         SimpleFile(const FilePath& path, Mode mode);
-        SimpleFile(SimpleFile&& arg);
+        SimpleFile(SimpleFile&& arg) noexcept;
 
-        SimpleFile& operator=(SimpleFile&& arg);
+        SimpleFile& operator=(SimpleFile&& arg) noexcept;
     };
 
     template<class T>
@@ -36,11 +36,11 @@ namespace Inscription
     {}
 
     template<class T>
-    SimpleFile<T>::SimpleFile(SimpleFile&& arg) : Stream<T>(std::move(arg))
+    SimpleFile<T>::SimpleFile(SimpleFile&& arg) noexcept : Stream<T>(std::move(arg))
     {}
 
     template<class T>
-    SimpleFile<T>& SimpleFile<T>::operator=(SimpleFile&& arg)
+    SimpleFile<T>& SimpleFile<T>::operator=(SimpleFile&& arg) noexcept
     {
         Stream<T>::operator=(std::move(arg));
         return *this;

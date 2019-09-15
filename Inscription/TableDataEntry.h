@@ -13,9 +13,15 @@ namespace Inscription
     {
     public:
         TableDataEntry();
-        TableDataEntry(const T& arg);
-        TableDataEntry(T&& arg);
+        TableDataEntry(const TableDataEntry& arg) = default;
+        TableDataEntry(TableDataEntry&& arg) = default;
+        explicit TableDataEntry(const T& arg);
+        explicit TableDataEntry(T&& arg);
 
+        ~TableDataEntry();
+
+        TableDataEntry& operator=(const TableDataEntry& arg) = default;
+        TableDataEntry& operator=(TableDataEntry&& arg) = default;
         TableDataEntry& operator=(const T& arg);
         TableDataEntry& operator=(T&& arg);
 
@@ -29,7 +35,7 @@ namespace Inscription
     private:
         using Wrapped = T;
 
-        bool setup = false;
+        bool constructedBytes = false;
         using Bytes = std::array<char, sizeof(T)>;
         Bytes bytes;
 
@@ -54,6 +60,13 @@ namespace Inscription
     TableDataEntry<T>::TableDataEntry(T&& arg)
     {
         Edit(std::move(arg));
+    }
+
+    template<class T>
+    TableDataEntry<T>::~TableDataEntry()
+    {
+        if (constructedBytes)
+            Get().~T();
     }
 
     template<class T>
@@ -103,21 +116,21 @@ namespace Inscription
     template<class T>
     void TableDataEntry<T>::Edit(const T& arg)
     {
-        setup = true;
+        constructedBytes = true;
         new (reinterpret_cast<T*>(bytes.data())) T(arg);
     }
 
     template<class T>
     void TableDataEntry<T>::Edit(T&& arg)
     {
-        setup = true;
+        constructedBytes = true;
         new (reinterpret_cast<T*>(bytes.data())) T(std::move(arg));
     }
 
     template<class T>
     void TableDataEntry<T>::Edit(Bytes&& bytes)
     {
-        setup = true;
+        constructedBytes = true;
         bytes = std::move(bytes);
     }
 
@@ -134,13 +147,6 @@ namespace Inscription
         {
             archive(object.Get());
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
-
-        using BaseT::DoBasicConstruction;
     };
    
     template<class T, class Archive>

@@ -10,10 +10,10 @@ namespace Inscription
     class OutputBinaryFile : public Stream<std::ofstream>
     {
     public:
-        OutputBinaryFile(const FilePath& path);
-        OutputBinaryFile(OutputBinaryFile&& arg);
+        explicit OutputBinaryFile(const FilePath& path);
+        OutputBinaryFile(OutputBinaryFile&& arg) noexcept;
 
-        OutputBinaryFile& operator=(OutputBinaryFile&& arg);
+        OutputBinaryFile& operator=(OutputBinaryFile&& arg) noexcept;
 
         void WriteData(const Buffer& buffer);
         template<class T>

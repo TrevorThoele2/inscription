@@ -3,14 +3,14 @@
 namespace Inscription
 {
     OutputTextArchive::OutputTextArchive(const FilePath& path, bool append) :
-        TextArchive(Direction::OUTPUT), file(path, append)
+        TextArchive(Direction::Output), file(path, append)
     {}
 
-    OutputTextArchive::OutputTextArchive(OutputTextArchive&& arg) :
+    OutputTextArchive::OutputTextArchive(OutputTextArchive&& arg) noexcept :
         TextArchive(std::move(arg)), file(std::move(arg.file))
     {}
 
-    OutputTextArchive& OutputTextArchive::operator=(OutputTextArchive&& arg)
+    OutputTextArchive& OutputTextArchive::operator=(OutputTextArchive&& arg) noexcept
     {
         TextArchive::operator=(std::move(arg));
         file = std::move(arg.file);

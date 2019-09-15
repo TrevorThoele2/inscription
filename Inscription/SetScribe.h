@@ -23,15 +23,8 @@ namespace Inscription
         using typename BaseT::ArchiveT;
 
         using BaseT::Scriven;
-        using BaseT::Construct;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
-
-        using BaseT::DoBasicConstruction;
     private:
         void SaveImplementation(ObjectT& object, ArchiveT& archive);
         void LoadImplementation(ObjectT& object, ArchiveT& archive);

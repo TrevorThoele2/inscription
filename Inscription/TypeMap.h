@@ -18,10 +18,10 @@ namespace Inscription
     public:
         TypeMapBase() = default;
         TypeMapBase(const TypeMapBase& arg) = default;
-        TypeMapBase(TypeMapBase&& arg);
+        TypeMapBase(TypeMapBase&& arg) noexcept;
 
         TypeMapBase& operator=(const TypeMapBase& arg) = default;
-        TypeMapBase& operator=(TypeMapBase&& arg);
+        TypeMapBase& operator=(TypeMapBase&& arg) noexcept;
 
         std::pair<iterator, bool> Add(T& obj);
         std::pair<iterator, bool> Add(T&& obj);
@@ -35,22 +35,22 @@ namespace Inscription
         T* Find(const std::type_index& index);
         const T* Find(const std::type_index& index) const;
 
-        iterator begin();
-        const_iterator begin() const;
-        iterator end();
-        const_iterator end() const;
-        size_type size() const;
-        bool empty() const;
+        [[nodiscard]] iterator begin();
+        [[nodiscard]] const_iterator begin() const;
+        [[nodiscard]] iterator end();
+        [[nodiscard]] const_iterator end() const;
+        [[nodiscard]] size_type size() const;
+        [[nodiscard]] bool empty() const;
     private:
         Indices indices;
     };
     
     template<class Container, class T>
-    TypeMapBase<Container, T>::TypeMapBase(TypeMapBase&& arg) : indices(std::move(arg.indices))
+    TypeMapBase<Container, T>::TypeMapBase(TypeMapBase&& arg) noexcept : indices(std::move(arg.indices))
     {}
 
     template<class Container, class T>
-    TypeMapBase<Container, T>& TypeMapBase<Container, T>::operator=(TypeMapBase&& arg)
+    TypeMapBase<Container, T>& TypeMapBase<Container, T>::operator=(TypeMapBase&& arg) noexcept
     {
         indices = std::move(arg.indices);
         return *this;

@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #include <Inscription/TupleScribe.h>
-#include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
@@ -15,7 +14,7 @@ TEST_CASE_METHOD(TupleTestsFixture, "std::tuple")
 
     SECTION("save")
     {
-        auto saved = dataGeneration.Generator<TestedObject>().RandomStack<int, std::string, unsigned short>();
+        auto saved = dataGeneration.RandomStack<TestedObject, int, std::string, unsigned short>();
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();

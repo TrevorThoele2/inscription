@@ -1,6 +1,5 @@
 #include "OutputBinaryArchive.h"
 
-#include "ContainerSize.h"
 #include "Const.h"
 
 namespace Inscription
@@ -11,7 +10,7 @@ namespace Inscription
         Version clientVersion) :
 
         BinaryArchive(
-            Direction::OUTPUT,
+            Direction::Output,
             clientSignature,
             clientVersion,
             ::Inscription::currentInscriptionVersion),
@@ -27,7 +26,7 @@ namespace Inscription
         const TypeRegistrationContext& typeRegistrationContext) :
 
         BinaryArchive(
-            Direction::OUTPUT,
+            Direction::Output,
             clientSignature,
             clientVersion,
             ::Inscription::currentInscriptionVersion,
@@ -37,11 +36,11 @@ namespace Inscription
         InitialSetup();
     }
 
-    OutputBinaryArchive::OutputBinaryArchive(OutputBinaryArchive&& arg) :
+    OutputBinaryArchive::OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept :
         BinaryArchive(std::move(arg)), file(std::move(arg.file))
     {}
 
-    OutputBinaryArchive& OutputBinaryArchive::operator=(OutputBinaryArchive&& arg)
+    OutputBinaryArchive& OutputBinaryArchive::operator=(OutputBinaryArchive&& arg) noexcept
     {
         BinaryArchive::operator=(std::move(arg));
         file = std::move(arg.file);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Scribe.h"
 #include "ScribeBase.h"
 
@@ -17,12 +15,8 @@ namespace Inscription
         using ArchiveT = typename BaseT::ArchiveT;
     public:
         using BaseT::Scriven;
-        using BaseT::Construct;
     protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
-
-        using BaseT::DoBasicConstruction;
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override final;
     private:
         constexpr static bool isEnum = std::is_enum_v<ObjectT>;
     private:
@@ -37,12 +31,6 @@ namespace Inscription
             archive.AsOutput()->Write(object);
         else
             archive.AsInput()->Read(object);
-    }
-
-    template<class Object, class Archive>
-    void NumericScribe<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 
     template<class Archive>

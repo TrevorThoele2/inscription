@@ -3,6 +3,8 @@
 #include "BinaryArchive.h"
 #include "OutputBinaryFile.h"
 
+#include "Endian.h"
+
 namespace Inscription
 {
     class OutputBinaryArchive : public BinaryArchive
@@ -17,9 +19,9 @@ namespace Inscription
             const Signature& clientSignature,
             Version clientVersion,
             const TypeRegistrationContext& typeRegistrationContext);
-        OutputBinaryArchive(OutputBinaryArchive&& arg);
+        OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept;
 
-        OutputBinaryArchive& operator=(OutputBinaryArchive&& arg);
+        OutputBinaryArchive& operator=(OutputBinaryArchive&& arg) noexcept;
 
         template<class T>
         OutputBinaryArchive& Write(T& object);
@@ -27,28 +29,28 @@ namespace Inscription
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
     protected:
-        inline void WriteImpl(bool arg) { WriteToFile(arg); }
-        inline void WriteImpl(signed char arg) { WriteToFile(arg); }
-        inline void WriteImpl(char arg) { WriteToFile(arg); }
-        inline void WriteImpl(short arg) { WriteToFile(arg); }
-        inline void WriteImpl(int arg) { WriteToFile(arg); }
-        inline void WriteImpl(long arg) { WriteToFile(arg); }
-        inline void WriteImpl(long long arg) { WriteToFile(arg); }
-        inline void WriteImpl(unsigned char arg) { WriteToFile(arg); }
-        inline void WriteImpl(unsigned short arg) { WriteToFile(arg); }
-        inline void WriteImpl(unsigned int arg) { WriteToFile(arg); }
-        inline void WriteImpl(unsigned long arg) { WriteToFile(arg); }
-        inline void WriteImpl(unsigned long long arg) { WriteToFile(arg); }
-        inline void WriteImpl(float arg) { WriteToFile(arg); }
-        inline void WriteImpl(double arg) { WriteToFile(arg); }
-        inline void WriteImpl(const Buffer &arg) { WriteToFile(arg); }
+        void WriteImpl(bool arg) { WriteToFile(arg); }
+        void WriteImpl(signed char arg) { WriteToFile(arg); }
+        void WriteImpl(char arg) { WriteToFile(arg); }
+        void WriteImpl(short arg) { WriteToFile(arg); }
+        void WriteImpl(int arg) { WriteToFile(arg); }
+        void WriteImpl(long arg) { WriteToFile(arg); }
+        void WriteImpl(long long arg) { WriteToFile(arg); }
+        void WriteImpl(unsigned char arg) { WriteToFile(arg); }
+        void WriteImpl(unsigned short arg) { WriteToFile(arg); }
+        void WriteImpl(unsigned int arg) { WriteToFile(arg); }
+        void WriteImpl(unsigned long arg) { WriteToFile(arg); }
+        void WriteImpl(unsigned long long arg) { WriteToFile(arg); }
+        void WriteImpl(float arg) { WriteToFile(arg); }
+        void WriteImpl(double arg) { WriteToFile(arg); }
+        void WriteImpl(const Buffer &arg) { WriteToFile(arg); }
     private:
         OutputBinaryFile file;
     private:
         void InitialSetup();
     private:
         template<class T>
-        inline void WriteToFile(T& arg)
+        void WriteToFile(T& arg)
         {
             file.WriteData(arg);
         }
@@ -62,13 +64,9 @@ namespace Inscription
             "The T given to Write was not arithmetic or a Buffer.");
 
         if (!IsLittleEndian())
-            ByteSwap(object);
+            EnsureCorrectEndianness(object);
 
-#ifdef INSCRIPTION_COMMON_NUMERICS
-        WriteImpl(static_cast<typename NumericTraits<T>::Size>(object));
-#else
         WriteImpl(object);
-#endif
 
         return *this;
     }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <typeindex>
-
 #include "Scribe.h"
 #include "TableData.h"
 
@@ -15,18 +13,18 @@ namespace Inscription
         using ObjectT = Object;
         using ArchiveT = Archive;
     private:
-        using BaseScribe = typename Scribe<Base, ArchiveT>;
+        using BaseScribe = Scribe<Base, ArchiveT>;
     public:
         using TableT = typename BaseScribe::Table;
-        using DataT = typename TableData<BaseT, ArchiveT>;
+        using DataT = TableData<BaseT, ArchiveT>;
     public:
-        BaseTableDataLink();
+        BaseTableDataLink() = default;
 
         BaseTableDataLink(const BaseTableDataLink& arg);
-        BaseTableDataLink(BaseTableDataLink&& arg);
+        BaseTableDataLink(BaseTableDataLink&& arg) noexcept;
 
         BaseTableDataLink& operator=(const BaseTableDataLink& arg);
-        BaseTableDataLink& operator=(BaseTableDataLink&& arg);
+        BaseTableDataLink& operator=(BaseTableDataLink&& arg) noexcept;
 
         void Scriven(ArchiveT& archive);
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
@@ -43,18 +41,14 @@ namespace Inscription
         DataT* operator->();
         const DataT* operator->() const;
 
-        DataT& Data();
-        const DataT& Data() const;
+        [[nodiscard]] DataT& Data();
+        [[nodiscard]] const DataT& Data() const;
 
-        TableT& Table();
-        const TableT& Table() const;
+        [[nodiscard]] TableT& Table();
+        [[nodiscard]] const TableT& Table() const;
     public:
         TableT baseTable;
     };
-
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink() 
-    {}
 
     template<class Base, class Object, class Archive>
     BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink(const BaseTableDataLink& arg) :
@@ -62,7 +56,7 @@ namespace Inscription
     {}
 
     template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink(BaseTableDataLink&& arg) :
+    BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink(BaseTableDataLink&& arg) noexcept :
         baseTable(std::move(arg.baseTable))
     {}
 
@@ -76,7 +70,7 @@ namespace Inscription
 
     template<class Base, class Object, class Archive>
     BaseTableDataLink<Base, Object, Archive>& BaseTableDataLink<Base, Object, Archive>::operator=(
-        BaseTableDataLink&& arg)
+        BaseTableDataLink&& arg) noexcept
     {
         baseTable = std::move(arg.baseTable);
         return *this;

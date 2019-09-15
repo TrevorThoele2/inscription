@@ -3,19 +3,19 @@
 namespace Inscription
 {
     template<class T>
-    struct IsConst : public std::false_type
+    struct IsConst : std::false_type
     {};
 
     template<class T>
-    struct IsConst<const T> : public std::true_type
+    struct IsConst<const T> : std::true_type
     {};
 
     template<class T>
-    struct IsConst<const T*> : public std::true_type
+    struct IsConst<const T*> : std::true_type
     {};
 
     template<class T>
-    struct IsConst<const T&> : public std::true_type
+    struct IsConst<const T&> : std::true_type
     {};
 
     template<class T>
@@ -55,13 +55,13 @@ namespace Inscription
     };
 
     template<class T>
-    inline typename RemoveConstTrait<T>::type&& RemoveConst(T&& object)
+    typename RemoveConstTrait<T>::type&& RemoveConst(T&& object)
     {
         return const_cast<typename RemoveConstTrait<T>::type&&>(object);
     }
 
     template<class T>
-    inline typename RemoveConstTrait<T>::type& RemoveConst(T& object)
+    typename RemoveConstTrait<T>::type& RemoveConst(T& object)
     {
         return const_cast<typename RemoveConstTrait<T>::type&>(object);
     }

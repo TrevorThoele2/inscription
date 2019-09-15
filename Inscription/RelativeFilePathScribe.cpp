@@ -18,7 +18,7 @@ namespace Inscription
             auto moveDown = object.GetMoveDown();
             archive(moveDown);
         }
-        else // INPUT
+        else // Input
         {
             size_t moveUpCount;
             archive(moveUpCount);

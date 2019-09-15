@@ -13,7 +13,7 @@ namespace Inscription
         using ArchiveT = Archive;
     public:
         template<class Function>
-        ClassNameResolver(Function function);
+        explicit ClassNameResolver(Function function);
 
         ClassName NameFor(ArchiveT& archive) const;
     private:

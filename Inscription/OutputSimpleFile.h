@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 #include "SimpleFile.h"
 
 namespace Inscription
@@ -7,7 +9,7 @@ namespace Inscription
     class OutputSimpleFile : public SimpleFile<std::ofstream>
     {
     public:
-        OutputSimpleFile(const FilePath& path, bool append = false);
+        explicit OutputSimpleFile(const FilePath& path, bool append = false);
 
         template<class T>
         OutputSimpleFile& operator<<(T& var);

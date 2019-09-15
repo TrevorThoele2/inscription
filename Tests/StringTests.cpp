@@ -13,7 +13,7 @@ TEST_CASE_METHOD(StringTestsFixture, "std::string")
 
     SECTION("save")
     {
-        auto saved = dataGeneration.Generator<TestedObject>().Random();
+        auto saved = dataGeneration.Random<TestedObject>();
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();

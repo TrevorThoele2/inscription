@@ -1,7 +1,5 @@
 #include "ObjectTracker.h"
 
-#include "Storage.h"
-
 namespace Inscription
 {
     ObjectTracker::ObjectTracker(const ObjectTracker& arg)
@@ -10,7 +8,7 @@ namespace Inscription
             map.emplace(loop.first, Entry(loop.second));
     }
 
-    ObjectTracker::ObjectTracker(ObjectTracker&& arg) :
+    ObjectTracker::ObjectTracker(ObjectTracker&& arg) noexcept :
         active(arg.active), map(std::move(arg.map))
     {}
 
@@ -22,7 +20,7 @@ namespace Inscription
         return *this;
     }
 
-    ObjectTracker& ObjectTracker::operator=(ObjectTracker&& arg)
+    ObjectTracker& ObjectTracker::operator=(ObjectTracker&& arg) noexcept
     {
         active = arg.active;
         map = std::move(arg.map);
@@ -55,7 +53,7 @@ namespace Inscription
             return Optional<ID>();
 
         {
-            auto foundObject = FindObject(id);
+            const auto foundObject = FindObject(id);
             if (foundObject)
                 return id;
 
@@ -74,14 +72,14 @@ namespace Inscription
         if (!IsActive())
             return;
 
-        auto iterator = FindIterator(here);
+        const auto iterator = FindIterator(here);
         if (iterator == map.end())
         {
             Add(newObject);
             return;
         }
 
-        auto id = iterator->first;
+        const auto id = iterator->first;
         map.erase(iterator);
         Add(newObject, id);
     }
@@ -91,7 +89,7 @@ namespace Inscription
         if (!IsActive())
             return;
 
-        auto iterator = map.find(id);
+        const auto iterator = map.find(id);
         if (iterator == map.end())
             return;
 
@@ -100,7 +98,7 @@ namespace Inscription
 
     bool ObjectTracker::HasSavedConstruction(ID id) const
     {
-        auto iterator = map.find(id);
+        const auto iterator = map.find(id);
         if (iterator == map.end())
             return false;
 
@@ -109,7 +107,7 @@ namespace Inscription
 
     void* ObjectTracker::FindObject(ID id)
     {
-        auto entry = FindEntry(id);
+        const auto entry = FindEntry(id);
         if (!entry)
             return nullptr;
 
@@ -118,7 +116,7 @@ namespace Inscription
 
     Optional<ObjectTracker::ID> ObjectTracker::FindID(void* object)
     {
-        auto iterator = FindIterator(object);
+        const auto iterator = FindIterator(object);
         if (iterator == map.end())
             return Optional<ID>();
 

@@ -21,11 +21,6 @@ namespace Inscription
             LoadImplementation(object, archive);
     }
 
-    void Scribe<std::string, BinaryArchive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
-    }
-
     void Scribe<std::string, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
         ContainerSize size(object.size());

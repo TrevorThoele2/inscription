@@ -64,10 +64,6 @@ namespace Inscription
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -78,10 +74,6 @@ namespace Inscription
         static const ClassNameResolver classNameResolver;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 }
 
@@ -91,7 +83,7 @@ TEST_CASE_METHOD(BinaryPolymorphicListFixture, "binary polymorphic list")
     {
         std::vector<Base*> savedOwning;
         {
-            auto startingGroup = dataGeneration.Generator<Derived>().RandomHeapGroup(3);
+            auto startingGroup = dataGeneration.RandomHeapGroup<Derived>(3);
             for (auto& loop : startingGroup)
                 savedOwning.push_back(loop);
         }

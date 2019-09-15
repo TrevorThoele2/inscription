@@ -10,10 +10,10 @@ namespace Inscription
     public:
         using Width = std::streamsize;
     public:
-        OutputTextFile(const FilePath& path, bool append = false);
-        OutputTextFile(OutputTextFile&& arg);
+        explicit OutputTextFile(const FilePath& path, bool append = false);
+        OutputTextFile(OutputTextFile&& arg) noexcept;
 
-        OutputTextFile& operator=(OutputTextFile&& arg);
+        OutputTextFile& operator=(OutputTextFile&& arg) noexcept;
 
         void WriteData(const std::string& string);
         void WriteData(const char character);
@@ -22,7 +22,7 @@ namespace Inscription
 
         // Set this to output strings at a given width.
         // If the string is lower than the width set, it'll fill with this character.
-        void SetFillCharacter(const char set);
+        void SetFillCharacter(char set);
         void ResetFillCharacter();
         // Set this to output strings at a given width.
         // If the string is lower than this, it'll fill with the fill character.

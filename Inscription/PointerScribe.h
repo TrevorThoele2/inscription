@@ -1,19 +1,15 @@
 #pragma once
 
-#include <memory>
-
 #include "ScribeBase.h"
 
-#include "ObjectTracker.h"
-#include "TypeTracker.h"
 #include "SpecialObjectTrackingID.h"
-#include "SpecialTypeTrackingID.h"
 #include "ObjectTrackingContext.h"
 
 #include "PolymorphicManager.h"
 
 #include "NumericScribe.h"
 #include "StringScribe.h"
+#include "Access.h"
 
 #include "Storage.h"
 
@@ -29,12 +25,8 @@ namespace Inscription
         using typename BaseT::ArchiveT;
 
         using BaseT::Scriven;
-        using BaseT::Construct;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
-
-        using BaseT::DoBasicConstruction;
     private:
         void SaveImplementation(ObjectT& object, ArchiveT& archive);
         void LoadImplementation(ObjectT& object, ArchiveT& archive);
@@ -48,12 +40,10 @@ namespace Inscription
         void SaveConstruction(
             ObjectT& object,
             ArchiveT& archive,
-            TrackingID objectID,
             std::true_type);
         void SaveConstruction(
             ObjectT& object,
             ArchiveT& archive,
-            TrackingID objectID,
             std::false_type);
         void LoadConstruction(
             ObjectT& object,
@@ -77,12 +67,6 @@ namespace Inscription
             SaveImplementation(object, archive);
         else
             LoadImplementation(object, archive);
-    }
-
-    template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 
     template<class Object, class Archive>
@@ -124,8 +108,8 @@ namespace Inscription
         SaveConstruction(
             object,
             archive,
-            objectID,
-            std::bool_constant<shouldConstructPolymorphically>{});
+            std::bool_constant<shouldConstructPolymorphically>{}
+        );
     }
 
     template<class Object, class Archive>
@@ -155,15 +139,16 @@ namespace Inscription
             object,
             archive,
             objectID,
-            std::bool_constant<shouldConstructPolymorphically>{});
+            std::bool_constant<shouldConstructPolymorphically>{}
+        );
     }
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::SaveConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::true_type)
+        ObjectT& object, ArchiveT& archive, std::true_type)
     {
         TrackingID typeID;
-        bool needsClassName = false;
+        auto needsClassName = false;
         auto type = std::type_index(typeid(*object));
 
         {
@@ -190,7 +175,7 @@ namespace Inscription
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::SaveConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::false_type)
+        ObjectT& object, ArchiveT& archive, std::false_type)
     {
         bareScribe.Scriven(*object, archive);
     }
@@ -229,7 +214,7 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive, TrackingID objectID, std::false_type)
     {
         auto storage = reinterpret_cast<BareObject*>(CreateStorage(sizeof(BareObject)));
-        bareScribe.Construct(storage, archive);
+        Access::Construct(storage, archive, bareScribe);
         object = storage;
     }
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "Archive.h"
 
 #include "Scribe.h"
@@ -22,18 +20,18 @@ namespace Inscription
         template<class T>
         TextArchive& operator()(T& object);
     public:
-        bool IsOutput() const;
-        bool IsInput() const;
+        [[nodiscard]] bool IsOutput() const;
+        [[nodiscard]] bool IsInput() const;
 
         OutputTextArchive* AsOutput();
         InputTextArchive* AsInput();
-        const OutputTextArchive* AsOutput() const;
-        const InputTextArchive* AsInput() const;
+        [[nodiscard]] const OutputTextArchive* AsOutput() const;
+        [[nodiscard]] const InputTextArchive* AsInput() const;
     protected:
-        TextArchive(Direction direction);
-        TextArchive(TextArchive&& arg);
+        explicit TextArchive(Direction direction);
+        TextArchive(TextArchive&& arg) noexcept;
 
-        TextArchive& operator=(TextArchive&& arg);
+        TextArchive& operator=(TextArchive&& arg) noexcept;
     private:
         template<class T>
         using KnownScribe = Scribe<T, TextArchive>;

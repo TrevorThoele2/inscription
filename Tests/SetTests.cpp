@@ -16,7 +16,7 @@ TEST_CASE_METHOD(SetTestsFixture, "std::set")
     {
         TestedObject saved;
 
-        const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
+        const auto startingGroup = dataGeneration.RandomGroup<int>(5);
 
         for (auto& loop : startingGroup)
             saved.emplace(loop);

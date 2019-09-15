@@ -1,7 +1,5 @@
 #pragma once
 
-#include <typeindex>
-
 #include "BaseTableDataLink.h"
 #include "Type.h"
 
@@ -27,10 +25,10 @@ namespace Inscription
         static AutoTableDataLink Base(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
 
         AutoTableDataLink(const AutoTableDataLink& arg);
-        AutoTableDataLink(AutoTableDataLink&& arg);
+        AutoTableDataLink(AutoTableDataLink&& arg) noexcept;
         
         AutoTableDataLink& operator=(const AutoTableDataLink& arg);
-        AutoTableDataLink& operator=(AutoTableDataLink&& arg);
+        AutoTableDataLink& operator=(AutoTableDataLink&& arg) noexcept;
 
         void Scriven(TableT& table, ArchiveT& archive);
         void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive);
@@ -41,16 +39,16 @@ namespace Inscription
         template<class ObjectMemberT, class DataMemberT>
         AutoTableDataLink(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
         template<class BaseT>
-        AutoTableDataLink(Type<BaseT> type);
+        explicit AutoTableDataLink(Type<BaseT> type);
         template<class BaseT>
-        AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
+        explicit AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
     private:
         class Implementation
         {
         public:
             virtual ~Implementation() = 0;
 
-            virtual Implementation* Clone() const = 0;
+            [[nodiscard]] virtual Implementation* Clone() const = 0;
 
             virtual void Scriven(TableT& table, ArchiveT& archive) = 0;
             virtual void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
@@ -67,6 +65,8 @@ namespace Inscription
             DataMemberT DataT::*dataMember;
         public:
             AutoImplementation(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
+
+            ~AutoImplementation() = default;
 
             AutoImplementation* Clone() const override;
 
@@ -86,6 +86,8 @@ namespace Inscription
         public:
             AutoSameTypeImplementation(T ObjectT::*objectMember, T DataT::*dataMember);
 
+            ~AutoSameTypeImplementation() = default;
+
             AutoSameTypeImplementation* Clone() const override;
 
             void Scriven(TableT& table, ArchiveT& archive) override;
@@ -102,6 +104,8 @@ namespace Inscription
             using BaseLink = BaseTableDataLink<BaseT, ObjectT, ArchiveT>;
             BaseLink baseLink;
         public:
+            ~BaseImplementation() = default;
+
             BaseImplementation* Clone() const override;
 
             void Scriven(TableT& table, ArchiveT& archive) override;
@@ -118,7 +122,9 @@ namespace Inscription
             using BaseLink = BaseTableDataLink<BaseT, ObjectT, ArchiveT>;
             BaseLink* baseLink;
         public:
-            BaseReferenceImplementation(BaseLink& baseLink);
+            explicit BaseReferenceImplementation(BaseLink& baseLink);
+
+            ~BaseReferenceImplementation() = default;
 
             BaseReferenceImplementation* Clone() const override;
 
@@ -175,7 +181,7 @@ namespace Inscription
     {}
 
     template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(AutoTableDataLink&& arg) :
+    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(AutoTableDataLink&& arg) noexcept :
         implementation(std::move(arg.implementation))
     {}
 
@@ -189,7 +195,7 @@ namespace Inscription
 
     template<class Data, class Object, class Archive>
     AutoTableDataLink<Data, Object, Archive>& AutoTableDataLink<Data, Object, Archive>::operator=(
-        AutoTableDataLink&& arg)
+        AutoTableDataLink&& arg) noexcept
     {
         implementation = std::move(arg.implementation);
         return *this;
@@ -238,8 +244,7 @@ namespace Inscription
     {}
 
     template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>::Implementation::~Implementation()
-    {}
+    AutoTableDataLink<Data, Object, Archive>::Implementation::~Implementation() = default;
 
     template<class Data, class Object, class Archive>
     template<class ObjectMemberT, class DataMemberT>
@@ -251,8 +256,8 @@ namespace Inscription
 
     template<class Data, class Object, class Archive>
     template<class ObjectMemberT, class DataMemberT>
-    AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>*
-        AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Clone() const
+    auto AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Clone() const
+        -> AutoImplementation<ObjectMemberT, DataMemberT>*
     {
         return new AutoImplementation(*this);
     }
@@ -297,15 +302,15 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class T>
     AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::AutoSameTypeImplementation(
-        T ObjectT::*objectMember, T DataT::*dataMember) :
-
+        T ObjectT::*objectMember, T DataT::*dataMember)
+        :
         objectMember(objectMember), dataMember(dataMember)
     {}
 
     template<class Data, class Object, class Archive>
     template<class T>
-    AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>*
-        AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::Clone() const
+    auto AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::Clone() const
+        -> AutoSameTypeImplementation<T>*
     {
         return new AutoSameTypeImplementation(*this);
     }
@@ -349,8 +354,8 @@ namespace Inscription
 
     template<class Data, class Object, class Archive>
     template<class T>
-    AutoTableDataLink<Data, Object, Archive>::BaseImplementation<T>*
-        AutoTableDataLink<Data, Object, Archive>::BaseImplementation<T>::Clone() const
+    auto AutoTableDataLink<Data, Object, Archive>::BaseImplementation<T>::Clone() const
+        -> BaseImplementation<T>*
     {
         return new BaseImplementation(*this);
     }
@@ -395,8 +400,8 @@ namespace Inscription
 
     template<class Data, class Object, class Archive>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>*
-        AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::Clone() const
+    auto AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::Clone() const
+        -> BaseReferenceImplementation<BaseT>*
     {
         return new BaseReferenceImplementation(*this);
     }
