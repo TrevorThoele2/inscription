@@ -58,14 +58,12 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     };
 
     template<>
     struct TableData<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive> :
-        public TableDataBase<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
+        TableDataBase<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::Base> base;
         std::string derivedValue;
@@ -80,11 +78,9 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
@@ -104,11 +100,11 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
+
+            void Construct(ObjectT* storage, ArchiveT& archive);
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
@@ -129,7 +125,6 @@ namespace Inscription
             Table();
         protected:
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     };
 
@@ -154,10 +149,9 @@ namespace Inscription
             void Construct(ObjectT* storage, ArchiveT& archive);
         protected:
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
@@ -176,8 +170,6 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     };
 
@@ -198,11 +190,9 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
@@ -222,19 +212,17 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::Base> base;
-        ::BinaryTableFixture::NonDefault* derivedValue;
+        ::BinaryTableFixture::NonDefault* derivedValue = nullptr;
     };
 
     template<>
@@ -246,11 +234,9 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     };
 
     template<>
@@ -269,8 +255,6 @@ namespace Inscription
         {
         public:
             Table();
-        protected:
-            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     };
 }

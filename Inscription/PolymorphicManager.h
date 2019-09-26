@@ -108,7 +108,7 @@ namespace Inscription
     template<class T>
     void PolymorphicManager<Archive>::Register(ArchiveT& archive)
     {
-        auto className = Scribe<T, ArchiveT>::classNameResolver.NameFor(archive);
+        auto className = Scribe<T, ArchiveT>::ClassNameResolver(archive);
         entryList.push_back(Entry(className, ::Inscription::Type<T>{}));
     }
 

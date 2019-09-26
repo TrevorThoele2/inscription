@@ -9,8 +9,6 @@
 
 #include "Scribe.h"
 
-#include <Chroma/IsBracesConstructible.h>
-
 namespace Inscription
 {
     template<class Object, class Archive>
@@ -28,7 +26,6 @@ namespace Inscription
     public:
         void Scriven(ArchiveT& archive);
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
-        void Construct(ObjectT* storage, ArchiveT& archive);
 
         void PushToObject(ObjectT& object, ArchiveT& archive);
         void PullFromObject(ObjectT& object, ArchiveT& archive);
@@ -39,7 +36,6 @@ namespace Inscription
     protected:
         virtual void ScrivenImplementation(ArchiveT& archive);
         virtual void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive);
-        virtual void ConstructImplementation(ObjectT* storage, ArchiveT& archive) = 0;
 
         virtual void PushToObjectImplementation(ObjectT& object, ArchiveT& archive);
         virtual void PullFromObjectImplementation(ObjectT& object, ArchiveT& archive);
@@ -48,55 +44,8 @@ namespace Inscription
         using DataLinkList = std::vector<DataLink>;
         void AddDataLink(DataLink&& link);
         void MergeDataLinks(DataLinkList&& links);
-    protected:
-        void DoBasicConstruction(ObjectT* storage, ArchiveT& archive);
     private:
         DataLinkList dataEntryList;
-    private:
-        template<class T>
-        constexpr static bool shouldDefaultConstruct =
-            !std::is_abstract_v<T> &&
-            ::Chroma::is_braces_default_constructible_v<T>;
-        template<class T>
-        constexpr static bool shouldDataConstruct =
-            !std::is_abstract_v<T> &&
-            !::Chroma::is_braces_default_constructible_v<T>;
-        template<class T>
-        constexpr static bool shouldIgnoreConstruct =
-            std::is_abstract_v<T>;
-
-        template<class T, std::enable_if_t<shouldDefaultConstruct<T>, int> = 0>
-        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
-        {
-            new (storage) ObjectT{};
-        }
-
-        template<class T, std::enable_if_t<shouldDataConstruct<T>, int> = 0>
-        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
-        {
-            DataConstructionImplementation<T>(storage, data);
-        }
-
-        template<class T, std::enable_if_t<shouldIgnoreConstruct<T>, int> = 0>
-        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
-        {}
-
-        template<class T, std::enable_if_t<Chroma::is_braces_constructible_v<T, const DataT&>, int> = 0>
-        static void DataConstructionImplementation(ObjectT* storage, DataT& data)
-        {
-            new (storage) ObjectT{ data };
-        }
-
-        template<class T, std::enable_if_t<!Chroma::is_braces_constructible_v<T, const DataT&>, int> = 0>
-        static void DataConstructionImplementation(ObjectT* storage, DataT& table)
-        {
-            static_assert(
-                !Chroma::is_braces_constructible_v<T, const DataT&>,
-                "Basic table construction requires either a "
-                "default constructor or a constructor taking a (const DataT&) on ObjectT. "
-
-                "Create one of these constructors or manually construct in ConstructImplementation.");
-        }
     private:
         template<class Object, class Archive>
         friend class TableScribe;
@@ -120,12 +69,6 @@ namespace Inscription
         archive.AttemptTrackObject(&object);
 
         ObjectScrivenImplementation(object, archive);
-    }
-
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::Construct(ObjectT* storage, ArchiveT& archive)
-    {
-        ConstructImplementation(storage, archive);
     }
 
     template<class Object, class Archive>
@@ -161,10 +104,6 @@ namespace Inscription
     {}
 
     template<class Object, class Archive>
-    void TableBase<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {}
-
-    template<class Object, class Archive>
     void TableBase<Object, Archive>::PushToObjectImplementation(
         ObjectT& object, ArchiveT& archive)
     {}
@@ -188,11 +127,5 @@ namespace Inscription
             std::make_move_iterator(links.begin()),
             std::make_move_iterator(links.end()));
         links.clear();
-    }
-
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::DoBasicConstruction(ObjectT* storage, ArchiveT& archive)
-    {
-        BasicConstructionImplementation<ObjectT>(storage, archive);
     }
 }

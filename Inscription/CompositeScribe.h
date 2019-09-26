@@ -2,8 +2,6 @@
 
 #include "ScribeBase.h"
 
-#include "ClassNameResolver.h"
-
 #include "ObjectTrackingContext.h"
 
 #include "BinaryArchive.h"
@@ -18,8 +16,6 @@ namespace Inscription
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
-    public:
-        using ClassNameResolver = ClassNameResolver<ArchiveT>;
     public:
         void Scriven(ObjectT& object, ArchiveT& archive) override;
     protected:
@@ -47,16 +43,12 @@ namespace Inscription
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
     public:
-        using ClassNameResolver = ClassNameResolver<ArchiveT>;
-    public:
         void Scriven(ObjectT& object, ArchiveT& archive) override;
     protected:
         CompositeScribe() = default;
         CompositeScribe(const CompositeScribe& arg) = default;
 
         using BaseT::ScrivenImplementation;
-    protected:
-        static ClassNameResolver CreateSingleNameResolver(const std::string& name);
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a CompositeScribe was not a composite.");
@@ -75,15 +67,5 @@ namespace Inscription
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
             ScrivenImplementation(object, archive);
         }
-    }
-
-    template<class Object>
-    auto CompositeScribe<Object, BinaryArchive>::CreateSingleNameResolver(const std::string& name)
-        -> ClassNameResolver
-    {
-        return ClassNameResolver([name](ArchiveT& archive)
-        {
-            return name;
-        });
     }
 }
