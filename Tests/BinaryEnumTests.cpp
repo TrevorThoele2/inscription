@@ -23,9 +23,9 @@ namespace Inscription
     {};
 }
 
-TEST_CASE_METHOD(BinaryEnumFixture, "binary enum")
+SCENARIO_METHOD(BinaryEnumFixture, "loading binary enum", "[binary][enum]")
 {
-    SECTION("save")
+    GIVEN("saved enum")
     {
         Enum saved = Two;
 
@@ -34,14 +34,17 @@ TEST_CASE_METHOD(BinaryEnumFixture, "binary enum")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading enum")
         {
             Enum loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(loaded == saved);
+            THEN("enum is same as saved")
+            {
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

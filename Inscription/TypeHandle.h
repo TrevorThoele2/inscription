@@ -4,5 +4,5 @@
 
 namespace Inscription
 {
-    using ClassName = std::string;
+    using TypeHandle = std::string;
 }

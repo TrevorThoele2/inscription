@@ -23,7 +23,7 @@ public:
     }
 
     template<>
-    OutputArchive CreateRegistered() const
+    [[nodiscard]] OutputArchive CreateRegistered() const
     {
         OutputArchive created("Test.dat", "testing", 1);
 
@@ -34,7 +34,7 @@ public:
     }
 
     template<>
-    InputArchive CreateRegistered() const
+    [[nodiscard]] InputArchive CreateRegistered() const
     {
         InputArchive created("Test.dat", "testing");
 
@@ -52,7 +52,7 @@ public:
 
         virtual ~Base() = 0;
 
-        int BaseValue() const
+        [[nodiscard]] int BaseValue() const
         {
             return baseValue;
         }
@@ -69,7 +69,7 @@ public:
             Base(baseValue), derivedValue(derivedValue)
         {}
 
-        const std::string& DerivedValue() const
+        [[nodiscard]] const std::string& DerivedValue() const
         {
             return derivedValue;
         }
@@ -80,8 +80,7 @@ public:
     };
 };
 
-BinaryPolymorphicManualRegistrationFixture::Base::~Base()
-{}
+BinaryPolymorphicManualRegistrationFixture::Base::~Base() = default;
 
 namespace Inscription
 {
@@ -98,15 +97,18 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
     {
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
 }
 
-TEST_CASE_METHOD(BinaryPolymorphicManualRegistrationFixture, "binary polymorphic manual registration")
-{
-    SECTION("polymorphic pointer saves and loads")
+SCENARIO_METHOD(
+    BinaryPolymorphicManualRegistrationFixture,
+    "loading manually registered type in binary",
+    "[binary][pointer][polymorphic]"
+) {
+    GIVEN("saved manually registered polymorphic object")
     {
         Base* saved = dataGeneration.Generator<Derived>().RandomHeap();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
@@ -116,21 +118,27 @@ TEST_CASE_METHOD(BinaryPolymorphicManualRegistrationFixture, "binary polymorphic
             outputArchive(saved);
         }
 
-        Base* loaded = nullptr;
-
+        WHEN("loading manually registered polymorphic object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
+
+            THEN("loaded object is valid")
+            {
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->BaseValue() == savedCasted->BaseValue());
+                REQUIRE(loadedCasted->DerivedValue() == savedCasted->DerivedValue());
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->BaseValue() == savedCasted->BaseValue());
-        REQUIRE(loadedCasted->DerivedValue() == savedCasted->DerivedValue());
-
-        delete saved;
-        delete loaded;
     }
 }
 
@@ -142,7 +150,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    ClassName Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";

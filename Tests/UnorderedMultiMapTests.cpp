@@ -9,11 +9,14 @@
 class UnorderedMultiMapTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(UnorderedMultiMapTestsFixture, "std::unordered_multimap")
-{
+SCENARIO_METHOD(
+    UnorderedMultiMapTestsFixture,
+    "loading unordered_multimap after saving",
+    "[binary][container][unordered_multimap]"
+) {
     using TestedObject = std::unordered_multimap<int, std::string>;
 
-    SECTION("save")
+    GIVEN("saved unordered_multimap")
     {
         TestedObject saved;
 
@@ -33,15 +36,18 @@ TEST_CASE_METHOD(UnorderedMultiMapTestsFixture, "std::unordered_multimap")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

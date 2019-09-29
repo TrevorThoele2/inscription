@@ -9,11 +9,11 @@
 class MapTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(MapTestsFixture, "std::map")
+SCENARIO_METHOD(MapTestsFixture, "loading map after saving", "[binary][container][map]")
 {
     using TestedObject = std::map<int, std::string>;
 
-    SECTION("save")
+    GIVEN("saved map")
     {
         TestedObject saved;
 
@@ -33,15 +33,18 @@ TEST_CASE_METHOD(MapTestsFixture, "std::map")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

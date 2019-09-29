@@ -8,11 +8,11 @@
 class ArrayTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(ArrayTestsFixture, "std::array")
+SCENARIO_METHOD(ArrayTestsFixture, "loading array after saving", "[binary][container][array]")
 {
     using TestedObject = std::array<int, 5>;
 
-    SECTION("save")
+    GIVEN("saved array")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(ArrayTestsFixture, "std::array")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading array")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as savd")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

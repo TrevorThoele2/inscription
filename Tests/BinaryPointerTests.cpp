@@ -119,9 +119,9 @@ namespace Inscription
     };
 }
 
-TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
+SCENARIO_METHOD(BinaryPointerFixture, "loading null pointer in binary", "[binary][pointer]")
 {
-    SECTION("null pointer saves and loads")
+    GIVEN("saved null pointer")
     {
         Object* saved = nullptr;
 
@@ -130,17 +130,26 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(saved);
         }
 
-        Object* loaded = nullptr;
-
+        WHEN("loading pointer")
         {
-            auto inputArchive = CreateRegistered<OutputArchive>();
-            inputArchive(loaded);
+            Object* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<OutputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("loaded pointer is null")
+            {
+                REQUIRE(loaded == nullptr);
+            }
         }
-
-        REQUIRE(loaded == nullptr);
     }
+}
 
-    SECTION("loads when object is saved beforehand")
+SCENARIO_METHOD(BinaryPointerFixture, "loading object before pointer in binary", "[binary][pointer]")
+{
+    GIVEN("object saved before pointer")
     {
         Object savedObject = dataGeneration.RandomStack<Object, int>();
         Object* savedPointer = &savedObject;
@@ -151,20 +160,29 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(savedPointer);
         }
 
-        Object loadedObject;
-        Object* loadedPointer;
-
+        WHEN("loading object then pointer")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedObject);
-            inputArchive(loadedPointer);
+            Object loadedObject;
+            Object* loadedPointer;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedObject);
+                inputArchive(loadedPointer);
+            }
+
+            THEN("loaded pointer points to loaded object")
+            {
+                REQUIRE(loadedObject.value == savedObject.value);
+                REQUIRE(loadedPointer == &loadedObject);
+            }
         }
-
-        REQUIRE(loadedObject.value == savedObject.value);
-        REQUIRE(loadedPointer == &loadedObject);
     }
+}
 
-    SECTION("loads nested object")
+SCENARIO_METHOD(BinaryPointerFixture, "loading nested object in binary", "[binary][pointer]")
+{
+    GIVEN("saved nested object")
     {
         NestedObject* savedObject1 = dataGeneration.RandomHeap<NestedObject, int>();
         NestedObject* savedObject2 = dataGeneration.RandomHeap<NestedObject, int>();
@@ -175,30 +193,39 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(savedObject1);
         }
 
-        NestedObject* loadedObject1 = nullptr;
-
+        WHEN("loading nested object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedObject1);
+            NestedObject* loadedObject1 = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedObject1);
+            }
+
+            THEN("loaded nested object is valid")
+            {
+                REQUIRE(loadedObject1 != nullptr);
+                REQUIRE(loadedObject1->next != nullptr);
+
+                auto loadedObject2 = loadedObject1->next;
+
+                REQUIRE(loadedObject1->next == loadedObject2);
+                REQUIRE(loadedObject2->next == nullptr);
+                REQUIRE(loadedObject1->value == savedObject1->value);
+                REQUIRE(loadedObject2->value == savedObject2->value);
+
+                delete savedObject1;
+                delete savedObject2;
+                delete loadedObject1;
+                delete loadedObject2;
+            }
         }
-
-        REQUIRE(loadedObject1 != nullptr);
-        REQUIRE(loadedObject1->next != nullptr);
-
-        auto loadedObject2 = loadedObject1->next;
-
-        REQUIRE(loadedObject1->next == loadedObject2);
-        REQUIRE(loadedObject2->next == nullptr);
-        REQUIRE(loadedObject1->value == savedObject1->value);
-        REQUIRE(loadedObject2->value == savedObject2->value);
-
-        delete savedObject1;
-        delete savedObject2;
-        delete loadedObject1;
-        delete loadedObject2;
     }
+}
 
-    SECTION("loads cyclic object")
+SCENARIO_METHOD(BinaryPointerFixture, "loading cyclic object in binary", "[binary][pointer]")
+{
+    GIVEN("saved cyclic object")
     {
         NestedObject* savedObject1 = dataGeneration.RandomHeap<NestedObject, int>();
         NestedObject* savedObject2 = dataGeneration.RandomHeap<NestedObject, int>();
@@ -210,30 +237,39 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(savedObject1);
         }
 
-        NestedObject* loadedObject1 = nullptr;
-
+        WHEN("loading cyclic object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedObject1);
+            NestedObject* loadedObject1 = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedObject1);
+            }
+
+            THEN("loaded cyclic object is valid")
+            {
+                REQUIRE(loadedObject1 != nullptr);
+                REQUIRE(loadedObject1->next != nullptr);
+
+                auto loadedObject2 = loadedObject1->next;
+
+                REQUIRE(loadedObject1->next == loadedObject2);
+                REQUIRE(loadedObject2->next == loadedObject1);
+                REQUIRE(loadedObject1->value == savedObject1->value);
+                REQUIRE(loadedObject2->value == savedObject2->value);
+
+                delete savedObject1;
+                delete savedObject2;
+                delete loadedObject1;
+                delete loadedObject2;
+            }
         }
-
-        REQUIRE(loadedObject1 != nullptr);
-        REQUIRE(loadedObject1->next != nullptr);
-
-        auto loadedObject2 = loadedObject1->next;
-
-        REQUIRE(loadedObject1->next == loadedObject2);
-        REQUIRE(loadedObject2->next == loadedObject1);
-        REQUIRE(loadedObject1->value == savedObject1->value);
-        REQUIRE(loadedObject2->value == savedObject2->value);
-
-        delete savedObject1;
-        delete savedObject2;
-        delete loadedObject1;
-        delete loadedObject2;
     }
+}
 
-    SECTION("loads protected constructor defined object")
+SCENARIO_METHOD(BinaryPointerFixture, "loading non-public constructor object pointers in binary", "[binary][pointer]")
+{
+    GIVEN("saved protected constructor object")
     {
         auto saved = ProtectedConstructor::Construct(dataGeneration.Random<int>());
 
@@ -242,21 +278,27 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(saved);
         }
 
-        ProtectedConstructor* loaded = nullptr;
-
+        WHEN("loading protected constructor object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            ProtectedConstructor* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("loaded protected constructor object is valid")
+            {
+                REQUIRE(loaded != nullptr);
+                REQUIRE(loaded->Value() == saved->Value());
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        REQUIRE(loaded != nullptr);
-        REQUIRE(loaded->Value() == saved->Value());
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("loads private constructor defined object")
+    GIVEN("saved private constructor object")
     {
         auto saved = PrivateConstructor::Construct(dataGeneration.Random<int>());
 
@@ -265,17 +307,23 @@ TEST_CASE_METHOD(BinaryPointerFixture, "binary pointer")
             outputArchive(saved);
         }
 
-        PrivateConstructor* loaded = nullptr;
-
+        WHEN("loading private constructor object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            PrivateConstructor* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("loaded private constructor object is valid")
+            {
+                REQUIRE(loaded != nullptr);
+                REQUIRE(loaded->Value() == saved->Value());
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        REQUIRE(loaded != nullptr);
-        REQUIRE(loaded->Value() == saved->Value());
-
-        delete saved;
-        delete loaded;
     }
 }

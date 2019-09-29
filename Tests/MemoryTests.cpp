@@ -36,27 +36,34 @@ public:
 
 MemoryTestsFixture::Base::~Base() = default;
 
-TEST_CASE_METHOD(MemoryTestsFixture, "std::unique_ptr")
+SCENARIO_METHOD(MemoryTestsFixture, "unique_ptr loads after saving", "[binary][std][unique_ptr]")
 {
-    std::unique_ptr<Base> saved(new Derived());
-
+    GIVEN("saved unique_ptr")
     {
-        auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
-    }
+        std::unique_ptr<Base> saved(new Derived());
 
-    {
-        std::unique_ptr<Base> loaded;
+        {
+            auto outputArchive = CreateRegistered<OutputArchive>();
+            outputArchive(saved);
+        }
 
-        auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        WHEN("loading")
+        {
+            std::unique_ptr<Base> loaded;
 
-        auto savedDerived = static_cast<Derived*>(saved.get());
-        auto loadedDerived = static_cast<Derived*>(loaded.get());
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
 
-        REQUIRE(loaded.get() != nullptr);
-        REQUIRE(loaded->baseValue == saved->baseValue);
-        REQUIRE(loadedDerived->derivedValue == savedDerived->derivedValue);
+            auto savedDerived = dynamic_cast<Derived*>(saved.get());
+            auto loadedDerived = dynamic_cast<Derived*>(loaded.get());
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.get() != nullptr);
+                REQUIRE(loaded->baseValue == saved->baseValue);
+                REQUIRE(loadedDerived->derivedValue == savedDerived->derivedValue);
+            }
+        }
     }
 }
 
@@ -78,7 +85,7 @@ namespace Inscription
         public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
@@ -87,7 +94,7 @@ namespace Inscription
         }
     };
 
-    ClassName Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "MemoryDerived";

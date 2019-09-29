@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StreamPosition.h"
 #include "FilePath.h"
 
 #include "NotOpenable.h"
@@ -13,7 +14,7 @@ namespace Inscription
     public:
         using Mode = std::ios_base::openmode;
         using StreamT = T;
-        using StreamPosition = std::streampos;
+        using StreamPosition = StreamPosition;
         using SizeT = StreamPosition;
     public:
         Stream() = delete;

@@ -8,11 +8,11 @@
 class MultiSetTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(MultiSetTestsFixture, "std::multiset")
+SCENARIO_METHOD(MultiSetTestsFixture, "loading multiset after saving", "[binary][container][multiset]")
 {
     using TestedObject = std::multiset<int>;
 
-    SECTION("save")
+    GIVEN("saved multiset")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(MultiSetTestsFixture, "std::multiset")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

@@ -8,11 +8,13 @@
 class UnorderedMultiSetTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(UnorderedMultiSetTestsFixture, "std::unordered_multiset")
-{
+SCENARIO_METHOD(
+    UnorderedMultiSetTestsFixture,
+    "loading unordered_multiset after saving", "[binary][container][unordered_multiset]"
+) {
     using TestedObject = std::unordered_multiset<int>;
 
-    SECTION("save")
+    GIVEN("saved unordered_multiset")
     {
         TestedObject saved;
 
@@ -25,15 +27,18 @@ TEST_CASE_METHOD(UnorderedMultiSetTestsFixture, "std::unordered_multiset")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

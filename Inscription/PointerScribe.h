@@ -148,12 +148,12 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive, std::true_type)
     {
         TrackingID typeID;
-        auto needsClassName = false;
+        auto needsTypeHandle = false;
         auto type = std::type_index(typeid(*object));
 
         {
             auto foundTypeID = archive.typeTracker.FindID(type);
-            needsClassName = !foundTypeID.IsValid();
+            needsTypeHandle = !foundTypeID.IsValid();
             if (foundTypeID.IsValid())
                 typeID = *foundTypeID;
             else
@@ -163,10 +163,10 @@ namespace Inscription
         {
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
             archive(typeID);
-            if (needsClassName)
+            if (needsTypeHandle)
             {
-                auto className = archive.polymorphicManager.ClassNameFor(type);
-                archive(className);
+                auto typeHandle = archive.polymorphicManager.PrincipleTypeHandleFor(type);
+                archive(typeHandle);
             }
         }
 
@@ -193,10 +193,10 @@ namespace Inscription
             auto foundType = archive.typeTracker.FindType(typeID);
             if (!foundType.IsValid())
             {
-                ClassName className;
-                archive(className);
+                TypeHandle typeHandle;
+                archive(typeHandle);
 
-                type = archive.polymorphicManager.TypeFor(className);
+                type = archive.polymorphicManager.TypeIndexFor(typeHandle);
                 archive.typeTracker.Add(type, typeID);
             }
             else

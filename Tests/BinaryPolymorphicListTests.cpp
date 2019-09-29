@@ -71,15 +71,18 @@ namespace Inscription
         public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
     {
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
 }
 
-TEST_CASE_METHOD(BinaryPolymorphicListFixture, "binary polymorphic list")
-{
-    SECTION("polymorphic pointer saves and loads")
+SCENARIO_METHOD(
+    BinaryPolymorphicListFixture,
+    "loading list of polymorphic pointers in binary",
+    "[binary][pointer][polymorphic]"
+) {
+    GIVEN("saved list of polymorphic pointers")
     {
         std::vector<Base*> savedOwning;
         {
@@ -101,42 +104,48 @@ TEST_CASE_METHOD(BinaryPolymorphicListFixture, "binary polymorphic list")
                 outputArchive(loop);
         }
 
-        std::vector<Base*> loadedOwning;
-
+        WHEN("loading list of polymorphic pointers")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
+            std::vector<Base*> loadedOwning;
 
-            ::Inscription::ContainerSize containerSize;
-            inputArchive(containerSize);
-            while (containerSize-- > 0)
             {
-                Base* ptr = nullptr;
-                inputArchive(ptr);
-                loadedOwning.push_back(ptr);
+                auto inputArchive = CreateRegistered<InputArchive>();
+
+                ::Inscription::ContainerSize containerSize;
+                inputArchive(containerSize);
+                while (containerSize-- > 0)
+                {
+                    Base* ptr = nullptr;
+                    inputArchive(ptr);
+                    loadedOwning.push_back(ptr);
+                }
+            }
+
+            std::vector<Derived*> loadedCastedOwning;
+            for (auto& loop : loadedOwning)
+                loadedCastedOwning.push_back(dynamic_cast<Derived*>(loop));
+
+            THEN("list of polymorphic pointers is valid")
+            {
+                REQUIRE(!loadedOwning.empty());
+                REQUIRE(loadedOwning.size() == savedOwning.size());
+                for (size_t i = 0; i < savedOwning.size(); ++i)
+                {
+                    auto savedOwningElement = savedOwning[i];
+                    auto loadedOwningElement = loadedOwning[i];
+                    auto savedCastedOwningElement = castedOwning[i];
+                    auto loadedCastedOwningElement = loadedCastedOwning[i];
+
+                    REQUIRE(savedOwningElement->BaseValue() == loadedOwningElement->BaseValue());
+                    REQUIRE(savedCastedOwningElement->DerivedValue() == loadedCastedOwningElement->DerivedValue());
+                }
+
+                for (auto& loop : savedOwning)
+                    delete loop;
+                for (auto& loop : loadedOwning)
+                    delete loop;
             }
         }
-
-        std::vector<Derived*> loadedCastedOwning;
-        for (auto& loop : loadedOwning)
-            loadedCastedOwning.push_back(dynamic_cast<Derived*>(loop));
-
-        REQUIRE(!loadedOwning.empty());
-        REQUIRE(loadedOwning.size() == savedOwning.size());
-        for (size_t i = 0; i < savedOwning.size(); ++i)
-        {
-            auto savedOwningElement = savedOwning[i];
-            auto loadedOwningElement = loadedOwning[i];
-            auto savedCastedOwningElement = castedOwning[i];
-            auto loadedCastedOwningElement = loadedCastedOwning[i];
-
-            REQUIRE(savedOwningElement->BaseValue() == loadedOwningElement->BaseValue());
-            REQUIRE(savedCastedOwningElement->DerivedValue() == loadedCastedOwningElement->DerivedValue());
-        }
-
-        for (auto& loop : savedOwning)
-            delete loop;
-        for (auto& loop : loadedOwning)
-            delete loop;
     }
 }
 
@@ -148,7 +157,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    ClassName Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver(const ArchiveT& archive)
+    TypeHandle Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::PrincipleTypeHandle(const ArchiveT& archive)
     {
         return "CustomConstructionDerived";
     }

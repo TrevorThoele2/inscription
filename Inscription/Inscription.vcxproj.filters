@@ -19,9 +19,6 @@
     <ClInclude Include="UndefAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Type.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,9 +73,6 @@
     <ClInclude Include="VerifyNonConst.h">
       <Filter>Header Files\Const</Filter>
     </ClInclude>
-    <ClInclude Include="TypeMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTracker.h">
       <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
@@ -132,9 +126,6 @@
     </ClInclude>
     <ClInclude Include="Access.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PolymorphicTypeNotFound.h">
-      <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
     <ClInclude Include="TableScribe.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
@@ -268,8 +259,41 @@
     <ClInclude Include="NotOpenable.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
-    <ClInclude Include="ClassName.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="JumpHandle.h">
+      <Filter>Header Files\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpSaver.h">
+      <Filter>Header Files\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputJumpTable.h">
+      <Filter>Header Files\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="InputJumpTable.h">
+      <Filter>Header Files\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPosition.h">
+      <Filter>Header Files\Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPositionScribe.h">
+      <Filter>Header Files\Scribe\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="RepresentedTypeHandlesAlreadyRegistered.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="RepresentedTypeHandleNotFound.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeHandle.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeMap.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ScribeHasRepresentedTypeHandles.h">
+      <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -314,9 +338,6 @@
     </Filter>
     <Filter Include="Source Files\File\Text">
       <UniqueIdentifier>{846caf04-11f4-4c88-b11e-8525bd76d058}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Types">
-      <UniqueIdentifier>{c2af1fe6-4b31-4af2-bcdf-f378967fc23c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\RegisteredTypes">
       <UniqueIdentifier>{a94282ab-0153-40db-9e6e-d5084e869824}</UniqueIdentifier>
@@ -369,12 +390,6 @@
     <Filter Include="Source Files\Scribe">
       <UniqueIdentifier>{77864077-936b-4fb6-9985-97a286f7a838}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Types\Std">
-      <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Types\Chroma">
-      <UniqueIdentifier>{cbed75a5-ec9f-40be-8cdc-150dc12d1153}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Stream">
       <UniqueIdentifier>{8e4d3200-1027-424a-8260-0612e5ca2386}</UniqueIdentifier>
     </Filter>
@@ -396,14 +411,29 @@
     <Filter Include="Header Files\Scribe\Base\Table">
       <UniqueIdentifier>{48b3ce0f-1150-4bbd-a964-f07481127ef6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Types\Base">
-      <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Scribe\Base\Table\Link">
       <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Scribe\Base\Table\Entry">
       <UniqueIdentifier>{1e4ca7dd-787d-4c6b-a2c2-3d2e7e3a0b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Jump">
+      <UniqueIdentifier>{b6b52590-0b6b-4284-b97d-cbec603f3a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Type">
+      <UniqueIdentifier>{b7e3a4e4-5ff4-417a-8d0c-9231b868baac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Types">
+      <UniqueIdentifier>{c2af1fe6-4b31-4af2-bcdf-f378967fc23c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Types\Std">
+      <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Types\Chroma">
+      <UniqueIdentifier>{cbed75a5-ec9f-40be-8cdc-150dc12d1153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Types\Base">
+      <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -482,23 +512,20 @@
     <ClCompile Include="TextArchive.cpp">
       <Filter>Source Files\Archive\Text</Filter>
     </ClCompile>
-    <ClCompile Include="PolymorphicTypeNotFound.cpp">
-      <Filter>Source Files\Polymorphic</Filter>
-    </ClCompile>
     <ClCompile Include="StringScribe.cpp">
-      <Filter>Source Files\Types\Std</Filter>
+      <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
     <ClCompile Include="FilePathScribe.cpp">
-      <Filter>Source Files\Types\Chroma</Filter>
+      <Filter>Source Files\Scribe\Types\Chroma</Filter>
     </ClCompile>
     <ClCompile Include="FileNameScribe.cpp">
-      <Filter>Source Files\Types\Chroma</Filter>
+      <Filter>Source Files\Scribe\Types\Chroma</Filter>
     </ClCompile>
     <ClCompile Include="RelativeFilePathScribe.cpp">
-      <Filter>Source Files\Types\Chroma</Filter>
+      <Filter>Source Files\Scribe\Types\Chroma</Filter>
     </ClCompile>
     <ClCompile Include="BufferScribe.cpp">
-      <Filter>Source Files\Types\Base</Filter>
+      <Filter>Source Files\Scribe\Types\Base</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTrackerEntry.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
@@ -508,6 +535,15 @@
     </ClCompile>
     <ClCompile Include="NotOpenable.cpp">
       <Filter>Source Files\File</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPositionScribe.cpp">
+      <Filter>Source Files\Scribe\Types\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="RepresentedTypeHandlesAlreadyRegistered.cpp">
+      <Filter>Source Files\Polymorphic</Filter>
+    </ClCompile>
+    <ClCompile Include="RepresentedTypeHandleNotFound.cpp">
+      <Filter>Source Files\Polymorphic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

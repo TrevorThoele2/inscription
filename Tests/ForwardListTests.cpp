@@ -8,11 +8,11 @@
 class ForwardListTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(ForwardListTestsFixture, "std::forward_list")
+SCENARIO_METHOD(ForwardListTestsFixture, "loading forward_list after saving", "[binary][container][forward_list]")
 {
     using TestedObject = std::forward_list<int>;
 
-    SECTION("save")
+    GIVEN("saved forward_list")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(ForwardListTestsFixture, "std::forward_list")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

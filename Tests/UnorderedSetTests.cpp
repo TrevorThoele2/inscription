@@ -8,11 +8,11 @@
 class UnorderedSetTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(UnorderedSetTestsFixture, "std::unordered_set")
+SCENARIO_METHOD(UnorderedSetTestsFixture, "loading unordered_set after saving", "[binary][container][unordered_set]")
 {
     using TestedObject = std::unordered_set<int>;
 
-    SECTION("save")
+    GIVEN("saved unordered_set")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(UnorderedSetTestsFixture, "std::unordered_set")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }
