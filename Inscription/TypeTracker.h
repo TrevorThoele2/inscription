@@ -2,11 +2,10 @@
 
 #include <typeindex>
 #include <vector>
+#include <optional>
 
 #include "TypeTrackerEntry.h"
 #include "TrackingID.h"
-
-#include "Optional.h"
 
 namespace Inscription
 {
@@ -34,10 +33,10 @@ namespace Inscription
         [[nodiscard]] bool IsTypeIn(const Type& type) const;
         [[nodiscard]] bool IsIDIn(ID id) const;
         template<class T>
-        [[nodiscard]] Optional<ID> FindID() const;
-        [[nodiscard]] Optional<ID> FindID(const Type& type) const;
+        [[nodiscard]] std::optional<ID> FindID() const;
+        [[nodiscard]] std::optional<ID> FindID(const Type& type) const;
 
-        [[nodiscard]] Optional<Type> FindType(ID id) const;
+        [[nodiscard]] std::optional<Type> FindType(ID id) const;
     private:
         using Entry = TypeTrackerEntry;
         using EntryList = std::vector<Entry>;
@@ -65,7 +64,7 @@ namespace Inscription
     }
 
     template<class T>
-    Optional<TypeTracker::ID> TypeTracker::FindID() const
+    std::optional<TypeTracker::ID> TypeTracker::FindID() const
     {
         return FindID(TypeFor<T>());
     }

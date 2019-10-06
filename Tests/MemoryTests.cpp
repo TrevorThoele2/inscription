@@ -4,7 +4,6 @@
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/PointerScribe.h>
-#include <Inscription/BaseScriven.h>
 
 #include "BinaryFixture.h"
 
@@ -89,7 +88,7 @@ namespace Inscription
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            BaseScriven<::MemoryTestsFixture::Base>(object, archive);
+            archive.BaseScriven<::MemoryTestsFixture::Base>(object);
             archive(object.derivedValue);
         }
     };

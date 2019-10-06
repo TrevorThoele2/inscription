@@ -18,8 +18,6 @@ namespace Inscription
         {
             ID id;
             Object& object;
-
-            Added() = delete;
         };
 
         std::vector<Added> added;
@@ -29,9 +27,6 @@ namespace Inscription
         static_assert(
             ::Chroma::is_braces_default_constructible_v<ID>,
             "The ID used in an InputJumpTable must be default constructible.");
-        static_assert(
-            ::Chroma::is_braces_default_constructible_v<Object>,
-            "The Object used in an InputJumpTable must be default constructible.");
     };
 
     template<class ID, class Object>

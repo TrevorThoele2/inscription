@@ -25,14 +25,14 @@ namespace Inscription
         objectTracker.SignalSavedConstruction(trackingID);
     }
 
-    void BinaryArchive::CopyTrackersTo(BinaryArchive& scribe) const
+    void BinaryArchive::CopyTrackersTo(BinaryArchive& target) const
     {
-        scribe.objectTracker = objectTracker;
+        target.objectTracker = objectTracker;
     }
 
-    void BinaryArchive::MoveTrackersTo(BinaryArchive& scribe)
+    void BinaryArchive::MoveTrackersTo(BinaryArchive& target)
     {
-        scribe.objectTracker = std::move(objectTracker);
+        target.objectTracker = std::move(objectTracker);
     }
 
     bool BinaryArchive::IsOutput() const

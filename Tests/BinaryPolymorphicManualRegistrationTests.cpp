@@ -3,7 +3,6 @@
 #include <Inscription/NumericScribe.h>
 #include <Inscription/PointerScribe.h>
 #include <Inscription/StringScribe.h>
-#include <Inscription/BaseScriven.h>
 
 #include "BinaryFixture.h"
 
@@ -159,7 +158,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
+        archive.BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object);
         archive(object.derivedValue);
     }
 }

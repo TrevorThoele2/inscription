@@ -46,7 +46,7 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
         {
             {
                 auto trackingID = archive.AttemptTrackObject(&object);
-                if (trackingID.IsValid())
+                if (trackingID.has_value())
                     archive.TrackSavedConstruction(*trackingID);
             }
 

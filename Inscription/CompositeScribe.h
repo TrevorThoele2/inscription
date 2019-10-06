@@ -59,7 +59,7 @@ namespace Inscription
     {
         {
             auto trackingID = archive.AttemptTrackObject(&object);
-            if (trackingID.IsValid())
+            if (trackingID.has_value())
                 archive.TrackSavedConstruction(*trackingID);
         }
 

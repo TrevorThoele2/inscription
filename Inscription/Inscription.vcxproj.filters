@@ -121,9 +121,6 @@
     <ClInclude Include="Scribe.h">
       <Filter>Header Files\Scribe</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScriven.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Access.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -190,12 +187,6 @@
     <ClInclude Include="VectorScribe.h">
       <Filter>Header Files\Scribe\Types\Std\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Optional.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OptionalScribe.h">
-      <Filter>Header Files\Scribe\Types\Chroma</Filter>
-    </ClInclude>
     <ClInclude Include="FileNameScribe.h">
       <Filter>Header Files\Scribe\Types\Chroma</Filter>
     </ClInclude>
@@ -259,12 +250,6 @@
     <ClInclude Include="NotOpenable.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
-    <ClInclude Include="JumpHandle.h">
-      <Filter>Header Files\Jump</Filter>
-    </ClInclude>
-    <ClInclude Include="JumpSaver.h">
-      <Filter>Header Files\Jump</Filter>
-    </ClInclude>
     <ClInclude Include="OutputJumpTable.h">
       <Filter>Header Files\Jump</Filter>
     </ClInclude>
@@ -294,6 +279,12 @@
     </ClInclude>
     <ClInclude Include="ScribeHasRepresentedTypeHandles.h">
       <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionalScribe.h">
+      <Filter>Header Files\Scribe\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeHandlesFor.h">
+      <Filter>Header Files\Type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

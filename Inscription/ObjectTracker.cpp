@@ -42,23 +42,23 @@ namespace Inscription
         return active;
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add)
+    std::optional<ObjectTracker::ID> ObjectTracker::Add(void* add)
     {
         return Add(add, NextID());
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::Add(void* add, ID id)
+    std::optional<ObjectTracker::ID> ObjectTracker::Add(void* add, ID id)
     {
         if (!IsActive())
-            return Optional<ID>();
+            return {};
 
         {
             const auto foundObject = FindObject(id);
             if (foundObject)
                 return id;
 
-            auto foundID = FindID(add);
-            if (foundID.IsValid())
+            const auto foundID = FindID(add);
+            if (foundID.has_value())
                 return foundID;
         }
 
@@ -114,13 +114,13 @@ namespace Inscription
         return entry->object;
     }
 
-    Optional<ObjectTracker::ID> ObjectTracker::FindID(void* object)
+    std::optional<ObjectTracker::ID> ObjectTracker::FindID(void* object)
     {
         const auto iterator = FindIterator(object);
         if (iterator == map.end())
-            return Optional<ID>();
+            return {};
 
-        return Optional<ID>(iterator->first);
+        return { iterator->first };
     }
 
     void ObjectTracker::Clear()

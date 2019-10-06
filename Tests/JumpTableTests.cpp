@@ -48,12 +48,33 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
             auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
             inputArchive(loadedJumpTable);
 
-            THEN("all ids are loadable")
+            THEN("all objects are constructible")
             {
                 for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
                 {
-                    auto object = loadedJumpTable.LoadObject(savedIntegerIDs[loop], inputArchive);
+                    auto object = loadedJumpTable.ConstructObject(savedIntegerIDs[loop], inputArchive);
                     REQUIRE(object == savedIntegerValues[loop]);
+                }
+            }
+
+            THEN("all objects fillable")
+            {
+                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
+                {
+                    int object;
+                    loadedJumpTable.FillObject(object, savedIntegerIDs[loop], inputArchive);
+                    REQUIRE(object == savedIntegerValues[loop]);
+                }
+            }
+
+            THEN("all ids are same as saved")
+            {
+                auto allIDs = loadedJumpTable.AllIDs();
+                REQUIRE(allIDs.size() == savedIntegerIDs.size());
+                for (auto savedIntegerID : savedIntegerIDs)
+                {
+                    auto found = std::find(allIDs.begin(), allIDs.end(), savedIntegerID);
+                    REQUIRE(found != allIDs.end());
                 }
             }
         }
@@ -88,7 +109,7 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
                 {
                     for(size_t loop = 0; loop < savedPostTable.size(); ++loop)
                     {
-                        auto object = loadedJumpTable.LoadObject(savedIntegerIDs[loop], inputArchive);
+                        auto object = loadedJumpTable.ConstructObject(savedIntegerIDs[loop], inputArchive);
                         REQUIRE(object == savedIntegerValues[loop]);
 
                         std::string postTable;

@@ -4,7 +4,6 @@
 #include <Inscription/PointerScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/ContainerSize.h>
-#include <Inscription/BaseScriven.h>
 
 #include "BinaryFixture.h"
 
@@ -77,7 +76,8 @@ namespace Inscription
     };
 }
 
-SCENARIO_METHOD(
+SCENARIO_METHOD
+(
     BinaryPolymorphicListFixture,
     "loading list of polymorphic pointers in binary",
     "[binary][pointer][polymorphic]"
@@ -165,7 +165,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        BaseScriven<::BinaryPolymorphicListFixture::Base>(object, archive);
+        archive.BaseScriven<::BinaryPolymorphicListFixture::Base>(object);
         archive(object.derivedValue);
     }
 }

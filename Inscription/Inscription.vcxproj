@@ -29,42 +29,42 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{93A2633A-46A4-4A08-AA6A-2C4DD75990B5}</ProjectGuid>
     <RootNamespace>LevelEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Debug|Win32'">
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release Debug|x64'">
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -187,7 +187,6 @@
     <ClInclude Include="BaseClassNotInTable.h" />
     <ClInclude Include="ArrayScribe.h" />
     <ClInclude Include="Assert.h" />
-    <ClInclude Include="BaseScriven.h" />
     <ClInclude Include="BaseTableDataLink.h" />
     <ClInclude Include="BufferScribe.h" />
     <ClInclude Include="CompositeScribe.h" />
@@ -197,11 +196,10 @@
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
     <ClInclude Include="InputJumpTable.h" />
-    <ClInclude Include="JumpHandle.h" />
-    <ClInclude Include="JumpSaver.h" />
     <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
+    <ClInclude Include="TypeHandlesFor.h" />
     <ClInclude Include="ScribeHasRepresentedTypeHandles.h" />
     <ClInclude Include="Storage.h" />
     <ClInclude Include="NullTableData.h" />
@@ -214,7 +212,6 @@
     <ClInclude Include="InputTextFile.h" />
     <ClInclude Include="InputTextArchive.h" />
     <ClInclude Include="InvalidSignature.h" />
-    <ClInclude Include="Optional.h" />
     <ClInclude Include="OptionalScribe.h" />
     <ClInclude Include="OutputBinaryFile.h" />
     <ClInclude Include="BinaryArchive.h" />

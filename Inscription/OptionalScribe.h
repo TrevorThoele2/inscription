@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Optional.h"
+#include <optional>
 #include "CompositeScribe.h"
 
 #include "ScopeConstructor.h"
@@ -10,11 +10,11 @@ namespace Inscription
     class BinaryArchive;
 
     template<class T>
-    class Scribe<Optional<T>, BinaryArchive> final :
-        public CompositeScribe<Optional<T>, BinaryArchive>
+    class Scribe<std::optional<T>, BinaryArchive> final :
+        public CompositeScribe<std::optional<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Optional<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<std::optional<T>, BinaryArchive>;
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
@@ -23,19 +23,13 @@ namespace Inscription
         using BaseT::Construct;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
-
-        using BaseT::DoBasicConstruction;
     private:
         void SaveImplementation(ObjectT& object, ArchiveT& archive);
         void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<class T>
-    void Scribe<Optional<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::optional<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             SaveImplementation(object, archive);
@@ -44,27 +38,27 @@ namespace Inscription
     }
 
     template<class T>
-    void Scribe<Optional<T>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::optional<T>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        auto isValid = object.IsValid();
-        archive(isValid);
+        auto hasValue = object.has_value();
+        archive(hasValue);
 
-        if (isValid)
+        if (hasValue)
             archive(object.Get());
     }
 
     template<class T>
-    void Scribe<Optional<T>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::optional<T>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
-        bool isValid;
-        archive(isValid);
+        bool hasValue;
+        archive(hasValue);
 
-        if (isValid)
+        if (hasValue)
         {
-            ::Inscription::ScopeConstructor<T> constructor(archive);
-            object.Set(std::move(constructor.GetMove()));
+            ScopeConstructor<T> constructor(archive);
+            object = { std::move(constructor.GetMove()) };
         }
         else
-            object.Reset();
+            object = {};
     }
 }
