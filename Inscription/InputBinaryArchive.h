@@ -10,19 +10,25 @@ namespace Inscription
     class InputBinaryArchive : public BinaryArchive
     {
     public:
-        InputBinaryArchive(
+        InputBinaryArchive
+        (
             const FilePath& path,
-            const Signature& signature);
-        InputBinaryArchive(
+            const Signature& signature
+        );
+        InputBinaryArchive
+        (
             const FilePath& path,
             const Signature& signature,
-            const TypeRegistrationContext& typeRegistrationContext);
+            const TypeRegistrationContext& typeRegistrationContext
+        );
         InputBinaryArchive(InputBinaryArchive&& arg) noexcept;
 
         InputBinaryArchive& operator=(InputBinaryArchive&& arg) noexcept;
 
         template<class T>
         InputBinaryArchive& Read(T& object);
+        template<class T>
+        InputBinaryArchive& Construct(T*& object, const std::type_index& type);
     public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
@@ -66,6 +72,13 @@ namespace Inscription
         if (!IsLittleEndian())
             EnsureCorrectEndianness(object);
 
+        return *this;
+    }
+
+    template<class T>
+    InputBinaryArchive& InputBinaryArchive::Construct(T*& object, const std::type_index& type)
+    {
+        DoConstruct(object, type);
         return *this;
     }
 }

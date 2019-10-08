@@ -19,9 +19,12 @@ namespace Inscription
     public:
         template<class Archive>
         [[nodiscard]] std::optional<Object> ConstructObject(ID at, Archive& archive);
-        // Returns true if the object was loaded, false if not
+        template<class Function, class Archive>
+        [[nodiscard]] std::optional<Object> ConstructObject(Function function, ID at, Archive& archive);
         template<class Archive>
         bool FillObject(Object& object, ID at, Archive& archive);
+        template<class Function, class Archive>
+        bool FillObject(Function function, Object& object, ID at, Archive& archive);
 
         [[nodiscard]] std::vector<ID> AllIDs() const;
     private:
@@ -38,6 +41,8 @@ namespace Inscription
     private:
         template<class Archive>
         void LoadObject(Object& object, iterator at, Archive& archive);
+        template<class Function, class Archive>
+        void LoadFunction(Function function, Object& object, iterator at, Archive& archive);
         iterator FindHandle(ID at);
     private:
         INSCRIPTION_ACCESS;
@@ -61,6 +66,19 @@ namespace Inscription
     }
 
     template<class ID, class Object>
+    template<class Function, class Archive>
+    [[nodiscard]] std::optional<Object> InputJumpTable<ID, Object>::ConstructObject(Function function, ID at, Archive& archive)
+    {
+        auto foundHandle = FindHandle(at);
+        if (foundHandle == handles.end())
+            return {};
+
+        Object object{};
+        LoadFunction(function, object, foundHandle, archive);
+        return object;
+    }
+
+    template<class ID, class Object>
     template<class Archive>
     bool InputJumpTable<ID, Object>::FillObject(Object& object, ID at, Archive& archive)
     {
@@ -69,6 +87,19 @@ namespace Inscription
             return false;
 
         LoadObject(object, foundHandle, archive);
+
+        return true;
+    }
+
+    template<class ID, class Object>
+    template<class Function, class Archive>
+    bool InputJumpTable<ID, Object>::FillObject(Function function, Object& object, ID at, Archive& archive)
+    {
+        auto foundHandle = FindHandle(at);
+        if (foundHandle == handles.end())
+            return false;
+
+        LoadFunction(function, object, foundHandle, archive);
 
         return true;
     }
@@ -89,6 +120,16 @@ namespace Inscription
         auto currentPosition = archive.TellStream();
         archive.SeekStream(at->jumpPosition);
         archive(object);
+        archive.SeekStream(currentPosition);
+    }
+
+    template<class ID, class Object>
+    template<class Function, class Archive>
+    void InputJumpTable<ID, Object>::LoadFunction(Function function, Object& object, iterator at, Archive& archive)
+    {
+        auto currentPosition = archive.TellStream();
+        archive.SeekStream(at->jumpPosition);
+        object = function(archive);
         archive.SeekStream(currentPosition);
     }
 
