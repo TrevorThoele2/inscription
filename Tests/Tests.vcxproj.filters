@@ -107,9 +107,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Tests.runsettings" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{d073549c-b050-4143-8b4d-b76206644096}</UniqueIdentifier>
     </Filter>

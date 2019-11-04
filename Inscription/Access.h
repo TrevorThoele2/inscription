@@ -113,7 +113,7 @@ namespace Inscription
             int> = 0
         > static void Construct(Object* storage, Archive& archive, Scribe<Object, Archive>& scribe)
         {
-            static_assert(!std::is_abstract_v<Object> && !is_braces_default_constructible_v<Object>,
+            static_assert(false,
                 "Basic construction of this object requires a default constructor. "
                 "Define it or override ConstructImplementation for this Scribe.");
         }

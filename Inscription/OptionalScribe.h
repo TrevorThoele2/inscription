@@ -20,7 +20,6 @@ namespace Inscription
         using typename BaseT::ArchiveT;
 
         using BaseT::Scriven;
-        using BaseT::Construct;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     private:
@@ -44,7 +43,7 @@ namespace Inscription
         archive(hasValue);
 
         if (hasValue)
-            archive(object.Get());
+            archive(*object);
     }
 
     template<class T>

@@ -1,13 +1,13 @@
-#include "RepresentedTypeHandlesAlreadyRegistered.h"
+#include "InputTypeHandlesAlreadyRegistered.h"
 
 namespace Inscription
 {
-    RepresentedTypeHandlesAlreadyRegistered::RepresentedTypeHandlesAlreadyRegistered() :
+    InputTypeHandlesAlreadyRegistered::InputTypeHandlesAlreadyRegistered() :
         Exception(
             DefaultString())
     {}
 
-    RepresentedTypeHandlesAlreadyRegistered::RepresentedTypeHandlesAlreadyRegistered(
+    InputTypeHandlesAlreadyRegistered::InputTypeHandlesAlreadyRegistered(
         const std::vector<TypeHandle>& typeHandles)
         :
         Exception(
@@ -15,13 +15,13 @@ namespace Inscription
             " TypeHandles: " + Join(typeHandles) + ".")
     {}
 
-    std::string RepresentedTypeHandlesAlreadyRegistered::DefaultString()
+    std::string InputTypeHandlesAlreadyRegistered::DefaultString()
     {
         return std::string(
-            "Represented type handles were already registered in the PolymorphicManager.");
+            "Input type handles were already registered in the PolymorphicManager.");
     }
 
-    std::string RepresentedTypeHandlesAlreadyRegistered::Join(const std::vector<TypeHandle>& typeHandles)
+    std::string InputTypeHandlesAlreadyRegistered::Join(const std::vector<TypeHandle>& typeHandles)
     {
         std::string built;
         if (typeHandles.empty())

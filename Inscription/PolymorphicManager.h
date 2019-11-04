@@ -12,8 +12,8 @@
 #include "Const.h"
 
 #include "TypeHandlesFor.h"
-#include "RepresentedTypeHandleNotFound.h"
-#include "RepresentedTypeHandlesAlreadyRegistered.h"
+#include "InputTypeHandleNotFound.h"
+#include "InputTypeHandlesAlreadyRegistered.h"
 
 namespace Inscription
 {
@@ -31,7 +31,7 @@ namespace Inscription
         void Construct(void*& storage, const std::type_index& type, ArchiveT& archive);
         void* CreateStorage(const std::type_index& type);
 
-        TypeHandle PrincipleTypeHandleFor(const std::type_index& type);
+        TypeHandle OutputTypeHandleFor(const std::type_index& type);
         std::type_index TypeIndexFor(const TypeHandle& typeHandle);
 
         template<class T>
@@ -40,8 +40,8 @@ namespace Inscription
         class Entry
         {
         public:
-            const TypeHandle principleTypeHandle;
-            const std::vector<TypeHandle> representedTypeHandles;
+            const TypeHandle outputTypeHandle;
+            const std::vector<TypeHandle> inputTypeHandles;
             const std::type_index typeIndex;
         public:
             virtual ~Entry() = 0;
@@ -53,8 +53,8 @@ namespace Inscription
         protected:
             Entry
             (
-                TypeHandle principleTypeHandle,
-                std::vector<TypeHandle> representedTypeHandles,
+                TypeHandle outputTypeHandle,
+                std::vector<TypeHandle> inputTypeHandles,
                 std::type_index typeIndex
             );
         };
@@ -63,7 +63,7 @@ namespace Inscription
         class EntryDerived : public Entry
         {
         public:
-            EntryDerived(TypeHandle principleTypeHandle, std::vector<TypeHandle> representedTypeHandles);
+            EntryDerived(TypeHandle outputTypeHandles, std::vector<TypeHandle> inputTypeHandles);
 
             void Save(const void* object, ArchiveT& archive) override;
             void Load(void* object, ArchiveT& archive) override;
@@ -80,8 +80,8 @@ namespace Inscription
         using EntryConstIterator = typename EntryList::const_iterator;
         EntryList entryList;
 
-        using RepresentedTypeHandles = std::vector<TypeHandle>;
-        RepresentedTypeHandles representedTypeHandles;
+        using InputTypeHandles = std::vector<TypeHandle>;
+        InputTypeHandles inputTypeHandles;
 
         EntryIterator FindRequiredEntry(const TypeHandle& typeHandle);
         EntryIterator FindRequiredEntry(const std::type_index& typeIndex);
@@ -139,10 +139,10 @@ namespace Inscription
     }
 
     template<class Archive>
-    TypeHandle PolymorphicManager<Archive>::PrincipleTypeHandleFor(const std::type_index& type)
+    TypeHandle PolymorphicManager<Archive>::OutputTypeHandleFor(const std::type_index& type)
     {
         auto found = FindRequiredEntry(type);
-        return (*found)->principleTypeHandle;
+        return (*found)->outputTypeHandle;
     }
 
     template<class Archive>
@@ -156,24 +156,24 @@ namespace Inscription
     template<class T>
     void PolymorphicManager<Archive>::Register(ArchiveT& archive)
     {
-        auto newRepresentedTypeHandles = RepresentedTypeHandlesFor<T>(archive);
+        auto newInputTypeHandles = InputTypeHandlesFor<T>(archive);
 
         std::vector<TypeHandle> duplicateTypeHandles;
-        for (auto& currentRepresented : representedTypeHandles)
-            for (auto& currentNewRepresented : newRepresentedTypeHandles)
-                if (currentNewRepresented == currentRepresented)
-                    duplicateTypeHandles.push_back(currentNewRepresented);
+        for (auto& currentInput : inputTypeHandles)
+            for (auto& currentNewInput : newInputTypeHandles)
+                if (currentNewInput == currentInput)
+                    duplicateTypeHandles.push_back(currentNewInput);
 
         if (!duplicateTypeHandles.empty())
-            throw RepresentedTypeHandlesAlreadyRegistered(duplicateTypeHandles);
+            throw InputTypeHandlesAlreadyRegistered(duplicateTypeHandles);
 
-        auto principleTypeHandle = ::Inscription::PrincipleTypeHandleFor<T>(archive);
-        entryList.push_back(std::make_unique<EntryDerived<T>>(principleTypeHandle, newRepresentedTypeHandles));
+        auto outputTypeHandle = ::Inscription::OutputTypeHandleFor<T>(archive);
+        entryList.push_back(std::make_unique<EntryDerived<T>>(outputTypeHandle, newInputTypeHandles));
         std::move
         (
-            newRepresentedTypeHandles.begin(),
-            newRepresentedTypeHandles.end(),
-            std::back_inserter(representedTypeHandles)
+            newInputTypeHandles.begin(),
+            newInputTypeHandles.end(),
+            std::back_inserter(inputTypeHandles)
         );
     }
 
@@ -183,21 +183,21 @@ namespace Inscription
     template<class Archive>
     PolymorphicManager<Archive>::Entry::Entry
     (
-        TypeHandle principleTypeHandle,
-        std::vector<TypeHandle> representedTypeHandles,
+        TypeHandle outputTypeHandle,
+        std::vector<TypeHandle> inputTypeHandles,
         std::type_index typeIndex
     ) :
-        principleTypeHandle(principleTypeHandle), representedTypeHandles(representedTypeHandles), typeIndex(typeIndex)
+        outputTypeHandle(outputTypeHandle), inputTypeHandles(inputTypeHandles), typeIndex(typeIndex)
     {}
 
     template<class Archive>
     template<class T>
     PolymorphicManager<Archive>::EntryDerived<T>::EntryDerived
     (
-        TypeHandle principleTypeHandle,
-        std::vector<TypeHandle> representedTypeHandles
+        TypeHandle outputTypeHandles,
+        std::vector<TypeHandle> inputTypeHandles
     ) :
-        Entry(principleTypeHandle, representedTypeHandles, typeid(T))
+        Entry(outputTypeHandles, inputTypeHandles, typeid(T))
     {}
 
     template<class Archive>
@@ -240,13 +240,13 @@ namespace Inscription
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
         {
-            auto checkBegin = (*loop)->representedTypeHandles.begin();
-            auto checkEnd = (*loop)->representedTypeHandles.end();
+            auto checkBegin = (*loop)->inputTypeHandles.begin();
+            auto checkEnd = (*loop)->inputTypeHandles.end();
             if (std::find(checkBegin, checkEnd, typeHandle) != checkEnd)
                 return loop;
         }
 
-        throw RepresentedTypeHandleNotFound(typeHandle);
+        throw InputTypeHandleNotFound(typeHandle);
     }
 
     template<class Archive>
@@ -257,7 +257,7 @@ namespace Inscription
             if ((*loop)->typeIndex == typeIndex)
                 return loop;
 
-        throw RepresentedTypeHandleNotFound(typeIndex);
+        throw InputTypeHandleNotFound(typeIndex);
     }
 
     template<class Archive>
@@ -269,6 +269,6 @@ namespace Inscription
         if (found.has_value())
             return *found;
 
-        throw RepresentedTypeHandleNotFound(type);
+        throw InputTypeHandleNotFound(type);
     }
 }

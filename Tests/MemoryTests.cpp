@@ -6,6 +6,7 @@
 #include <Inscription/PointerScribe.h>
 
 #include "BinaryFixture.h"
+#include "Inscription/BaseScriven.h"
 
 class MemoryTestsFixture : public BinaryFixture
 {
@@ -84,16 +85,16 @@ namespace Inscription
         public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
+        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            archive.BaseScriven<::MemoryTestsFixture::Base>(object);
+            BaseScriven<::MemoryTestsFixture::Base>(object, archive);
             archive(object.derivedValue);
         }
     };
 
-    TypeHandle Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "MemoryDerived";

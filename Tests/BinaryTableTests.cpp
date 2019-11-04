@@ -542,7 +542,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "DefaultConstructionDerived";
@@ -563,7 +563,7 @@ namespace Inscription
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";
@@ -604,7 +604,7 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "ObjectScrivenDerived";
@@ -627,7 +627,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "TableConstructionDerived";
@@ -642,7 +642,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "UsingEntriesDerived";
@@ -657,7 +657,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "UsingEntryPointerDerived";

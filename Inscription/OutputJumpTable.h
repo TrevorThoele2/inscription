@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 #include <Chroma/IsBracesConstructible.h>
 #include "ContainerSize.h"
 
@@ -12,15 +12,18 @@ namespace Inscription
     class OutputJumpTable
     {
     public:
-        void Add(ID id, Object& add);
+        bool Add(ID id, Object& add);
+
+        [[nodiscard]] std::vector<ID> AllIDs() const;
     private:
         struct Added
         {
-            ID id;
             Object& object;
+
+            explicit Added(Object& object);
         };
 
-        std::vector<Added> added;
+        std::unordered_map<ID, Added> added;
     private:
         INSCRIPTION_ACCESS;
     private:
@@ -30,10 +33,23 @@ namespace Inscription
     };
 
     template<class ID, class Object>
-    void OutputJumpTable<ID, Object>::Add(ID id, Object& add)
+    bool OutputJumpTable<ID, Object>::Add(ID id, Object& add)
     {
-        added.push_back(Added{ id, add });
+        return added.emplace(id, Added{ add }).second;
     }
+
+    template<class ID, class Object>
+    auto OutputJumpTable<ID, Object>::AllIDs() const -> std::vector<ID>
+    {
+        std::vector<ID> returnValue;
+        for (auto& loop : added)
+            returnValue.push_back(loop.first);
+        return returnValue;
+    }
+
+    template<class ID, class Object>
+    OutputJumpTable<ID, Object>::Added::Added(Object& object) : object(object)
+    {}
 
     template<class ID, class Object, class Archive>
     class Scribe<OutputJumpTable<ID, Object>, Archive> :
@@ -51,7 +67,7 @@ namespace Inscription
         {
             std::vector<JumpPoint> jumpPoints;
             for (auto& loop : object.added)
-                jumpPoints.push_back(JumpPoint(loop.id, loop.object));
+                jumpPoints.push_back(JumpPoint(loop.first, loop.second.object));
 
             ContainerSize size(jumpPoints.size());
             archive(size);

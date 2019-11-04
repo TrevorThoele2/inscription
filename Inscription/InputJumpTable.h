@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <optional>
 #include <algorithm>
 #include <Chroma/IsBracesConstructible.h>
 
@@ -18,13 +17,7 @@ namespace Inscription
     {
     public:
         template<class Archive>
-        [[nodiscard]] std::optional<Object> ConstructObject(ID at, Archive& archive);
-        template<class Function, class Archive>
-        [[nodiscard]] std::optional<Object> ConstructObject(Function function, ID at, Archive& archive);
-        template<class Archive>
-        bool FillObject(Object& object, ID at, Archive& archive);
-        template<class Function, class Archive>
-        bool FillObject(Function function, Object& object, ID at, Archive& archive);
+        bool FillObject(ID at, Object& object, Archive& archive);
 
         [[nodiscard]] std::vector<ID> AllIDs() const;
     private:
@@ -41,8 +34,8 @@ namespace Inscription
     private:
         template<class Archive>
         void LoadObject(Object& object, iterator at, Archive& archive);
-        template<class Function, class Archive>
-        void LoadFunction(Function function, Object& object, iterator at, Archive& archive);
+        template<class Archive, class Function>
+        void LoadObject(Function function, Object& object, iterator at, Archive& archive);
         iterator FindHandle(ID at);
     private:
         INSCRIPTION_ACCESS;
@@ -54,52 +47,13 @@ namespace Inscription
 
     template<class ID, class Object>
     template<class Archive>
-    auto InputJumpTable<ID, Object>::ConstructObject(ID at, Archive& archive) -> std::optional<Object>
-    {
-        auto foundHandle = FindHandle(at);
-        if (foundHandle == handles.end())
-            return {};
-
-        Object object{};
-        LoadObject(object, foundHandle, archive);
-        return object;
-    }
-
-    template<class ID, class Object>
-    template<class Function, class Archive>
-    [[nodiscard]] std::optional<Object> InputJumpTable<ID, Object>::ConstructObject(Function function, ID at, Archive& archive)
-    {
-        auto foundHandle = FindHandle(at);
-        if (foundHandle == handles.end())
-            return {};
-
-        Object object{};
-        LoadFunction(function, object, foundHandle, archive);
-        return object;
-    }
-
-    template<class ID, class Object>
-    template<class Archive>
-    bool InputJumpTable<ID, Object>::FillObject(Object& object, ID at, Archive& archive)
+    bool InputJumpTable<ID, Object>::FillObject(ID at, Object& object, Archive& archive)
     {
         auto foundHandle = FindHandle(at);
         if (foundHandle == handles.end())
             return false;
 
         LoadObject(object, foundHandle, archive);
-
-        return true;
-    }
-
-    template<class ID, class Object>
-    template<class Function, class Archive>
-    bool InputJumpTable<ID, Object>::FillObject(Function function, Object& object, ID at, Archive& archive)
-    {
-        auto foundHandle = FindHandle(at);
-        if (foundHandle == handles.end())
-            return false;
-
-        LoadFunction(function, object, foundHandle, archive);
 
         return true;
     }
@@ -124,12 +78,12 @@ namespace Inscription
     }
 
     template<class ID, class Object>
-    template<class Function, class Archive>
-    void InputJumpTable<ID, Object>::LoadFunction(Function function, Object& object, iterator at, Archive& archive)
+    template<class Archive, class Function>
+    void InputJumpTable<ID, Object>::LoadObject(Function function, Object& object, iterator at, Archive& archive)
     {
         auto currentPosition = archive.TellStream();
         archive.SeekStream(at->jumpPosition);
-        object = function(archive);
+        function(object, archive);
         archive.SeekStream(currentPosition);
     }
 
