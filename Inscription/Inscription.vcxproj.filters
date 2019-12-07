@@ -262,31 +262,34 @@
     <ClInclude Include="StreamPositionScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="Type.h">
-      <Filter>Header Files\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeHandle.h">
-      <Filter>Header Files\Type</Filter>
-    </ClInclude>
     <ClInclude Include="TypeMap.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
     <ClInclude Include="OptionalScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="TypeHandlesFor.h">
-      <Filter>Header Files\Type</Filter>
-    </ClInclude>
     <ClInclude Include="BaseScriven.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputTypeHandleNotFound.h">
+    <ClInclude Include="NullScribe.h">
+      <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeIdentity.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypesFor.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="InputTypeNotFound.h">
       <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
-    <ClInclude Include="InputTypeHandlesAlreadyRegistered.h">
+    <ClInclude Include="InputTypesAlreadyRegistered.h">
       <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
-    <ClInclude Include="ScribeHasInputTypeHandles.h">
+    <ClInclude Include="ScribeHasInputTypes.h">
       <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
   </ItemGroup>

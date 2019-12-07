@@ -2,6 +2,7 @@
 
 #include <optional>
 #include "CompositeScribe.h"
+#include "NumericScribe.h"
 
 #include "ScopeConstructor.h"
 

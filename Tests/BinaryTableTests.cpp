@@ -542,7 +542,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "DefaultConstructionDerived";
@@ -552,7 +552,7 @@ namespace Inscription
     {
         MergeDataLinks
         ({
-            DataLink::Base(Type<::BinaryTableFixture::Base>{}),
+            DataLink::Base(TypeIdentity<::BinaryTableFixture::Base>{}),
             DataLink::Auto(&ObjectT::derivedValue, &DataT::derivedValue) }
         );
     }
@@ -563,7 +563,7 @@ namespace Inscription
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";
@@ -587,7 +587,7 @@ namespace Inscription
     {
         MergeDataLinks
         ({
-            DataLink::Base(Type<::BinaryTableFixture::ObjectScrivenBase>{}),
+            DataLink::Base(TypeIdentity<::BinaryTableFixture::ObjectScrivenBase>{}),
             DataLink::Auto(&ObjectT::derivedValue, &DataT::derivedValue) }
         );
     }
@@ -604,7 +604,7 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "ObjectScrivenDerived";
@@ -622,12 +622,12 @@ namespace Inscription
     {
         MergeDataLinks
         ({
-            DataLink::Base(Type<::BinaryTableFixture::TableConstructionBase>{}),
+            DataLink::Base(TypeIdentity<::BinaryTableFixture::TableConstructionBase>{}),
             DataLink::Auto(&ObjectT::derivedValue, &DataT::derivedValue) }
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "TableConstructionDerived";
@@ -642,7 +642,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "UsingEntriesDerived";
@@ -657,7 +657,7 @@ namespace Inscription
         );
     }
 
-    TypeHandle Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "UsingEntryPointerDerived";

@@ -13,7 +13,6 @@ namespace Inscription
     {
     public:
         using ID = TrackingID;
-        using Type = std::type_index;
     public:
         TypeTracker() = default;
         TypeTracker(TypeTracker&& arg) noexcept;
@@ -22,21 +21,21 @@ namespace Inscription
 
         template<class T>
         ID Add();
-        ID Add(const Type& type);
-        ID Add(const Type& type, ID id);
+        ID Add(const std::type_index& type);
+        ID Add(const std::type_index& type, ID id);
 
         void SignalSavedConstruction(ID id);
         [[nodiscard]] bool HasSavedConstruction(ID id) const;
 
         template<class T>
         [[nodiscard]] bool IsTypeIn() const;
-        [[nodiscard]] bool IsTypeIn(const Type& type) const;
+        [[nodiscard]] bool IsTypeIn(const std::type_index& type) const;
         [[nodiscard]] bool IsIDIn(ID id) const;
         template<class T>
         [[nodiscard]] std::optional<ID> FindID() const;
-        [[nodiscard]] std::optional<ID> FindID(const Type& type) const;
+        [[nodiscard]] std::optional<ID> FindID(const std::type_index& type) const;
 
-        [[nodiscard]] std::optional<Type> FindType(ID id) const;
+        [[nodiscard]] std::optional<std::type_index> FindType(ID id) const;
     private:
         using Entry = TypeTrackerEntry;
         using EntryList = std::vector<Entry>;
@@ -48,7 +47,7 @@ namespace Inscription
         [[nodiscard]] ID NextID() const;
     private:
         template<class T>
-        static Type TypeFor();
+        static std::type_index TypeFor();
     };
 
     template<class T>
@@ -70,7 +69,7 @@ namespace Inscription
     }
 
     template<class T>
-    TypeTracker::Type TypeTracker::TypeFor()
+    std::type_index TypeTracker::TypeFor()
     {
         return typeid(T);
     }

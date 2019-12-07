@@ -1,39 +1,39 @@
-#include "InputTypeHandlesAlreadyRegistered.h"
+#include "InputTypesAlreadyRegistered.h"
 
 namespace Inscription
 {
-    InputTypeHandlesAlreadyRegistered::InputTypeHandlesAlreadyRegistered() :
+    InputTypesAlreadyRegistered::InputTypesAlreadyRegistered() :
         Exception(
             DefaultString())
     {}
 
-    InputTypeHandlesAlreadyRegistered::InputTypeHandlesAlreadyRegistered(
-        const std::vector<TypeHandle>& typeHandles)
+    InputTypesAlreadyRegistered::InputTypesAlreadyRegistered(
+        const std::vector<Type>& types)
         :
         Exception(
             DefaultString() +
-            " TypeHandles: " + Join(typeHandles) + ".")
+            " Types: " + Join(types) + ".")
     {}
 
-    std::string InputTypeHandlesAlreadyRegistered::DefaultString()
+    std::string InputTypesAlreadyRegistered::DefaultString()
     {
         return std::string(
-            "Input type handles were already registered in the PolymorphicManager.");
+            "Input type were already registered in the PolymorphicManager.");
     }
 
-    std::string InputTypeHandlesAlreadyRegistered::Join(const std::vector<TypeHandle>& typeHandles)
+    std::string InputTypesAlreadyRegistered::Join(const std::vector<Type>& types)
     {
         std::string built;
-        if (typeHandles.empty())
+        if (types.empty())
             return built;
 
         for(size_t i = 0;; ++i)
         {
-            built += typeHandles[0];
+            built += types[0];
 
-            if (i < typeHandles.size() - 1)
+            if (i < types.size() - 1)
                 built += ", ";
-            else if (i == typeHandles.size() - 1)
+            else if (i == types.size() - 1)
                 break;
         }
         return built;

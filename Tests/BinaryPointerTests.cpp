@@ -22,10 +22,10 @@ public:
         int value = 0;
     };
 
-    struct NestedObject
+    struct NestedHeapObject
     {
         int value = 0;
-        NestedObject* next = nullptr;
+        NestedHeapObject* next = nullptr;
     };
 
     class ProtectedConstructor
@@ -85,8 +85,8 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryPointerFixture::NestedObject, BinaryArchive> : public
-        CompositeScribe<::BinaryPointerFixture::NestedObject, BinaryArchive>
+    class Scribe<::BinaryPointerFixture::NestedHeapObject, BinaryArchive> : public
+        CompositeScribe<::BinaryPointerFixture::NestedHeapObject, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -184,8 +184,8 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading nested object in binary", "[binar
 {
     GIVEN("saved nested object")
     {
-        NestedObject* savedObject1 = dataGeneration.RandomHeap<NestedObject, int>();
-        NestedObject* savedObject2 = dataGeneration.RandomHeap<NestedObject, int>();
+        NestedHeapObject* savedObject1 = dataGeneration.RandomHeap<NestedHeapObject, int>();
+        NestedHeapObject* savedObject2 = dataGeneration.RandomHeap<NestedHeapObject, int>();
         savedObject1->next = savedObject2;
 
         {
@@ -195,7 +195,7 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading nested object in binary", "[binar
 
         WHEN("loading nested object")
         {
-            NestedObject* loadedObject1 = nullptr;
+            NestedHeapObject* loadedObject1 = nullptr;
 
             {
                 auto inputArchive = CreateRegistered<InputArchive>();
@@ -223,12 +223,12 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading nested object in binary", "[binar
     }
 }
 
-SCENARIO_METHOD(BinaryPointerFixture, "loading cyclic object in binary", "[binary][pointer]")
+SCENARIO_METHOD(BinaryPointerFixture, "loading cyclic heap objects in binary", "[binary][pointer]")
 {
     GIVEN("saved cyclic object")
     {
-        NestedObject* savedObject1 = dataGeneration.RandomHeap<NestedObject, int>();
-        NestedObject* savedObject2 = dataGeneration.RandomHeap<NestedObject, int>();
+        NestedHeapObject* savedObject1 = dataGeneration.RandomHeap<NestedHeapObject, int>();
+        NestedHeapObject* savedObject2 = dataGeneration.RandomHeap<NestedHeapObject, int>();
         savedObject1->next = savedObject2;
         savedObject2->next = savedObject1;
 
@@ -239,7 +239,7 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading cyclic object in binary", "[binar
 
         WHEN("loading cyclic object")
         {
-            NestedObject* loadedObject1 = nullptr;
+            NestedHeapObject* loadedObject1 = nullptr;
 
             {
                 auto inputArchive = CreateRegistered<InputArchive>();

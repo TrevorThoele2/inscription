@@ -1,8 +1,8 @@
 #pragma once
 
+#include <string>
+
 namespace Inscription
 {
-    template<class T>
-    struct Type
-    {};
+    using Type = std::string;
 }

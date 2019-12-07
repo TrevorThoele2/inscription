@@ -157,25 +157,25 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive, std::true_type)
     {
         TrackingID typeID;
-        auto needsTypeHandle = false;
-        auto type = std::type_index(typeid(*object));
+        auto needsType = false;
+        auto typeIndex = std::type_index(typeid(*object));
 
         {
-            auto foundTypeID = archive.typeTracker.FindID(type);
-            needsTypeHandle = !foundTypeID.has_value();
+            auto foundTypeID = archive.typeTracker.FindID(typeIndex);
+            needsType = !foundTypeID.has_value();
             if (foundTypeID.has_value())
                 typeID = *foundTypeID;
             else
-                typeID = archive.typeTracker.Add(type);
+                typeID = archive.typeTracker.Add(typeIndex);
         }
 
         {
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
             archive(typeID);
-            if (needsTypeHandle)
+            if (needsType)
             {
-                auto typeHandle = archive.polymorphicManager.OutputTypeHandleFor(type);
-                archive(typeHandle);
+                auto type = archive.polymorphicManager.OutputTypeFor(typeIndex);
+                archive(type);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive, TrackingID objectID, std::true_type)
     {
         TrackingID typeID;
-        std::type_index type = typeid(void*);
+        std::type_index typeIndex = typeid(void*);
 
         {
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
@@ -202,19 +202,19 @@ namespace Inscription
             auto foundType = archive.typeTracker.FindType(typeID);
             if (!foundType.has_value())
             {
-                TypeHandle typeHandle;
-                archive(typeHandle);
+                Type type;
+                archive(type);
 
-                type = archive.polymorphicManager.TypeIndexFor(typeHandle);
-                archive.typeTracker.Add(type, typeID);
+                typeIndex = archive.polymorphicManager.TypeIndexFor(type);
+                archive.typeTracker.Add(typeIndex, typeID);
             }
             else
-                type = *foundType;
+                typeIndex = *foundType;
         }
 
-        auto storage = archive.polymorphicManager.CreateStorage(type);
+        auto storage = archive.polymorphicManager.CreateStorage(typeIndex);
         archive.objectTracker.Add(storage, objectID);
-        archive.polymorphicManager.Construct(storage, type, archive);
+        archive.polymorphicManager.Construct(storage, typeIndex, archive);
         object = reinterpret_cast<ObjectT>(storage);
     }
 

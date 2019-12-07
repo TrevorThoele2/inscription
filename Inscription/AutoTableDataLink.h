@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseTableDataLink.h"
-#include "Type.h"
+#include "TypeIdentity.h"
 
 #include "ObjectTrackingContext.h"
 
@@ -20,7 +20,7 @@ namespace Inscription
         template<class ObjectMemberT, class DataMemberT>
         static AutoTableDataLink Auto(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
         template<class BaseT>
-        static AutoTableDataLink Base(Type<BaseT>);
+        static AutoTableDataLink Base(TypeIdentity<BaseT>);
         template<class BaseT>
         static AutoTableDataLink Base(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
 
@@ -39,7 +39,7 @@ namespace Inscription
         template<class ObjectMemberT, class DataMemberT>
         AutoTableDataLink(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
         template<class BaseT>
-        explicit AutoTableDataLink(Type<BaseT> type);
+        explicit AutoTableDataLink(TypeIdentity<BaseT> type);
         template<class BaseT>
         explicit AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
     private:
@@ -162,7 +162,7 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class BaseT>
     AutoTableDataLink<Data, Object, Archive> AutoTableDataLink<Data, Object, Archive>::Base(
-        Type<BaseT> type)
+        TypeIdentity<BaseT> type)
     {
         return AutoTableDataLink(type);
     }
@@ -233,7 +233,7 @@ namespace Inscription
 
     template<class Data, class Object, class Archive>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(Type<BaseT> type) :
+    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(TypeIdentity<BaseT> type) :
         implementation(new BaseImplementation<BaseT>())
     {}
 

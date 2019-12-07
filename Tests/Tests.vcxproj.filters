@@ -91,6 +91,9 @@
     <ClCompile Include="StreamPositionTests.cpp">
       <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
     </ClCompile>
+    <ClCompile Include="OptionalTests.cpp">
+      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextFixture.h">

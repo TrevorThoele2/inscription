@@ -85,7 +85,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;$(IncludePath)</IncludePath>
@@ -198,11 +198,12 @@
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
     <ClInclude Include="InputJumpTable.h" />
+    <ClInclude Include="NullScribe.h" />
     <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
-    <ClInclude Include="TypeHandlesFor.h" />
-    <ClInclude Include="ScribeHasInputTypeHandles.h" />
+    <ClInclude Include="TypesFor.h" />
+    <ClInclude Include="ScribeHasInputTypes.h" />
     <ClInclude Include="Storage.h" />
     <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
@@ -218,7 +219,7 @@
     <ClInclude Include="OutputBinaryFile.h" />
     <ClInclude Include="BinaryArchive.h" />
     <ClInclude Include="Buffer.h" />
-    <ClInclude Include="TypeHandle.h" />
+    <ClInclude Include="Type.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="ContainerSize.h" />
     <ClInclude Include="Endian.h" />
@@ -239,7 +240,7 @@
     <ClInclude Include="MultimapScribe.h" />
     <ClInclude Include="MultisetScribe.h" />
     <ClInclude Include="SpecialTypeTrackingID.h" />
-    <ClInclude Include="InputTypeHandleNotFound.h" />
+    <ClInclude Include="InputTypeNotFound.h" />
     <ClInclude Include="QueueScribe.h" />
     <ClInclude Include="Archive.h" />
     <ClInclude Include="SetScribe.h" />
@@ -256,7 +257,8 @@
     <ClInclude Include="TableDataEntry.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataLink.h" />
-    <ClInclude Include="InputTypeHandlesAlreadyRegistered.h" />
+    <ClInclude Include="InputTypesAlreadyRegistered.h" />
+    <ClInclude Include="TypeIdentity.h" />
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />
@@ -270,7 +272,6 @@
     <ClInclude Include="TrackingID.h" />
     <ClInclude Include="ObjectTrackerEntry.h" />
     <ClInclude Include="TupleScribe.h" />
-    <ClInclude Include="Type.h" />
     <ClInclude Include="TypeMap.h" />
     <ClInclude Include="UndefAssert.h" />
     <ClInclude Include="UnorderedMapScribe.h" />
