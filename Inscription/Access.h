@@ -175,8 +175,7 @@ namespace Inscription
             int> = 0
         > static void TableConstruct(Object* storage, Archive& archive, Table<Object, Archive>& table)
         {
-            static_assert(
-                !is_braces_constructible_v<Object, const TableData<Object, Archive>&>,
+            static_assert(false,
                 "Basic table construction requires either a "
                 "default constructor or a constructor taking a (const DataT&) on ObjectT. "
 

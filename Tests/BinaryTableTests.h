@@ -50,8 +50,8 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::Base, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::Base, BinaryArchive>
+    class Scribe<::BinaryTableFixture::Base, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::Base, BinaryArchive>
     {
     public:
         class Table : public TableBase
@@ -70,11 +70,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -84,7 +84,7 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::Base> base;
@@ -92,11 +92,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -108,18 +108,18 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>
     {
         int baseValue;
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>
+    class Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -129,7 +129,7 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::ObjectScrivenBase> base;
@@ -137,11 +137,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -155,18 +155,18 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::TableConstructionBase, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::TableConstructionBase, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::TableConstructionBase, BinaryArchive>
     {
         int baseValue;
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>
+    class Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -174,7 +174,7 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::TableConstructionBase> base;
@@ -182,11 +182,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -196,7 +196,7 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>
     {
         Base<::BinaryTableFixture::Base> base;
@@ -204,11 +204,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -226,11 +226,11 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>
+    class Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();
@@ -240,18 +240,18 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::BinaryTableFixture::NonDefault, BinaryArchive> : public
+    struct TableData<::BinaryTableFixture::NonDefault, BinaryArchive> :
         TableDataBase<::BinaryTableFixture::NonDefault, BinaryArchive>
     {
         std::string value;
     };
 
     template<>
-    class Scribe<::BinaryTableFixture::NonDefault, BinaryArchive> : public
-        TableScribe<::BinaryTableFixture::NonDefault, BinaryArchive>
+    class Scribe<::BinaryTableFixture::NonDefault, BinaryArchive> final :
+        public TableScribe<::BinaryTableFixture::NonDefault, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();

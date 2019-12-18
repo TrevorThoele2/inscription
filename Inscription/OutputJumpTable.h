@@ -15,6 +15,8 @@ namespace Inscription
         bool Add(ID id, Object& add);
 
         [[nodiscard]] std::vector<ID> AllIDs() const;
+        [[nodiscard]] bool Contains(ID id) const;
+        [[nodiscard]] size_t Size() const;
     private:
         struct Added
         {
@@ -45,6 +47,22 @@ namespace Inscription
         for (auto& loop : added)
             returnValue.push_back(loop.first);
         return returnValue;
+    }
+
+    template<class ID, class Object>
+    bool OutputJumpTable<ID, Object>::Contains(ID id) const
+    {
+        for (auto& loop : added)
+            if (loop.first == id)
+                return true;
+
+        return false;
+    }
+
+    template<class ID, class Object>
+    size_t OutputJumpTable<ID, Object>::Size() const
+    {
+        return added.size();
     }
 
     template<class ID, class Object>

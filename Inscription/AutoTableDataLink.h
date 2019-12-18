@@ -284,9 +284,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PullFromObject(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        auto& extractedDataMember = RemoveConst(table.data.*dataMember); 
-        auto extractedObjectMember = RemoveConst(object.*objectMember);
-        extractedDataMember = extractedObjectMember;
+        RemoveConst(table.data.*dataMember) = RemoveConst(object.*objectMember);
     }
 
     template<class Data, class Object, class Archive>
@@ -294,9 +292,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PushToObject(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        auto& extractedObjectMember = RemoveConst(object.*objectMember);
-        std::remove_const_t<ObjectMemberT> extractedDataMember(table.data.*dataMember);
-        extractedObjectMember = std::move(extractedDataMember);
+        RemoveConst(object.*objectMember) = std::move(table.data.*dataMember);
     }
 
     template<class Data, class Object, class Archive>
@@ -337,9 +333,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::PullFromObject(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        auto& extractedDataMember = RemoveConst(table.data.*dataMember);
-        auto& extractedObjectMember = (object.*objectMember);
-        extractedDataMember = extractedObjectMember;
+        RemoveConst(table.data.*dataMember) = object.*objectMember;
     }
 
     template<class Data, class Object, class Archive>
@@ -347,9 +341,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::PushToObject(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        auto& extractedObjectMember = RemoveConst((object.*objectMember));
-        auto& extractedDataMember = (table.data.*dataMember);
-        extractedObjectMember = std::move(extractedDataMember);
+        RemoveConst(object.*objectMember) = std::move(table.data.*dataMember);
     }
 
     template<class Data, class Object, class Archive>

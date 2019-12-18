@@ -20,6 +20,8 @@ namespace Inscription
         bool FillObject(ID at, Object& object, Archive& archive);
 
         [[nodiscard]] std::vector<ID> AllIDs() const;
+        [[nodiscard]] bool Contains(ID id) const;
+        [[nodiscard]] size_t Size() const;
     private:
         struct Handle
         {
@@ -59,12 +61,28 @@ namespace Inscription
     }
 
     template<class ID, class Object>
-    [[nodiscard]] std::vector<ID> InputJumpTable<ID, Object>::AllIDs() const
+    std::vector<ID> InputJumpTable<ID, Object>::AllIDs() const
     {
         std::vector<ID> returnValue;
         for (auto& loop : handles)
             returnValue.push_back(loop.id);
         return returnValue;
+    }
+
+    template<class ID, class Object>
+    bool InputJumpTable<ID, Object>::Contains(ID id) const
+    {
+        for (auto& loop : handles)
+            if (loop.id == id)
+                return true;
+
+        return false;
+    }
+
+    template<class ID, class Object>
+    size_t InputJumpTable<ID, Object>::Size() const
+    {
+        return handles.size();
     }
 
     template<class ID, class Object>
