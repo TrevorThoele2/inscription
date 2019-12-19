@@ -14,7 +14,9 @@ namespace Inscription
         virtual ~Archive() = 0;
 
         template<class T>
-        void UserContext(T* userContext);
+        void EmplaceUserContext(T* userContext);
+        template<class T>
+        void RemoveUserContext();
         template<class T>
         [[nodiscard]] T* UserContext() const;
     protected:
@@ -26,9 +28,15 @@ namespace Inscription
     };
 
     template<class T>
-    void Archive::UserContext(T* userContext)
+    void Archive::EmplaceUserContext(T* userContext)
     {
         userContexts.emplace(typeid(T), userContext);
+    }
+
+    template<class T>
+    void Archive::RemoveUserContext()
+    {
+        userContexts.erase(typeid(T));
     }
 
     template<class T>
