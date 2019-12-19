@@ -202,6 +202,7 @@
     <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
+    <ClInclude Include="PointerScribe.h" />
     <ClInclude Include="TrackingScribe.h" />
     <ClInclude Include="TypesFor.h" />
     <ClInclude Include="ScribeHasInputTypes.h" />

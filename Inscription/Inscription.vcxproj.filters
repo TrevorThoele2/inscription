@@ -292,6 +292,9 @@
     <ClInclude Include="TrackingScribe.h">
       <Filter>Header Files\Scribe\Base</Filter>
     </ClInclude>
+    <ClInclude Include="PointerScribe.h">
+      <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
