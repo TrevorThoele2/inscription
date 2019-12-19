@@ -3,7 +3,6 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
-#include <Inscription/PointerScribe.h>
 
 #include "BinaryFixture.h"
 #include "Inscription/BaseScriven.h"

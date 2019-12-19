@@ -120,7 +120,7 @@ namespace Inscription
         template<class Archive>
         friend class PolymorphicManager;
         template<class Object, class Archive>
-        friend class PointerScribe;
+        friend class CompositeScribe;
     };
 
     template<class T>
@@ -134,7 +134,7 @@ namespace Inscription
     template<class T>
     BinaryArchive& BinaryArchive::operator()(T*& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type*> scribe;
+        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
         scribe.Scriven(RemoveConst(object), *this);
         return *this;
     }

@@ -202,6 +202,7 @@
     <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
+    <ClInclude Include="TrackingScribe.h" />
     <ClInclude Include="TypesFor.h" />
     <ClInclude Include="ScribeHasInputTypes.h" />
     <ClInclude Include="Storage.h" />
@@ -231,7 +232,6 @@
     <ClInclude Include="OutputBinaryArchive.h" />
     <ClInclude Include="OutputSimpleFile.h" />
     <ClInclude Include="OutputTextArchive.h" />
-    <ClInclude Include="PointerScribe.h" />
     <ClInclude Include="PolymorphicManager.h" />
     <ClInclude Include="SpecialObjectTrackingID.h" />
     <ClInclude Include="ListScribe.h" />

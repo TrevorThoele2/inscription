@@ -133,9 +133,6 @@
     <ClInclude Include="NumericScribe.h">
       <Filter>Header Files\Scribe\Base</Filter>
     </ClInclude>
-    <ClInclude Include="PointerScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
     <ClInclude Include="MemoryScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
@@ -291,6 +288,9 @@
     </ClInclude>
     <ClInclude Include="ScribeHasInputTypes.h">
       <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackingScribe.h">
+      <Filter>Header Files\Scribe\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
