@@ -15,7 +15,7 @@ namespace Inscription
 
         InputBinaryFile& operator=(InputBinaryFile&& arg) noexcept;
 
-        void ReadData(Buffer& buffer);
+        void ReadData(Buffer& buffer, size_t size);
         template<class T>
         void ReadData(T& var);
 

@@ -10,9 +10,6 @@
     <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -184,16 +181,7 @@
     <ClInclude Include="VectorScribe.h">
       <Filter>Header Files\Scribe\Types\Std\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="FileNameScribe.h">
-      <Filter>Header Files\Scribe\Types\Chroma</Filter>
-    </ClInclude>
-    <ClInclude Include="FilePathScribe.h">
-      <Filter>Header Files\Scribe\Types\Chroma</Filter>
-    </ClInclude>
     <ClInclude Include="FilePath.h">
-      <Filter>Header Files\File</Filter>
-    </ClInclude>
-    <ClInclude Include="FileName.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
     <ClInclude Include="Stream.h">
@@ -204,9 +192,6 @@
     </ClInclude>
     <ClInclude Include="NullTableData.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="RelativeFilePathScribe.h">
-      <Filter>Header Files\Scribe\Types\Chroma</Filter>
     </ClInclude>
     <ClInclude Include="BufferScribe.h">
       <Filter>Header Files\Scribe\Base</Filter>
@@ -294,6 +279,12 @@
     </ClInclude>
     <ClInclude Include="PointerScribe.h">
       <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePathScribe.h">
+      <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -402,9 +393,6 @@
     <Filter Include="Header Files\Scribe\Types\Std\Containers">
       <UniqueIdentifier>{a916ce06-9c94-42e8-a93b-26626c159528}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scribe\Types\Chroma">
-      <UniqueIdentifier>{e2741f3e-fdab-4852-90ca-e7ee27f81873}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Scribe\Base">
       <UniqueIdentifier>{5641c513-6962-4cea-b837-11f91c61015c}</UniqueIdentifier>
     </Filter>
@@ -429,18 +417,12 @@
     <Filter Include="Source Files\Scribe\Types\Std">
       <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scribe\Types\Chroma">
-      <UniqueIdentifier>{cbed75a5-ec9f-40be-8cdc-150dc12d1153}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Scribe\Types\Base">
       <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InputBinaryFile.cpp">
@@ -515,15 +497,6 @@
     <ClCompile Include="StringScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
-    <ClCompile Include="FilePathScribe.cpp">
-      <Filter>Source Files\Scribe\Types\Chroma</Filter>
-    </ClCompile>
-    <ClCompile Include="FileNameScribe.cpp">
-      <Filter>Source Files\Scribe\Types\Chroma</Filter>
-    </ClCompile>
-    <ClCompile Include="RelativeFilePathScribe.cpp">
-      <Filter>Source Files\Scribe\Types\Chroma</Filter>
-    </ClCompile>
     <ClCompile Include="BufferScribe.cpp">
       <Filter>Source Files\Scribe\Types\Base</Filter>
     </ClCompile>
@@ -544,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="InputTypeHandlesAlreadyRegistered.cpp">
       <Filter>Source Files\Polymorphic</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePathScribe.cpp">
+      <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

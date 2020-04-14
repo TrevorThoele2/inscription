@@ -49,7 +49,7 @@ namespace Inscription
         using ArchiveT = typename BaseT::ArchiveT;
     public:
         using BaseT::Scriven;
-        virtual void Scriven(ObjectT*& object, ArchiveT& archive);
+        void Scriven(ObjectT*& object, ArchiveT& archive);
     protected:
         CompositeScribe() = default;
         CompositeScribe(const CompositeScribe& arg) = default;

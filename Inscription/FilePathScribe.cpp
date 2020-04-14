@@ -1,20 +1,42 @@
 #include "FilePathScribe.h"
 
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+
+#include "OutputTextArchive.h"
+#include "InputTextArchive.h"
+
 #include "StringScribe.h"
-#include "BinaryArchive.h"
 
 namespace Inscription
 {
-    void Scribe<::Chroma::FilePath, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::filesystem::path, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
-            archive(object.GetValue());
+        {
+            auto string = object.string();
+            archive(string);
+        }
         else
         {
-            std::string value;
-            archive(value);
+            std::string string;
+            archive(string);
+            object = string;
+        }
+    }
 
-            object.Set(value);
+    void Scribe<std::filesystem::path, TextArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto string = object.string();
+            archive(string);
+        }
+        else
+        {
+            std::string string;
+            archive(string);
+            object = string;
         }
     }
 }

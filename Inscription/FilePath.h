@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Chroma/FilePath.h>
+#include <filesystem>
 
 namespace Inscription
 {
-    using ::Chroma::FilePath;
+    using FilePath = std::filesystem::path;
 }
