@@ -15,6 +15,7 @@ namespace Inscription
         using Mode = std::ios_base::openmode;
         using StreamT = T;
         using StreamPosition = StreamPosition;
+        using OffsetPosition = StreamPosition;
         using SizeT = StreamPosition;
     public:
         Stream() = delete;
@@ -47,8 +48,7 @@ namespace Inscription
     };
 
     template<class T>
-    Stream<T>::~Stream()
-    {}
+    Stream<T>::~Stream() = default;
 
     template<class T>
     void Stream<T>::Open()

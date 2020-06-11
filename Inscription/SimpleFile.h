@@ -11,6 +11,7 @@ namespace Inscription
         using typename Stream<T>::Mode;
         using typename Stream<T>::StreamT;
         using typename Stream<T>::StreamPosition;
+        using typename Stream<T>::OffsetPosition;
         using typename Stream<T>::SizeT;
     public:
         virtual ~SimpleFile() = 0;
@@ -47,8 +48,7 @@ namespace Inscription
     }
 
     template<class T>
-    SimpleFile<T>::~SimpleFile()
-    {}
+    SimpleFile<T>::~SimpleFile() = default;
 
     template<class T>
     bool SimpleFile<T>::IsAtEndOfFile() const

@@ -15,7 +15,9 @@ namespace Inscription
         InputSimpleFile& operator>>(T& var);
 
         void FillBuffer(char* var, std::streamsize size);
-        void SeekG(StreamT::pos_type position);
+        void Seek(StreamPosition position);
+        void Seek(OffsetPosition position, std::ios_base::seekdir direction);
+        [[nodiscard]] StreamPosition Tell();
     };
 
     template<class T>

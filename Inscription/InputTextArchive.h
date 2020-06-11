@@ -19,7 +19,7 @@ namespace Inscription
 
         InputTextArchive& ReadLine(std::string& arg);
         InputTextArchive& ReadLine(std::string& arg, char delimiter);
-        InputTextArchive& ReadSize(std::string& arg, size_t size);
+        InputTextArchive& ReadSize(std::string& arg, size_t size = std::numeric_limits<size_t>::max());
     protected:
         void ReadImpl(std::string& arg) { ReadFromFile(arg); }
         void ReadImpl(char& arg) { ReadFromFile(arg); }
