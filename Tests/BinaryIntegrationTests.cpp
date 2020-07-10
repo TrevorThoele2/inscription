@@ -6,6 +6,7 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/TupleScribe.h>
 #include <Inscription/StreamPositionScribe.h>
+#include <Inscription/VariantScribe.h>
 
 #include <Inscription/ArrayScribe.h>
 #include <Inscription/ForwardListScribe.h>
@@ -87,6 +88,8 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
         auto savedString = dataGeneration.Random<std::string>();
 
         auto savedTuple = dataGeneration.RandomStack<std::tuple<int, short, std::string>, int, short, std::string>();
+
+        auto savedVariant = dataGeneration.RandomStack<std::variant<int, short, std::string>, std::string>();
 
         auto savedArray = std::array<int, 3>
         {
@@ -207,6 +210,8 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
 
             outputArchive(savedTuple);
 
+            outputArchive(savedVariant);
+
             outputArchive(savedArray);
             outputArchive(savedForwardList);
             outputArchive(savedList);
@@ -248,6 +253,8 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
 
             std::tuple<int, short, std::string> loadedTuple;
 
+            std::variant<int, short, std::string> loadedVariant;
+
             std::array<int, 3> loadedArray{ 0, 0, 0 };
             std::forward_list<int> loadedForwardList;
             std::list<int> loadedList;
@@ -287,6 +294,8 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
                 inputArchive(loadedString);
 
                 inputArchive(loadedTuple);
+
+                inputArchive(loadedVariant);
 
                 inputArchive(loadedArray);
                 inputArchive(loadedForwardList);
@@ -328,6 +337,8 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
                 REQUIRE(loadedString == savedString);
 
                 REQUIRE(loadedTuple == savedTuple);
+
+                REQUIRE(loadedVariant == savedVariant);
 
                 REQUIRE(loadedArray == savedArray);
                 REQUIRE(loadedForwardList == savedForwardList);

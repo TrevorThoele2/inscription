@@ -286,6 +286,9 @@
     <ClInclude Include="FilePathScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
+    <ClInclude Include="VariantScribe.h">
+      <Filter>Header Files\Scribe\Types\Std</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

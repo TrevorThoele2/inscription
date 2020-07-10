@@ -154,6 +154,7 @@
     <ClCompile Include="UnorderedMultiMapTests.cpp" />
     <ClCompile Include="UnorderedMultisetTests.cpp" />
     <ClCompile Include="UnorderedSetTests.cpp" />
+    <ClCompile Include="VariantTests.cpp" />
     <ClCompile Include="VectorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
