@@ -23,6 +23,17 @@ namespace Inscription
     };
 
     template<>
+    class Scribe<std::string, JsonArchive> final :
+        public TrackingScribe<std::string, JsonArchive>
+    {
+    protected:
+        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
+    private:
+        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+    };
+
+    template<>
     class Scribe<std::string, TextArchive> final :
         public ScribeBase<std::string, TextArchive>
     {

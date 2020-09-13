@@ -4,13 +4,11 @@
 namespace Inscription
 {
     OutputTextFile::OutputTextFile(const FilePath& path, bool append) :
-        SimpleFile(path, (!append) ? std::ios::out : std::ios::out | std::ios::app)
-    {
-        ResetFillCharacter();
-        ResetWidth();
-    }
+        SimpleFile(path, append ? std::ios::out | std::ios::app : std::ios::out)
+    {}
 
-    OutputTextFile::OutputTextFile(OutputTextFile&& arg) noexcept : SimpleFile(std::move(arg))
+    OutputTextFile::OutputTextFile(OutputTextFile&& arg) noexcept :
+        SimpleFile(std::move(arg))
     {}
 
     OutputTextFile& OutputTextFile::operator=(OutputTextFile&& arg) noexcept
@@ -58,5 +56,15 @@ namespace Inscription
     void OutputTextFile::ResetWidth()
     {
         width = 0;
+    }
+
+    void OutputTextFile::SeekStream(StreamPosition position)
+    {
+        stream.seekp(position);
+    }
+
+    StreamPosition OutputTextFile::TellStream()
+    {
+        return stream.tellp();
     }
 }

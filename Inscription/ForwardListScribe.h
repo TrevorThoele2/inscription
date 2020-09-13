@@ -2,7 +2,7 @@
 
 #include <forward_list>
 
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
@@ -13,10 +13,10 @@ namespace Inscription
 
     template<class T, class Allocator>
     class Scribe<std::forward_list<T, Allocator>, BinaryArchive> final :
-        public CompositeScribe<std::forward_list<T, Allocator>, BinaryArchive>
+        public ObjectScribe<std::forward_list<T, Allocator>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<std::forward_list<T, Allocator>, BinaryArchive>;
+        using BaseT = ObjectScribe<std::forward_list<T, Allocator>, BinaryArchive>;
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
@@ -58,8 +58,71 @@ namespace Inscription
         {
             ScopeConstructor<typename ObjectT::value_type> constructor(archive);
             object.push_front(std::move(constructor.GetMove()));
-            archive.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
         }
+
+        object.reverse();
+    }
+
+    class JsonArchive;
+
+    template<class T, class Allocator>
+    class Scribe<std::forward_list<T, Allocator>, JsonArchive> final :
+        public ObjectScribe<std::forward_list<T, Allocator>, JsonArchive>
+    {
+    private:
+        using BaseT = ObjectScribe<std::forward_list<T, Allocator>, JsonArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+
+        using BaseT::Scriven;
+    protected:
+        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
+    private:
+        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(name, object, archive);
+        else
+            LoadImplementation(name, object, archive);
+    }
+
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, JsonArchive>::SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        auto outputArchive = archive.AsOutput();
+
+        outputArchive->StartList(name);
+        for (auto loop = object.begin(); loop != object.end(); ++loop)
+            archive("", *loop);
+        outputArchive->EndList();
+    }
+
+    template<class T, class Allocator>
+    void Scribe<std::forward_list<T, Allocator>, JsonArchive>::LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        object.clear();
+
+        auto inputArchive = archive.AsInput();
+
+        ContainerSize size = 0;
+
+        inputArchive->StartList(name, size);
+
+        while (size-- > 0)
+        {
+            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+            object.push_front(std::move(constructor.GetMove()));
+            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+        }
+
+        inputArchive->EndList();
 
         object.reverse();
     }

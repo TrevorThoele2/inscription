@@ -2,22 +2,29 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
+    class TypeManagerBase;
 
     class ObjectTrackingContext
     {
     public:
-        enum Type
+        static ObjectTrackingContext Active(TypeManagerBase& typeManager);
+        static ObjectTrackingContext Inactive(TypeManagerBase& typeManager);
+
+        ObjectTrackingContext(const ObjectTrackingContext& arg) = default;
+        ~ObjectTrackingContext();
+
+        ObjectTrackingContext& operator=(const ObjectTrackingContext& arg) = default;
+    private:
+        enum class Type
         {
             Active,
             Inactive
         };
-    public:
-        ObjectTrackingContext(Type type, BinaryArchive& archive);
-        ~ObjectTrackingContext();
-    private:
+
         Type previousType;
-        BinaryArchive* archive;
+        TypeManagerBase* typeManager;
+
+        ObjectTrackingContext(Type type, TypeManagerBase& typeManager);
 
         static bool BoolFrom(Type type);
         static Type TypeFrom(bool b);

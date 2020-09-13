@@ -25,10 +25,10 @@ public:
     template<>
     [[nodiscard]] OutputArchive CreateRegistered() const
     {
-        OutputArchive created("Test.dat", "testing", 1);
+        OutputArchive created("Test.dat");
 
-        created.RegisterType<Base>();
-        created.RegisterType<Derived>();
+        created.types.RegisterType<Base>();
+        created.types.RegisterType<Derived>();
 
         return created;
     }
@@ -36,10 +36,10 @@ public:
     template<>
     [[nodiscard]] InputArchive CreateRegistered() const
     {
-        InputArchive created("Test.dat", "testing");
+        InputArchive created("Test.dat");
 
-        created.RegisterType<Base>();
-        created.RegisterType<Derived>();
+        created.types.RegisterType<Base>();
+        created.types.RegisterType<Derived>();
 
         return created;
     }

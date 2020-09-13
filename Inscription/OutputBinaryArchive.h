@@ -7,18 +7,11 @@
 
 namespace Inscription
 {
-    class OutputBinaryArchive : public BinaryArchive
+    class OutputBinaryArchive final : public BinaryArchive
     {
     public:
-        OutputBinaryArchive(
-            const FilePath& path,
-            const Signature& clientSignature,
-            Version clientVersion);
-        OutputBinaryArchive(
-            const FilePath& path,
-            const Signature& clientSignature,
-            Version clientVersion,
-            const TypeRegistrationContext& typeRegistrationContext);
+        OutputBinaryArchive(const FilePath& path);
+        OutputBinaryArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
         OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept;
 
         OutputBinaryArchive& operator=(OutputBinaryArchive&& arg) noexcept;
@@ -46,8 +39,6 @@ namespace Inscription
         void WriteImpl(const Buffer &arg) { WriteToFile(arg); }
     private:
         OutputBinaryFile file;
-    private:
-        void InitialSetup();
     private:
         template<class T>
         void WriteToFile(T& arg)

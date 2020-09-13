@@ -25,6 +25,21 @@ namespace Inscription
         }
     }
 
+    void Scribe<std::filesystem::path, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto string = object.string();
+            archive(name, string);
+        }
+        else
+        {
+            std::string string;
+            archive(name, string);
+            object = string;
+        }
+    }
+
     void Scribe<std::filesystem::path, TextArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())

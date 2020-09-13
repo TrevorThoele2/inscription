@@ -12,19 +12,19 @@
 class TextFixture : public GeneralFixture
 {
 public:
-    using OutputArchive = ::Inscription::OutputTextArchive;
-    using InputArchive = ::Inscription::InputTextArchive;
+    using OutputArchive = Inscription::OutputTextArchive;
+    using InputArchive = Inscription::InputTextArchive;
 
-    OutputArchive CreateOutputArchive() const;
-    InputArchive CreateInputArchive() const;
+    [[nodiscard]] OutputArchive CreateOutputArchive() const;
+    [[nodiscard]] InputArchive CreateInputArchive() const;
 };
 
-TextFixture::OutputArchive TextFixture::CreateOutputArchive() const
+auto TextFixture::CreateOutputArchive() const -> OutputArchive
 {
     return OutputArchive("Test.txt");
 }
 
-TextFixture::InputArchive TextFixture::CreateInputArchive() const
+auto TextFixture::CreateInputArchive() const -> InputArchive
 {
     return InputArchive("Test.txt");
 }

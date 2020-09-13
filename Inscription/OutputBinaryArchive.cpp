@@ -1,40 +1,17 @@
 #include "OutputBinaryArchive.h"
 
-#include "Const.h"
-
 namespace Inscription
 {
-    OutputBinaryArchive::OutputBinaryArchive(
-        const FilePath& path,
-        const Signature& clientSignature,
-        Version clientVersion) :
-
-        BinaryArchive(
-            Direction::Output,
-            clientSignature,
-            clientVersion,
-            ::Inscription::currentInscriptionVersion),
+    OutputBinaryArchive::OutputBinaryArchive(const FilePath& path) :
+        BinaryArchive(Direction::Output),
         file(path)
-    {
-        InitialSetup();
-    }
+    {}
 
     OutputBinaryArchive::OutputBinaryArchive(
-        const FilePath& path,
-        const Signature& clientSignature,
-        Version clientVersion,
-        const TypeRegistrationContext& typeRegistrationContext) :
-
-        BinaryArchive(
-            Direction::Output,
-            clientSignature,
-            clientVersion,
-            ::Inscription::currentInscriptionVersion,
-            typeRegistrationContext),
+        const FilePath& path, const TypeRegistrationContext& typeRegistrationContext) :
+        BinaryArchive(Direction::Output, typeRegistrationContext),
         file(path)
-    {
-        InitialSetup();
-    }
+    {}
 
     OutputBinaryArchive::OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept :
         BinaryArchive(std::move(arg)), file(std::move(arg.file))
@@ -55,15 +32,5 @@ namespace Inscription
     OutputBinaryArchive::StreamPosition OutputBinaryArchive::TellStream()
     {
         return file.TellStream();
-    }
-
-    void OutputBinaryArchive::InitialSetup()
-    {
-        for (auto& loop : clientSignature)
-            WriteImpl(RemoveConst(loop));
-
-        WriteImpl(inscriptionVersion);
-        WriteImpl(clientVersion);
-        postHeaderPosition = TellStream();
     }
 }

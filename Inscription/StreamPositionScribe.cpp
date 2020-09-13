@@ -9,7 +9,7 @@ namespace Inscription
 {
     void Scribe<StreamPosition, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
-        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())
             SaveImplementation(object, archive);
         else

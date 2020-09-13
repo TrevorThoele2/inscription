@@ -6,7 +6,7 @@
 
 namespace Inscription
 {
-    class InputTypesAlreadyRegistered : public Exception
+    class InputTypesAlreadyRegistered final : public Exception
     {
     public:
         InputTypesAlreadyRegistered();

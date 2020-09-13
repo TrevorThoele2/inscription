@@ -4,16 +4,11 @@
 
 #include "Archive.h"
 
-#include "ObjectTracker.h"
-#include "TypeTracker.h"
-#include "PolymorphicManager.h"
-#include "TypeRegistrationContext.h"
-#include "ObjectTrackingTraits.h"
+#include "TypeManager.h"
 
 #include "Scribe.h"
 #include "TableData.h"
 
-#include "Version.h"
 #include "Direction.h"
 #include "Const.h"
 
@@ -24,10 +19,13 @@ namespace Inscription
 
     class BinaryArchive : public Archive
     {
+    private:
+        using Types = TypeManager<BinaryArchive>;
     public:
-        using Signature = std::string;
         using StreamPosition = unsigned long long;
-        using TypeRegistrationContext = TypeRegistrationContext<BinaryArchive>;
+        using TypeRegistrationContext = Types::TypeRegistrationContext;
+    public:
+        Types types;
     public:
         BinaryArchive(const BinaryArchive& arg) = delete;
         BinaryArchive& operator=(const BinaryArchive& arg) = delete;
@@ -39,23 +37,6 @@ namespace Inscription
         template<class T>
         BinaryArchive& operator()(T*& object);
     public:
-        template<class T>
-        std::optional<TrackingID> AttemptTrackObject(T* arg);
-        template<class T>
-        void AttemptReplaceTrackedObject(T& here, T& newObject);
-        void AttemptReplaceTrackedObject(void* here, void *newObject);
-        bool TrackObjects(bool set = true);
-
-        void TrackSavedConstruction(TrackingID trackingID);
-
-        // Will remove all of the target's tracking history
-        // For this reason, this should probably be called at the beginning of the target's lifetime
-        void CopyTrackersTo(BinaryArchive& target) const;
-        // Will remove all of the target's tracking history
-        // For this reason, this should probably be called at the beginning of the target's lifetime
-        // Be sure that this archive will no longer need to handle pointers through tracking when calling this
-        void MoveTrackersTo(BinaryArchive& target);
-    public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
 
@@ -64,38 +45,11 @@ namespace Inscription
         [[nodiscard]] const OutputBinaryArchive* AsOutput() const;
         [[nodiscard]] const InputBinaryArchive* AsInput() const;
     public:
-        [[nodiscard]] Signature ClientSignature() const;
-        [[nodiscard]] Version ClientVersion() const;
-        [[nodiscard]] Version InscriptionVersion() const;
-
-        void MovePositionToStart();
-
         virtual void SeekStream(StreamPosition position) = 0;
         virtual StreamPosition TellStream() = 0;
-    public:
-        template<class T>
-        void RegisterType();
     protected:
-        Signature clientSignature;
-        Version clientVersion;
-        Version inscriptionVersion;
-        StreamPosition postHeaderPosition;
-    protected:
-        BinaryArchive
-        (
-            Direction direction,
-            const Signature& clientSignature,
-            Version clientVersion,
-            Version inscriptionVersion
-        );
-        BinaryArchive
-        (
-            Direction direction,
-            const Signature& clientSignature,
-            Version clientVersion,
-            Version inscriptionVersion,
-            TypeRegistrationContext typeRegistrationContext
-        );
+        BinaryArchive(Direction direction);
+        BinaryArchive(Direction direction, TypeRegistrationContext typeRegistrationContext);
         BinaryArchive(BinaryArchive&& arg) noexcept;
 
         BinaryArchive& operator=(BinaryArchive&& arg) noexcept;
@@ -105,22 +59,8 @@ namespace Inscription
     private:
         const Direction direction;
     private:
-        ObjectTracker objectTracker;
-        TypeTracker typeTracker;
-
-        PolymorphicManager<BinaryArchive> polymorphicManager;
-    private:
-        TypeRegistrationContext typeRegistrationContext;
-
-        template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int> = 0>
-        void RegisterTypeImpl();
-        template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int> = 0>
-        void RegisterTypeImpl();
-    private:
         template<class Archive>
         friend class PolymorphicManager;
-        template<class Object, class Archive>
-        friend class CompositeScribe;
     };
 
     template<class T>
@@ -138,43 +78,6 @@ namespace Inscription
         scribe.Scriven(RemoveConst(object), *this);
         return *this;
     }
-
-    template<class T>
-    std::optional<TrackingID> BinaryArchive::AttemptTrackObject(T* arg)
-    {
-        if (!ObjectTrackingTraits<T, BinaryArchive>::shouldTrack)
-            return {};
-
-        return objectTracker.Add(arg);
-    }
-
-    template<class T>
-    void BinaryArchive::AttemptReplaceTrackedObject(T& here, T& newObject)
-    {
-        if (!ObjectTrackingTraits<T, BinaryArchive>::shouldTrack)
-            return;
-
-        objectTracker.ReplaceObject(&here, &newObject);
-    }
-
-    template<class T>
-    void BinaryArchive::RegisterType()
-    {
-        static_assert(std::is_class_v<T>, "A registered type must be a class type.");
-
-        typeRegistrationContext.RegisterType<T>();
-        RegisterTypeImpl<T>();
-    }
-
-    template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int>>
-    void BinaryArchive::RegisterTypeImpl()
-    {
-        polymorphicManager.Register<T>(*this);
-    }
-
-    template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int>>
-    void BinaryArchive::RegisterTypeImpl()
-    {}
 
     template<class T>
     using BinaryScribe = Scribe<T, BinaryArchive>;

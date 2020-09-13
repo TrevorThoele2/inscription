@@ -5,14 +5,21 @@
 
 #include "OutputBinaryArchive.h"
 #include "InputBinaryArchive.h"
+#include "OutputJsonArchive.h"
+#include "InputJsonArchive.h"
+
+#include <Chroma/StringUtility.h>
 
 namespace Inscription
 {
     template<class Object, class Archive>
-    class NumericScribe : public ScribeBase<Object, Archive>
+    class NumericScribe;
+
+    template<class Object>
+    class NumericScribe<Object, BinaryArchive> : public ScribeBase<Object, BinaryArchive>
     {
     private:
-        using BaseT = ScribeBase<Object, Archive>;
+        using BaseT = ScribeBase<Object, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -27,13 +34,49 @@ namespace Inscription
             "The Object given to a NumericScribe was not arithmetic.");
     };
 
-    template<class Object, class Archive>
-    void NumericScribe<Object, Archive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    template<class Object>
+    void NumericScribe<Object, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
             archive.AsOutput()->Write(object);
         else
             archive.AsInput()->Read(object);
+    }
+
+    template<class Object, class Archive>
+    class NumericScribe;
+
+    template<class Object>
+    class NumericScribe<Object, JsonArchive> : public ScribeBase<Object, JsonArchive>
+    {
+    private:
+        using BaseT = ScribeBase<Object, JsonArchive>;
+    public:
+        using ObjectT = typename BaseT::ObjectT;
+        using ArchiveT = typename BaseT::ArchiveT;
+    public:
+        using BaseT::Scriven;
+    protected:
+        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override final;
+    private:
+        constexpr static bool isEnum = std::is_enum_v<ObjectT>;
+    private:
+        static_assert(std::is_arithmetic_v<ObjectT> || std::is_enum_v<ObjectT>,
+            "The Object given to a NumericScribe was not arithmetic.");
+    };
+
+    template<class Object>
+    void NumericScribe<Object, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            archive.AsOutput()->WriteValue(name, Chroma::ToString(object));
+        else
+        {
+            std::string output;
+            archive.AsInput()->TakeValue(name, output);
+            auto value = Chroma::FromString<ObjectT>(output);
+            new (&object) ObjectT(value);
+        }
     }
 
     template<class Archive>

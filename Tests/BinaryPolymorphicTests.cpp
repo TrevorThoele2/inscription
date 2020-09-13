@@ -4,6 +4,7 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
+#include <Inscription/CompositeScribe.h>
 
 #include "BinaryFixture.h"
 #include "Inscription/BaseScriven.h"
@@ -287,11 +288,11 @@ SCENARIO_METHOD
         Saved2::outputType = saved2OutputType;
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "testing", 1);
-            outputArchive.RegisterType<Base>();
-            outputArchive.RegisterType<Saved0>();
-            outputArchive.RegisterType<Saved1>();
-            outputArchive.RegisterType<Saved2>();
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            outputArchive.types.RegisterType<Base>();
+            outputArchive.types.RegisterType<Saved0>();
+            outputArchive.types.RegisterType<Saved1>();
+            outputArchive.types.RegisterType<Saved2>();
             outputArchive(saved0);
             outputArchive(saved1);
             outputArchive(saved2);
@@ -303,7 +304,7 @@ SCENARIO_METHOD
 
         WHEN("loading unregistered pointer")
         {
-            auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
+            auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
 
             Base* loaded = nullptr;
 
@@ -321,9 +322,9 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
-                inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<SameOutputType>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                inputArchive.types.RegisterType<Base>();
+                inputArchive.types.RegisterType<SameOutputType>();
                 inputArchive(loaded);
             }
 
@@ -344,9 +345,9 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
-                inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<InInputTypes>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                inputArchive.types.RegisterType<Base>();
+                inputArchive.types.RegisterType<InInputTypes>();
                 inputArchive(loaded);
             }
 
@@ -371,9 +372,9 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded2 = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
-                inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<InInputTypes>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                inputArchive.types.RegisterType<Base>();
+                inputArchive.types.RegisterType<InInputTypes>();
                 inputArchive(loaded0);
                 inputArchive(loaded1);
                 inputArchive(loaded2);
@@ -399,7 +400,7 @@ SCENARIO_METHOD
 
     GIVEN("output archive")
     {
-        auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "testing", 1);
+        auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
 
         WHEN("registering same type handle in output and input handles on same type")
         {
@@ -412,7 +413,7 @@ SCENARIO_METHOD
 
             THEN("does not throw")
             {
-                REQUIRE_NOTHROW(outputArchive.RegisterType<Type>());
+                REQUIRE_NOTHROW(outputArchive.types.RegisterType<Type>());
             }
         }
 
@@ -428,7 +429,7 @@ SCENARIO_METHOD
             THEN("throws error")
             {
                 REQUIRE_THROWS_AS(
-                    outputArchive.RegisterType<Type>(),
+                    outputArchive.types.RegisterType<Type>(),
                     ::Inscription::InputTypesAlreadyRegistered);
             }
         }
@@ -447,9 +448,9 @@ SCENARIO_METHOD
 
             THEN("throws error on second register")
             {
-                REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
+                REQUIRE_NOTHROW(outputArchive.types.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
-                    outputArchive.RegisterType<Type1>(),
+                    outputArchive.types.RegisterType<Type1>(),
                     ::Inscription::InputTypesAlreadyRegistered);
             }
         }
@@ -468,9 +469,9 @@ SCENARIO_METHOD
 
             THEN("throws error on second register")
             {
-                REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
+                REQUIRE_NOTHROW(outputArchive.types.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
-                    outputArchive.RegisterType<Type1>(),
+                    outputArchive.types.RegisterType<Type1>(),
                     ::Inscription::InputTypesAlreadyRegistered);
             }
         }
@@ -489,9 +490,9 @@ SCENARIO_METHOD
 
             THEN("throws error on second register")
             {
-                REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
+                REQUIRE_NOTHROW(outputArchive.types.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
-                    outputArchive.RegisterType<Type1>(),
+                    outputArchive.types.RegisterType<Type1>(),
                     ::Inscription::InputTypesAlreadyRegistered);
             }
         }

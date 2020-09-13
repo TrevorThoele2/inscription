@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 namespace Inscription
 {
@@ -10,10 +10,10 @@ namespace Inscription
 
     template<class T, class Deleter>
     class Scribe<std::unique_ptr<T, Deleter>, BinaryArchive> final :
-        public CompositeScribe<std::unique_ptr<T, Deleter>, BinaryArchive>
+        public ObjectScribe<std::unique_ptr<T, Deleter>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<std::unique_ptr<T, Deleter>, BinaryArchive>;
+        using BaseT = ObjectScribe<std::unique_ptr<T, Deleter>, BinaryArchive>;
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;

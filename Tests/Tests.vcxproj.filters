@@ -100,6 +100,21 @@
     <ClCompile Include="VariantTests.cpp">
       <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
     </ClCompile>
+    <ClCompile Include="JsonTests.cpp">
+      <Filter>Source Files\Tests\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonIntegrationTests.cpp">
+      <Filter>Source Files\Tests\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonEnumTests.cpp">
+      <Filter>Source Files\Tests\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePathTests.cpp">
+      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonParseErrorTests.cpp">
+      <Filter>Source Files\Tests\Json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextFixture.h">
@@ -113,6 +128,12 @@
     </ClInclude>
     <ClInclude Include="BinaryTableTests.h">
       <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="TestClass.h">
+      <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +172,12 @@
     </Filter>
     <Filter Include="Source Files\Tests\Jump">
       <UniqueIdentifier>{748d051d-89e7-4ead-b511-40ef6c649e48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Json">
+      <UniqueIdentifier>{60fbaabe-8907-4880-b0b5-2d80bfa16b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data">
+      <UniqueIdentifier>{c1693ac8-686c-457b-af44-3875e58dc99a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

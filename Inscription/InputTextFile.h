@@ -5,7 +5,7 @@
 
 namespace Inscription
 {
-    class InputTextFile : public SimpleFile<std::ifstream>
+    class InputTextFile final : public SimpleFile<std::ifstream>
     {
     public:
         explicit InputTextFile(const FilePath& path);
@@ -20,5 +20,8 @@ namespace Inscription
         std::string ReadLine(char delimiter);
 
         std::string ReadSize(size_t size);
+
+        void SeekStream(StreamPosition position);
+        StreamPosition TellStream();
     };
 }

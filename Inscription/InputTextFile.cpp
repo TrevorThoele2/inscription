@@ -44,4 +44,14 @@ namespace Inscription
         stream.get(buffer, size + 1);
         return std::string(buffer);
     }
+
+    void InputTextFile::SeekStream(StreamPosition position)
+    {
+        stream.seekg(position);
+    }
+
+    StreamPosition InputTextFile::TellStream()
+    {
+        return stream.tellg();
+    }
 }

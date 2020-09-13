@@ -12,6 +12,7 @@ namespace Inscription
     public:
         template<class Archive>
         explicit ScopeConstructor(Archive& archive);
+        ScopeConstructor(const std::string& name, JsonArchive& archive);
         ~ScopeConstructor();
 
         Object* operator->();
@@ -33,6 +34,14 @@ namespace Inscription
         object = reinterpret_cast<Object*>(CreateStorage(sizeof(Object)));
         Scribe<Object, Archive> scribe;
         Access::Construct(object, archive, scribe);
+    }
+
+    template<class Object>
+    ScopeConstructor<Object>::ScopeConstructor(const std::string& name, JsonArchive& archive)
+    {
+        object = reinterpret_cast<Object*>(CreateStorage(sizeof(Object)));
+        Scribe<Object, JsonArchive> scribe;
+        Access::ConstructWithName(name, object, archive, scribe);
     }
 
     template<class Object>

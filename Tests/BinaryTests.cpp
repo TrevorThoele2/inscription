@@ -5,6 +5,8 @@
 
 #include "BinaryFixture.h"
 
+#include "TestClass.h"
+
 class BinaryTestsFixture : public BinaryFixture
 {
 public:
@@ -12,37 +14,7 @@ public:
     {
         typeRegistrationContext.RegisterType<TestClass>();
     }
-
-    class TestClass
-    {
-    public:
-        explicit TestClass(int value = 0) : value(value)
-        {}
-
-        int Value() const
-        {
-            return value;
-        }
-    private:
-        int value;
-    private:
-        INSCRIPTION_ACCESS;
-    };
 };
-
-namespace Inscription
-{
-    template<>
-    class Scribe<::BinaryTestsFixture::TestClass, BinaryArchive> final :
-        public CompositeScribe<::BinaryTestsFixture::TestClass, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.value);
-        }
-    };
-}
 
 SCENARIO_METHOD(BinaryTestsFixture, "loading basics in binary", "[binary]")
 {
@@ -152,7 +124,7 @@ SCENARIO_METHOD(BinaryTestsFixture, "loading basics in binary", "[binary]")
 
         THEN("loading")
         {
-            TestClass loadedTestClass(0);
+            TestClass loadedTestClass;
 
             {
                 auto inputArchive = CreateRegistered<InputArchive>();
@@ -161,7 +133,7 @@ SCENARIO_METHOD(BinaryTestsFixture, "loading basics in binary", "[binary]")
 
             THEN("is valid")
             {
-                REQUIRE(loadedTestClass.Value() == savedTestClass.Value());
+                REQUIRE(loadedTestClass == savedTestClass);
             }
         }
     }

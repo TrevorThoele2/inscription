@@ -265,7 +265,7 @@ namespace Inscription
     TrackingID PolymorphicManager<Archive>::RequiredTypeTrackingIDFor(const T* object, ArchiveT& archive)
     {
         auto& type = typeid(*RemoveConst(object));
-        auto found = archive.typeTracker.FindID(type);
+        auto found = archive.types.FindTypeID(type);
         if (found.has_value())
             return *found;
 

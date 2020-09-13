@@ -130,8 +130,13 @@
     <ClCompile Include="BinaryPointerTests.cpp" />
     <ClCompile Include="BinaryTests.cpp" />
     <ClCompile Include="BinaryTableTests.cpp" />
+    <ClCompile Include="FilePathTests.cpp" />
     <ClCompile Include="ForwardListTests.cpp" />
     <ClCompile Include="BinaryPolymorphicListTests.cpp" />
+    <ClCompile Include="JsonEnumTests.cpp" />
+    <ClCompile Include="JsonIntegrationTests.cpp" />
+    <ClCompile Include="JsonParseErrorTests.cpp" />
+    <ClCompile Include="JsonTests.cpp" />
     <ClCompile Include="JumpTableTests.cpp" />
     <ClCompile Include="ListTests.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -169,6 +174,8 @@
     <ClInclude Include="BinaryFixture.h" />
     <ClInclude Include="BinaryTableTests.h" />
     <ClInclude Include="GeneralFixture.h" />
+    <ClInclude Include="JsonFixture.h" />
+    <ClInclude Include="TestClass.h" />
     <ClInclude Include="TextFixture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,7 +2,7 @@
 
 #include <tuple>
 
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 #include "ScopeConstructor.h"
 
@@ -11,7 +11,7 @@ namespace Inscription
     class BinaryArchive;
 
     template<class... Args>
-    class Scribe<std::tuple<Args...>, BinaryArchive> : public CompositeScribe<std::tuple<Args...>, BinaryArchive>
+    class Scribe<std::tuple<Args...>, BinaryArchive> : public ObjectScribe<std::tuple<Args...>, BinaryArchive>
     {
     private:
         using BaseT = ScribeBase<std::tuple<Args...>, BinaryArchive>;
