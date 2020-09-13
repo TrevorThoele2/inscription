@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #include <Inscription/NumericScribe.h>
-#include <Inscription/CompositeScribe.h>
 
 #include "BinaryFixture.h"
 

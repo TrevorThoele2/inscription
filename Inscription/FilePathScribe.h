@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "TrackingScribe.h"
+#include "TrackingScribeCategory.h"
 
 namespace Inscription
 {
@@ -10,26 +10,19 @@ namespace Inscription
     class TextArchive;
 
     template<>
-    class Scribe<std::filesystem::path, BinaryArchive> final :
-        public TrackingScribe<std::filesystem::path, BinaryArchive>
+    class Scribe<std::filesystem::path> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = std::filesystem::path;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, TextArchive& archive);
     };
 
-    template<>
-    class Scribe<std::filesystem::path, JsonArchive> final :
-        public TrackingScribe<std::filesystem::path, JsonArchive>
+    template<class Archive>
+    struct ScribeTraits<std::filesystem::path, Archive>
     {
-    protected:
-        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
-    };
-
-    template<>
-    class Scribe<std::filesystem::path, TextArchive> final :
-        public ScribeBase<std::filesystem::path, TextArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using Category = TrackingScribeCategory<std::filesystem::path>;
     };
 }

@@ -1,183 +1,180 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="JumpTableTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryEnumTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryPointerTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryPolymorphicConstructionTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryPolymorphicListTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryPolymorphicManualRegistrationTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryPolymorphicTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryTableTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="VectorTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
     <ClCompile Include="ArrayTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="ForwardListTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="ListTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="MapTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="MultiMapTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="MultiSetTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="QueueTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="SetTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="StackTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="UnorderedMapTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="UnorderedMultiMapTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="UnorderedMultisetTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="UnorderedSetTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std\Containers</Filter>
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="StringTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="TupleTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="TextTests.cpp">
-      <Filter>Source Files\Tests\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryIntegrationTests.cpp">
-      <Filter>Source Files\Tests\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="JumpTableTests.cpp">
-      <Filter>Source Files\Tests\Jump</Filter>
-    </ClCompile>
-    <ClCompile Include="StreamPositionTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="OptionalTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="ArchiveTests.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="VariantTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonTests.cpp">
-      <Filter>Source Files\Tests\Json</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonIntegrationTests.cpp">
-      <Filter>Source Files\Tests\Json</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonEnumTests.cpp">
-      <Filter>Source Files\Tests\Json</Filter>
+    <ClCompile Include="VectorTests.cpp">
+      <Filter>Source Files\Test\Type\Std\Container</Filter>
     </ClCompile>
     <ClCompile Include="FilePathTests.cpp">
-      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionalTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="StringTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="TupleTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="VariantTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryEnumTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryIntegrationTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPointerTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicConstructionTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicListTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicManualRegistrationTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryTableTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryTests.cpp">
+      <Filter>Source Files\Test\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonEnumTests.cpp">
+      <Filter>Source Files\Test\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonIntegrationTests.cpp">
+      <Filter>Source Files\Test\Json</Filter>
     </ClCompile>
     <ClCompile Include="JsonParseErrorTests.cpp">
-      <Filter>Source Files\Tests\Json</Filter>
+      <Filter>Source Files\Test\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonTests.cpp">
+      <Filter>Source Files\Test\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPositionTests.cpp">
+      <Filter>Source Files\Test\Type\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="TextTests.cpp">
+      <Filter>Source Files\Test\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="UserContextTests.cpp">
+      <Filter>Source Files\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TextFixture.h">
-      <Filter>Header Files\Fixtures</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryFixture.h">
-      <Filter>Header Files\Fixtures</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneralFixture.h">
-      <Filter>Header Files\Fixtures</Filter>
-    </ClInclude>
-    <ClInclude Include="BinaryTableTests.h">
-      <Filter>Header Files\Tests</Filter>
+      <Filter>Header Files\Fixture</Filter>
     </ClInclude>
     <ClInclude Include="JsonFixture.h">
-      <Filter>Header Files\Fixtures</Filter>
+      <Filter>Header Files\Fixture</Filter>
+    </ClInclude>
+    <ClInclude Include="TextFixture.h">
+      <Filter>Header Files\Fixture</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralFixture.h">
+      <Filter>Header Files\Fixture</Filter>
     </ClInclude>
     <ClInclude Include="TestClass.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryTableTests.h">
+      <Filter>Header Files\Test\Binary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{d073549c-b050-4143-8b4d-b76206644096}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{730a2410-2a25-43a2-82a6-e85a751f561d}</UniqueIdentifier>
+      <UniqueIdentifier>{0ebe9609-6751-49b5-bab5-dcf3a4e10073}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests">
-      <UniqueIdentifier>{bdd35c8c-85c0-41d7-b35b-f37ef0346bda}</UniqueIdentifier>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7b3bfe88-e3d6-47ca-8bb5-81318d361300}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Fixtures">
-      <UniqueIdentifier>{d92cfe17-366a-42c6-8a04-d5f45cfb7066}</UniqueIdentifier>
+    <Filter Include="Header Files\Fixture">
+      <UniqueIdentifier>{65c46dfe-e083-4691-b686-d6260d99fee9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests\Scribe">
-      <UniqueIdentifier>{f80a277c-9914-45eb-886a-f3efbbf79773}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Scribe\Types">
-      <UniqueIdentifier>{2b41f5e9-c7fe-4641-93e3-e8082689280f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Scribe\Types\Std">
-      <UniqueIdentifier>{0f58fa2f-fd97-4484-84dd-c9a8cc6f14c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Binary">
-      <UniqueIdentifier>{07f185df-6ad9-4733-81a6-0f1274053fc2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Scribe\Types\Std\Containers">
-      <UniqueIdentifier>{f1beb1cc-7981-4923-9798-1e9f7d1649db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Text">
-      <UniqueIdentifier>{d8b211ad-2f02-4f56-9a45-e8ff0738809e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Tests">
-      <UniqueIdentifier>{f19a61c9-3e31-48e0-ab59-475669e03ee7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Jump">
-      <UniqueIdentifier>{748d051d-89e7-4ead-b511-40ef6c649e48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tests\Json">
-      <UniqueIdentifier>{60fbaabe-8907-4880-b0b5-2d80bfa16b43}</UniqueIdentifier>
+    <Filter Include="Header Files\Test">
+      <UniqueIdentifier>{41d5a0c1-8917-496a-9b59-41d1c43a4bca}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Data">
-      <UniqueIdentifier>{c1693ac8-686c-457b-af44-3875e58dc99a}</UniqueIdentifier>
+      <UniqueIdentifier>{83a92df9-2181-4fa4-9ccf-0147d2220d50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test">
+      <UniqueIdentifier>{356454e3-2ed3-4c45-a1be-cb33a62b0bd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Type">
+      <UniqueIdentifier>{f20cc80c-7a37-4164-8536-587ceec39ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Type\Std">
+      <UniqueIdentifier>{6e9850c7-a298-4295-a778-7aabaf4a3ac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Type\Std\Container">
+      <UniqueIdentifier>{bca9b80d-9b5d-40c5-a3e1-1cb2fb3697fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Binary">
+      <UniqueIdentifier>{96aa668a-3cec-4b60-9699-dfa27c4927b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Json">
+      <UniqueIdentifier>{f72ac7cd-4737-40d6-b1c4-d928a47660c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Text">
+      <UniqueIdentifier>{aca5c674-c5b5-4f4a-b245-399131435b55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Test\Binary">
+      <UniqueIdentifier>{39e773bc-cf0a-498b-a9c0-94a4bac1e99d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

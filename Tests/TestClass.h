@@ -2,7 +2,9 @@
 
 #include <string>
 
-#include <Inscription/CompositeScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
+#include <Inscription/StringScribe.h>
+#include <Inscription/NumericScribe.h>
 
 class TestClass
 {
@@ -28,27 +30,28 @@ public:
 namespace Inscription
 {
     template<>
-    class Scribe<TestClass, BinaryArchive> final :
-        public CompositeScribe<TestClass, BinaryArchive>
+    class Scribe<TestClass> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = TestClass;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.integer);
             archive(object.string);
         }
-    };
 
-    template<>
-    class Scribe<TestClass, JsonArchive> final :
-        public CompositeScribe<TestClass, JsonArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        void Scriven(ObjectT& object, JsonArchive& archive)
         {
             archive("integer", object.integer);
             archive("string", object.string);
         }
+    };
+
+    template<class Archive>
+    struct ScribeTraits<TestClass, Archive> final
+    {
+        using Category = CompositeScribeCategory<TestClass>;
     };
 }
 

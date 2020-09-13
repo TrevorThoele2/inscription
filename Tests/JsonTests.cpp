@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #include <Inscription/NumericScribe.h>
-#include <Inscription/CompositeScribe.h>
 
 #include "JsonFixture.h"
 
@@ -29,6 +28,24 @@ SCENARIO_METHOD(JsonTestsFixture, "loading from empty file in json", "[json]")
             THEN("does not throw exception")
             {
                 REQUIRE_NOTHROW(CreateRegistered<InputArchive>());
+            }
+        }
+
+        WHEN("loading value")
+        {
+            THEN("throws exception")
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+
+                std::int8_t value;
+
+                REQUIRE_THROWS_MATCHES
+                (
+                    inputArchive("nonexistent", value),
+                    Inscription::JsonParseError,
+                    Catch::Matchers::Message(
+                        "The element \"nonexistent\" could not be found.")
+                );
             }
         }
     }

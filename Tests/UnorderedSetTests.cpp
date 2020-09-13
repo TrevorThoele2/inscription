@@ -105,6 +105,25 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved unordered_set with objects")
@@ -205,6 +224,25 @@ SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after savin
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("unordered_set", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("unordered_set", loaded);

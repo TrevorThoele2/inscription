@@ -1,13 +1,12 @@
 #include <catch.hpp>
 #include <utility>
 
+#include <Inscription/CompositeScribeCategory.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
-#include <Inscription/CompositeScribe.h>
 
 #include "BinaryFixture.h"
-#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicFixture : public BinaryFixture
 {
@@ -104,55 +103,85 @@ BinaryPolymorphicFixture::UnregisteredBase::~UnregisteredBase() = default;
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicFixture::Base, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicFixture::Base, BinaryArchive>
+    class Scribe<BinaryPolymorphicFixture::Base> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = BinaryPolymorphicFixture::Base;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicFixture::Base, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicFixture::Base>;
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>
+    class Scribe<BinaryPolymorphicFixture::Derived> final
     {
     public:
-        static Type OutputType(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = BinaryPolymorphicFixture::Derived;
+    public:
+        static Type OutputType(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicFixture::Derived, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicFixture::Derived>;
     };
 
     template<size_t differentiator>
-    class Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>
+    class Scribe<BinaryPolymorphicFixture::GeneralDerived<differentiator>> final
     {
-    private:
-        using BaseT = CompositeScribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
+        using ObjectT = BinaryPolymorphicFixture::GeneralDerived<differentiator>;
+    public:
+        static Type OutputType(const BinaryArchive& archive);
+        static std::vector<Type> InputTypes(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
 
-        static Type OutputType(const ArchiveT& archive);
-        static std::vector<Type> InputTypes(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    template<size_t differentiator, class Archive>
+    struct ScribeTraits<BinaryPolymorphicFixture::GeneralDerived<differentiator>, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicFixture::GeneralDerived<differentiator>>;
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicFixture::UnregisteredBase, BinaryArchive>
+    class Scribe<BinaryPolymorphicFixture::UnregisteredBase> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = BinaryPolymorphicFixture::UnregisteredBase;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {}
     };
 
-    template<>
-    class Scribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicFixture::UnregisteredDerived, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicFixture::UnregisteredBase, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using Category = CompositeScribeCategory<BinaryPolymorphicFixture::UnregisteredBase>;
+    };
+
+    template<>
+    class Scribe<BinaryPolymorphicFixture::UnregisteredDerived> final
+    {
+    public:
+        using ObjectT = BinaryPolymorphicFixture::UnregisteredDerived;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {}
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicFixture::UnregisteredDerived, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicFixture::UnregisteredDerived>;
     };
 }
 
@@ -501,43 +530,38 @@ SCENARIO_METHOD
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicFixture::Base, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         archive(object.baseValue);
     }
 
-    Type Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<::BinaryPolymorphicFixture::Derived>::OutputType(const BinaryArchive& archive)
+    {
         return "BinaryPolymorphicDerived";
     }
 
-    void Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
 
     template<size_t differentiator>
-    Type Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::OutputType(
-        const ArchiveT& archive)
+    Type Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::OutputType(const BinaryArchive& archive)
     {
         return ObjectT::outputType;
     }
 
     template<size_t differentiator>
-    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::InputTypes(
-        const ArchiveT& archive)
+    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::InputTypes(const BinaryArchive& archive)
         -> std::vector<Type>
     {
         return ObjectT::inputTypes;
     }
 
     template<size_t differentiator>
-    void Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::Scriven(
+        ObjectT& object, BinaryArchive& archive)
     {
         BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
         archive(object.derivedValue);

@@ -7,25 +7,19 @@
 
 namespace Inscription
 {
-    void Scribe<StreamPosition, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<StreamPosition>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())
-            SaveImplementation(object, archive);
+        {
+            unsigned long long converted = object;
+            archive(converted);
+        }
         else
-            LoadImplementation(object, archive);
-    }
-
-    void Scribe<StreamPosition, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        unsigned long long converted = object;
-        archive(converted);
-    }
-
-    void Scribe<StreamPosition, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        unsigned long long loaded;
-        archive(loaded);
-        object = ObjectT(loaded);
+        {
+            unsigned long long loaded;
+            archive(loaded);
+            object = ObjectT(loaded);
+        }
     }
 }

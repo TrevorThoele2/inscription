@@ -2,7 +2,6 @@
 
 #include <Inscription/ArrayScribe.h>
 #include <Inscription/NumericScribe.h>
-#include <Inscription/CompositeScribe.h>
 
 #include "BinaryFixture.h"
 #include "JsonFixture.h"
@@ -44,6 +43,25 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
         WHEN("loading array")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(saved.size());
+
+            for (size_t i = 0; i < occupiedGroup.size(); ++i)
+                loaded[i] = occupiedGroup[i];
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
@@ -176,6 +194,25 @@ SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json
         WHEN("loading array")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("array", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(saved.size());
+
+            for (size_t i = 0; i < occupiedGroup.size(); ++i)
+                loaded[i] = occupiedGroup[i];
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("array", loaded);

@@ -104,6 +104,24 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+            for (auto& loop : occupiedGroup)
+                loaded.push_back(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested vectors")
@@ -240,6 +258,24 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("vector", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+            for (auto& loop : occupiedGroup)
+                loaded.push_back(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("vector", loaded);

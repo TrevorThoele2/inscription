@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include <Inscription/EnumScribe.h>
+#include <Inscription/EnumScribeCategory.h>
 
 #include "JsonFixture.h"
 
@@ -17,10 +17,11 @@ public:
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::JsonEnumFixture::Enum, JsonArchive> final :
-        public EnumScribe<::JsonEnumFixture::Enum, JsonArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<JsonEnumFixture::Enum, Archive> final
+    {
+        using Category = EnumScribeCategory<JsonEnumFixture::Enum>;
+    };
 }
 
 SCENARIO_METHOD(JsonEnumFixture, "loading enum after saving json", "[json][enum]")

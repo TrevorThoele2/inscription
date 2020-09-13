@@ -70,8 +70,8 @@ namespace Inscription
             void Construct(void*& storage, ArchiveT& archive) override;
             [[nodiscard]] void* CreateStorage() const override;
         private:
-            using DerivedT = typename RemoveConstTrait<T>::type;
-            using DerivedScribe = Scribe<DerivedT, ArchiveT>;
+            using DerivedT = remove_const_t<T>;
+            using DerivedScribe = Scribe<DerivedT>;
         };
 
         using EntryPtr = std::unique_ptr<Entry>;
@@ -181,22 +181,19 @@ namespace Inscription
     PolymorphicManager<Archive>::Entry::~Entry() = default;
 
     template<class Archive>
-    PolymorphicManager<Archive>::Entry::Entry
-    (
+    PolymorphicManager<Archive>::Entry::Entry(
         Type outputType,
         std::vector<Type> inputTypes,
-        std::type_index typeIndex
-    ) :
+        std::type_index typeIndex)
+        :
         outputType(outputType), inputTypes(inputTypes), typeIndex(typeIndex)
     {}
 
     template<class Archive>
     template<class T>
-    PolymorphicManager<Archive>::EntryDerived<T>::EntryDerived
-    (
-        Type outputType,
-        std::vector<Type> inputTypes
-    ) :
+    PolymorphicManager<Archive>::EntryDerived<T>::EntryDerived(
+        Type outputType, std::vector<Type> inputTypes)
+        :
         Entry(outputType, inputTypes, typeid(T))
     {}
 
@@ -205,8 +202,7 @@ namespace Inscription
     void PolymorphicManager<Archive>::EntryDerived<T>::Save(const void* object, ArchiveT& archive)
     {
         auto castedObject = reinterpret_cast<const T*>(object);
-        DerivedScribe derivedScribe;
-        derivedScribe.Scriven(RemoveConst(*castedObject), archive);
+        ScrivenDispatch::Execute(RemoveConst(*castedObject), archive);
     }
 
     template<class Archive>
@@ -214,8 +210,7 @@ namespace Inscription
     void PolymorphicManager<Archive>::EntryDerived<T>::Load(void* object, ArchiveT& archive)
     {
         auto castedObject = reinterpret_cast<T*>(object);
-        DerivedScribe derivedScribe;
-        derivedScribe.Scriven(RemoveConst(*castedObject), archive);
+        ScrivenDispatch::Execute(RemoveConst(*castedObject), archive);
     }
 
     template<class Archive>
@@ -223,8 +218,7 @@ namespace Inscription
     void PolymorphicManager<Archive>::EntryDerived<T>::Construct(void*& storage, ArchiveT& archive)
     {
         DerivedT* castedStorage = reinterpret_cast<DerivedT*>(storage);
-        DerivedScribe derivedScribe;
-        Access::Construct(castedStorage, archive, derivedScribe);
+        ConstructDispatch::Execute(castedStorage, archive);
     }
 
     template<class Archive>
@@ -235,8 +229,8 @@ namespace Inscription
     }
 
     template<class Archive>
-    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        const Type& type)
+    auto PolymorphicManager<Archive>::FindRequiredEntry(const Type& type)
+        -> EntryIterator
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
         {
@@ -250,8 +244,8 @@ namespace Inscription
     }
 
     template<class Archive>
-    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        const std::type_index& typeIndex)
+    auto PolymorphicManager<Archive>::FindRequiredEntry(const std::type_index& typeIndex)
+        -> EntryIterator
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
             if ((*loop)->typeIndex == typeIndex)

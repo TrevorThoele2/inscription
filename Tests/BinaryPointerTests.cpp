@@ -1,8 +1,10 @@
 #include <catch.hpp>
 
-#include <Inscription/TableScribe.h>
-#include <Inscription/NumericScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
+#include <Inscription/TableScribeCategory.h>
 
+#include <Inscription/NumericScribe.h>
+#include <Inscription/PointerScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
@@ -73,45 +75,67 @@ public:
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPointerFixture::Object, BinaryArchive> : public
-        CompositeScribe<::BinaryPointerFixture::Object, BinaryArchive>
+    class Scribe<BinaryPointerFixture::Object>
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = BinaryPointerFixture::Object;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.value);
         }
     };
 
-    template<>
-    class Scribe<::BinaryPointerFixture::NestedHeapObject, BinaryArchive> : public
-        CompositeScribe<::BinaryPointerFixture::NestedHeapObject, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<BinaryPointerFixture::Object, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using Category = CompositeScribeCategory<BinaryPointerFixture::Object>;
+    };
+
+    template<>
+    class Scribe<BinaryPointerFixture::NestedHeapObject>
+    {
+    public:
+        using ObjectT = BinaryPointerFixture::NestedHeapObject;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.value);
             archive(object.next);
         }
     };
 
-    template<>
-    class Scribe<::BinaryPointerFixture::ProtectedConstructor, BinaryArchive> final :
-        public CompositeScribe<::BinaryPointerFixture::ProtectedConstructor, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<BinaryPointerFixture::NestedHeapObject, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using Category = CompositeScribeCategory<BinaryPointerFixture::NestedHeapObject>;
+    };
+
+    template<>
+    class Scribe<BinaryPointerFixture::ProtectedConstructor> final
+    {
+    public:
+        using ObjectT = BinaryPointerFixture::ProtectedConstructor;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.value);
         }
     };
 
-    template<>
-    class Scribe<::BinaryPointerFixture::PrivateConstructor, BinaryArchive> final :
-        public CompositeScribe<::BinaryPointerFixture::PrivateConstructor, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<BinaryPointerFixture::ProtectedConstructor, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using Category = CompositeScribeCategory<BinaryPointerFixture::ProtectedConstructor>;
+    };
+
+    template<>
+    class Scribe<BinaryPointerFixture::PrivateConstructor> final
+    {
+    public:
+        using ObjectT = BinaryPointerFixture::PrivateConstructor;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.value);
         }

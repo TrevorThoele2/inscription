@@ -25,7 +25,7 @@ namespace Inscription
         InputJsonArchive& ReadValue(const std::string& name, std::string& value);
         [[nodiscard]] bool HasValue(const std::string& name);
 
-        void StartList(const std::string& name, ContainerSize& size);
+        ContainerSize StartList(const std::string& name);
         void EndList();
         void StartObject(const std::string& name);
         void EndObject();

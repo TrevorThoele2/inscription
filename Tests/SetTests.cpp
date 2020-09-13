@@ -105,6 +105,25 @@ SCENARIO_METHOD(SetBinaryTestsFixture, "loading set after saving binary", "[bina
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            std::set<int> loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested sets")
@@ -242,6 +261,25 @@ SCENARIO_METHOD(SetJsonTestsFixture, "loading set after saving json", "[json][co
         WHEN("loading")
         {
             std::set<int> loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("set", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            std::set<int> loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("set", loaded);

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "ScribeTraits.h"
+
 namespace Inscription
 {
-    template<class Object, class Archive>
+    template<class Object>
     class Scribe;
 }

@@ -2,135 +2,93 @@
 
 #include <unordered_set>
 
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
 
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
-#include "Const.h"
+
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+#include "OutputJsonArchive.h"
+#include "InputJsonArchive.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
     template<class Key, class Hash, class Predicate, class Allocator>
-    class Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive> final :
-        public ObjectScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>
+    class Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>> final
     {
-    private:
-        using BaseT = ObjectScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>;
     public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        using ObjectT = std::unordered_set<Key, Hash, Predicate, Allocator>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     };
 
     template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive);
-        else
-            LoadImplementation(object, archive);
-    }
-
-    template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        ContainerSize size(object.size());
-        archive(size);
-        for (auto loop = object.begin(); loop != object.end(); ++loop)
-            archive(*loop);
-    }
-
-    template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        ContainerSize size;
-        archive(size);
-
-        object.clear();
-        while (size-- > 0)
         {
-            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+            ContainerSize size(object.size());
+            archive(size);
+            for (auto loop = object.begin(); loop != object.end(); ++loop)
+                archive(*loop);
+        }
+        else
+        {
+            ContainerSize size;
+            archive(size);
 
-            auto emplaced = object.emplace(std::move(constructor.GetMove()));
-            if (emplaced.second)
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
+            object.clear();
+            while (size-- > 0)
+            {
+                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+
+                auto emplaced = object.emplace(std::move(constructor.GetMove()));
+                if (emplaced.second)
+                    archive.types.AttemptReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
+            }
         }
     }
 
-    class JsonArchive;
-
     template<class Key, class Hash, class Predicate, class Allocator>
-    class Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive> final :
-        public ObjectScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive>
+    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
-    private:
-        using BaseT = ObjectScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive>;
-    public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
+        if (archive.IsOutput())
+        {
+            auto outputArchive = archive.AsOutput();
 
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+            outputArchive->StartList(name);
+            for (auto loop = object.begin(); loop != object.end(); ++loop)
+                archive("", *loop);
+            outputArchive->EndList();
+        }
+        else
+        {
+            object.clear();
+
+            auto inputArchive = archive.AsInput();
+
+            auto size = inputArchive->StartList(name);
+
+            while (size-- > 0)
+            {
+                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+
+                auto emplaced = object.emplace(std::move(constructor.GetMove()));
+                if (emplaced.second)
+                    archive.types.AttemptReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
+            }
+
+            inputArchive->EndList();
+        }
+    }
+
+    template<class Key, class Hash, class Predicate, class Allocator, class Archive>
+    struct ScribeTraits<std::unordered_set<Key, Hash, Predicate, Allocator>, Archive>
+    {
+        using Category = TrackingScribeCategory<std::unordered_set<Key, Hash, Predicate, Allocator>>;
     };
-
-    template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive>::ScrivenImplementation(
-        const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        if (archive.IsOutput())
-            SaveImplementation(name, object, archive);
-        else
-            LoadImplementation(name, object, archive);
-    }
-
-    template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive>::SaveImplementation(
-        const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        auto outputArchive = archive.AsOutput();
-
-        outputArchive->StartList(name);
-        for (auto loop = object.begin(); loop != object.end(); ++loop)
-            archive("", *loop);
-        outputArchive->EndList();
-    }
-
-    template<class Key, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, JsonArchive>::LoadImplementation(
-        const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        object.clear();
-
-        auto inputArchive = archive.AsInput();
-
-        ContainerSize size = 0;
-
-        inputArchive->StartList(name, size);
-
-        while (size-- > 0)
-        {
-            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
-
-            auto emplaced = object.emplace(std::move(constructor.GetMove()));
-            if (emplaced.second)
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
-        }
-
-        inputArchive->EndList();
-    }
 }

@@ -2,150 +2,118 @@
 
 #include <stack>
 
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
 
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
+
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+#include "OutputJsonArchive.h"
+#include "InputJsonArchive.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
     template<class T, class Container>
-    class Scribe<std::stack<T, Container>, BinaryArchive> final :
-        public ObjectScribe<std::stack<T, Container>, BinaryArchive>
+    class Scribe<std::stack<T, Container>> final
     {
-    private:
-        using BaseT = ObjectScribe<std::stack<T, Container>, BinaryArchive>;
     public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        using ObjectT = std::stack<T, Container>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     };
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive);
+        {
+            auto copied = object;
+
+            ObjectT reversed;
+            while (!copied.empty())
+            {
+                auto& top = copied.top();
+                reversed.push(top);
+                copied.pop();
+            }
+
+            ContainerSize size(reversed.size());
+            archive(size);
+            while (!reversed.empty())
+            {
+                auto& top = reversed.top();
+                archive(top);
+                reversed.pop();
+            }
+        }
         else
-            LoadImplementation(object, archive);
-    }
-
-    template<class T, class Container>
-    void Scribe<std::stack<T, Container>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        auto copied = object;
-
-        ObjectT reversed;
-        while (!copied.empty())
         {
-            auto& top = copied.top();
-            reversed.push(top);
-            copied.pop();
-        }
+            object = ObjectT();
 
-        ContainerSize size(reversed.size());
-        archive(size);
-        while (!reversed.empty())
-        {
-            auto& top = reversed.top();
-            archive(top);
-            reversed.pop();
+            ContainerSize size;
+            archive(size);
+
+            while (size-- > 0)
+            {
+                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                object.push(std::move(constructor.GetMove()));
+                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+            }
         }
     }
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
-        ContainerSize size;
-        archive(size);
-
-        while (size-- > 0)
+        if (archive.IsOutput())
         {
-            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
-            object.push(std::move(constructor.GetMove()));
-            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+            auto copied = object;
+
+            ObjectT reversed;
+            while (!copied.empty())
+            {
+                auto& top = copied.top();
+                reversed.push(top);
+                copied.pop();
+            }
+
+            auto outputArchive = archive.AsOutput();
+
+            outputArchive->StartList(name);
+            while (!reversed.empty())
+            {
+                auto& top = reversed.top();
+                archive("", top);
+                reversed.pop();
+            }
+            outputArchive->EndList();
+        }
+        else
+        {
+            object = ObjectT();
+
+            auto inputArchive = archive.AsInput();
+
+            auto size = inputArchive->StartList(name);
+
+            while (size-- > 0)
+            {
+                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                object.push(std::move(constructor.GetMove()));
+                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+            }
+
+            inputArchive->EndList();
         }
     }
 
-    class JsonArchive;
-
     template<class T, class Container>
-    class Scribe<std::stack<T, Container>, JsonArchive> final :
-        public ObjectScribe<std::stack<T, Container>, JsonArchive>
+    struct ScribeTraits<std::stack<T, Container>, Archive>
     {
-    private:
-        using BaseT = ObjectScribe<std::stack<T, Container>, JsonArchive>;
-    public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+        using Category = TrackingScribeCategory<std::stack<T, Container>>;
     };
-
-    template<class T, class Container>
-    void Scribe<std::stack<T, Container>, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        if (archive.IsOutput())
-            SaveImplementation(name, object, archive);
-        else
-            LoadImplementation(name, object, archive);
-    }
-
-    template<class T, class Container>
-    void Scribe<std::stack<T, Container>, JsonArchive>::SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        auto copied = object;
-
-        ObjectT reversed;
-        while (!copied.empty())
-        {
-            auto& top = copied.top();
-            reversed.push(top);
-            copied.pop();
-        }
-
-
-        auto outputArchive = archive.AsOutput();
-
-        outputArchive->StartList(name);
-        while (!reversed.empty())
-        {
-            auto& top = reversed.top();
-            archive("", top);
-            reversed.pop();
-        }
-        outputArchive->EndList();
-    }
-
-    template<class T, class Container>
-    void Scribe<std::stack<T, Container>, JsonArchive>::LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        auto inputArchive = archive.AsInput();
-
-        ContainerSize size = 0;
-
-        inputArchive->StartList(name, size);
-
-        while (size-- > 0)
-        {
-            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
-            object.push(std::move(constructor.GetMove()));
-            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
-        }
-
-        inputArchive->EndList();
-    }
 }

@@ -4,7 +4,7 @@
 #include <Chroma/IsBracesConstructible.h>
 #include "ContainerSize.h"
 
-#include "CompositeScribe.h"
+#include "CompositeScribeCategory.h"
 
 namespace Inscription
 {
@@ -69,19 +69,15 @@ namespace Inscription
     OutputJumpTable<ID, Object>::Added::Added(Object& object) : object(object)
     {}
 
-    template<class ID, class Object, class Archive>
-    class Scribe<OutputJumpTable<ID, Object>, Archive> :
-        public CompositeScribe<OutputJumpTable<ID, Object>, Archive>
+    template<class ID, class Object>
+    class Scribe<OutputJumpTable<ID, Object>>
     {
-    private:
-        using BaseT = CompositeScribe<OutputJumpTable<ID, Object>, Archive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
+        using ObjectT = OutputJumpTable<ID, Object>;
     private:
-        using ArchivePosition = typename ArchiveT::StreamPosition;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using ArchivePosition = StreamPosition;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             std::vector<JumpPoint> jumpPoints;
             for (auto& loop : object.added)
@@ -90,7 +86,7 @@ namespace Inscription
             ContainerSize size(jumpPoints.size());
             archive(size);
 
-            ArchivePosition postSizePosition = archive.TellStream();
+            const auto postSizePosition = archive.TellStream();
             ArchivePosition postTablePositionPlaceholder = 0;
             archive(postTablePositionPlaceholder);
 
@@ -106,8 +102,6 @@ namespace Inscription
             archive.SeekStream(postTablePosition);
         }
     private:
-        using StreamPosition = typename ArchiveT::StreamPosition;
-
         struct JumpPoint
         {
             ID id;
@@ -118,7 +112,7 @@ namespace Inscription
             {}
         };
 
-        void SaveJump(JumpPoint& point, ArchiveT& archive)
+        void SaveJump(JumpPoint& point, BinaryArchive& archive)
         {
             point.jumpPosition = archive.TellStream();
 
@@ -127,19 +121,25 @@ namespace Inscription
             archive(point.id);
         }
 
-        void SaveObject(JumpPoint& point, ArchiveT& archive)
+        void SaveObject(JumpPoint& point, BinaryArchive& archive)
         {
-            ArchivePosition currentPosition = archive.TellStream();
+            const auto currentPosition = archive.TellStream();
             archive(point.object);
             OverwriteJump(point, currentPosition, archive);
         }
 
-        void OverwriteJump(JumpPoint& point, ArchivePosition overwriteWith, ArchiveT& archive)
+        void OverwriteJump(JumpPoint& point, ArchivePosition overwriteWith, BinaryArchive& archive)
         {
-            ArchivePosition currentPosition = archive.TellStream();
+            const auto currentPosition = archive.TellStream();
             archive.SeekStream(point.jumpPosition);
             archive(overwriteWith);
             archive.SeekStream(currentPosition);
         }
+    };
+
+    template<class ID, class Object>
+    struct ScribeTraits<OutputJumpTable<ID, Object>, BinaryArchive> final
+    {
+        using Category = CompositeScribeCategory<OutputJumpTable<ID, Object>>;
     };
 }

@@ -4,13 +4,10 @@
 
 #include "Archive.h"
 
-#include "TypeManager.h"
-
-#include "Scribe.h"
+#include "ScrivenDispatch.h"
 #include "TableData.h"
-
 #include "Direction.h"
-#include "Const.h"
+#include "TypeManager.h"
 
 namespace Inscription
 {
@@ -35,7 +32,7 @@ namespace Inscription
         template<class T>
         BinaryArchive& operator()(T& object);
         template<class T>
-        BinaryArchive& operator()(T*& object);
+        BinaryArchive& operator()(const std::string& name, T& object);
     public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
@@ -54,9 +51,6 @@ namespace Inscription
 
         BinaryArchive& operator=(BinaryArchive&& arg) noexcept;
     private:
-        template<class T>
-        using KnownScribe = Scribe<T, BinaryArchive>;
-    private:
         const Direction direction;
     private:
         template<class Archive>
@@ -66,21 +60,17 @@ namespace Inscription
     template<class T>
     BinaryArchive& BinaryArchive::operator()(T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(RemoveConst(object), *this);
+        ScrivenDispatch::Execute(object, *this);
         return *this;
     }
 
     template<class T>
-    BinaryArchive& BinaryArchive::operator()(T*& object)
+    BinaryArchive& BinaryArchive::operator()(const std::string&, T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(RemoveConst(object), *this);
+        ScrivenDispatch::Execute(object, *this);
         return *this;
     }
 
-    template<class T>
-    using BinaryScribe = Scribe<T, BinaryArchive>;
     template<class Object>
     using BinaryTableData = TableData<Object, BinaryArchive>;
 }

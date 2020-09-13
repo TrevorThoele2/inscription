@@ -102,6 +102,22 @@ SCENARIO_METHOD(ListBinaryTestsFixture, "loading list after saving binary", "[bi
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            Integers loaded(occupiedGroup.begin(), occupiedGroup.end());
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested lists")
@@ -239,6 +255,22 @@ SCENARIO_METHOD(ListJsonTestsFixture, "loading list after saving json", "[json][
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("list", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            Integers loaded(occupiedGroup.begin(), occupiedGroup.end());
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("list", loaded);

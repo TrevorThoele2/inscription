@@ -1,6 +1,7 @@
 #include <catch.hpp>
 
 #include <Inscription/StringScribe.h>
+#include <Inscription/ListScribe.h>
 
 #include "BinaryFixture.h"
 #include "JsonFixture.h"
@@ -66,9 +67,9 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][s
         }
     }
 
-    GIVEN("saved string with :")
+    GIVEN("saved string with sensitive character")
     {
-        std::string saved = "abc:123";
+        auto saved = GENERATE(std::string("abc:123"), std::string("abc\\123"), std::string("abc\"123"));
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -88,10 +89,20 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][s
             }
         }
     }
+}
 
-    GIVEN("saved string with character requiring escape")
+SCENARIO_METHOD(StringJsonTestsFixture, "loading string list in json", "[json][std][string][list]")
+{
+    using TestedObject = std::list<std::string>;
+
+    GIVEN("saved string with sensitive character")
     {
-        auto saved = GENERATE(std::string("abc\\123"), std::string("abc\"123"));
+        auto saved = TestedObject
+        {
+            std::string("abc:123"),
+            std::string("abc\\123"),
+            std::string("abc\"123")
+        };
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();

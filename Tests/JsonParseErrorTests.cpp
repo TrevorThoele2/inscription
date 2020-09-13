@@ -52,8 +52,7 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
 
             auto element = 0;
 
-            Inscription::ContainerSize size;
-            inputArchive.StartList("list", size);
+            inputArchive.StartList("list");
             THEN("throw exception")
             {
                 REQUIRE_THROWS_MATCHES
@@ -104,12 +103,11 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
         {
             auto inputArchive = CreateRegistered<InputArchive>();
 
-            Inscription::ContainerSize size;
             THEN("throw exception")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    inputArchive.StartList("list", size),
+                    inputArchive.StartList("list"),
                     Inscription::JsonParseError,
                     Catch::Matchers::Message(
                         "Value on object requires name.")

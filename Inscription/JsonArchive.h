@@ -4,14 +4,10 @@
 
 #include "Archive.h"
 
-#include "TypeManager.h"
-
-#include "Scribe.h"
+#include "ScrivenDispatch.h"
 #include "TableData.h"
-
-#include "Version.h"
 #include "Direction.h"
-#include "Const.h"
+#include "TypeManager.h"
 
 namespace Inscription
 {
@@ -35,8 +31,6 @@ namespace Inscription
     public:
         template<class T>
         JsonArchive& operator()(const std::string& name, T& object);
-        template<class T>
-        JsonArchive& operator()(const std::string& name, T*& object);
     public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
@@ -52,9 +46,6 @@ namespace Inscription
 
         JsonArchive& operator=(JsonArchive&& arg) noexcept;
     private:
-        template<class T>
-        using KnownScribe = Scribe<T, JsonArchive>;
-    private:
         const Direction direction;
     private:
         template<class Archive>
@@ -64,21 +55,10 @@ namespace Inscription
     template<class T>
     JsonArchive& JsonArchive::operator()(const std::string& name, T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(name, RemoveConst(object), *this);
+        ScrivenDispatch::NamedExecute(name, RemoveConst(object), *this);
         return *this;
     }
 
-    template<class T>
-    JsonArchive& JsonArchive::operator()(const std::string& name, T*& object)
-    {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(name, RemoveConst(object), *this);
-        return *this;
-    }
-
-    template<class T>
-    using JsonScribe = Scribe<T, JsonArchive>;
     template<class Object>
     using JsonTableData = TableData<Object, JsonArchive>;
 }

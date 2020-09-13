@@ -3,9 +3,10 @@
 
 #include "BinaryTableTests.h"
 
-#include <Inscription/TableScribe.h>
-#include <Inscription/NumericScribe.h>
+#include <Inscription/TableScribeCategory.h>
 
+#include <Inscription/NumericScribe.h>
+#include <Inscription/PointerScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
@@ -99,7 +100,7 @@ public:
         baseValue(baseValue)
     {}
 
-    TableConstructionBase(const ::Inscription::BinaryTableData<TableConstructionBase>& data) :
+    TableConstructionBase(const Inscription::BinaryTableData<TableConstructionBase>& data) :
         baseValue(data.baseValue)
     {}
 
@@ -117,7 +118,7 @@ public:
         TableConstructionBase(baseValue), derivedValue(std::move(derivedValue))
     {}
 
-    TableConstructionDerived(const ::Inscription::BinaryTableData<TableConstructionDerived>& data) :
+    TableConstructionDerived(const Inscription::BinaryTableData<TableConstructionDerived>& data) :
         TableConstructionBase(data.base), derivedValue(data.derivedValue)
     {}
 };
@@ -131,7 +132,7 @@ public:
         Base(baseValue), derivedValue(derivedValue)
     {}
 
-    UsingEntriesDerived(const ::Inscription::BinaryTableData<UsingEntriesDerived>& data) :
+    UsingEntriesDerived(const Inscription::BinaryTableData<UsingEntriesDerived>& data) :
         Base(data.base), derivedValue(data.derivedValue)
     {}
 };
@@ -145,12 +146,12 @@ public:
         Base(baseValue), derivedValue(derivedValue)
     {}
 
-    UsingEntryPointerDerived(const ::Inscription::BinaryTableData<UsingEntryPointerDerived>& data) :
+    UsingEntryPointerDerived(const Inscription::BinaryTableData<UsingEntryPointerDerived>& data) :
         Base(data.base), derivedValue(data.derivedValue)
     {}
 };
 
-BinaryTableFixture::NonDefault::NonDefault(const ::Inscription::BinaryTableData<NonDefault>& data) :
+BinaryTableFixture::NonDefault::NonDefault(const Inscription::BinaryTableData<NonDefault>& data) :
     value(data.value)
 {}
 
@@ -525,7 +526,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
 namespace Inscription
 {
-    Scribe<::BinaryTableFixture::Base, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::Base>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -533,7 +534,7 @@ namespace Inscription
         );
     }
 
-    Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::DefaultConstructionDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -542,13 +543,12 @@ namespace Inscription
         );
     }
 
-    Type Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::DefaultConstructionDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "DefaultConstructionDerived";
     }
 
-    Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::CustomConstructionDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -557,19 +557,18 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Construct(
+    void Scribe<BinaryTableFixture::CustomConstructionDerived>::Table::Construct(
         ObjectT* storage, ArchiveT& archive)
     {
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    Type Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::CustomConstructionDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "CustomConstructionDerived";
     }
 
-    Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::ObjectScrivenBase>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -577,13 +576,13 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>::Table::ObjectScrivenImplementation(
+    void Scribe<BinaryTableFixture::ObjectScrivenBase>::Table::ObjectScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         archive(object.baseObjectScrivenValue);
     }
 
-    Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -592,25 +591,24 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::Construct(
+    void Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::Construct(
         ObjectT* storage, ArchiveT& archive)
     {
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    void Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::ObjectScrivenImplementation(
+    void Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::ObjectScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         archive(object.derivedObjectScrivenValue);
     }
 
-    Type Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::ObjectScrivenDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "ObjectScrivenDerived";
     }
 
-    Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::TableConstructionBase>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -618,7 +616,7 @@ namespace Inscription
         );
     }
 
-    Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::TableConstructionDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -627,13 +625,12 @@ namespace Inscription
         );
     }
 
-    Type Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::TableConstructionDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "TableConstructionDerived";
     }
 
-    Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::UsingEntriesDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -642,13 +639,12 @@ namespace Inscription
         );
     }
 
-    Type Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::UsingEntriesDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "UsingEntriesDerived";
     }
 
-    Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::UsingEntryPointerDerived>::Table::Table()
     {
         MergeDataLinks
         ({
@@ -657,13 +653,12 @@ namespace Inscription
         );
     }
 
-    Type Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryTableFixture::UsingEntryPointerDerived>::OutputType(const BinaryArchive& archive)
+    {
         return "UsingEntryPointerDerived";
     }
 
-    Scribe<::BinaryTableFixture::NonDefault, BinaryArchive>::Table::Table()
+    Scribe<BinaryTableFixture::NonDefault>::Table::Table()
     {
         MergeDataLinks({
             DataLink::Auto(&ObjectT::value, &DataT::value) }

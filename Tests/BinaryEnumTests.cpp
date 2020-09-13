@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include <Inscription/EnumScribe.h>
+#include <Inscription/EnumScribeCategory.h>
 
 #include "BinaryFixture.h"
 
@@ -17,10 +17,11 @@ public:
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::BinaryEnumFixture::Enum, BinaryArchive> :
-        public EnumScribe<::BinaryEnumFixture::Enum, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<BinaryEnumFixture::Enum, Archive> final
+    {
+        using Category = EnumScribeCategory<BinaryEnumFixture::Enum>;
+    };
 }
 
 SCENARIO_METHOD(BinaryEnumFixture, "loading enum after saving binary", "[binary][enum]")

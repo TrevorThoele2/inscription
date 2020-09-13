@@ -2,8 +2,7 @@
 
 #include "Archive.h"
 
-#include "Scribe.h"
-
+#include "ScrivenDispatch.h"
 #include "Direction.h"
 #include "Const.h"
 
@@ -33,17 +32,13 @@ namespace Inscription
 
         TextArchive& operator=(TextArchive&& arg) noexcept;
     private:
-        template<class T>
-        using KnownScribe = Scribe<T, TextArchive>;
-    private:
         const Direction direction;
     };
 
     template<class T>
     TextArchive& TextArchive::operator()(T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(RemoveConst(object), *this);
+        ScrivenDispatch::Execute(object, *this);
         return *this;
     }
 }

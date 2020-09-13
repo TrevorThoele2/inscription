@@ -10,7 +10,7 @@
 
 namespace Inscription
 {
-    void Scribe<std::filesystem::path, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
         {
@@ -25,7 +25,7 @@ namespace Inscription
         }
     }
 
-    void Scribe<std::filesystem::path, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    void Scribe<std::filesystem::path>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
         if (archive.IsOutput())
         {
@@ -40,7 +40,7 @@ namespace Inscription
         }
     }
 
-    void Scribe<std::filesystem::path, TextArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, TextArchive& archive)
     {
         if (archive.IsOutput())
         {

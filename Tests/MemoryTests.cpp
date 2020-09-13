@@ -1,12 +1,11 @@
 #include <catch.hpp>
 
+#include <Inscription/CompositeScribeCategory.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
-#include <Inscription/CompositeScribe.h>
 
 #include "BinaryFixture.h"
-#include "Inscription/BaseScriven.h"
 
 class MemoryTestsFixture : public BinaryFixture
 {
@@ -70,33 +69,40 @@ SCENARIO_METHOD(MemoryTestsFixture, "unique_ptr loads after saving", "[binary][s
 namespace Inscription
 {
     template<>
-    class Scribe<::MemoryTestsFixture::Base, BinaryArchive> :
-        public CompositeScribe<::MemoryTestsFixture::Base, BinaryArchive>
+    class Scribe<MemoryTestsFixture::Base> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = MemoryTestsFixture::Base;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.baseValue);
         }
     };
 
+    template<class Archive>
+    struct ScribeTraits<MemoryTestsFixture::Base, Archive> final
+    {
+        using Category = CompositeScribeCategory<MemoryTestsFixture::Base>;
+    };
+
     template<>
-    class Scribe<::MemoryTestsFixture::Derived, BinaryArchive> :
-        public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
+    class Scribe<MemoryTestsFixture::Derived> final
     {
     public:
-        static Type OutputType(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using ObjectT = MemoryTestsFixture::Derived;
+    public:
+        static Type OutputType(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             BaseScriven<::MemoryTestsFixture::Base>(object, archive);
             archive(object.derivedValue);
         }
     };
 
-    Type Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<MemoryTestsFixture::Derived>::OutputType(const BinaryArchive& archive)
+    {
         return "MemoryDerived";
     }
 }

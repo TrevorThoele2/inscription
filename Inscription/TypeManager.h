@@ -4,7 +4,7 @@
 #include "TypeTracker.h"
 #include "PolymorphicManager.h"
 #include "TypeRegistrationContext.h"
-#include "ObjectTrackingTraits.h"
+#include "ShouldTrack.h"
 
 namespace Inscription
 {
@@ -143,7 +143,7 @@ namespace Inscription
     template<class T>
     std::optional<TrackingID> TypeManager<DerivedArchive>::AttemptTrackObject(T* arg)
     {
-        if (!ObjectTrackingTraits<T, DerivedArchive>::shouldTrack)
+        if (!should_track_v<T, DerivedArchive>)
             return {};
 
         return objectTracker.Add(arg);
@@ -153,7 +153,7 @@ namespace Inscription
     template<class T>
     std::optional<TrackingID> TypeManager<DerivedArchive>::AttemptTrackObject(T* arg, TrackingID id)
     {
-        if (!ObjectTrackingTraits<T, DerivedArchive>::shouldTrack)
+        if (!should_track_v<T, DerivedArchive>)
             return {};
 
         return objectTracker.Add(arg, id);
@@ -163,7 +163,7 @@ namespace Inscription
     template<class T>
     void TypeManager<DerivedArchive>::AttemptReplaceTrackedObject(T& here, T& newObject)
     {
-        if (!ObjectTrackingTraits<T, DerivedArchive>::shouldTrack)
+        if (!should_track_v<T, DerivedArchive>)
             return;
 
         objectTracker.ReplaceObject(&here, &newObject);
