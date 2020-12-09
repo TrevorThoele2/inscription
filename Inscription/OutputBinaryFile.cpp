@@ -21,9 +21,23 @@ namespace Inscription
             throw FileEncounteredError();
     }
 
-    void OutputBinaryFile::SeekStream(StreamPosition position)
+    void OutputBinaryFile::SeekStreamFromCurrent(StreamPosition offset)
     {
-        stream.seekp(position);
+        stream.seekp(offset);
+        if (FailedStream())
+            throw FileEncounteredError();
+    }
+
+    void OutputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
+    {
+        stream.seekp(offset, std::ofstream::beg);
+        if (FailedStream())
+            throw FileEncounteredError();
+    }
+
+    void OutputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
+    {
+        stream.seekp(offset, std::ofstream::end);
         if (FailedStream())
             throw FileEncounteredError();
     }

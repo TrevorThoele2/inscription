@@ -86,7 +86,7 @@ namespace Inscription
             ContainerSize size(jumpPoints.size());
             archive(size);
 
-            const auto postSizePosition = archive.TellStream();
+            const auto postSizePosition = archive.CurrentStreamPosition();
             ArchivePosition postTablePositionPlaceholder = 0;
             archive(postTablePositionPlaceholder);
 
@@ -96,10 +96,10 @@ namespace Inscription
             for (auto& loop : jumpPoints)
                 SaveObject(loop, archive);
 
-            ArchivePosition postTablePosition = archive.TellStream();
-            archive.SeekStream(postSizePosition);
+            ArchivePosition postTablePosition = archive.CurrentStreamPosition();
+            archive.SeekStreamFromCurrent(postSizePosition);
             archive(postTablePosition);
-            archive.SeekStream(postTablePosition);
+            archive.SeekStreamFromCurrent(postTablePosition);
         }
     private:
         struct JumpPoint
@@ -114,7 +114,7 @@ namespace Inscription
 
         void SaveJump(JumpPoint& point, BinaryArchive& archive)
         {
-            point.jumpPosition = archive.TellStream();
+            point.jumpPosition = archive.CurrentStreamPosition();
 
             ArchivePosition placeholder = 0;
             archive(placeholder);
@@ -123,17 +123,17 @@ namespace Inscription
 
         void SaveObject(JumpPoint& point, BinaryArchive& archive)
         {
-            const auto currentPosition = archive.TellStream();
+            const auto currentPosition = archive.CurrentStreamPosition();
             archive(point.object);
             OverwriteJump(point, currentPosition, archive);
         }
 
         void OverwriteJump(JumpPoint& point, ArchivePosition overwriteWith, BinaryArchive& archive)
         {
-            const auto currentPosition = archive.TellStream();
-            archive.SeekStream(point.jumpPosition);
+            const auto currentPosition = archive.CurrentStreamPosition();
+            archive.SeekStreamFromCurrent(point.jumpPosition);
             archive(overwriteWith);
-            archive.SeekStream(currentPosition);
+            archive.SeekStreamFromCurrent(currentPosition);
         }
     };
 

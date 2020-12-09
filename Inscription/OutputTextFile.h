@@ -30,7 +30,7 @@ namespace Inscription
         void ResetWidth();
 
         void SeekStream(StreamPosition position);
-        StreamPosition TellStream();
+        [[nodiscard]] StreamPosition TellStream();
     private:
         char fillCharacter = ' ';
         Width width = 0;

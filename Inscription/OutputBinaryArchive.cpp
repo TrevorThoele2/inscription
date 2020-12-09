@@ -24,12 +24,22 @@ namespace Inscription
         return *this;
     }
 
-    void OutputBinaryArchive::SeekStream(StreamPosition position)
+    void OutputBinaryArchive::SeekStreamFromCurrent(StreamPosition position)
     {
-        file.SeekStream(position);
+        file.SeekStreamFromCurrent(position);
     }
 
-    OutputBinaryArchive::StreamPosition OutputBinaryArchive::TellStream()
+    void OutputBinaryArchive::SeekStreamFromBegin(StreamPosition offset)
+    {
+        file.SeekStreamFromBegin(offset);
+    }
+
+    void OutputBinaryArchive::SeekStreamFromEnd(StreamPosition offset)
+    {
+        file.SeekStreamFromEnd(offset);
+    }
+
+    OutputBinaryArchive::StreamPosition OutputBinaryArchive::CurrentStreamPosition()
     {
         return file.TellStream();
     }

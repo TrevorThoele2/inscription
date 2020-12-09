@@ -89,20 +89,20 @@ namespace Inscription
     template<class Archive>
     void InputJumpTable<ID, Object>::LoadObject(Object& object, iterator at, Archive& archive)
     {
-        auto currentPosition = archive.TellStream();
-        archive.SeekStream(at->jumpPosition);
+        auto currentPosition = archive.CurrentStreamPosition();
+        archive.SeekStreamFromCurrent(at->jumpPosition);
         archive(object);
-        archive.SeekStream(currentPosition);
+        archive.SeekStreamFromCurrent(currentPosition);
     }
 
     template<class ID, class Object>
     template<class Archive, class Function>
     void InputJumpTable<ID, Object>::LoadObject(Function function, Object& object, iterator at, Archive& archive)
     {
-        auto currentPosition = archive.TellStream();
-        archive.SeekStream(at->jumpPosition);
+        auto currentPosition = archive.CurrentStreamPosition();
+        archive.SeekStreamFromCurrent(at->jumpPosition);
         function(object, archive);
-        archive.SeekStream(currentPosition);
+        archive.SeekStreamFromCurrent(currentPosition);
     }
 
     template<class ID, class Object>
@@ -135,7 +135,7 @@ namespace Inscription
             while (size-- > 0)
                 LoadJump(object, archive);
 
-            archive.SeekStream(postTablePosition);
+            archive.SeekStreamFromCurrent(postTablePosition);
         }
     private:
         void LoadJump(ObjectT& object, BinaryArchive& archive)

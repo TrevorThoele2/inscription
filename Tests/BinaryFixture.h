@@ -18,27 +18,19 @@ public:
     using OutputArchive = Inscription::OutputBinaryArchive;
     using InputArchive = Inscription::InputBinaryArchive;
 
-    template<class T>
-    [[nodiscard]] T CreateRegistered() const;
-    template<>
+    template<class T, std::enable_if_t<std::is_same_v<T, OutputArchive>, int> = 0>
     [[nodiscard]] OutputArchive CreateRegistered() const;
-    template<>
+    template<class T, std::enable_if_t<std::is_same_v<T, InputArchive>, int> = 0>
     [[nodiscard]] InputArchive CreateRegistered() const;
 };
 
-template<class T>
-T BinaryFixture::CreateRegistered() const
-{
-    static_assert(false, "A generic registered type cannot be created. Use one of the explicit overloads.");
-}
-
-template<>
+template<class T, std::enable_if_t<std::is_same_v<T, BinaryFixture::OutputArchive>, int>>
 auto BinaryFixture::CreateRegistered() const -> OutputArchive
 {
     return OutputArchive("Test.dat", typeRegistrationContext);
 }
 
-template<>
+template<class T, std::enable_if_t<std::is_same_v<T, BinaryFixture::InputArchive>, int>>
 auto BinaryFixture::CreateRegistered() const -> InputArchive
 {
     return InputArchive("Test.dat", typeRegistrationContext);

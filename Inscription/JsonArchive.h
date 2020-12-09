@@ -8,6 +8,7 @@
 #include "TableData.h"
 #include "Direction.h"
 #include "TypeManager.h"
+#include "StreamPosition.h"
 
 namespace Inscription
 {
@@ -19,7 +20,7 @@ namespace Inscription
     private:
         using Types = TypeManager<JsonArchive>;
     public:
-        using StreamPosition = unsigned long long;
+        using StreamPosition = StreamPosition;
         using TypeRegistrationContext = Types::TypeRegistrationContext;
     public:
         Types types;
