@@ -38,7 +38,7 @@ namespace Inscription
         void WriteImpl(unsigned long long arg) { WriteToFile(arg); }
         void WriteImpl(float arg) { WriteToFile(arg); }
         void WriteImpl(double arg) { WriteToFile(arg); }
-        void WriteImpl(const Buffer &arg) { WriteToFile(arg); }
+        void WriteImpl(const Buffer& arg) { WriteToFile(arg); }
     private:
         OutputBinaryFile file;
     private:
