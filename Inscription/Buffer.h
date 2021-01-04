@@ -4,5 +4,8 @@
 
 namespace Inscription
 {
-    using Buffer = std::vector<char>;
+    struct Buffer
+    {
+        std::vector<char> value;
+    };
 }

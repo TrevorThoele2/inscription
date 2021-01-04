@@ -41,7 +41,7 @@ namespace Inscription
         void ReadImpl(unsigned long long&  arg) { ReadFromFile(arg); }
         void ReadImpl(float& arg) { ReadFromFile(arg); }
         void ReadImpl(double& arg) { ReadFromFile(arg); }
-        void ReadImpl(Buffer& arg) { file.ReadData(arg, arg.size()); }
+        void ReadImpl(Buffer& arg) { file.ReadData(arg.value, arg.value.size()); }
     private:
         InputBinaryFile file;
     private:

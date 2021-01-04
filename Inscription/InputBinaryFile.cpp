@@ -14,7 +14,7 @@ namespace Inscription
         return *this;
     }
 
-    void InputBinaryFile::ReadData(Buffer& buffer, size_t size)
+    void InputBinaryFile::ReadData(std::vector<char>& buffer, size_t size)
     {
         if (buffer.empty())
             throw FileEncounteredError();
