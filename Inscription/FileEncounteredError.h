@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Exception.h"
+#include <Chroma/DetailedException.h>
+#include "FilePath.h"
 
 namespace Inscription
 {
-    class FileEncounteredError final : public Exception
+    class FileEncounteredError final : public Chroma::DetailedException
     {
     public:
-        FileEncounteredError();
+        FileEncounteredError(const FilePath& filePath);
     };
 }

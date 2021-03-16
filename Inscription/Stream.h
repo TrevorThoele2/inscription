@@ -41,6 +41,8 @@ namespace Inscription
         Stream& operator=(Stream&& arg) noexcept;
     protected:
         [[nodiscard]] bool FailedStream() const;
+
+        [[nodiscard]] FilePath Path() const;
     private:
         FilePath path;
         Mode mode;
@@ -71,7 +73,7 @@ namespace Inscription
 
         stream.close();
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
 
         isOpen = false;
     }
@@ -122,5 +124,11 @@ namespace Inscription
     bool Stream<T>::FailedStream() const
     {
         return stream.bad();
+    }
+
+    template<class T>
+    FilePath Stream<T>::Path() const
+    {
+        return path;
     }
 }

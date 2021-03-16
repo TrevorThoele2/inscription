@@ -31,6 +31,6 @@ namespace Inscription
     {
         stream.read(reinterpret_cast<char*>(&var), sizeof(var));
         if (stream.bad())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 }
