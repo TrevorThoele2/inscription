@@ -11,9 +11,7 @@ namespace Inscription
         explicit OutputTextArchive(const FilePath& path, bool append = false);
         OutputTextArchive(const OutputTextArchive& arg) = delete;
         OutputTextArchive(OutputTextArchive&& arg) noexcept;
-
-        ~OutputTextArchive() = default;
-
+        
         OutputTextArchive& operator=(const OutputTextArchive& arg) = delete;
         OutputTextArchive& operator=(OutputTextArchive&& arg) noexcept;
 

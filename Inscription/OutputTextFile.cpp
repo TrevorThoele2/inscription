@@ -21,11 +21,19 @@ namespace Inscription
     {
         if (width > 0)
         {
-            stream << std::setfill(fillCharacter);
-            stream << std::setw(width);
-        }
+            const auto previousFill = stream.fill();
+            const auto previousWidth = stream.width();
 
-        stream << string;
+            stream.fill(fillCharacter);
+            stream.width(width);
+
+            stream << string;
+
+            stream.fill(previousFill);
+            stream.width(previousWidth);
+        }
+        else
+            stream << string;
     }
 
     void OutputTextFile::WriteData(const char character)
