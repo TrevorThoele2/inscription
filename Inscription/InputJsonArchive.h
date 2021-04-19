@@ -10,19 +10,19 @@
 
 #include <Chroma/StringUtility.h>
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class InputJsonArchive final : public JsonArchive
+    class InputJson final : public Json
     {
     public:
-        InputJsonArchive(const FilePath& path);
-        InputJsonArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
-        InputJsonArchive(InputJsonArchive&& arg) noexcept;
+        InputJson(const File::Path& path);
+        InputJson(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        InputJson(InputJson&& arg) noexcept;
 
-        InputJsonArchive& operator=(InputJsonArchive&& arg) noexcept;
+        InputJson& operator=(InputJson&& arg) noexcept;
 
-        InputJsonArchive& TakeValue(const std::string& name, std::string& value);
-        InputJsonArchive& ReadValue(const std::string& name, std::string& value);
+        InputJson& TakeValue(const std::string& name, std::string& value);
+        InputJson& ReadValue(const std::string& name, std::string& value);
         [[nodiscard]] bool HasValue(const std::string& name);
 
         ContainerSize StartList(const std::string& name);
@@ -30,7 +30,7 @@ namespace Inscription
         void StartObject(const std::string& name);
         void EndObject();
     private:
-        InputTextFile file;
+        File::InputText file;
 
         class Item
         {
@@ -130,7 +130,7 @@ namespace Inscription
     };
 
     template<class T>
-    auto InputJsonArchive::Collection::StartNew(const std::string& name) -> T*
+    auto InputJson::Collection::StartNew(const std::string& name) -> T*
     {
         auto created = std::make_unique<T>(this);
         Emplace(name, std::move(created));
@@ -138,7 +138,7 @@ namespace Inscription
     }
 
     template<class T>
-    void InputJsonArchive::StartCollection(const std::string& name, Collection*& collection)
+    void InputJson::StartCollection(const std::string& name, Collection*& collection)
     {
         auto existentCollection = OptionalTransformation<T>(*OptionalItem(name, *collection));
         if (!existentCollection)
@@ -147,7 +147,7 @@ namespace Inscription
     }
 
     template<class T>
-    T& InputJsonArchive::RequiredTransformation(const std::string& name, Item& item)
+    T& InputJson::RequiredTransformation(const std::string& name, Item& item)
     {
         const auto check = OptionalTransformation<T>(item);
         if (!check)
@@ -157,7 +157,7 @@ namespace Inscription
     }
 
     template<class T>
-    T* InputJsonArchive::OptionalTransformation(Item& item)
+    T* InputJson::OptionalTransformation(Item& item)
     {
         return dynamic_cast<T*>(&item);
     }

@@ -20,9 +20,9 @@ namespace Inscription
         static constexpr bool requiresScribe = false;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        static void Scriven(ObjectT& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     private:
         static_assert(std::is_enum_v<ObjectT>,
             "The Object given to an EnumScribeCategory is not an enum.");
@@ -30,7 +30,7 @@ namespace Inscription
 
     template<class Object>
     void EnumScribeCategory<Object>::Scriven(
-        ObjectT& object, BinaryArchive& archive)
+        ObjectT& object, Archive::Binary& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())
@@ -48,7 +48,7 @@ namespace Inscription
 
     template<class Object>
     void EnumScribeCategory<Object>::Scriven(
-        const std::string& name, ObjectT& object, JsonArchive& archive)
+        const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())

@@ -63,7 +63,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicListFixture::Base;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -78,9 +78,9 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicListFixture::Derived;
     public:
-        static Type OutputType(const BinaryArchive& archive);
+        static Type OutputType(const Archive::Binary& archive);
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -165,17 +165,17 @@ SCENARIO_METHOD
 
 namespace Inscription
 {
-    void Scribe<BinaryPolymorphicListFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<BinaryPolymorphicListFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         archive(object.baseValue);
     }
 
-    Type Scribe<BinaryPolymorphicListFixture::Derived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryPolymorphicListFixture::Derived>::OutputType(const Archive::Binary& archive)
     {
         return "CustomConstructionDerived";
     }
 
-    void Scribe<BinaryPolymorphicListFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<BinaryPolymorphicListFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         BaseScriven<BinaryPolymorphicListFixture::Base>(object, archive);
         archive(object.derivedValue);

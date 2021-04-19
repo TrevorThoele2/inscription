@@ -131,12 +131,12 @@ namespace Inscription
     public:
         using ObjectT = TableDataEntry<T>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.Get());
         }
 
-        void Scriven(ObjectT& object, JsonArchive& archive)
+        void Scriven(ObjectT& object, Archive::Json& archive)
         {
             archive("object", object.Get());
         }

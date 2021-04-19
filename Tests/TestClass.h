@@ -35,13 +35,13 @@ namespace Inscription
     public:
         using ObjectT = TestClass;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.integer);
             archive(object.string);
         }
 
-        void Scriven(ObjectT& object, JsonArchive& archive)
+        void Scriven(ObjectT& object, Archive::Json& archive)
         {
             archive("integer", object.integer);
             archive("string", object.string);

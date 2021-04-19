@@ -51,7 +51,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicConstructionFixture::Base;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -66,11 +66,11 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicConstructionFixture::Derived;
     public:
-        static void Construct(ObjectT* storage, BinaryArchive& archive);
+        static void Construct(ObjectT* storage, Archive::Binary& archive);
 
-        static Type OutputType(const BinaryArchive& archive);
+        static Type OutputType(const Archive::Binary& archive);
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -163,12 +163,12 @@ SCENARIO_METHOD(
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicConstructionFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<::BinaryPolymorphicConstructionFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         archive(object.baseValue);
     }
 
-    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Construct(ObjectT* storage, BinaryArchive& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Construct(ObjectT* storage, Archive::Binary& archive)
     {
         int baseValue;
         archive(baseValue);
@@ -179,12 +179,12 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    Type Scribe<BinaryPolymorphicConstructionFixture::Derived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryPolymorphicConstructionFixture::Derived>::OutputType(const Archive::Binary& archive)
     {
         return "BinaryPolymorphicConstructionDerived";
     }
 
-    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
         archive(object.derivedValue);

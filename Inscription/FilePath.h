@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-namespace Inscription
+namespace Inscription::File
 {
-    using FilePath = std::filesystem::path;
+    using Path = std::filesystem::path;
 }

@@ -8,51 +8,50 @@
 #include "TableData.h"
 #include "Direction.h"
 #include "TypeManager.h"
-#include "StreamPosition.h"
+#include "FilePosition.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputBinaryArchive;
-    class InputBinaryArchive;
+    class OutputBinary;
+    class InputBinary;
 
-    class BinaryArchive : public Archive
+    class Binary : public Archive
     {
     private:
-        using Types = TypeManager<BinaryArchive>;
+        using Types = TypeManager<Binary>;
     public:
-        using StreamPosition = StreamPosition;
         using TypeRegistrationContext = Types::TypeRegistrationContext;
     public:
         Types types;
     public:
-        BinaryArchive(const BinaryArchive& arg) = delete;
-        BinaryArchive& operator=(const BinaryArchive& arg) = delete;
+        Binary(const Binary& arg) = delete;
+        Binary& operator=(const Binary& arg) = delete;
 
-        virtual ~BinaryArchive() = 0;
+        virtual ~Binary() = 0;
     public:
         template<class T>
-        BinaryArchive& operator()(T& object);
+        Binary& operator()(T& object);
         template<class T>
-        BinaryArchive& operator()(const std::string& name, T& object);
+        Binary& operator()(const std::string& name, T& object);
     public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
 
-        OutputBinaryArchive* AsOutput();
-        InputBinaryArchive* AsInput();
-        [[nodiscard]] const OutputBinaryArchive* AsOutput() const;
-        [[nodiscard]] const InputBinaryArchive* AsInput() const;
+        OutputBinary* AsOutput();
+        InputBinary* AsInput();
+        [[nodiscard]] const OutputBinary* AsOutput() const;
+        [[nodiscard]] const InputBinary* AsInput() const;
     public:
-        virtual void SeekStreamFromCurrent(StreamPosition offset) = 0;
-        virtual void SeekStreamFromBegin(StreamPosition offset = 0) = 0;
-        virtual void SeekStreamFromEnd(StreamPosition offset = 0) = 0;
-        virtual StreamPosition CurrentStreamPosition() = 0;
+        virtual void Seek(File::Position offset) = 0;
+        virtual void SeekFromBeginning(File::Position offset = 0) = 0;
+        virtual void SeekFromEnd(File::Position offset = 0) = 0;
+        virtual File::Position Position() = 0;
     protected:
-        BinaryArchive(Direction direction);
-        BinaryArchive(Direction direction, TypeRegistrationContext typeRegistrationContext);
-        BinaryArchive(BinaryArchive&& arg) noexcept;
+        Binary(Direction direction);
+        Binary(Direction direction, TypeRegistrationContext typeRegistrationContext);
+        Binary(Binary&& arg) noexcept;
 
-        BinaryArchive& operator=(BinaryArchive&& arg) noexcept;
+        Binary& operator=(Binary&& arg) noexcept;
     private:
         const Direction direction;
     private:
@@ -61,19 +60,22 @@ namespace Inscription
     };
 
     template<class T>
-    BinaryArchive& BinaryArchive::operator()(T& object)
+    Binary& Binary::operator()(T& object)
     {
         ScrivenDispatch::Execute(object, *this);
         return *this;
     }
 
     template<class T>
-    BinaryArchive& BinaryArchive::operator()(const std::string&, T& object)
+    Binary& Binary::operator()(const std::string&, T& object)
     {
         ScrivenDispatch::Execute(object, *this);
         return *this;
     }
+}
 
+namespace Inscription
+{
     template<class Object>
-    using BinaryTableData = TableData<Object, BinaryArchive>;
+    using BinaryTableData = TableData<Object, Archive::Binary>;
 }

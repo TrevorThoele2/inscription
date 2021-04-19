@@ -9,7 +9,10 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
+    namespace Archive
+    {
+        class Binary;
+    }
 
     namespace detail
     {
@@ -18,7 +21,7 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>& object, BinaryArchive& archive)
+            static void AttemptSaveValue(std::variant<Args...>& object, Archive::Binary& archive)
             {
                 if (object.index() == I - 1)
                 {
@@ -30,7 +33,7 @@ namespace Inscription
             }
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, BinaryArchive& archive)
+            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Archive::Binary& archive)
             {
                 if (index == I - 1)
                 {
@@ -44,7 +47,7 @@ namespace Inscription
         public:
 
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>& object, JsonArchive& archive)
+            static void AttemptSaveValue(std::variant<Args...>& object, Archive::Json& archive)
             {
                 if (object.index() == I - 1)
                 {
@@ -56,7 +59,7 @@ namespace Inscription
             }
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, JsonArchive& archive)
+            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Archive::Json& archive)
             {
                 if (index == I - 1)
                 {
@@ -74,19 +77,19 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>&, BinaryArchive&)
+            static void AttemptSaveValue(std::variant<Args...>&, Archive::Binary&)
             {}
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, BinaryArchive&)
+            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Archive::Binary&)
             {}
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>&, JsonArchive&)
+            static void AttemptSaveValue(std::variant<Args...>&, Archive::Json&)
             {}
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, JsonArchive&)
+            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Archive::Json&)
             {}
         };
     }
@@ -97,12 +100,12 @@ namespace Inscription
     public:
         using ObjectT = std::variant<Args...>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class... Args>
-    void Scribe<std::variant<Args...>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::variant<Args...>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -119,7 +122,7 @@ namespace Inscription
     }
 
     template<class... Args>
-    void Scribe<std::variant<Args...>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::variant<Args...>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

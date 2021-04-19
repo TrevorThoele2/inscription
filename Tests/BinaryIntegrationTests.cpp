@@ -5,7 +5,7 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/TupleScribe.h>
-#include <Inscription/StreamPositionScribe.h>
+#include <Inscription/FilePositionScribe.h>
 #include <Inscription/VariantScribe.h>
 
 #include <Inscription/ArrayScribe.h>
@@ -157,7 +157,7 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
             dataGeneration.Random<int>()
         };
 
-        auto savedStreamPosition = Inscription::StreamPosition(dataGeneration.Random<unsigned long long>());
+        auto savedStreamPosition = Inscription::File::Position(dataGeneration.Random<unsigned long long>());
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -242,7 +242,7 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
             std::unordered_set<int> loadedUnorderedSet;
             std::vector<int> loadedVector;
 
-            Inscription::StreamPosition loadedStreamPosition;
+            Inscription::File::Position loadedStreamPosition;
 
             {
                 auto inputArchive = CreateRegistered<InputArchive>();

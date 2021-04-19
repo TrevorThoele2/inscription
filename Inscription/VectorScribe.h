@@ -14,20 +14,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class T, class Allocator>
     class Scribe<std::vector<T, Allocator>> final
     {
     public:
         using ObjectT = std::vector<T, Allocator>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class T, class Allocator>
-    void Scribe<std::vector<T, Allocator>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::vector<T, Allocator>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -52,7 +50,7 @@ namespace Inscription
     }
 
     template<class T, class Allocator>
-    void Scribe<std::vector<T, Allocator>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::vector<T, Allocator>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

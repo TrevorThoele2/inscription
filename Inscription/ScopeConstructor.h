@@ -12,7 +12,7 @@ namespace Inscription
     public:
         template<class Archive>
         explicit ScopeConstructor(Archive& archive);
-        ScopeConstructor(const std::string& name, JsonArchive& archive);
+        ScopeConstructor(const std::string& name, Archive::Json& archive);
         ~ScopeConstructor();
 
         Object* operator->();
@@ -36,7 +36,7 @@ namespace Inscription
     }
 
     template<class Object>
-    ScopeConstructor<Object>::ScopeConstructor(const std::string& name, JsonArchive& archive)
+    ScopeConstructor<Object>::ScopeConstructor(const std::string& name, Archive::Json& archive)
     {
         object = reinterpret_cast<Object*>(CreateStorage(sizeof(Object)));
         ConstructDispatch::NamedExecute(name, object, archive);

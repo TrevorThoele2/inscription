@@ -15,13 +15,13 @@ namespace Inscription
         static constexpr bool requiresScribe = true;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive, ScribeT& scribe);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive, ScribeT& scribe);
-        static void Scriven(ObjectT& object, TextArchive& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Archive::Text& archive, ScribeT& scribe);
     };
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, BinaryArchive& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe)
     {
         {
             auto trackingID = archive.types.AttemptTrackObject(&object);
@@ -36,7 +36,7 @@ namespace Inscription
     }
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe)
     {
         {
             auto trackingID = archive.types.AttemptTrackObject(&object);
@@ -51,7 +51,7 @@ namespace Inscription
     }
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, TextArchive& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Archive::Text& archive, ScribeT& scribe)
     {
         scribe.Scriven(object, archive);
     }

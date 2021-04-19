@@ -1,53 +1,51 @@
 #include "InputBinaryArchive.h"
 
-#include "ContainerSize.h"
-
-namespace Inscription
+namespace Inscription::Archive
 {
-    InputBinaryArchive::InputBinaryArchive(const FilePath& path) :
-        BinaryArchive(Direction::Input),
+    InputBinary::InputBinary(const File::Path& path) :
+        Binary(Direction::Input),
         file(path)
     {}
 
-    InputBinaryArchive::InputBinaryArchive(
-        const FilePath& path, const TypeRegistrationContext& typeRegistrationContext)
+    InputBinary::InputBinary(
+        const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
         :
-        BinaryArchive(Direction::Input, typeRegistrationContext),
+        Binary(Direction::Input, typeRegistrationContext),
         file(path)
     {}
 
-    InputBinaryArchive::InputBinaryArchive(InputBinaryArchive&& arg) noexcept :
-        BinaryArchive(std::move(arg)), file(std::move(arg.file))
+    InputBinary::InputBinary(InputBinary&& arg) noexcept :
+        Binary(std::move(arg)), file(std::move(arg.file))
     {}
 
-    InputBinaryArchive& InputBinaryArchive::operator=(InputBinaryArchive&& arg) noexcept
+    InputBinary& InputBinary::operator=(InputBinary&& arg) noexcept
     {
-        BinaryArchive::operator=(std::move(arg));
+        Binary::operator=(std::move(arg));
         file = std::move(arg.file);
         return *this;
     }
 
-    void InputBinaryArchive::SeekStreamFromCurrent(StreamPosition offset)
+    void InputBinary::Seek(File::Position offset)
     {
-        file.SeekStream(offset);
+        file.Seek(offset);
     }
 
-    void InputBinaryArchive::SeekStreamFromBegin(StreamPosition offset)
+    void InputBinary::SeekFromBeginning(File::Position offset)
     {
-        file.SeekStreamFromBegin(offset);
+        file.SeekFromBeginning(offset);
     }
 
-    void InputBinaryArchive::SeekStreamFromEnd(StreamPosition offset)
+    void InputBinary::SeekFromEnd(File::Position offset)
     {
-        file.SeekStreamFromEnd(offset);
+        file.SeekFromEnd(offset);
     }
 
-    InputBinaryArchive::StreamPosition InputBinaryArchive::CurrentStreamPosition()
+    File::Position InputBinary::Position()
     {
-        return file.TellStream();
+        return file.Position();
     }
 
-    auto InputBinaryArchive::Size() -> SizeT
+    File::Size InputBinary::Size()
     {
         return file.Size();
     }

@@ -16,8 +16,8 @@ namespace Inscription
         static constexpr bool requiresScribe = true;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive, ScribeT& scribe);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe);
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a CompositeScribeCategory is not a class/struct.");
@@ -25,14 +25,14 @@ namespace Inscription
 
     template<class Object>
     void CompositeScribeCategory<Object>::Scriven(
-        ObjectT& object, BinaryArchive& archive, ScribeT& scribe)
+        ObjectT& object, Archive::Binary& archive, ScribeT& scribe)
     {
         TrackingScribeCategory<Object>::Scriven(object, archive, scribe);
     }
 
     template<class Object>
     void CompositeScribeCategory<Object>::Scriven(
-        const std::string& name, ObjectT& object, JsonArchive& archive, ScribeT& scribe)
+        const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe)
     {
         if (archive.IsOutput())
         {

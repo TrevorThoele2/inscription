@@ -1,70 +1,91 @@
 #include "InputTextFile.h"
 
-namespace Inscription
+namespace Inscription::File
 {
-    InputTextFile::InputTextFile(const FilePath& path) : SimpleFile(path, std::ios::in)
+    InputText::InputText(const Path& path) : path(path), stream(path, std::ios::in)
     {}
 
-    InputTextFile::InputTextFile(InputTextFile&& arg) noexcept : SimpleFile(std::move(arg))
+    InputText::InputText(InputText&& arg) noexcept : path(std::move(arg.path)), stream(std::move(arg.stream))
     {}
 
-    InputTextFile& InputTextFile::operator=(InputTextFile&& arg) noexcept
+    InputText& InputText::operator=(InputText&& arg) noexcept
     {
-        SimpleFile::operator=(std::move(arg));
+        path = std::move(arg.path);
+        stream = std::move(arg.stream);
         return *this;
     }
 
-    void InputTextFile::ReadData(std::string& string)
+    void InputText::ReadData(std::string& string)
     {
-        stream >> string;
+        SanitizeStreamFailure([this, &string]() { stream >> string; }, path);
     }
 
-    void InputTextFile::ReadData(char& character)
+    void InputText::ReadData(char& character)
     {
-        stream >> character;
+        SanitizeStreamFailure([this, &character]() { stream >> character; }, path);
     }
 
-    std::string InputTextFile::ReadLine()
+    std::string InputText::ReadLine()
     {
-        std::string string;
-        std::getline(stream, string);
-        return string;
+        return SanitizeStreamFailure<std::string>(
+            [this]()
+            {
+                std::string string;
+                std::getline(stream, string);
+                return string;
+            },
+            path);
     }
 
-    std::string InputTextFile::ReadLine(char delimiter)
+    std::string InputText::ReadLine(char delimiter)
     {
-        std::string string;
-        std::getline(stream, string, delimiter);
-        return string;
+        return SanitizeStreamFailure<std::string>(
+            [this, delimiter]()
+            {
+                std::string string;
+                std::getline(stream, string, delimiter);
+                return string;
+            },
+            path);
     }
 
-    std::string InputTextFile::ReadSize(size_t size)
+    std::string InputText::ReadSize(size_t size)
     {
-        const auto startPosition = stream.tellg();
+        return SanitizeStreamFailure<std::string>(
+            [this]()
+            {
+                const auto startPosition = stream.tellg();
 
-        stream.ignore(std::numeric_limits<std::streamsize>::max());
-        const auto useSize = stream.gcount();
-        stream.clear();
-        stream.seekg(startPosition, std::ios_base::beg);
+                stream.ignore(std::numeric_limits<std::streamsize>::max());
+                const auto useSize = stream.gcount();
+                stream.clear();
+                stream.seekg(startPosition, std::ios_base::beg);
 
-        std::string buffer;
-        buffer.resize(static_cast<size_t>(useSize));
+                std::string buffer;
+                buffer.resize(static_cast<size_t>(useSize));
 
-        stream.read(&buffer[0], useSize);
+                stream.read(&buffer[0], useSize);
 
-        while (buffer[buffer.size() - 1] == '\0')
-            buffer.erase(buffer.size() - 1);
+                while (buffer[buffer.size() - 1] == '\0')
+                    buffer.erase(buffer.size() - 1);
 
-        return buffer;
+                return buffer;
+            },
+            path);
     }
 
-    void InputTextFile::SeekStream(StreamPosition position)
+    void InputText::Seek(File::Position position)
     {
-        stream.seekg(position);
+        SanitizeStreamFailure([this, position]() { stream.seekg(position); }, path);
     }
 
-    StreamPosition InputTextFile::TellStream()
+    Position InputText::Position()
     {
-        return stream.tellg();
+        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellg(); }, path);
+    }
+
+    bool InputText::IsAtEnd() const
+    {
+        return stream.eof();
     }
 }

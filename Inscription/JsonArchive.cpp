@@ -4,59 +4,59 @@
 #include "OutputJsonArchive.h"
 #include "InputJsonArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    JsonArchive::~JsonArchive() = default;
+    Json::~Json() = default;
 
-    bool JsonArchive::IsOutput() const
+    bool Json::IsOutput() const
     {
         return direction == Direction::Output;
     }
 
-    bool JsonArchive::IsInput() const
+    bool Json::IsInput() const
     {
         return direction == Direction::Input;
     }
 
-    OutputJsonArchive* JsonArchive::AsOutput()
+    OutputJson* Json::AsOutput()
     {
-        return dynamic_cast<OutputJsonArchive*>(this);
+        return dynamic_cast<OutputJson*>(this);
     }
 
-    InputJsonArchive* JsonArchive::AsInput()
+    InputJson* Json::AsInput()
     {
-        return dynamic_cast<InputJsonArchive*>(this);
+        return dynamic_cast<InputJson*>(this);
     }
 
-    const OutputJsonArchive* JsonArchive::AsOutput() const
+    const OutputJson* Json::AsOutput() const
     {
-        return dynamic_cast<const OutputJsonArchive*>(this);
+        return dynamic_cast<const OutputJson*>(this);
     }
 
-    const InputJsonArchive* JsonArchive::AsInput() const
+    const InputJson* Json::AsInput() const
     {
-        return dynamic_cast<const InputJsonArchive*>(this);
+        return dynamic_cast<const InputJson*>(this);
     }
 
-    JsonArchive::JsonArchive(Direction direction) :
+    Json::Json(Direction direction) :
         types(*this),
         direction(direction)
     {}
 
-    JsonArchive::JsonArchive(Direction direction, TypeRegistrationContext typeRegistrationContext) :
+    Json::Json(Direction direction, TypeRegistrationContext typeRegistrationContext) :
         types(*this, typeRegistrationContext),
         direction(direction)
     {
         typeRegistrationContext.PushAll(*this);
     }
 
-    JsonArchive::JsonArchive(JsonArchive&& arg) noexcept :
+    Json::Json(Json&& arg) noexcept :
         Archive(std::move(arg)),
         types(std::move(arg.types), *this),
         direction(arg.direction)
     {}
 
-    JsonArchive& JsonArchive::operator=(JsonArchive&& arg) noexcept
+    Json& Json::operator=(Json&& arg) noexcept
     {
         Archive::operator=(std::move(arg));
         types = std::move(arg.types);

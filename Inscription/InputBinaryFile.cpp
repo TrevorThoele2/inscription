@@ -1,65 +1,73 @@
 #include "InputBinaryFile.h"
 
-namespace Inscription
+namespace Inscription::File
 {
-    InputBinaryFile::InputBinaryFile(const FilePath& path) : Stream(path, std::ios::in | std::ios::binary)
+    InputBinary::InputBinary(const Path& path) :
+        path(path), stream(path, std::ios::in | std::ios::binary)
     {}
 
-    InputBinaryFile::InputBinaryFile(InputBinaryFile&& arg) noexcept : Stream(std::move(arg))
+    InputBinary::InputBinary(InputBinary&& arg) noexcept :
+        path(std::move(arg.path)), stream(std::move(arg.stream))
     {}
 
-    InputBinaryFile& InputBinaryFile::operator=(InputBinaryFile&& arg) noexcept
+    InputBinary& InputBinary::operator=(InputBinary&& arg) noexcept
     {
-        Stream::operator=(std::move(arg));
+        path = std::move(arg.path);
+        stream = std::move(arg.stream);
         return *this;
     }
 
-    void InputBinaryFile::ReadData(std::vector<char>& buffer, size_t size)
+    void InputBinary::ReadData(std::vector<char>& buffer, size_t size)
     {
-        if (buffer.empty())
-            throw FileEncounteredError(Path());
-
-        stream.read(&buffer[0], size);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure(
+            [this, &buffer, size]()
+            {
+                buffer.resize(size);
+                stream.read(&buffer[0], size);
+            },
+            path);
     }
 
-    void InputBinaryFile::SeekStream(StreamPosition offset)
+    void InputBinary::Seek(File::Position position)
     {
-        stream.seekg(offset);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure(
+            [this, position]() { stream.seekg(position); },
+            path);
     }
 
-    void InputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
+    void InputBinary::SeekFromBeginning(File::Position offset)
     {
-        stream.seekg(offset, std::ifstream::beg);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure(
+            [this, offset]() { stream.seekg(offset, std::ifstream::beg); },
+            path);
     }
 
-    void InputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
+    void InputBinary::SeekFromEnd(File::Position offset)
     {
-        stream.seekg(offset, std::ifstream::end);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure(
+            [this, offset]() { stream.seekg(offset, std::ifstream::end); },
+            path);
     }
 
-    InputBinaryFile::StreamPosition InputBinaryFile::TellStream()
+    Position InputBinary::Position()
     {
-        const auto told = stream.tellg();
-        if (FailedStream())
-            throw FileEncounteredError(Path());
-        return told;
+        return SanitizeStreamFailure<std::ios::pos_type>(
+            [this]() { return stream.tellg(); },
+            path);
     }
 
-    auto InputBinaryFile::Size() -> SizeT
+    Size InputBinary::Size()
     {
-        const auto currentPosition = TellStream();
-        stream.ignore(std::numeric_limits<SizeT>::max());
-        const auto size = stream.gcount();
-        stream.clear();
-        SeekStream(currentPosition);
-        return size;
+        return SanitizeStreamFailure<File::Size>(
+            [this]()
+            {
+                const auto currentPosition = stream.tellg();
+                stream.ignore(std::numeric_limits<File::Size>::max());
+                const auto size = stream.gcount();
+                stream.clear();
+                Seek(currentPosition);
+                return size;
+            },
+            path);
     }
 }

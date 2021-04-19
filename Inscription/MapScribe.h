@@ -14,20 +14,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class Key, class T, class Hash, class Allocator>
     class Scribe<std::map<Key, T, Hash, Allocator>> final
     {
     public:
         using ObjectT = std::map<Key, T, Hash, Allocator>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -61,7 +59,7 @@ namespace Inscription
     }
 
     template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

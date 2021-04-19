@@ -4,7 +4,7 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/TupleScribe.h>
-#include <Inscription/StreamPositionScribe.h>
+#include <Inscription/FilePositionScribe.h>
 #include <Inscription/VariantScribe.h>
 
 #include <Inscription/ArrayScribe.h>
@@ -156,7 +156,7 @@ SCENARIO_METHOD(JsonIntegrationTestsFixture, "loading every type in json", "[jso
             dataGeneration.Random<int>()
         };
 
-        auto savedStreamPosition = Inscription::StreamPosition(dataGeneration.Random<unsigned long long>());
+        auto savedStreamPosition = Inscription::File::Position(dataGeneration.Random<unsigned long long>());
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();

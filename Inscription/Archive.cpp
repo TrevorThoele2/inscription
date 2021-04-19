@@ -1,6 +1,6 @@
 #include "Archive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
     Archive::~Archive() = default;
 

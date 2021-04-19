@@ -1,46 +1,47 @@
 #include "OutputBinaryArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    OutputBinaryArchive::OutputBinaryArchive(const FilePath& path) :
-        BinaryArchive(Direction::Output),
+    OutputBinary::OutputBinary(const File::Path& path) :
+        Binary(Direction::Output),
         file(path)
     {}
 
-    OutputBinaryArchive::OutputBinaryArchive(
-        const FilePath& path, const TypeRegistrationContext& typeRegistrationContext) :
-        BinaryArchive(Direction::Output, typeRegistrationContext),
+    OutputBinary::OutputBinary(
+        const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
+        :
+        Binary(Direction::Output, typeRegistrationContext),
         file(path)
     {}
 
-    OutputBinaryArchive::OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept :
-        BinaryArchive(std::move(arg)), file(std::move(arg.file))
+    OutputBinary::OutputBinary(OutputBinary&& arg) noexcept :
+        Binary(std::move(arg)), file(std::move(arg.file))
     {}
 
-    OutputBinaryArchive& OutputBinaryArchive::operator=(OutputBinaryArchive&& arg) noexcept
+    OutputBinary& OutputBinary::operator=(OutputBinary&& arg) noexcept
     {
-        BinaryArchive::operator=(std::move(arg));
+        Binary::operator=(std::move(arg));
         file = std::move(arg.file);
         return *this;
     }
 
-    void OutputBinaryArchive::SeekStreamFromCurrent(StreamPosition position)
+    void OutputBinary::Seek(File::Position position)
     {
-        file.SeekStreamFromCurrent(position);
+        file.Seek(position);
     }
 
-    void OutputBinaryArchive::SeekStreamFromBegin(StreamPosition offset)
+    void OutputBinary::SeekFromBeginning(File::Position offset)
     {
-        file.SeekStreamFromBegin(offset);
+        file.SeekFromBeginning(offset);
     }
 
-    void OutputBinaryArchive::SeekStreamFromEnd(StreamPosition offset)
+    void OutputBinary::SeekFromEnd(File::Position offset)
     {
-        file.SeekStreamFromEnd(offset);
+        file.SeekFromEnd(offset);
     }
 
-    OutputBinaryArchive::StreamPosition OutputBinaryArchive::CurrentStreamPosition()
+    File::Position OutputBinary::Position()
     {
-        return file.TellStream();
+        return file.Position();
     }
 }

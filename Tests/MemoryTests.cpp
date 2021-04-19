@@ -74,7 +74,7 @@ namespace Inscription
     public:
         using ObjectT = MemoryTestsFixture::Base;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.baseValue);
         }
@@ -92,16 +92,16 @@ namespace Inscription
     public:
         using ObjectT = MemoryTestsFixture::Derived;
     public:
-        static Type OutputType(const BinaryArchive& archive);
+        static Type OutputType(const Archive::Binary& archive);
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             BaseScriven<::MemoryTestsFixture::Base>(object, archive);
             archive(object.derivedValue);
         }
     };
 
-    Type Scribe<MemoryTestsFixture::Derived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<MemoryTestsFixture::Derived>::OutputType(const Archive::Binary& archive)
     {
         return "MemoryDerived";
     }

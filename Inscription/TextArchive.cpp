@@ -3,48 +3,48 @@
 #include "OutputTextArchive.h"
 #include "InputTextArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    TextArchive::~TextArchive() = default;
+    Text::~Text() = default;
 
-    bool TextArchive::IsOutput() const
+    bool Text::IsOutput() const
     {
         return direction == Direction::Output;
     }
 
-    bool TextArchive::IsInput() const
+    bool Text::IsInput() const
     {
         return direction == Direction::Input;
     }
 
-    OutputTextArchive* TextArchive::AsOutput()
+    OutputText* Text::AsOutput()
     {
-        return dynamic_cast<OutputTextArchive*>(this);
+        return dynamic_cast<OutputText*>(this);
     }
 
-    InputTextArchive* TextArchive::AsInput()
+    InputText* Text::AsInput()
     {
-        return dynamic_cast<InputTextArchive*>(this);
+        return dynamic_cast<InputText*>(this);
     }
 
-    const OutputTextArchive* TextArchive::AsOutput() const
+    const OutputText* Text::AsOutput() const
     {
-        return dynamic_cast<const OutputTextArchive*>(this);
+        return dynamic_cast<const OutputText*>(this);
     }
 
-    const InputTextArchive* TextArchive::AsInput() const
+    const InputText* Text::AsInput() const
     {
-        return dynamic_cast<const InputTextArchive*>(this);
+        return dynamic_cast<const InputText*>(this);
     }
 
-    TextArchive::TextArchive(Direction direction) : direction(direction)
+    Text::Text(Direction direction) : direction(direction)
     {}
     
-    TextArchive::TextArchive(TextArchive&& arg) noexcept :
+    Text::Text(Text&& arg) noexcept :
         Archive(std::move(arg)), direction(std::move(arg.direction))
     {}
 
-    TextArchive& TextArchive::operator=(TextArchive&& arg) noexcept
+    Text& Text::operator=(Text&& arg) noexcept
     {
         Archive::operator=(std::move(arg));
         return *this;

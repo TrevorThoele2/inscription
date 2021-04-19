@@ -543,7 +543,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::DefaultConstructionDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::DefaultConstructionDerived>::OutputType(const Archive::Binary& archive)
     {
         return "DefaultConstructionDerived";
     }
@@ -563,7 +563,7 @@ namespace Inscription
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    Type Scribe<BinaryTableFixture::CustomConstructionDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::CustomConstructionDerived>::OutputType(const Archive::Binary& archive)
     {
         return "CustomConstructionDerived";
     }
@@ -603,7 +603,7 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    Type Scribe<BinaryTableFixture::ObjectScrivenDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::ObjectScrivenDerived>::OutputType(const Archive::Binary& archive)
     {
         return "ObjectScrivenDerived";
     }
@@ -625,7 +625,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::TableConstructionDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::TableConstructionDerived>::OutputType(const Archive::Binary& archive)
     {
         return "TableConstructionDerived";
     }
@@ -639,7 +639,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::UsingEntriesDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::UsingEntriesDerived>::OutputType(const Archive::Binary& archive)
     {
         return "UsingEntriesDerived";
     }
@@ -653,7 +653,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::UsingEntryPointerDerived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<BinaryTableFixture::UsingEntryPointerDerived>::OutputType(const Archive::Binary& archive)
     {
         return "UsingEntryPointerDerived";
     }

@@ -1,78 +1,86 @@
 #include "OutputTextFile.h"
 #include <iomanip>
 
-namespace Inscription
+namespace Inscription::File
 {
-    OutputTextFile::OutputTextFile(const FilePath& path, bool append) :
-        SimpleFile(path, append ? std::ios::out | std::ios::app : std::ios::out)
+    OutputText::OutputText(const Path& path, bool append) :
+        path(path),
+        stream(path, append ? std::ios::out | std::ios::app : std::ios::out)
     {}
 
-    OutputTextFile::OutputTextFile(OutputTextFile&& arg) noexcept :
-        SimpleFile(std::move(arg))
+    OutputText::OutputText(OutputText&& arg) noexcept :
+        path(std::move(arg.path)),
+        stream(std::move(arg.stream))
     {}
 
-    OutputTextFile& OutputTextFile::operator=(OutputTextFile&& arg) noexcept
+    OutputText& OutputText::operator=(OutputText&& arg) noexcept
     {
-        SimpleFile::operator=(std::move(arg));
+        path = std::move(arg.path);
+        stream = std::move(arg.stream);
         return *this;
     }
 
-    void OutputTextFile::WriteData(const std::string& string)
+    void OutputText::WriteData(const std::string& string)
     {
-        if (width > 0)
-        {
-            const auto previousFill = stream.fill();
-            const auto previousWidth = stream.width();
+        SanitizeStreamFailure(
+            [this, string]()
+            {
+                if (width > 0)
+                {
+                    const auto previousFill = stream.fill();
+                    const auto previousWidth = stream.width();
 
-            stream.fill(fillCharacter);
-            stream.width(width);
+                    stream.fill(fillCharacter);
+                    stream.width(width);
 
-            stream << string;
+                    stream << string;
 
-            stream.fill(previousFill);
-            stream.width(previousWidth);
-        }
-        else
-            stream << string;
+                    stream.fill(previousFill);
+                    stream.width(previousWidth);
+                }
+                else
+                    stream << string;
+            },
+            path);
     }
 
-    void OutputTextFile::WriteData(const char character)
+    void OutputText::WriteData(const char character)
     {
-        stream << character;
+        SanitizeStreamFailure([this, character]() { stream << character; }, path);
     }
 
-    void OutputTextFile::ClearFile()
+    void OutputText::ClearFile()
     {
-        stream.flush();
+        SanitizeStreamFailure([this]() {stream.flush(); }, path);
     }
 
-    void OutputTextFile::SetFillCharacter(const char set)
+    void OutputText::SetFillCharacter(const char set)
     {
         fillCharacter = set;
     }
 
-    void OutputTextFile::ResetFillCharacter()
+    void OutputText::ResetFillCharacter()
     {
         fillCharacter = ' ';
     }
 
-    void OutputTextFile::SetWidth(Width set)
+    void OutputText::SetWidth(Width set)
     {
         width = set;
     }
 
-    void OutputTextFile::ResetWidth()
+    void OutputText::ResetWidth()
     {
         width = 0;
     }
 
-    void OutputTextFile::SeekStream(StreamPosition position)
+    void OutputText::Seek(File::Position position)
     {
-        stream.seekp(position);
+        SanitizeStreamFailure([this, position]() { stream.seekp(position); }, path);
     }
 
-    StreamPosition OutputTextFile::TellStream()
+    Position OutputText::Position()
     {
-        return stream.tellp();
+        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellp(); }, path);
     }
 }

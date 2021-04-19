@@ -80,7 +80,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::Object;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.value);
         }
@@ -98,7 +98,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::NestedHeapObject;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.value);
             archive(object.next);
@@ -117,7 +117,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::ProtectedConstructor;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.value);
         }
@@ -135,7 +135,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::PrivateConstructor;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             archive(object.value);
         }

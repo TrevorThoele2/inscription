@@ -1,19 +1,22 @@
 #pragma once
 
 #include <fstream>
-#include "SimpleFile.h"
 
-namespace Inscription
+#include "FilePath.h"
+#include "FilePosition.h"
+#include "SanitizeStreamFailure.h"
+
+namespace Inscription::File
 {
-    class OutputTextFile final : public SimpleFile<std::ofstream>
+    class OutputText final
     {
     public:
         using Width = std::streamsize;
     public:
-        explicit OutputTextFile(const FilePath& path, bool append = false);
-        OutputTextFile(OutputTextFile&& arg) noexcept;
+        explicit OutputText(const Path& path, bool append = false);
+        OutputText(OutputText&& arg) noexcept;
 
-        OutputTextFile& operator=(OutputTextFile&& arg) noexcept;
+        OutputText& operator=(OutputText&& arg) noexcept;
 
         void WriteData(const std::string& string);
         void WriteData(char character);
@@ -29,9 +32,12 @@ namespace Inscription
         void SetWidth(Width set);
         void ResetWidth();
 
-        void SeekStream(StreamPosition position);
-        [[nodiscard]] StreamPosition TellStream();
+        void Seek(Position position);
+        [[nodiscard]] Position Position();
     private:
+        Path path;
+        std::ofstream stream;
+
         char fillCharacter = ' ';
         Width width = 0;
     };

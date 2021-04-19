@@ -12,11 +12,11 @@
 class BinaryFixture : public GeneralFixture
 {
 public:
-    using TypeRegistrationContext = Inscription::TypeRegistrationContext<Inscription::BinaryArchive>;
+    using TypeRegistrationContext = Inscription::TypeRegistrationContext<Inscription::Archive::Binary>;
     TypeRegistrationContext typeRegistrationContext;
 
-    using OutputArchive = Inscription::OutputBinaryArchive;
-    using InputArchive = Inscription::InputBinaryArchive;
+    using OutputArchive = Inscription::Archive::OutputBinary;
+    using InputArchive = Inscription::Archive::InputBinary;
 
     template<class T, std::enable_if_t<std::is_same_v<T, OutputArchive>, int> = 0>
     [[nodiscard]] OutputArchive CreateRegistered() const;

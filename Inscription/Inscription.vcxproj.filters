@@ -28,15 +28,6 @@
     <ClInclude Include="Exception.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
-    <ClInclude Include="InputSimpleFile.h">
-      <Filter>Header Files\File\Simple</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputSimpleFile.h">
-      <Filter>Header Files\File\Simple</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleFile.h">
-      <Filter>Header Files\File\Simple</Filter>
-    </ClInclude>
     <ClInclude Include="OutputTextFile.h">
       <Filter>Header Files\File\Text</Filter>
     </ClInclude>
@@ -45,9 +36,6 @@
     </ClInclude>
     <ClInclude Include="TypeRegistrationContext.h">
       <Filter>Header Files\RegisteredTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="FileEncounteredError.h">
-      <Filter>Header Files\File</Filter>
     </ClInclude>
     <ClInclude Include="TableVariableNotHere.h">
       <Filter>Header Files\Scribe\Errors</Filter>
@@ -205,19 +193,13 @@
     <ClInclude Include="TableDataEntry.h">
       <Filter>Header Files\Scribe\Table\Entry</Filter>
     </ClInclude>
-    <ClInclude Include="NotOpenable.h">
-      <Filter>Header Files\File</Filter>
-    </ClInclude>
     <ClInclude Include="OutputJumpTable.h">
       <Filter>Header Files\Jump</Filter>
     </ClInclude>
     <ClInclude Include="InputJumpTable.h">
       <Filter>Header Files\Jump</Filter>
     </ClInclude>
-    <ClInclude Include="StreamPosition.h">
-      <Filter>Header Files\Stream</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamPositionScribe.h">
+    <ClInclude Include="FilePositionScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
     <ClInclude Include="OptionalScribe.h">
@@ -261,9 +243,6 @@
     </ClInclude>
     <ClInclude Include="TypeManager.h">
       <Filter>Header Files\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonParseError.h">
-      <Filter>Header Files\Archive\Json</Filter>
     </ClInclude>
     <ClInclude Include="ScribeTraits.h">
       <Filter>Header Files\Scribe</Filter>
@@ -310,6 +289,21 @@
     <ClInclude Include="ScribeHasOutputType.h">
       <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
+    <ClInclude Include="FileEncounteredError.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePosition.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSize.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="SanitizeStreamFailure.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonParseError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -341,12 +335,6 @@
     </Filter>
     <Filter Include="Source Files\File\Binary">
       <UniqueIdentifier>{88e2965e-e153-4168-a42a-c9c2433fd140}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\File\Simple">
-      <UniqueIdentifier>{ae168c71-62b6-486e-b7e7-bf969d748ea9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\File\Simple">
-      <UniqueIdentifier>{0da20bb4-bb6a-400e-b509-3bb811e85d29}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\File\Text">
       <UniqueIdentifier>{12fb1c48-3f9d-4c89-a62e-e4db8f28ac57}</UniqueIdentifier>
@@ -470,20 +458,11 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
-    <ClCompile Include="InputSimpleFile.cpp">
-      <Filter>Source Files\File\Simple</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputSimpleFile.cpp">
-      <Filter>Source Files\File\Simple</Filter>
-    </ClCompile>
     <ClCompile Include="InputTextFile.cpp">
       <Filter>Source Files\File\Text</Filter>
     </ClCompile>
     <ClCompile Include="OutputTextFile.cpp">
       <Filter>Source Files\File\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="FileEncounteredError.cpp">
-      <Filter>Source Files\File</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTracker.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
@@ -524,10 +503,7 @@
     <ClCompile Include="ObjectTrackingContext.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
     </ClCompile>
-    <ClCompile Include="NotOpenable.cpp">
-      <Filter>Source Files\File</Filter>
-    </ClCompile>
-    <ClCompile Include="StreamPositionScribe.cpp">
+    <ClCompile Include="FilePositionScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
     <ClCompile Include="FilePathScribe.cpp">
@@ -568,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="TableVariableNotHere.cpp">
       <Filter>Source Files\Scribe\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="FileEncounteredError.cpp">
+      <Filter>Source Files\File</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

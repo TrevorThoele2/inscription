@@ -6,18 +6,15 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-    class TextArchive;
-
     template<>
     class Scribe<std::filesystem::path> final
     {
     public:
         using ObjectT = std::filesystem::path;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-        void Scriven(ObjectT& object, TextArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Archive::Text& archive);
     };
 
     template<class Archive>

@@ -1,29 +1,29 @@
 #include "OutputTextArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    OutputTextArchive::OutputTextArchive(const FilePath& path, bool append) :
-        TextArchive(Direction::Output), file(path, append)
+    OutputText::OutputText(const File::Path& path, bool append) :
+        Text(Direction::Output), file(path, append)
     {}
 
-    OutputTextArchive::OutputTextArchive(OutputTextArchive&& arg) noexcept :
-        TextArchive(std::move(arg)), file(std::move(arg.file))
+    OutputText::OutputText(OutputText&& arg) noexcept :
+        Text(std::move(arg)), file(std::move(arg.file))
     {}
 
-    OutputTextArchive& OutputTextArchive::operator=(OutputTextArchive&& arg) noexcept
+    OutputText& OutputText::operator=(OutputText&& arg) noexcept
     {
-        TextArchive::operator=(std::move(arg));
+        Text::operator=(std::move(arg));
         file = std::move(arg.file);
         return *this;
     }
 
-    OutputTextArchive& OutputTextArchive::Write(const std::string& arg)
+    OutputText& OutputText::Write(const std::string& arg)
     {
         WriteImpl(arg);
         return *this;
     }
 
-    OutputTextArchive& OutputTextArchive::Write(const char arg)
+    OutputText& OutputText::Write(const char arg)
     {
         WriteImpl(arg);
         return *this;

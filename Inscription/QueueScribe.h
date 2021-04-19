@@ -14,20 +14,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class T, class Container>
     class Scribe<std::queue<T, Container>> final
     {
     public:
         using ObjectT = std::queue<T, Container>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class T, class Container>
-    void Scribe<std::queue<T, Container>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::queue<T, Container>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -59,7 +57,7 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    void Scribe<std::queue<T, Container>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::queue<T, Container>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

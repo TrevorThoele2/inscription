@@ -1,15 +1,15 @@
 #include <catch.hpp>
 
-#include <Inscription/StreamPositionScribe.h>
+#include <Inscription/FilePositionScribe.h>
 
 #include "BinaryFixture.h"
 
-class StreamPositionFixture : public BinaryFixture
+class FilePositionFixture : public BinaryFixture
 {};
 
-SCENARIO_METHOD(StreamPositionFixture, "stream position loads after save", "[binary][std][streamposition]")
+SCENARIO_METHOD(FilePositionFixture, "file position loads after save", "[binary][std][fileposition]")
 {
-    using TestedObject = Inscription::StreamPosition;
+    using TestedObject = Inscription::File::Position;
 
     GIVEN("saved stream position")
     {

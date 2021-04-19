@@ -1,8 +1,5 @@
 #include "StringScribe.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-
 #include "OutputTextArchive.h"
 #include "InputTextArchive.h"
 
@@ -14,7 +11,7 @@
 
 namespace Inscription
 {
-    void Scribe<std::string>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::string>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())
@@ -40,7 +37,7 @@ namespace Inscription
         }
     }
 
-    void Scribe<std::string>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::string>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())
@@ -67,7 +64,7 @@ namespace Inscription
         }
     }
 
-    void Scribe<std::string>::Scriven(ObjectT& object, TextArchive& archive)
+    void Scribe<std::string>::Scriven(ObjectT& object, Archive::Text& archive)
     {
         if (archive.IsOutput())
             archive.AsOutput()->Write(object);

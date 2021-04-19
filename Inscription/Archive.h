@@ -3,7 +3,7 @@
 #include <typeindex>
 #include <unordered_map>
 
-namespace Inscription
+namespace Inscription::Archive
 {
     class Archive
     {

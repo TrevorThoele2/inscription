@@ -7,19 +7,17 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class T, class Deleter>
     class Scribe<std::unique_ptr<T, Deleter>> final
     {
     public:
         using ObjectT = std::unique_ptr<T, Deleter>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class T, class Deleter>
-    void Scribe<std::unique_ptr<T, Deleter>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::unique_ptr<T, Deleter>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {

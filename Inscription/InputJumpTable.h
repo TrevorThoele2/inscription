@@ -6,9 +6,9 @@
 
 #include "ContainerSize.h"
 
-#include "StreamPosition.h"
+#include "FilePosition.h"
 #include "CompositeScribeCategory.h"
-#include "StreamPositionScribe.h"
+#include "FilePositionScribe.h"
 
 namespace Inscription
 {
@@ -26,7 +26,7 @@ namespace Inscription
         struct Handle
         {
             ID id;
-            StreamPosition jumpPosition;
+            File::Position jumpPosition;
         };
 
         using Handles = std::vector<Handle>;
@@ -89,20 +89,20 @@ namespace Inscription
     template<class Archive>
     void InputJumpTable<ID, Object>::LoadObject(Object& object, iterator at, Archive& archive)
     {
-        auto currentPosition = archive.CurrentStreamPosition();
-        archive.SeekStreamFromCurrent(at->jumpPosition);
+        auto currentPosition = archive.Position();
+        archive.Seek(at->jumpPosition);
         archive(object);
-        archive.SeekStreamFromCurrent(currentPosition);
+        archive.Seek(currentPosition);
     }
 
     template<class ID, class Object>
     template<class Archive, class Function>
     void InputJumpTable<ID, Object>::LoadObject(Function function, Object& object, iterator at, Archive& archive)
     {
-        auto currentPosition = archive.CurrentStreamPosition();
-        archive.SeekStreamFromCurrent(at->jumpPosition);
+        auto currentPosition = archive.Position();
+        archive.Seek(at->jumpPosition);
         function(object, archive);
-        archive.SeekStreamFromCurrent(currentPosition);
+        archive.Seek(currentPosition);
     }
 
     template<class ID, class Object>
@@ -122,9 +122,9 @@ namespace Inscription
         using ObjectT = InputJumpTable<ID, Object>;
     private:
         using Handle = typename ObjectT::Handle;
-        using ArchivePosition = StreamPosition;
+        using ArchivePosition = File::Position;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {
             ContainerSize size;
             archive(size);
@@ -135,10 +135,10 @@ namespace Inscription
             while (size-- > 0)
                 LoadJump(object, archive);
 
-            archive.SeekStreamFromCurrent(postTablePosition);
+            archive.Seek(postTablePosition);
         }
     private:
-        void LoadJump(ObjectT& object, BinaryArchive& archive)
+        void LoadJump(ObjectT& object, Archive::Binary& archive)
         {
             ArchivePosition jumpPosition = 0;
             ID id{};
@@ -151,7 +151,7 @@ namespace Inscription
     };
 
     template<class ID, class Object>
-    struct ScribeTraits<InputJumpTable<ID, Object>, BinaryArchive> final
+    struct ScribeTraits<InputJumpTable<ID, Object>, Archive::Binary> final
     {
         using Category = CompositeScribeCategory<InputJumpTable<ID, Object>>;
     };
