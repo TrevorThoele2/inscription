@@ -4,7 +4,7 @@ namespace Inscription::File
 {
     InputBinary::InputBinary(const Path& path) : path(path)
     {
-        stream.exceptions(std::ios::failbit | std::ios::badbit);
+        stream.exceptions(std::ios::badbit);
         SanitizeStreamFailure([this, path]() { stream.open(path, std::ios::in | std::ios::binary); }, path);
     }
 
