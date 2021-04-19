@@ -2,8 +2,11 @@
 
 namespace Inscription::File
 {
-    InputText::InputText(const Path& path) : path(path), stream(path, std::ios::in)
-    {}
+    InputText::InputText(const Path& path) : path(path)
+    {
+        stream.exceptions(std::ios::failbit | std::ios::badbit);
+        SanitizeStreamFailure([this, path]() {stream.open(path, std::ios::in); }, path);
+    }
 
     InputText::InputText(InputText&& arg) noexcept : path(std::move(arg.path)), stream(std::move(arg.stream))
     {}
