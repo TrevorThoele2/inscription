@@ -133,8 +133,9 @@ namespace Inscription::Archive
     auto InputJson::Collection::StartNew(const std::string& name) -> T*
     {
         auto created = std::make_unique<T>(this);
+        auto value = created.get();
         Emplace(name, std::move(created));
-        return created.get();
+        return value;
     }
 
     template<class T>
