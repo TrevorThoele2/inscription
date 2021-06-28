@@ -29,5 +29,6 @@ namespace Inscription::File
     private:
         Path path;
         std::ifstream stream;
+        bool failedOpening = false;
     };
 }
