@@ -56,7 +56,7 @@ namespace Inscription::File
     {
         return !failedOpening
             ? SanitizeStreamFailure<std::ios::pos_type>([this]() { return stream.tellg(); }, path)
-            : 0;
+            : static_cast<File::Position>(0);
     }
 
     Size InputBinary::Size()

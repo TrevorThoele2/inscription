@@ -91,7 +91,7 @@ namespace Inscription::File
     {
         return !failedOpening
             ? SanitizeStreamFailure<File::Position>([this]() { return stream.tellg(); }, path)
-            : 0;
+            : static_cast<File::Position>(0);
     }
 
     bool InputText::IsAtEnd() const
