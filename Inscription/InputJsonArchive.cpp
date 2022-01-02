@@ -4,33 +4,57 @@
 
 namespace Inscription::Archive
 {
-    InputJson::InputJson(const File::Path& path) :
+    InputJson::InputJson(
+        const File::Path& path)
+		:
         Json(Direction::Input),
-        file(path),
+        json(ExtractFile(path)),
         baseObject(nullptr),
         writeCollection(&baseObject),
         readCollection(&baseObject)
     {
-        char character;
-        file.ReadData(character);
+        ParseString();
     }
 
     InputJson::InputJson(
         const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
         :
         Json(Direction::Input, typeRegistrationContext),
-        file(path),
+        json(ExtractFile(path)),
         baseObject(nullptr),
         writeCollection(&baseObject),
         readCollection(&baseObject)
     {
-        char character;
-        file.ReadData(character);
+        ParseString();
+    }
+
+    InputJson::InputJson(
+        const std::string& json)
+	    :
+	    Json(Direction::Input),
+	    json(json),
+	    baseObject(nullptr),
+	    writeCollection(&baseObject),
+	    readCollection(&baseObject)
+    {
+        ParseString();
+    }
+
+    InputJson::InputJson(
+        const std::string& json, const TypeRegistrationContext& typeRegistrationContext)
+        :
+        Json(Direction::Input, typeRegistrationContext),
+        json(json),
+        baseObject(nullptr),
+        writeCollection(&baseObject),
+        readCollection(&baseObject)
+    {
+        ParseString();
     }
 
     InputJson::InputJson(InputJson&& arg) noexcept :
         Json(std::move(arg)),
-        file(std::move(arg.file)),
+		json(std::move(arg.json)),
         baseObject(std::move(arg.baseObject)),
         writeCollection(&baseObject),
         readCollection(&baseObject)
@@ -39,7 +63,7 @@ namespace Inscription::Archive
     InputJson& InputJson::operator=(InputJson&& arg) noexcept
     {
         Json::operator=(std::move(arg));
-        file = std::move(arg.file);
+        json = std::move(arg.json);
         baseObject = std::move(arg.baseObject);
         writeCollection = &baseObject;
         readCollection = &baseObject;
@@ -48,7 +72,7 @@ namespace Inscription::Archive
 
     InputJson& InputJson::TakeValue(const std::string& name, std::string& value)
     {
-        auto readValue = TakeValueFrom(name, *readCollection);
+        const auto readValue = TakeValueFrom(name, *readCollection);
         if (!readValue)
             throw JsonParseError("The element \"" + name + "\" could not be found.");
         value = *readValue;
@@ -58,7 +82,7 @@ namespace Inscription::Archive
 
     InputJson& InputJson::ReadValue(const std::string& name, std::string& value)
     {
-        auto readValue = ReadValueFrom(name, *readCollection);
+        const auto readValue = ReadValueFrom(name, *readCollection);
         if (!readValue)
             throw JsonParseError("The element \"" + name + "\" could not be found.");
         value = *readValue;
@@ -343,21 +367,18 @@ namespace Inscription::Archive
         return items.size();
     }
 
-    void InputJson::ScanFile()
+    void InputJson::ParseString()
     {
-        if (file.IsAtEnd())
-            return;
+        json.erase(0, 1);
 
-        auto read = file.ReadSize(std::numeric_limits<size_t>::max());
-
-        while (!read.empty())
+        while (!json.empty())
         {
-            const auto result = writeCollection->Read(read);
-            read.erase(0, result.endPosition);
-            if (!read.empty() && read[0] == ',')
-                read.erase(0, 1);
+            const auto result = writeCollection->Read(json);
+            json.erase(0, result.endPosition);
+            if (!json.empty() && json[0] == ',')
+                json.erase(0, 1);
 
-            if (!read.empty() && read[0] == ',')
+            if (!json.empty() && json[0] == ',')
                 throw JsonParseError();
 
             if (result.newCollection)
@@ -365,6 +386,12 @@ namespace Inscription::Archive
             else
                 writeCollection = writeCollection->parent;
         }
+    }
+
+    std::string InputJson::ExtractFile(const File::Path& filePath)
+    {
+        File::InputText file(filePath);
+        return file.IsAtEnd() ? "" : file.ReadSize(std::numeric_limits<size_t>::max());
     }
 
     std::optional<std::string> InputJson::TakeValueFrom(const std::string& name, Collection& from)
@@ -415,7 +442,6 @@ namespace Inscription::Archive
 
         if (!string)
         {
-            ScanFile();
             string = findItem();
             if (!string)
                 return {};
@@ -430,7 +456,7 @@ namespace Inscription::Archive
         {
             if (name.empty())
             {
-                auto& list = RequiredTransformation<List>(name, from);
+                const auto& list = RequiredTransformation<List>(name, from);
                 const auto item = list.items.front().get();
                 if (!item)
                     return {};
@@ -464,7 +490,6 @@ namespace Inscription::Archive
 
         if (!string)
         {
-            ScanFile();
             string = findItem();
             if (!string)
                 return {};
@@ -479,7 +504,7 @@ namespace Inscription::Archive
         {
             if (name.empty())
             {
-                auto& list = RequiredTransformation<List>(name, from);
+                const auto& list = RequiredTransformation<List>(name, from);
                 return list.items.front().get();
             }
             else
@@ -497,8 +522,7 @@ namespace Inscription::Archive
             if (item)
                 return item;
         }
-
-        ScanFile();
+        
         return findItem();
     }
 
