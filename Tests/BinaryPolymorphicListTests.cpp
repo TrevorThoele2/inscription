@@ -6,11 +6,13 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/ContainerSize.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class BinaryPolymorphicListFixture : public BinaryFixture
+class BinaryPolymorphicListFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryPolymorphicListFixture()
     {
         typeRegistrationContext.RegisterType<Base>();
@@ -63,11 +65,11 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicListFixture::Base;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicListFixture::Base, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicListFixture::Base, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicListFixture::Base>;
     };
@@ -78,13 +80,13 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicListFixture::Derived;
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicListFixture::Derived, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicListFixture::Derived, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicListFixture::Derived>;
     };
@@ -110,12 +112,14 @@ SCENARIO_METHOD
             castedOwning.push_back(dynamic_cast<Derived*>(loop));
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
+            auto file = Inscription::File::OutputBinary("Test.dat");
+            auto archive = Inscription::Archive::OutputBinary(file);
+            auto format = Inscription::Format::OutputBinary(archive, typeRegistrationContext);
 
-            ::Inscription::ContainerSize containerSize(savedOwning.size());
-            outputArchive(containerSize);
+            Inscription::ContainerSize containerSize(savedOwning.size());
+            format(containerSize);
             for (auto& loop : savedOwning)
-                outputArchive(loop);
+                format(loop);
         }
 
         WHEN("loading list of polymorphic pointers")
@@ -123,14 +127,16 @@ SCENARIO_METHOD
             std::vector<Base*> loadedOwning;
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
+                auto file = Inscription::File::InputBinary("Test.dat");
+                auto archive = Inscription::Archive::InputBinary(file);
+                auto format = Inscription::Format::InputBinary(archive, typeRegistrationContext);
 
-                ::Inscription::ContainerSize containerSize;
-                inputArchive(containerSize);
+                Inscription::ContainerSize containerSize;
+                format(containerSize);
                 while (containerSize-- > 0)
                 {
                     Base* ptr = nullptr;
-                    inputArchive(ptr);
+                    format(ptr);
                     loadedOwning.push_back(ptr);
                 }
             }
@@ -165,19 +171,19 @@ SCENARIO_METHOD
 
 namespace Inscription
 {
-    void Scribe<BinaryPolymorphicListFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicListFixture::Base>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        archive(object.baseValue);
+        format(object.baseValue);
     }
 
-    Type Scribe<BinaryPolymorphicListFixture::Derived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryPolymorphicListFixture::Derived>::OutputType(const Format::Binary& format)
     {
         return "CustomConstructionDerived";
     }
 
-    void Scribe<BinaryPolymorphicListFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicListFixture::Derived>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        BaseScriven<BinaryPolymorphicListFixture::Base>(object, archive);
-        archive(object.derivedValue);
+        BaseScriven<BinaryPolymorphicListFixture::Base>(object, format);
+        format(object.derivedValue);
     }
 }

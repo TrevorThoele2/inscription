@@ -7,10 +7,10 @@
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -20,23 +20,23 @@ namespace Inscription
     public:
         using ObjectT = std::queue<T, Container>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class T, class Container>
-    void Scribe<std::queue<T, Container>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::queue<T, Container>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto copied = object;
 
             ContainerSize size(copied.size());
-            archive(size);
+            format(size);
             while (!copied.empty())
             {
                 auto& front = copied.front();
-                archive(front);
+                format(front);
                 copied.pop();
             }
         }
@@ -45,56 +45,60 @@ namespace Inscription
             object = ObjectT();
 
             ContainerSize size;
-            archive(size);
+            format(size);
 
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(format);
                 object.push(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
             }
         }
     }
 
     template<class T, class Container>
-    void Scribe<std::queue<T, Container>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::queue<T, Container>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto outputArchive = archive.AsOutput();
+            const auto outputFormat = format.AsOutput();
 
             auto copied = object;
 
-            outputArchive->StartList(name);
+            outputFormat->StartList(name);
+            size_t i = 0;
             while (!copied.empty())
             {
                 auto& front = copied.front();
-                archive("", front);
+                format(Chroma::ToString(i), front);
                 copied.pop();
+                ++i;
             }
-            outputArchive->EndList();
+            outputFormat->EndList();
         }
         else
         {
             object = ObjectT();
 
-            auto inputArchive = archive.AsInput();
+            const auto inputFormat = format.AsInput();
 
-            auto size = inputArchive->StartList(name);
+            auto size = inputFormat->StartList(name);
 
+            size_t i = 0;
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(Chroma::ToString(i), format);
                 object.push(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
+                ++i;
             }
 
-            inputArchive->EndList();
+            inputFormat->EndList();
         }
     }
 
-    template<class T, class Container, class Archive>
-    struct ScribeTraits<std::queue<T, Container>, Archive>
+    template<class T, class Container, class Format>
+    struct ScribeTraits<std::queue<T, Container>, Format>
     {
         using Category = TrackingScribeCategory<std::queue<T, Container>>;
     };

@@ -35,7 +35,7 @@ public:
     Base(int baseValue) : baseValue(baseValue)
     {}
 
-    Base(const ::Inscription::BinaryTableData<Base>& data) : baseValue(data.baseValue)
+    Base(const Inscription::BinaryTableData<Base>& data) : baseValue(data.baseValue)
     {}
 
     virtual ~Base() = 0;
@@ -161,19 +161,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     {
         auto saved = dataGeneration.RandomStack<DefaultConstructionDerived, int, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading default construction object")
         {
             DefaultConstructionDerived loaded;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -188,19 +182,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         Base* saved = dataGeneration.RandomHeap<DefaultConstructionDerived, int, std::string>();
         auto savedCasted = dynamic_cast<DefaultConstructionDerived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading default construction pointer")
         {
             Base* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -219,19 +207,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     {
         CustomConstructionDerived saved = dataGeneration.RandomStack<CustomConstructionDerived, int, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             CustomConstructionDerived loaded(0, "");
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -246,19 +228,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         Base* saved = dataGeneration.RandomHeap<CustomConstructionDerived, int, std::string>();
         auto savedCasted = dynamic_cast<CustomConstructionDerived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             Base* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -277,19 +253,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     {
         auto saved = dataGeneration.RandomStack<TableConstructionDerived, int, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             TableConstructionDerived loaded(0, "");
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -304,19 +274,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         TableConstructionBase* saved = dataGeneration.RandomHeap<TableConstructionDerived, int, std::string>();
         auto savedCasted = dynamic_cast<TableConstructionDerived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             TableConstructionBase* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -337,19 +301,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         saved.baseObjectScrivenValue = dataGeneration.Generator<short>().Random();
         saved.derivedObjectScrivenValue = dataGeneration.Generator<long long>().Random();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             ObjectScrivenDerived loaded(0, "");
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -369,19 +327,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         savedCasted->baseObjectScrivenValue = dataGeneration.Generator<short>().Random();
         savedCasted->derivedObjectScrivenValue = dataGeneration.Generator<long long>().Random();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             ObjectScrivenBase* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -402,19 +354,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     {
         UsingEntriesDerived saved = dataGeneration.RandomStack<UsingEntriesDerived, int, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             UsingEntriesDerived loaded(0, "");
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -429,19 +375,13 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         Base* saved = dataGeneration.RandomHeap<UsingEntriesDerived, int, std::string>();
         auto savedCasted = dynamic_cast<UsingEntriesDerived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             Base* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("is valid")
             {
@@ -462,9 +402,12 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         UsingEntryPointerDerived saved(dataGeneration.Random<int>(), &savedSource.derivedValue);
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedSource);
-            outputArchive(saved);
+            auto file = Inscription::File::OutputBinary("Test.dat");
+            auto archive = Inscription::Archive::OutputBinary(file);
+            auto format = Inscription::Format::OutputBinary(archive, typeRegistrationContext);
+            
+            format(savedSource);
+            format(saved);
         }
 
         WHEN("loading")
@@ -473,9 +416,12 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
             UsingEntryPointerDerived loaded(0, nullptr);
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedSource);
-                inputArchive(loaded);
+                auto file = Inscription::File::InputBinary("Test.dat");
+                auto archive = Inscription::Archive::InputBinary(file);
+                auto format = Inscription::Format::InputBinary(archive, typeRegistrationContext);
+
+                format(loadedSource);
+                format(loaded);
             }
 
             THEN("is valid")
@@ -494,9 +440,12 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         auto savedCasted = dynamic_cast<UsingEntryPointerDerived*>(saved);
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedSource);
-            outputArchive(saved);
+            auto file = Inscription::File::OutputBinary("Test.dat");
+            auto archive = Inscription::Archive::OutputBinary(file);
+            auto format = Inscription::Format::OutputBinary(archive, typeRegistrationContext);
+
+            format(savedSource);
+            format(saved);
         }
 
         WHEN("loading")
@@ -505,9 +454,12 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
             Base* loaded = nullptr;
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedSource);
-                inputArchive(loaded);
+                auto file = Inscription::File::InputBinary("Test.dat");
+                auto archive = Inscription::Archive::InputBinary(file);
+                auto format = Inscription::Format::InputBinary(archive, typeRegistrationContext);
+
+                format(loadedSource);
+                format(loaded);
             }
 
             THEN("is valid")
@@ -543,7 +495,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::DefaultConstructionDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::DefaultConstructionDerived>::OutputType(const Format::Binary& format)
     {
         return "DefaultConstructionDerived";
     }
@@ -558,12 +510,12 @@ namespace Inscription
     }
 
     void Scribe<BinaryTableFixture::CustomConstructionDerived>::Table::Construct(
-        ObjectT* storage, ArchiveT& archive)
+        ObjectT* storage, FormatT& format)
     {
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    Type Scribe<BinaryTableFixture::CustomConstructionDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::CustomConstructionDerived>::OutputType(const Format::Binary& format)
     {
         return "CustomConstructionDerived";
     }
@@ -577,9 +529,9 @@ namespace Inscription
     }
 
     void Scribe<BinaryTableFixture::ObjectScrivenBase>::Table::ObjectScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+        ObjectT& object, FormatT& format)
     {
-        archive(object.baseObjectScrivenValue);
+        format(object.baseObjectScrivenValue);
     }
 
     Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::Table()
@@ -592,18 +544,18 @@ namespace Inscription
     }
 
     void Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::Construct(
-        ObjectT* storage, ArchiveT& archive)
+        ObjectT* storage, FormatT& format)
     {
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
     void Scribe<BinaryTableFixture::ObjectScrivenDerived>::Table::ObjectScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+        ObjectT& object, FormatT& format)
     {
-        archive(object.derivedObjectScrivenValue);
+        format(object.derivedObjectScrivenValue);
     }
 
-    Type Scribe<BinaryTableFixture::ObjectScrivenDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::ObjectScrivenDerived>::OutputType(const Format::Binary& format)
     {
         return "ObjectScrivenDerived";
     }
@@ -625,7 +577,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::TableConstructionDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::TableConstructionDerived>::OutputType(const Format::Binary& format)
     {
         return "TableConstructionDerived";
     }
@@ -639,7 +591,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::UsingEntriesDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::UsingEntriesDerived>::OutputType(const Format::Binary& format)
     {
         return "UsingEntriesDerived";
     }
@@ -653,7 +605,7 @@ namespace Inscription
         );
     }
 
-    Type Scribe<BinaryTableFixture::UsingEntryPointerDerived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryTableFixture::UsingEntryPointerDerived>::OutputType(const Format::Binary& format)
     {
         return "UsingEntryPointerDerived";
     }

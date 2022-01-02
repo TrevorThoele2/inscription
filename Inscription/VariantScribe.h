@@ -4,12 +4,12 @@
 
 #include "TrackingScribeCategory.h"
 
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
-    namespace Archive
+    namespace Format
     {
         class Binary;
     }
@@ -21,54 +21,54 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>& object, Archive::Binary& archive)
+            static void AttemptSaveValue(std::variant<Args...>& object, Format::Binary& format)
             {
                 if (object.index() == I - 1)
                 {
                     auto& value = std::get<I - 1>(object);
-                    archive(value);
+                    format(value);
                     return;
                 }
-                UnpackVariant<I - 1>::AttemptSaveValue(object, archive);
+                UnpackVariant<I - 1>::AttemptSaveValue(object, format);
             }
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Archive::Binary& archive)
+            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Format::Binary& format)
             {
                 if (index == I - 1)
                 {
                     std::variant_alternative_t<I - 1, std::variant<Args...>> value;
-                    archive(value);
+                    format(value);
                     object = value;
                     return;
                 }
-                UnpackVariant<I - 1>::AttemptLoadValue(index, object, archive);
+                UnpackVariant<I - 1>::AttemptLoadValue(index, object, format);
             }
         public:
 
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>& object, Archive::Json& archive)
+            static void AttemptSaveValue(std::variant<Args...>& object, Format::Json& format)
             {
                 if (object.index() == I - 1)
                 {
                     auto& value = std::get<I - 1>(object);
-                    archive("value", value);
+                    format("value", value);
                     return;
                 }
-                UnpackVariant<I - 1>::AttemptSaveValue(object, archive);
+                UnpackVariant<I - 1>::AttemptSaveValue(object, format);
             }
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Archive::Json& archive)
+            static void AttemptLoadValue(std::size_t index, std::variant<Args...>& object, Format::Json& format)
             {
                 if (index == I - 1)
                 {
                     std::variant_alternative_t<I - 1, std::variant<Args...>> value;
-                    archive("value", value);
+                    format("value", value);
                     object = value;
                     return;
                 }
-                UnpackVariant<I - 1>::AttemptLoadValue(index, object, archive);
+                UnpackVariant<I - 1>::AttemptLoadValue(index, object, format);
             }
         };
 
@@ -77,19 +77,19 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>&, Archive::Binary&)
+            static void AttemptSaveValue(std::variant<Args...>&, Format::Binary&)
             {}
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Archive::Binary&)
+            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Format::Binary&)
             {}
         public:
             template<class... Args>
-            static void AttemptSaveValue(std::variant<Args...>&, Archive::Json&)
+            static void AttemptSaveValue(std::variant<Args...>&, Format::Json&)
             {}
 
             template<class... Args>
-            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Archive::Json&)
+            static void AttemptLoadValue(std::size_t, std::variant<Args...>&, Format::Json&)
             {}
         };
     }
@@ -100,56 +100,56 @@ namespace Inscription
     public:
         using ObjectT = std::variant<Args...>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class... Args>
-    void Scribe<std::variant<Args...>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::variant<Args...>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto index = object.index();
-            archive(index);
-            detail::UnpackVariant<sizeof...(Args)>::AttemptSaveValue(object, archive);
+            format(index);
+            detail::UnpackVariant<sizeof...(Args)>::AttemptSaveValue(object, format);
         }
         else
         {
             std::size_t index;
-            archive(index);
-            detail::UnpackVariant<sizeof...(Args)>::AttemptLoadValue(index, object, archive);
+            format(index);
+            detail::UnpackVariant<sizeof...(Args)>::AttemptLoadValue(index, object, format);
         }
     }
 
     template<class... Args>
-    void Scribe<std::variant<Args...>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::variant<Args...>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto output = archive.AsOutput();
+            auto output = format.AsOutput();
             output->StartObject(name);
 
             auto index = object.index();
-            archive("index", index);
-            detail::UnpackVariant<sizeof...(Args)>::AttemptSaveValue(object, archive);
+            format("index", index);
+            detail::UnpackVariant<sizeof...(Args)>::AttemptSaveValue(object, format);
 
             output->EndObject();
         }
         else
         {
-            auto input = archive.AsInput();
+            auto input = format.AsInput();
             input->StartObject(name);
 
             std::size_t index;
-            archive("index", index);
-            detail::UnpackVariant<sizeof...(Args)>::AttemptLoadValue(index, object, archive);
+            format("index", index);
+            detail::UnpackVariant<sizeof...(Args)>::AttemptLoadValue(index, object, format);
 
             input->EndObject();
         }
     }
 
-    template<class... Args, class Archive>
-    struct ScribeTraits<std::variant<Args...>, Archive>
+    template<class... Args, class Format>
+    struct ScribeTraits<std::variant<Args...>, Format>
     {
         using Category = TrackingScribeCategory<std::variant<Args...>>;
     };

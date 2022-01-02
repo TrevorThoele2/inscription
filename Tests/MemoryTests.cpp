@@ -5,12 +5,13 @@
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class MemoryTestsFixture : public BinaryFixture
+class MemoryTestsFixture : public GeneralFixture
 {
 public:
-    ::TestFramework::DataGeneration dataGeneration;
+    TestFramework::DataGeneration dataGeneration;
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
 
     MemoryTestsFixture()
     {
@@ -41,20 +42,16 @@ SCENARIO_METHOD(MemoryTestsFixture, "unique_ptr loads after saving", "[binary][s
     {
         std::unique_ptr<Base> saved(new Derived());
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading")
         {
             std::unique_ptr<Base> loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
-            auto savedDerived = dynamic_cast<Derived*>(saved.get());
-            auto loadedDerived = dynamic_cast<Derived*>(loaded.get());
+            const auto savedDerived = dynamic_cast<Derived*>(saved.get());
+            const auto loadedDerived = dynamic_cast<Derived*>(loaded.get());
 
             THEN("is valid")
             {
@@ -74,14 +71,14 @@ namespace Inscription
     public:
         using ObjectT = MemoryTestsFixture::Base;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.baseValue);
+            format(object.baseValue);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<MemoryTestsFixture::Base, Archive> final
+    template<class Format>
+    struct ScribeTraits<MemoryTestsFixture::Base, Format> final
     {
         using Category = CompositeScribeCategory<MemoryTestsFixture::Base>;
     };
@@ -92,16 +89,16 @@ namespace Inscription
     public:
         using ObjectT = MemoryTestsFixture::Derived;
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            BaseScriven<::MemoryTestsFixture::Base>(object, archive);
-            archive(object.derivedValue);
+            BaseScriven<MemoryTestsFixture::Base>(object, format);
+            format(object.derivedValue);
         }
     };
 
-    Type Scribe<MemoryTestsFixture::Derived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<MemoryTestsFixture::Derived>::OutputType(const Format::Binary& format)
     {
         return "MemoryDerived";
     }

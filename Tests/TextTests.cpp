@@ -2,9 +2,9 @@
 
 #include <Inscription/StringScribe.h>
 
-#include "TextFixture.h"
+#include "GeneralFixture.h"
 
-class TextTestsFixture : public TextFixture
+class TextTestsFixture : public GeneralFixture
 {};
 
 SCENARIO_METHOD(TextTestsFixture, "opening input text file", "[text]")
@@ -28,7 +28,7 @@ SCENARIO_METHOD(TextTestsFixture, "opening input text file", "[text]")
     }
 }
 
-SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
+SCENARIO_METHOD(TextTestsFixture, "loading strings from text file", "[text]")
 {
     GIVEN("three saved strings")
     {
@@ -40,10 +40,13 @@ SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
         };
 
         {
-            auto outputArchive = CreateOutputArchive();
-            outputArchive(saved[0]);
-            outputArchive(saved[1]);
-            outputArchive(saved[2]);
+            auto file = Inscription::File::OutputText("Test.txt");
+            auto archive = Inscription::Archive::OutputText(file);
+            auto format = Inscription::Format::OutputPlaintext(archive);
+
+            format(saved[0]);
+            format(saved[1]);
+            format(saved[2]);
         }
 
         WHEN("loading directly")
@@ -51,10 +54,13 @@ SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
             std::array<std::string, 3> loaded;
 
             {
-                auto inputArchive = CreateInputArchive();
-                inputArchive(loaded[0]);
-                inputArchive(loaded[1]);
-                inputArchive(loaded[2]);
+                auto file = Inscription::File::InputText("Test.txt");
+                auto archive = Inscription::Archive::InputText(file);
+                auto format = Inscription::Format::InputPlaintext(archive);
+
+                format(loaded[0]);
+                format(loaded[1]);
+                format(loaded[2]);
             }
 
             THEN("all turns into a single string")
@@ -76,10 +82,13 @@ SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
         };
 
         {
-            auto outputArchive = CreateOutputArchive();
-            outputArchive(saved[0]);
-            outputArchive(saved[1]);
-            outputArchive(saved[2]);
+            auto file = Inscription::File::OutputText("Test.txt");
+            auto archive = Inscription::Archive::OutputText(file);
+            auto format = Inscription::Format::OutputPlaintext(archive);
+
+            format(saved[0]);
+            format(saved[1]);
+            format(saved[2]);
         }
 
         WHEN("loading as lines")
@@ -87,10 +96,13 @@ SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
             std::array<std::string, 3> loaded;
 
             {
-                auto inputArchive = CreateInputArchive();
-                inputArchive.ReadLine(loaded[0]);
-                inputArchive.ReadLine(loaded[1]);
-                inputArchive.ReadLine(loaded[2]);
+                auto file = Inscription::File::InputText("Test.txt");
+                auto archive = Inscription::Archive::InputText(file);
+                auto format = Inscription::Format::InputPlaintext(archive);
+
+                format(loaded[0]);
+                format(loaded[1]);
+                format(loaded[2]);
             }
 
             THEN("loaded is same as saved")

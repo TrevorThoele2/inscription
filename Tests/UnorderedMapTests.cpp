@@ -4,42 +4,30 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class UnorderedMapBinaryTestsFixture : public BinaryFixture
+class UnorderedMapTestsFixture : public GeneralFixture
 {
 public:
     using IntegerToStrings = std::unordered_map<int, std::string>;
     using IntegerToClasses = std::unordered_map<int, TestClass>;
 };
 
-class UnorderedMapJsonTestsFixture : public JsonFixture
-{
-public:
-    using IntegerToStrings = std::unordered_map<int, std::string>;
-    using IntegerToClasses = std::unordered_map<int, TestClass>;
-};
-
-SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after saving binary", "[binary][container][unordered_map]")
+SCENARIO_METHOD(UnorderedMapTestsFixture, "loading unordered_map after saving binary", "[binary][container][unordered_map]")
 {
     GIVEN("saved empty unordered_map")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -63,17 +51,13 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -98,17 +82,13 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -132,8 +112,7 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -158,17 +137,13 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -179,23 +154,19 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
     }
 }
 
-SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after saving json", "[json][container][unordered_map]")
+SCENARIO_METHOD(UnorderedMapTestsFixture, "loading unordered_map after saving json", "[json][container][unordered_map]")
 {
     GIVEN("saved empty unordered_map")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_unordered_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_unordered_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -219,17 +190,13 @@ SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after savin
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -254,17 +221,13 @@ SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after savin
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -288,8 +251,7 @@ SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after savin
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -314,17 +276,13 @@ SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after savin
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

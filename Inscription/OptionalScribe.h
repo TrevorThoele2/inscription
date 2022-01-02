@@ -14,29 +14,29 @@ namespace Inscription
     public:
         using ObjectT = std::optional<T>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class T>
-    void Scribe<std::optional<T>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::optional<T>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto hasValue = object.has_value();
-            archive(hasValue);
+            format(hasValue);
 
             if (hasValue)
-                archive(*object);
+                format(*object);
         }
         else
         {
             bool hasValue;
-            archive(hasValue);
+            format(hasValue);
 
             if (hasValue)
             {
-                ScopeConstructor<T> constructor(archive);
+                ScopeConstructor<T> constructor(format);
                 object = { std::move(constructor.GetMove()) };
             }
             else
@@ -45,35 +45,35 @@ namespace Inscription
     }
 
     template<class T>
-    void Scribe<std::optional<T>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::optional<T>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             if (!object.has_value())
             {
-                auto output = archive.AsOutput();
+                auto output = format.AsOutput();
                 output->WriteValue(name, "null");
             }
             else
-                archive(name, *object);
+                format(name, *object);
         }
         else
         {
             std::string readValue;
-            archive.AsInput()->ReadValue(name, readValue);
+            format.AsInput()->ReadValue(name, readValue);
 
             if (readValue == "null")
                 object = {};
             else
             {
-                ScopeConstructor<T> constructor(name, archive);
+                ScopeConstructor<T> constructor(name, format);
                 object = { std::move(constructor.GetMove()) };
             }
         }
     }
 
-    template<class T, class Archive>
-    struct ScribeTraits<std::optional<T>, Archive>
+    template<class T, class Format>
+    struct ScribeTraits<std::optional<T>, Format>
     {
         using Category = TrackingScribeCategory<std::optional<T>>;
     };

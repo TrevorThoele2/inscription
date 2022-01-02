@@ -131,19 +131,19 @@ namespace Inscription
     public:
         using ObjectT = TableDataEntry<T>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.Get());
+            format(object.Get());
         }
 
-        void Scriven(ObjectT& object, Archive::Json& archive)
+        void Scriven(ObjectT& object, Format::Json& format)
         {
-            archive("object", object.Get());
+            format("object", object.Get());
         }
     };
    
-    template<class T, class Archive>
-    struct ScribeTraits<TableDataEntry<T>, Archive>
+    template<class T, class Format>
+    struct ScribeTraits<TableDataEntry<T>, Format>
     {
         static constexpr bool shouldTrack = false;
     };

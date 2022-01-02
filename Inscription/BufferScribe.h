@@ -2,7 +2,7 @@
 
 #include "Buffer.h"
 
-#include "BinaryArchive.h"
+#include "BinaryFormat.h"
 
 namespace Inscription
 {
@@ -12,11 +12,11 @@ namespace Inscription
     public:
         using ObjectT = Buffer;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<Buffer, Archive>
+    template<class Format>
+    struct ScribeTraits<Buffer, Format>
     {
         static constexpr bool shouldTrack = false;
     };

@@ -97,12 +97,6 @@
     <ClCompile Include="JsonEnumTests.cpp">
       <Filter>Source Files\Test\Json</Filter>
     </ClCompile>
-    <ClCompile Include="JsonIntegrationTests.cpp">
-      <Filter>Source Files\Test\Json</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonParseErrorTests.cpp">
-      <Filter>Source Files\Test\Json</Filter>
-    </ClCompile>
     <ClCompile Include="JsonTests.cpp">
       <Filter>Source Files\Test\Json</Filter>
     </ClCompile>
@@ -120,15 +114,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BinaryFixture.h">
-      <Filter>Header Files\Fixture</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonFixture.h">
-      <Filter>Header Files\Fixture</Filter>
-    </ClInclude>
-    <ClInclude Include="TextFixture.h">
-      <Filter>Header Files\Fixture</Filter>
-    </ClInclude>
     <ClInclude Include="GeneralFixture.h">
       <Filter>Header Files\Fixture</Filter>
     </ClInclude>
@@ -137,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="BinaryTableTests.h">
       <Filter>Header Files\Test\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="Basics.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedClass.h">
+      <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

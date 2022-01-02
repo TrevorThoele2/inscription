@@ -18,8 +18,7 @@ namespace Inscription::File
 
         void ReadData(std::string& string);
         void ReadData(char& character);
-        std::string ReadLine();
-        std::string ReadLine(char delimiter);
+        std::string ReadUntil(char delimiter);
         std::string ReadSize(size_t size);
 
         void Seek(Position position);

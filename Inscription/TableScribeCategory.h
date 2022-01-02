@@ -4,7 +4,7 @@
 
 namespace Inscription
 {
-    namespace Archive
+    namespace Format
     {
         class Binary;
     }
@@ -17,79 +17,79 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive);
-        static void Construct(ObjectT* storage, Archive::Binary& archive);
+        static void Scriven(ObjectT& object, Format::Binary& format);
+        static void Construct(ObjectT* storage, Format::Binary& format);
     private:
-        template<class T, class Archive, class = void>
+        template<class T, class Format, class = void>
         struct scribe_has_table : std::false_type
         {};
 
-        template<class T, class Archive>
-        struct scribe_has_table<T, Archive,
+        template<class T, class Format>
+        struct scribe_has_table<T, Format,
             std::void_t<typename Scribe<T>::Table>> : std::true_type
         {};
 
-#define REQUIRE_TABLE(ArchiveT) \
-static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require a declared Table object.")
+#define REQUIRE_TABLE(FormatT) \
+static_assert(scribe_has_table<ObjectT, FormatT>::value, "TableScribe's require a declared Table object.")
 
-        template<class T, std::enable_if_t<scribe_has_table<T, Archive::Binary>::value, int> = 0>
-        static void DoScriven(T& object, Archive::Binary& archive)
+        template<class T, std::enable_if_t<scribe_has_table<T, Format::Binary>::value, int> = 0>
+        static void DoScriven(T& object, Format::Binary& format)
         {
             {
-                auto trackingID = archive.types.AttemptTrackObject(&object);
+                auto trackingID = format.types.AttemptTrackObject(&object);
                 if (trackingID.has_value())
-                    archive.types.TrackSavedConstruction(*trackingID);
+                    format.types.TrackSavedConstruction(*trackingID);
             }
 
             {
-                auto trackingContext = ObjectTrackingContext::Active(archive.types);
+                auto trackingContext = ObjectTrackingContext::Active(format.types);
                 using TableT = typename Scribe<ObjectT>::Table;
 
                 TableT table;
-                if (archive.IsOutput())
+                if (format.IsOutput())
                 {
-                    table.PullFromObject(object, archive);
-                    table.Scriven(archive);
-                    table.ObjectScriven(object, archive);
+                    table.PullFromObject(object, format);
+                    table.Scriven(format);
+                    table.ObjectScriven(object, format);
                 }
                 else
                 {
-                    table.Scriven(archive);
-                    table.PushToObject(object, archive);
-                    table.ObjectScriven(object, archive);
+                    table.Scriven(format);
+                    table.PushToObject(object, format);
+                    table.ObjectScriven(object, format);
                 }
             }
         }
 
-        template<class T, std::enable_if_t<!scribe_has_table<T, Archive::Binary>::value, int> = 0>
-        static void DoScriven(T& object, Archive::Binary& archive)
+        template<class T, std::enable_if_t<!scribe_has_table<T, Format::Binary>::value, int> = 0>
+        static void DoScriven(T& object, Format::Binary& format)
         {
-            REQUIRE_TABLE(Archive::Binary);
+            REQUIRE_TABLE(Format::Binary);
         }
 
-        template<class T, std::enable_if_t<scribe_has_table<T, Archive::Binary>::value, int> = 0>
-        static void DoConstruct(T* storage, Archive::Binary& archive)
+        template<class T, std::enable_if_t<scribe_has_table<T, Format::Binary>::value, int> = 0>
+        static void DoConstruct(T* storage, Format::Binary& format)
         {
             {
-                archive.types.AttemptTrackObject(storage);
+                format.types.AttemptTrackObject(storage);
             }
 
             {
-                auto trackingContext = ObjectTrackingContext::Active(archive.types);
+                auto trackingContext = ObjectTrackingContext::Active(format.types);
                 using TableT = typename Scribe<ObjectT>::Table;
 
                 TableT table;
-                table.Scriven(archive);
-                ConstructDispatch::TableExecute(storage, archive, table);
-                table.PushToObject(*storage, archive);
-                table.ObjectScriven(*storage, archive);
+                table.Scriven(format);
+                ConstructDispatch::TableExecute(storage, format, table);
+                table.PushToObject(*storage, format);
+                table.ObjectScriven(*storage, format);
             }
         }
 
-        template<class T, std::enable_if_t<!scribe_has_table<T, Archive::Archive>::value, int> = 0>
-        static void DoConstruct(T* storage, Archive::Binary& archive)
+        template<class T, std::enable_if_t<!scribe_has_table<T, Format::Format>::value, int> = 0>
+        static void DoConstruct(T* storage, Format::Binary& format)
         {
-            REQUIRE_TABLE(Archive::Binary);
+            REQUIRE_TABLE(Format::Binary);
         }
 
 #undef REQUIRE_TABLE
@@ -100,14 +100,14 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
     };
 
     template<class Object>
-    void TableScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void TableScribeCategory<Object>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        DoScriven(object, archive);
+        DoScriven(object, format);
     }
 
     template<class Object>
-    void TableScribeCategory<Object>::Construct(ObjectT* storage, Archive::Binary& archive)
+    void TableScribeCategory<Object>::Construct(ObjectT* storage, Format::Binary& format)
     {
-        DoConstruct(storage, archive);
+        DoConstruct(storage, format);
     }
 }

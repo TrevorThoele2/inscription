@@ -5,18 +5,18 @@
 
 namespace Inscription
 {
-    template<class Base, class Object, class Archive>
+    template<class Base, class Object, class Format>
     class BaseTableDataLink
     {
     public:
         using BaseT = Base;
         using ObjectT = Object;
-        using ArchiveT = Archive;
+        using FormatT = Format;
     private:
         using BaseScribe = Scribe<Base>;
     public:
         using TableT = typename BaseScribe::Table;
-        using DataT = TableData<BaseT, ArchiveT>;
+        using DataT = TableData<BaseT, FormatT>;
     public:
         BaseTableDataLink() = default;
 
@@ -26,11 +26,11 @@ namespace Inscription
         BaseTableDataLink& operator=(const BaseTableDataLink& arg);
         BaseTableDataLink& operator=(BaseTableDataLink&& arg) noexcept;
 
-        void Scriven(ArchiveT& archive);
-        void ObjectScriven(ObjectT& object, ArchiveT& archive);
+        void Scriven(FormatT& format);
+        void ObjectScriven(ObjectT& object, FormatT& format);
 
-        void PullFromObject(ObjectT& object, ArchiveT& archive);
-        void PushToObject(ObjectT& object, ArchiveT& archive);
+        void PullFromObject(ObjectT& object, FormatT& format);
+        void PushToObject(ObjectT& object, FormatT& format);
     public:
         operator DataT&();
         operator const DataT&() const;
@@ -50,112 +50,112 @@ namespace Inscription
         TableT baseTable;
     };
 
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink(const BaseTableDataLink& arg) :
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>::BaseTableDataLink(const BaseTableDataLink& arg) :
         baseTable(arg.baseTable)
     {}
 
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::BaseTableDataLink(BaseTableDataLink&& arg) noexcept :
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>::BaseTableDataLink(BaseTableDataLink&& arg) noexcept :
         baseTable(std::move(arg.baseTable))
     {}
 
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>& BaseTableDataLink<Base, Object, Archive>::operator=(
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>& BaseTableDataLink<Base, Object, Format>::operator=(
         const BaseTableDataLink& arg)
     {
         baseTable = arg.baseTable;
         return *this;
     }
 
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>& BaseTableDataLink<Base, Object, Archive>::operator=(
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>& BaseTableDataLink<Base, Object, Format>::operator=(
         BaseTableDataLink&& arg) noexcept
     {
         baseTable = std::move(arg.baseTable);
         return *this;
     }
 
-    template<class Base, class Object, class Archive>
-    void BaseTableDataLink<Base, Object, Archive>::Scriven(ArchiveT& archive)
+    template<class Base, class Object, class Format>
+    void BaseTableDataLink<Base, Object, Format>::Scriven(FormatT& format)
     {
-        baseTable.Scriven(archive);
+        baseTable.Scriven(format);
     }
 
-    template<class Base, class Object, class Archive>
-    void BaseTableDataLink<Base, Object, Archive>::ObjectScriven(ObjectT& object, ArchiveT& archive)
+    template<class Base, class Object, class Format>
+    void BaseTableDataLink<Base, Object, Format>::ObjectScriven(ObjectT& object, FormatT& format)
     {
-        baseTable.ObjectScriven(object, archive);
+        baseTable.ObjectScriven(object, format);
     }
 
-    template<class Base, class Object, class Archive>
-    void BaseTableDataLink<Base, Object, Archive>::PullFromObject(ObjectT& object, ArchiveT& archive)
+    template<class Base, class Object, class Format>
+    void BaseTableDataLink<Base, Object, Format>::PullFromObject(ObjectT& object, FormatT& format)
     {
-        baseTable.PullFromObject(object, archive);
+        baseTable.PullFromObject(object, format);
     }
 
-    template<class Base, class Object, class Archive>
-    void BaseTableDataLink<Base, Object, Archive>::PushToObject(ObjectT& object, ArchiveT& archive)
+    template<class Base, class Object, class Format>
+    void BaseTableDataLink<Base, Object, Format>::PushToObject(ObjectT& object, FormatT& format)
     {
-        baseTable.PushToObject(object, archive);
+        baseTable.PushToObject(object, format);
     }
 
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::operator DataT&()
-    {
-        return Data();
-    }
-
-    template<class Base, class Object, class Archive>
-    BaseTableDataLink<Base, Object, Archive>::operator const DataT&() const
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>::operator DataT&()
     {
         return Data();
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::operator*() -> DataT&
+    template<class Base, class Object, class Format>
+    BaseTableDataLink<Base, Object, Format>::operator const DataT&() const
     {
         return Data();
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::operator*() const -> const DataT&
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::operator*() -> DataT&
     {
         return Data();
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::operator->() -> DataT*
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::operator*() const -> const DataT&
+    {
+        return Data();
+    }
+
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::operator->() -> DataT*
     {
         return &Data();
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::operator->() const -> const DataT*
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::operator->() const -> const DataT*
     {
         return &Data();
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::Data() -> DataT&
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::Data() -> DataT&
     {
         return baseTable.data;
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::Data() const -> const DataT&
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::Data() const -> const DataT&
     {
         return baseTable.data;
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::Table() -> TableT&
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::Table() -> TableT&
     {
         return baseTable;
     }
 
-    template<class Base, class Object, class Archive>
-    auto BaseTableDataLink<Base, Object, Archive>::Table() const -> const TableT&
+    template<class Base, class Object, class Format>
+    auto BaseTableDataLink<Base, Object, Format>::Table() const -> const TableT&
     {
         return baseTable;
     }

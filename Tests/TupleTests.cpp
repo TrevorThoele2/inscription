@@ -3,38 +3,27 @@
 #include <Inscription/TupleScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class TupleTestsBinaryFixture : public BinaryFixture
+class TupleTestsFixture : public GeneralFixture
 {
 public:
     using TestedObject = std::tuple<int, std::string, unsigned short>;
 };
 
-class TupleTestsJsonFixture : public JsonFixture
-{
-public:
-    using TestedObject = std::tuple<int, std::string, unsigned short>;
-};
-
-SCENARIO_METHOD(TupleTestsBinaryFixture, "loading tuple after saving binary", "[binary][std][tuple]")
+SCENARIO_METHOD(TupleTestsFixture, "loading tuple after saving binary", "[binary][std][tuple]")
 {
     GIVEN("saved tuple")
     {
         auto saved = dataGeneration.RandomStack<TestedObject, int, std::string, unsigned short>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading tuple")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -44,7 +33,7 @@ SCENARIO_METHOD(TupleTestsBinaryFixture, "loading tuple after saving binary", "[
     }
 }
 
-SCENARIO_METHOD(TupleTestsJsonFixture, "loading tuple after saving json", "[json][std][tuple]")
+SCENARIO_METHOD(TupleTestsFixture, "loading tuple after saving json", "[json][std][tuple]")
 {
     using TestedObject = std::tuple<int, std::string, unsigned short>;
 
@@ -52,17 +41,13 @@ SCENARIO_METHOD(TupleTestsJsonFixture, "loading tuple after saving json", "[json
     {
         auto saved = dataGeneration.RandomStack<TestedObject, int, std::string, unsigned short>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("tuple", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading tuple")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("tuple", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

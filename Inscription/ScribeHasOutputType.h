@@ -5,21 +5,21 @@
 
 namespace Inscription
 {
-    template<class T, class Archive, class = void>
+    template<class T, class Format, class = void>
     struct scribe_has_output_type
         : std::false_type
     {};
 
-    template<class T, class Archive>
+    template<class T, class Format>
     struct scribe_has_output_type<
         T,
-        Archive,
-        std::void_t<decltype(Scribe<T>::OutputType(std::declval<const Archive&>()))>
+        Format,
+        std::void_t<decltype(Scribe<T>::OutputType(std::declval<const Format&>()))>
     >
         : std::true_type
     {};
 
-    template<class T, class Archive>
+    template<class T, class Format>
     static constexpr bool scribe_has_output_type_v =
-        scribe_has_output_type<T, Archive>::value;
+        scribe_has_output_type<T, Format>::value;
 }

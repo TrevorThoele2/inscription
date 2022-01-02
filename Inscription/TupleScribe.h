@@ -6,8 +6,8 @@
 
 #include "ScopeConstructor.h"
 
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -18,19 +18,20 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void Scriven(std::tuple<Args...>& object, Archive::Binary& archive)
+            static void Scriven(std::tuple<Args...>& object, Format::Binary& format)
             {
                 auto& value = std::get<I - 1>(object);
-                archive(value);
-                UnpackTuple<I - 1>::Scriven(object, archive);
+                format(value);
+                UnpackTuple<I - 1>::Scriven(object, format);
             }
 
             template<class... Args>
-            static void Scriven(std::tuple<Args...>& object, Archive::Json& archive)
+            static void Scriven(std::tuple<Args...>& object, size_t& i, Format::Json& format)
             {
                 auto& value = std::get<I - 1>(object);
-                archive("", value);
-                UnpackTuple<I - 1>::Scriven(object, archive);
+                format(Chroma::ToString(i), value);
+                ++i;
+                UnpackTuple<I - 1>::Scriven(object, i, format);
             }
         };
 
@@ -39,11 +40,11 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void Scriven(std::tuple<Args...>&, Archive::Binary&)
+            static void Scriven(std::tuple<Args...>&, Format::Binary&)
             {}
 
             template<class... Args>
-            static void Scriven(std::tuple<Args...>&, Archive::Json&)
+            static void Scriven(std::tuple<Args...>&, size_t& i, Format::Json&)
             {}
         };
     }
@@ -54,37 +55,39 @@ namespace Inscription
     public:
         using ObjectT = std::tuple<Args...>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::tuple<Args...>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
+        detail::UnpackTuple<sizeof...(Args)>::Scriven(object, format);
     }
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::tuple<Args...>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto output = archive.AsOutput();
+            const auto output = format.AsOutput();
             output->StartList(name);
-            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
+            size_t i = 0;
+            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, i, format);
             output->EndList();
         }
         else
         {
-            auto input = archive.AsInput();
+            const auto input = format.AsInput();
             input->StartList(name);
-            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
+            size_t i = 0;
+            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, i, format);
             input->EndList();
         }
     }
 
-    template<class... Args, class Archive>
-    struct ScribeTraits<std::tuple<Args...>, Archive>
+    template<class... Args, class Format>
+    struct ScribeTraits<std::tuple<Args...>, Format>
     {
         using Category = TrackingScribeCategory<std::tuple<Args...>>;
     };

@@ -7,10 +7,10 @@
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -20,14 +20,14 @@ namespace Inscription
     public:
         using ObjectT = std::stack<T, Container>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto copied = object;
 
@@ -40,11 +40,11 @@ namespace Inscription
             }
 
             ContainerSize size(reversed.size());
-            archive(size);
+            format(size);
             while (!reversed.empty())
             {
                 auto& top = reversed.top();
-                archive(top);
+                format(top);
                 reversed.pop();
             }
         }
@@ -53,21 +53,21 @@ namespace Inscription
             object = ObjectT();
 
             ContainerSize size;
-            archive(size);
+            format(size);
 
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(format);
                 object.push(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
             }
         }
     }
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto copied = object;
 
@@ -79,38 +79,42 @@ namespace Inscription
                 copied.pop();
             }
 
-            auto outputArchive = archive.AsOutput();
+            const auto outputFormat = format.AsOutput();
 
-            outputArchive->StartList(name);
+            outputFormat->StartList(name);
+            size_t i = 0;
             while (!reversed.empty())
             {
                 auto& top = reversed.top();
-                archive("", top);
+                format(Chroma::ToString(i), top);
                 reversed.pop();
+                ++i;
             }
-            outputArchive->EndList();
+            outputFormat->EndList();
         }
         else
         {
             object = ObjectT();
 
-            auto inputArchive = archive.AsInput();
+            const auto inputFormat = format.AsInput();
 
-            auto size = inputArchive->StartList(name);
+            auto size = inputFormat->StartList(name);
 
+            size_t i = 0;
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(Chroma::ToString(i), format);
                 object.push(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.top());
+                ++i;
             }
 
-            inputArchive->EndList();
+            inputFormat->EndList();
         }
     }
 
     template<class T, class Container>
-    struct ScribeTraits<std::stack<T, Container>, Archive::Archive>
+    struct ScribeTraits<std::stack<T, Container>, Format::Format>
     {
         using Category = TrackingScribeCategory<std::stack<T, Container>>;
     };

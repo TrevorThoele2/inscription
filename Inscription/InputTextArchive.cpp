@@ -2,51 +2,56 @@
 
 namespace Inscription::Archive
 {
-    InputText::InputText(const File::Path& path) :
-        Text(Direction::Input), file(path)
+    InputText::InputText(File::InputText& file) : Text(Direction::Input), source(&file)
     {}
 
+	InputText::InputText(std::string& string) : Text(Direction::Input), source(StringSource(0, string))
+    {}
+    
     InputText::InputText(InputText&& arg) noexcept :
-        Text(std::move(arg)), file(std::move(arg.file))
+        Text(std::move(arg)), source(std::move(arg.source))
     {}
 
     InputText& InputText::operator=(InputText&& arg) noexcept
     {
         Text::operator=(std::move(arg));
-        file = std::move(arg.file);
+        source = std::move(arg.source);
         return *this;
     }
 
-    InputText& InputText::ReadLine(std::string& arg)
+    InputText& InputText::ReadUntil(std::string& arg, char delimiter)
     {
-        ReadLineImpl(arg);
-        return *this;
-    }
+        if (std::holds_alternative<File::InputText*>(source))
+            arg = std::get<File::InputText*>(source)->ReadUntil(delimiter);
+        else
+        {
+            arg = {};
+            auto& source = std::get<StringSource>(this->source);
+            size_t i = source.position;
+            while (i < source.string.size() && source.string[i] != delimiter)
+            {
+                arg.push_back(source.string[i]);
+                ++i;
+            }
+            source.position += arg.size();
+        }
 
-    InputText& InputText::ReadLine(std::string& arg, char delimiter)
-    {
-        ReadLineImpl(arg, delimiter);
         return *this;
     }
 
     InputText& InputText::ReadSize(std::string& arg, size_t size)
     {
-        ReadSizeImpl(arg, size);
+        if (std::holds_alternative<File::InputText*>(source))
+            arg = std::get<File::InputText*>(source)->ReadSize(size);
+        else
+        {
+            arg = {};
+            auto& source = std::get<StringSource>(this->source);
+            for (size_t i = source.position; i < source.string.size() && arg.size() < size; ++i)
+                arg.push_back(source.string[i]);
+            source.position += arg.size();
+        }
+
         return *this;
-    }
-
-    void InputText::ReadLineFromFile(std::string& arg)
-    {
-        arg = file.ReadLine();
-    }
-
-    void InputText::ReadLineFromFile(std::string& arg, char delimiter)
-    {
-        arg = file.ReadLine(delimiter);
-    }
-
-    void InputText::ReadSizeFromFile(std::string& arg, size_t size)
-    {
-        arg = file.ReadSize(size);
     }
 }

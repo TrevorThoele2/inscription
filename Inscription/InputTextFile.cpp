@@ -5,7 +5,7 @@ namespace Inscription::File
     InputText::InputText(const Path& path) : path(path)
     {
         stream.exceptions(std::ios::badbit);
-        SanitizeStreamFailure([this, path]() {stream.open(path, std::ios::in); }, path);
+        SanitizeStreamFailure([this, path] {stream.open(path, std::ios::in); }, path);
         if (stream.fail())
             failedOpening = true;
     }
@@ -22,30 +22,18 @@ namespace Inscription::File
 
     void InputText::ReadData(std::string& string)
     {
-        SanitizeStreamFailure([this, &string]() { stream >> string; }, path);
+        SanitizeStreamFailure([this, &string] { stream >> string; }, path);
     }
 
     void InputText::ReadData(char& character)
     {
-        SanitizeStreamFailure([this, &character]() { stream >> character; }, path);
+        SanitizeStreamFailure([this, &character] { stream >> character; }, path);
     }
-
-    std::string InputText::ReadLine()
+    
+    std::string InputText::ReadUntil(char delimiter)
     {
         return SanitizeStreamFailure<std::string>(
-            [this]()
-            {
-                std::string string;
-                std::getline(stream, string);
-                return string;
-            },
-            path);
-    }
-
-    std::string InputText::ReadLine(char delimiter)
-    {
-        return SanitizeStreamFailure<std::string>(
-            [this, delimiter]()
+            [this, delimiter]
             {
                 std::string string;
                 std::getline(stream, string, delimiter);
@@ -57,7 +45,7 @@ namespace Inscription::File
     std::string InputText::ReadSize(size_t size)
     {
         return SanitizeStreamFailure<std::string>(
-            [this]()
+            [this]
             {
                 const auto startPosition = stream.tellg();
 
@@ -84,13 +72,13 @@ namespace Inscription::File
 
     void InputText::Seek(File::Position position)
     {
-        SanitizeStreamFailure([this, position]() { stream.seekg(position); }, path);
+        SanitizeStreamFailure([this, position] { stream.seekg(position); }, path);
     }
 
     Position InputText::Position()
     {
         return !failedOpening
-            ? SanitizeStreamFailure<File::Position>([this]() { return stream.tellg(); }, path)
+            ? SanitizeStreamFailure<File::Position>([this] { return stream.tellg(); }, path)
             : static_cast<File::Position>(0);
     }
 

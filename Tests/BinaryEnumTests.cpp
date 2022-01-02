@@ -2,9 +2,9 @@
 
 #include <Inscription/EnumScribeCategory.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class BinaryEnumFixture : public BinaryFixture
+class BinaryEnumFixture : public GeneralFixture
 {
 public:
     enum Enum
@@ -17,8 +17,8 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<BinaryEnumFixture::Enum, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryEnumFixture::Enum, Format> final
     {
         using Category = EnumScribeCategory<BinaryEnumFixture::Enum>;
     };
@@ -30,17 +30,13 @@ SCENARIO_METHOD(BinaryEnumFixture, "loading enum after saving binary", "[binary]
     {
         Enum saved = Two;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading enum")
         {
             Enum loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("enum is same as saved")
             {

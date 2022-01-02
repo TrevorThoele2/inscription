@@ -3,12 +3,11 @@
 #include <Inscription/ArrayScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class ArrayBinaryTestsFixture : public BinaryFixture
+class ArrayTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::array<int, 5>;
@@ -16,15 +15,7 @@ public:
     using Classes = std::array<TestClass, 5>;
 };
 
-class ArrayJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::array<int, 5>;
-    using NestedIntegers = std::array<std::array<int, 5>, 5>;
-    using Classes = std::array<TestClass, 5>;
-};
-
-SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[binary][container][array]")
+SCENARIO_METHOD(ArrayTestsFixture, "loading array after saving binary", "[binary][container][array]")
 {
     GIVEN("saved array")
     {
@@ -35,17 +26,13 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
         for (size_t i = 0; i < startingGroup.size(); ++i)
             saved[i] = startingGroup[i];
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading array")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -63,8 +50,7 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
             for (size_t i = 0; i < occupiedGroup.size(); ++i)
                 loaded[i] = occupiedGroup[i];
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -121,17 +107,13 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
             }
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -154,17 +136,13 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
             objects[4]
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -175,7 +153,7 @@ SCENARIO_METHOD(ArrayBinaryTestsFixture, "loading array after saving binary", "[
     }
 }
 
-SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json][container][array]")
+SCENARIO_METHOD(ArrayTestsFixture, "loading array after saving json", "[json][container][array]")
 {
     GIVEN("saved array")
     {
@@ -186,17 +164,13 @@ SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json
         for (size_t i = 0; i < startingGroup.size(); ++i)
             saved[i] = startingGroup[i];
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("array", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading array")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("array", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -214,8 +188,7 @@ SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json
             for (size_t i = 0; i < occupiedGroup.size(); ++i)
                 loaded[i] = occupiedGroup[i];
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("array", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -272,17 +245,13 @@ SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json
             }
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("nested_array", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("nested_array", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -305,17 +274,13 @@ SCENARIO_METHOD(ArrayJsonTestsFixture, "loading array after saving json", "[json
             objects[4]
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("array", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("array", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

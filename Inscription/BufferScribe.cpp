@@ -1,15 +1,15 @@
 #include "BufferScribe.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
 
 namespace Inscription
 {
-    void Scribe<Buffer>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<Buffer>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
-            archive.AsOutput()->Write(object);
+        if (format.IsOutput())
+            format.AsOutput()->Write(object);
         else
-            archive.AsInput()->Read(object);
+            format.AsInput()->Read(object);
     }
 }

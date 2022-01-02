@@ -38,7 +38,7 @@ namespace Inscription::File
     void InputBinary::ReadData(T& var)
     {
         SanitizeStreamFailure(
-            [this, &var]() { stream.read(reinterpret_cast<char*>(&var), sizeof(var)); },
+            [this, &var] { stream.read(reinterpret_cast<char*>(&var), sizeof(var)); },
             path);
     }
 }

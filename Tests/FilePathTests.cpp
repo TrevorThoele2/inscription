@@ -2,32 +2,24 @@
 
 #include <Inscription/FilePathScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class FilePathBinaryTestsFixture : public BinaryFixture
+class FilePathTestsFixture : public GeneralFixture
 {};
 
-class FilePathJsonTestsFixture : public JsonFixture
-{};
-
-SCENARIO_METHOD(FilePathBinaryTestsFixture, "loading file path after save binary", "[binary][std][filepath]")
+SCENARIO_METHOD(FilePathTestsFixture, "loading file path after save binary", "[binary][std][filepath]")
 {
-    GIVEN("saved occupied optional")
+    GIVEN("saved file path")
     {
         std::filesystem::path saved = dataGeneration.Random<std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
-        WHEN("loading optional")
+        WHEN("loading file path")
         {
             std::filesystem::path loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -37,23 +29,19 @@ SCENARIO_METHOD(FilePathBinaryTestsFixture, "loading file path after save binary
     }
 }
 
-SCENARIO_METHOD(FilePathJsonTestsFixture, "loading file path after save json", "[json][std][filepath]")
+SCENARIO_METHOD(FilePathTestsFixture, "loading file path after save json", "[json][std][filepath]")
 {
-    GIVEN("saved occupied optional")
+    GIVEN("saved file path")
     {
         std::filesystem::path saved = dataGeneration.Random<std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("filepath", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
-        WHEN("loading optional")
+        WHEN("loading file path")
         {
             std::filesystem::path loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("filepath", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

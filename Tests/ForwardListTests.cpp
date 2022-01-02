@@ -3,12 +3,11 @@
 #include <Inscription/ForwardListScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class ForwardListBinaryTestsFixture : public BinaryFixture
+class ForwardListTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::forward_list<int>;
@@ -16,31 +15,19 @@ public:
     using Classes = std::forward_list<TestClass>;
 };
 
-class ForwardListJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::forward_list<int>;
-    using NestedIntegers = std::forward_list<std::forward_list<int>>;
-    using Classes = std::forward_list<TestClass>;
-};
-
-SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after saving binary", "[binary][container][forward_list]")
+SCENARIO_METHOD(ForwardListTestsFixture, "loading forward_list after saving binary", "[binary][container][forward_list]")
 {
     GIVEN("saved empty forward_list")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +45,13 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
         for (auto& loop : startingGroup)
             saved.push_front(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
-
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -87,17 +70,13 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
         for (auto& loop : startingGroup)
             saved.push_front(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -115,8 +94,7 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
             for (auto& loop : occupiedGroup)
                 loaded.push_front(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -143,17 +121,13 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -169,17 +143,13 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -190,23 +160,20 @@ SCENARIO_METHOD(ForwardListBinaryTestsFixture, "loading forward_list after savin
     }
 }
 
-SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving json", "[json][container][forward_list]")
+SCENARIO_METHOD(ForwardListTestsFixture, "loading forward_list after saving json", "[json][container][forward_list]")
 {
+    /*
     GIVEN("saved empty forward_list")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_forward_list", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
-
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_forward_list", loaded);
+            
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -224,17 +191,13 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
         for (auto& loop : startingGroup)
             saved.push_front(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("forward_list", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("forward_list", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -253,17 +216,13 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
         for (auto& loop : startingGroup)
             saved.push_front(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("forward_list", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("forward_list", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -281,8 +240,7 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
             for (auto& loop : occupiedGroup)
                 loaded.push_front(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("forward_list", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -309,17 +267,13 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("nested_forward_list", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("nested_forward_list", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -328,6 +282,7 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
             }
         }
     }
+    */
 
     GIVEN("saved forward_list with objects")
     {
@@ -335,17 +290,13 @@ SCENARIO_METHOD(ForwardListJsonTestsFixture, "loading forward_list after saving 
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("forward_list", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("forward_list", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

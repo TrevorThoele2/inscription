@@ -9,5 +9,5 @@ friend class ::Inscription::Scribe
 
 #define INSCRIPTION_TABLE_ACCESS        \
 INSCRIPTION_ACCESS;                     \
-template<class Object, class Archive>   \
+template<class Object, class Format>   \
 friend struct ::Inscription::TableData

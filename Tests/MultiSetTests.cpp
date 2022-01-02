@@ -3,12 +3,11 @@
 #include <Inscription/MultiSetScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class MultiSetBinaryTestsFixture : public BinaryFixture
+class MultiSetTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::multiset<int>;
@@ -16,31 +15,19 @@ public:
     using Classes = std::multiset<TestClass>;
 };
 
-class MultiSetJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::multiset<int>;
-    using NestedIntegers = std::multiset<std::multiset<int>>;
-    using Classes = std::multiset<TestClass>;
-};
-
-SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binary", "[binary][container][multiset]")
+SCENARIO_METHOD(MultiSetTestsFixture, "loading multiset after saving binary", "[binary][container][multiset]")
 {
     GIVEN("saved empty multiset")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +45,13 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -87,17 +70,13 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -115,8 +94,7 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -143,17 +121,13 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -169,17 +143,13 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -190,23 +160,19 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
     }
 }
 
-SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", "[json][container][multiset]")
+SCENARIO_METHOD(MultiSetTestsFixture, "loading multiset after saving json", "[json][container][multiset]")
 {
     GIVEN("saved empty multiset")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -224,17 +190,13 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -253,17 +215,13 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -281,8 +239,7 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -309,17 +266,13 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("nested_multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("nested_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -335,17 +288,13 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

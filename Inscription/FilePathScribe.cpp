@@ -1,56 +1,53 @@
 #include "FilePathScribe.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-
-#include "OutputTextArchive.h"
-#include "InputTextArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
 
 #include "StringScribe.h"
 
 namespace Inscription
 {
-    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto string = object.string();
-            archive(string);
+            format(string);
         }
         else
         {
             std::string string;
-            archive(string);
+            format(string);
             object = string;
         }
     }
 
-    void Scribe<std::filesystem::path>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::filesystem::path>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto string = object.string();
-            archive(name, string);
+            format(name, string);
         }
         else
         {
             std::string string;
-            archive(name, string);
+            format(name, string);
             object = string;
         }
     }
 
-    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, Archive::Text& archive)
+    void Scribe<std::filesystem::path>::Scriven(ObjectT& object, Format::Plaintext& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto string = object.string();
-            archive(string);
+            format(string);
         }
         else
         {
             std::string string;
-            archive(string);
+            format(string);
             object = string;
         }
     }

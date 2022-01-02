@@ -2,9 +2,9 @@
 
 #include <Inscription/FilePositionScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class FilePositionFixture : public BinaryFixture
+class FilePositionFixture : public GeneralFixture
 {};
 
 SCENARIO_METHOD(FilePositionFixture, "file position loads after save", "[binary][std][fileposition]")
@@ -15,17 +15,13 @@ SCENARIO_METHOD(FilePositionFixture, "file position loads after save", "[binary]
     {
         auto saved = TestedObject(dataGeneration.Random<unsigned long long>());
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {

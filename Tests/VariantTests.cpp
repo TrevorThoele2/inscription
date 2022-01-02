@@ -3,38 +3,27 @@
 #include <Inscription/VariantScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class VariantBinaryTestsFixture : public BinaryFixture
+class VariantTestsFixture : public GeneralFixture
 {
 public:
     using TestedObject = std::variant<int, std::string, unsigned short>;
 };
 
-class VariantJsonTestsFixture : public JsonFixture
-{
-public:
-    using TestedObject = std::variant<int, std::string, unsigned short>;
-};
-
-SCENARIO_METHOD(VariantBinaryTestsFixture, "loading variant after saving binary", "[binary][std][variant]")
+SCENARIO_METHOD(VariantTestsFixture, "loading variant after saving binary", "[binary][std][variant]")
 {
     GIVEN("saved variant")
     {
         auto saved = dataGeneration.RandomStack<TestedObject, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading variant")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -44,23 +33,19 @@ SCENARIO_METHOD(VariantBinaryTestsFixture, "loading variant after saving binary"
     }
 }
 
-SCENARIO_METHOD(VariantJsonTestsFixture, "loading variant after saving json", "[json][std][variant]")
+SCENARIO_METHOD(VariantTestsFixture, "loading variant after saving json", "[json][std][variant]")
 {
     GIVEN("saved variant")
     {
         auto saved = dataGeneration.RandomStack<TestedObject, std::string>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("variant", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading variant")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("variant", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

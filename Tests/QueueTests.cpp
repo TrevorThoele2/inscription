@@ -3,12 +3,11 @@
 #include <Inscription/QueueScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class QueueBinaryTestsFixture : public BinaryFixture
+class QueueTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::queue<int>;
@@ -16,31 +15,19 @@ public:
     using Classes = std::queue<TestClass>;
 };
 
-class QueueJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::queue<int>;
-    using NestedIntegers = std::queue<std::queue<int>>;
-    using Classes = std::queue<TestClass>;
-};
-
-SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[binary][container][queue]")
+SCENARIO_METHOD(QueueTestsFixture, "loading queue after saving binary", "[binary][container][queue]")
 {
     GIVEN("saved empty queue")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +45,13 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -87,17 +70,13 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
         for (auto& loop : startingGroup)
             saved.push(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -115,8 +94,7 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
             for (auto& loop : occupiedGroup)
                 loaded.push(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -150,17 +128,13 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
         saved.push(startingGroup3);
         saved.push(startingGroup4);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -181,17 +155,13 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
         saved.push(objects[3]);
         saved.push(objects[4]);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -202,23 +172,19 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
     }
 }
 
-SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json][container][queue]")
+SCENARIO_METHOD(QueueTestsFixture, "loading queue after saving json", "[json][container][queue]")
 {
     GIVEN("saved empty queue")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_queue", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -236,17 +202,13 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("queue", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -265,17 +227,13 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
         for (auto& loop : startingGroup)
             saved.push(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("queue", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -293,8 +251,7 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
             for (auto& loop : occupiedGroup)
                 loaded.push(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -328,17 +285,13 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
         saved.push(startingGroup3);
         saved.push(startingGroup4);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("nested_queue", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("nested_queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -359,17 +312,13 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
         saved.push(objects[3]);
         saved.push(objects[4]);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("queue", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("queue", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

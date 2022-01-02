@@ -7,10 +7,10 @@
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -20,92 +20,95 @@ namespace Inscription
     public:
         using ObjectT = std::map<Key, T, Hash, Allocator>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             ContainerSize size(object.size());
-            archive(size);
+            format(size);
             for (auto loop = object.begin(); loop != object.end(); ++loop)
             {
-                archive(loop->first);
-                archive(loop->second);
+                format(loop->first);
+                format(loop->second);
             }
         }
         else
         {
             ContainerSize size;
-            archive(size);
+            format(size);
 
             object.clear();
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::key_type> key(archive);
-                ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
+                ScopeConstructor<typename ObjectT::key_type> key(format);
+                ScopeConstructor<typename ObjectT::mapped_type> mapped(format);
 
                 auto emplaced = object.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
                 if (emplaced.second)
                 {
-                    archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
-                    archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
+                    format.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
+                    format.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
                 }
             }
         }
     }
 
     template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::map<Key, T, Hash, Allocator>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto outputArchive = archive.AsOutput();
+            const auto outputFormat = format.AsOutput();
 
-            outputArchive->StartList(name);
+            outputFormat->StartList(name);
             for (auto loop = object.begin(); loop != object.end(); ++loop)
             {
-                outputArchive->StartList("");
-                archive("", loop->first);
-                archive("", loop->second);
-                outputArchive->EndList();
+                outputFormat->StartList("");
+                format("0", loop->first);
+                format("1", loop->second);
+                outputFormat->EndList();
             }
-            outputArchive->EndList();
+            outputFormat->EndList();
         }
         else
         {
             object.clear();
 
-            auto inputArchive = archive.AsInput();
+            const auto inputFormat = format.AsInput();
 
-            auto size = inputArchive->StartList(name);
+            auto size = inputFormat->StartList(name);
 
+            size_t i = 0;
             while (size-- > 0)
             {
-                inputArchive->StartList("");
+                inputFormat->StartList(Chroma::ToString(i));
 
-                ScopeConstructor<typename ObjectT::key_type> key(archive);
-                ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
+                ScopeConstructor<typename ObjectT::key_type> key("0", format);
+                ScopeConstructor<typename ObjectT::mapped_type> mapped("1", format);
 
                 auto emplaced = object.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
                 if (emplaced.second)
                 {
-                    archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
-                    archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
+                    format.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced.first->first));
+                    format.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced.first->second);
                 }
 
-                inputArchive->EndList();
+                inputFormat->EndList();
+
+                ++i;
             }
 
-            inputArchive->EndList();
+            inputFormat->EndList();
         }
     }
 
-    template<class Key, class T, class Hash, class Allocator, class Archive>
-    struct ScribeTraits<std::map<Key, T, Hash, Allocator>, Archive>
+    template<class Key, class T, class Hash, class Allocator, class Format>
+    struct ScribeTraits<std::map<Key, T, Hash, Allocator>, Format>
     {
         using Category = TrackingScribeCategory<std::map<Key, T, Hash, Allocator>>;
     };

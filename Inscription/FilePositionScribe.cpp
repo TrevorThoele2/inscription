@@ -2,23 +2,23 @@
 
 #include "NumericScribe.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
 
 namespace Inscription
 {
-    void Scribe<File::Position>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<File::Position>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
-        if (archive.IsOutput())
+        auto trackingContext = ObjectTrackingContext::Inactive(format.types);
+        if (format.IsOutput())
         {
             unsigned long long converted = object;
-            archive(converted);
+            format(converted);
         }
         else
         {
             unsigned long long loaded;
-            archive(loaded);
+            format(loaded);
             object = ObjectT(loaded);
         }
     }

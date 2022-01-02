@@ -14,13 +14,13 @@ namespace Inscription
     public:
         using ObjectT = std::string;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
-        void Scriven(ObjectT& object, Archive::Text& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
+        void Scriven(ObjectT& object, Format::Plaintext& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<std::string, Archive>
+    template<class Format>
+    struct ScribeTraits<std::string, Format>
     {
         using Category = TrackingScribeCategory<std::string>;
     };

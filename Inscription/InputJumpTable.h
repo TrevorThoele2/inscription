@@ -7,8 +7,7 @@
 #include "ContainerSize.h"
 
 #include "FilePosition.h"
-#include "CompositeScribeCategory.h"
-#include "FilePositionScribe.h"
+#include "InputBinaryFormat.h"
 
 namespace Inscription
 {
@@ -16,8 +15,10 @@ namespace Inscription
     class InputJumpTable
     {
     public:
-        template<class Archive>
-        bool FillObject(ID at, Object& object, Archive& archive);
+        void Load(File::InputBinary& file, Format::Binary& format);
+
+        template<class Format>
+        bool FillObject(ID at, Object& object, Format& format);
 
         [[nodiscard]] std::vector<ID> AllIDs() const;
         [[nodiscard]] bool Contains(ID id) const;
@@ -34,11 +35,15 @@ namespace Inscription
 
         using iterator = typename Handles::iterator;
     private:
-        template<class Archive>
-        void LoadObject(Object& object, iterator at, Archive& archive);
-        template<class Archive, class Function>
-        void LoadObject(Function function, Object& object, iterator at, Archive& archive);
+        File::InputBinary* file = nullptr;
+
+        template<class Format>
+        void LoadObject(Object& object, iterator at, Format& format);
+        template<class Format, class Function>
+        void LoadObject(Function function, Object& object, iterator at, Format& format);
         iterator FindHandle(ID at);
+
+        void LoadJump(Format::Binary& format);
     private:
         INSCRIPTION_ACCESS;
     private:
@@ -48,14 +53,31 @@ namespace Inscription
     };
 
     template<class ID, class Object>
-    template<class Archive>
-    bool InputJumpTable<ID, Object>::FillObject(ID at, Object& object, Archive& archive)
+    void InputJumpTable<ID, Object>::Load(File::InputBinary& file, Format::Binary& format)
+    {
+        this->file = &file;
+
+        ContainerSize size;
+        format(size);
+
+        File::Position postTablePosition = 0;
+        format(postTablePosition);
+
+        while (size-- > 0)
+            LoadJump(format);
+
+        file.Seek(postTablePosition);
+    }
+
+    template<class ID, class Object>
+    template<class Format>
+    bool InputJumpTable<ID, Object>::FillObject(ID at, Object& object, Format& format)
     {
         auto foundHandle = FindHandle(at);
         if (foundHandle == handles.end())
             return false;
 
-        LoadObject(object, foundHandle, archive);
+        LoadObject(object, foundHandle, format);
 
         return true;
     }
@@ -86,23 +108,23 @@ namespace Inscription
     }
 
     template<class ID, class Object>
-    template<class Archive>
-    void InputJumpTable<ID, Object>::LoadObject(Object& object, iterator at, Archive& archive)
+    template<class Format>
+    void InputJumpTable<ID, Object>::LoadObject(Object& object, iterator at, Format& format)
     {
-        auto currentPosition = archive.Position();
-        archive.Seek(at->jumpPosition);
-        archive(object);
-        archive.Seek(currentPosition);
+        const auto currentPosition = file->Position();
+        file->Seek(at->jumpPosition);
+        format(object);
+        file->Seek(currentPosition);
     }
 
     template<class ID, class Object>
-    template<class Archive, class Function>
-    void InputJumpTable<ID, Object>::LoadObject(Function function, Object& object, iterator at, Archive& archive)
+    template<class Format, class Function>
+    void InputJumpTable<ID, Object>::LoadObject(Function function, Object& object, iterator at, Format& format)
     {
-        auto currentPosition = archive.Position();
-        archive.Seek(at->jumpPosition);
-        function(object, archive);
-        archive.Seek(currentPosition);
+        const auto currentPosition = file->Position();
+        file->Seek(at->jumpPosition);
+        function(object, format);
+        file->Seek(currentPosition);
     }
 
     template<class ID, class Object>
@@ -116,43 +138,14 @@ namespace Inscription
     }
 
     template<class ID, class Object>
-    class Scribe<InputJumpTable<ID, Object>>
+    void InputJumpTable<ID, Object>::LoadJump(Format::Binary& format)
     {
-    public:
-        using ObjectT = InputJumpTable<ID, Object>;
-    private:
-        using Handle = typename ObjectT::Handle;
-        using ArchivePosition = File::Position;
-    public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
-        {
-            ContainerSize size;
-            archive(size);
+        File::Position jumpPosition = 0;
+        ID id{};
 
-            ArchivePosition postTablePosition = 0;
-            archive(postTablePosition);
+        format(jumpPosition);
+        format(id);
 
-            while (size-- > 0)
-                LoadJump(object, archive);
-
-            archive.Seek(postTablePosition);
-        }
-    private:
-        void LoadJump(ObjectT& object, Archive::Binary& archive)
-        {
-            ArchivePosition jumpPosition = 0;
-            ID id{};
-
-            archive(jumpPosition);
-            archive(id);
-
-            object.handles.push_back(Handle{ id, jumpPosition });
-        }
-    };
-
-    template<class ID, class Object>
-    struct ScribeTraits<InputJumpTable<ID, Object>, Archive::Binary> final
-    {
-        using Category = CompositeScribeCategory<InputJumpTable<ID, Object>>;
-    };
+        handles.push_back(Handle{ id, jumpPosition });
+    }
 }

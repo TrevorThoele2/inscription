@@ -7,10 +7,10 @@
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -20,68 +20,71 @@ namespace Inscription
     public:
         using ObjectT = std::list<T, Allocator>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class T, class Allocator>
-    void Scribe<std::list<T, Allocator>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::list<T, Allocator>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             ContainerSize size(std::distance(object.begin(), object.end()));
-            archive(size);
+            format(size);
             for (auto loop = object.begin(); loop != object.end(); ++loop)
-                archive(*loop);
+                format(*loop);
         }
         else
         {
             ContainerSize size;
-            archive(size);
+            format(size);
 
             object.clear();
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(format);
                 object.push_back(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
             }
         }
     }
 
     template<class T, class Allocator>
-    void Scribe<std::list<T, Allocator>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::list<T, Allocator>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto outputArchive = archive.AsOutput();
+            const auto outputFormat = format.AsOutput();
 
-            outputArchive->StartList(name);
-            for (auto loop = object.begin(); loop != object.end(); ++loop)
-                archive("", *loop);
-            outputArchive->EndList();
+            outputFormat->StartList(name);
+            size_t i = 0;
+            for (auto loop = object.begin(); loop != object.end(); ++loop, ++i)
+                format(Chroma::ToString(i), *loop);
+            outputFormat->EndList();
         }
         else
         {
             object.clear();
 
-            auto inputArchive = archive.AsInput();
+            const auto inputFormat = format.AsInput();
 
-            auto size = inputArchive->StartList(name);
+            auto size = inputFormat->StartList(name);
 
+            size_t i = 0;
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(Chroma::ToString(i), format);
                 object.push_back(std::move(constructor.GetMove()));
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+                ++i;
             }
 
-            inputArchive->EndList();
+            inputFormat->EndList();
         }
     }
 
-    template<class T, class Allocator, class Archive>
-    struct ScribeTraits<std::list<T, Allocator>, Archive>
+    template<class T, class Allocator, class Format>
+    struct ScribeTraits<std::list<T, Allocator>, Format>
     {
         using Category = TrackingScribeCategory<std::list<T, Allocator>>;
     };

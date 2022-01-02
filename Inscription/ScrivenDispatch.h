@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Scribe.h"
 #include "HasCategoryTrait.h"
 #include "RequiresScribe.h"
@@ -7,7 +8,7 @@
 
 namespace Inscription
 {
-    namespace Archive
+    namespace Format
     {
         class Json;
     }
@@ -19,84 +20,84 @@ namespace Inscription
         using KnownType = remove_const_t<T>;
         template<class T>
         using KnownScribe = Scribe<KnownType<T>>;
-        template<class T, class Archive>
-        using KnownScribeTraits = ScribeTraits<KnownType<T>, Archive>;
-        template<class T, class Archive>
-        using KnownScribeCategory = typename KnownScribeTraits<T, Archive>::Category;
+        template<class T, class Format>
+        using KnownScribeTraits = ScribeTraits<KnownType<T>, Format>;
+        template<class T, class Format>
+        using KnownScribeCategory = typename KnownScribeTraits<T, Format>::Category;
 
-        template<class T, class Archive>
+        template<class T, class Format>
         using CategoryAndScribeExecute =
             std::conjunction<
-                has_category_trait<KnownScribeTraits<T, Archive>>,
-                requires_scribe<KnownScribeCategory<T, Archive>>>;
-        template<class T, class Archive>
+                has_category_trait<KnownScribeTraits<T, Format>>,
+                requires_scribe<KnownScribeCategory<T, Format>>>;
+        template<class T, class Format>
         using CategoryExecute =
             std::conjunction<
-                has_category_trait<KnownScribeTraits<T, Archive>>,
-                std::negation<requires_scribe<KnownScribeCategory<T, Archive>>>>;
-        template<class T, class Archive>
-        using ScribeExecute = std::negation<has_category_trait<KnownScribeTraits<T, Archive>>>;
+                has_category_trait<KnownScribeTraits<T, Format>>,
+                std::negation<requires_scribe<KnownScribeCategory<T, Format>>>>;
+        template<class T, class Format>
+        using ScribeExecute = std::negation<has_category_trait<KnownScribeTraits<T, Format>>>;
     public:
-        template<class T, class Archive, std::enable_if_t<CategoryAndScribeExecute<T, Archive>::value, int> = 0>
-        static void Execute(T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<CategoryAndScribeExecute<T, Format>::value, int> = 0>
+        static void Execute(T& object, Format& format)
         {
             using ScribeT = KnownScribe<T>;
             ScribeT scribe;
 
-            using CategoryT = KnownScribeCategory<T, Archive>;
-            CategoryT::Scriven(RemoveConst(object), archive, scribe);
+            using CategoryT = KnownScribeCategory<T, Format>;
+            CategoryT::Scriven(RemoveConst(object), format, scribe);
         }
 
-        template<class T, class Archive, std::enable_if_t<CategoryExecute<T, Archive>::value, int> = 0>
-        static void Execute(T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<CategoryExecute<T, Format>::value, int> = 0>
+        static void Execute(T& object, Format& format)
         {
-            using CategoryT = KnownScribeCategory<T, Archive>;
-            CategoryT::Scriven(RemoveConst(object), archive);
+            using CategoryT = KnownScribeCategory<T, Format>;
+            CategoryT::Scriven(RemoveConst(object), format);
         }
 
-        template<class T, class Archive, std::enable_if_t<ScribeExecute<T, Archive>::value, int> = 0>
-        static void Execute(T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<ScribeExecute<T, Format>::value, int> = 0>
+        static void Execute(T& object, Format& format)
         {
             using ScribeT = KnownScribe<T>;
             ScribeT scribe;
-            scribe.Scriven(RemoveConst(object), archive);
+            scribe.Scriven(RemoveConst(object), format);
         }
 
         template<class T>
-        static void Execute(T& object, Archive::Json& archive)
+        static void Execute(T& object, Format::Json& format)
         {
-            NamedExecute("", object, archive);
+            NamedExecute("", object, format);
         }
 
-        template<class T, class Archive, std::enable_if_t<CategoryAndScribeExecute<T, Archive>::value, int> = 0>
-        static void NamedExecute(const std::string& name, T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<CategoryAndScribeExecute<T, Format>::value, int> = 0>
+        static void NamedExecute(const std::string& name, T& object, Format& format)
         {
             using ScribeT = KnownScribe<T>;
             ScribeT scribe;
 
-            using CategoryT = KnownScribeCategory<T, Archive>;
-            CategoryT::Scriven(name, RemoveConst(object), archive, scribe);
+            using CategoryT = KnownScribeCategory<T, Format>;
+            CategoryT::Scriven(name, RemoveConst(object), format, scribe);
         }
 
-        template<class T, class Archive, std::enable_if_t<CategoryExecute<T, Archive>::value, int> = 0>
-        static void NamedExecute(const std::string& name, T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<CategoryExecute<T, Format>::value, int> = 0>
+        static void NamedExecute(const std::string& name, T& object, Format& format)
         {
-            using CategoryT = KnownScribeCategory<T, Archive>;
-            CategoryT::Scriven(name, RemoveConst(object), archive);
+            using CategoryT = KnownScribeCategory<T, Format>;
+            CategoryT::Scriven(name, RemoveConst(object), format);
         }
 
-        template<class T, class Archive, std::enable_if_t<ScribeExecute<T, Archive>::value, int> = 0>
-        static void NamedExecute(const std::string& name, T& object, Archive& archive)
+        template<class T, class Format, std::enable_if_t<ScribeExecute<T, Format>::value, int> = 0>
+        static void NamedExecute(const std::string& name, T& object, Format& format)
         {
             using ScribeT = KnownScribe<T>;
             ScribeT scribe;
-            scribe.Scriven(name, RemoveConst(object), archive);
+            scribe.Scriven(name, RemoveConst(object), format);
         }
     };
 
-    template<class BaseT, class T, class Archive>
-    void BaseScriven(T& object, Archive& archive)
+    template<class BaseT, class T, class Format>
+    void BaseScriven(T& object, Format& format)
     {
-        ScrivenDispatch::Execute(static_cast<BaseT&>(RemoveConst(object)), archive);
+        ScrivenDispatch::Execute(static_cast<BaseT&>(RemoveConst(object)), format);
     }
 }
