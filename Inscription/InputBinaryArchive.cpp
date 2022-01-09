@@ -18,6 +18,11 @@ namespace Inscription::Archive
         source = std::move(arg.source);
         return *this;
     }
+
+    File::InputBinary* InputBinary::File() const
+    {
+        return std::holds_alternative<File::InputBinary*>(source) ? std::get<File::InputBinary*>(source) : nullptr;
+    }
     
 	void InputBinary::PullFromBuffer(Buffer& arg, Buffer& buffer)
     {

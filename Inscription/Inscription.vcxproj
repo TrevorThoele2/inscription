@@ -332,6 +332,7 @@
     <ClCompile Include="InputTypeNotFound.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="FilePositionScribe.cpp" />
+    <ClCompile Include="Plaintext.cpp" />
     <ClCompile Include="PlaintextFormat.cpp" />
     <ClCompile Include="StringScribe.cpp" />
     <ClCompile Include="TableNotConstructed.cpp" />

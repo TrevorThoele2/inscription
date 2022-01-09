@@ -59,16 +59,18 @@ namespace Inscription
         }
         else
         {
-            std::string readValue;
-            format.AsInput()->ReadValue(name, readValue);
+            const auto inputFormat = format.AsInput();
 
-            if (readValue == "null")
-                object = {};
-            else
+            const auto hasValue = inputFormat->HasValue(name);
+
+            if (inputFormat->IsNull(name))
             {
-                ScopeConstructor<T> constructor(name, format);
-                object = { std::move(constructor.GetMove()) };
+                object = {};
+                return;
             }
+
+            ScopeConstructor<T> constructor(name, format);
+            object = { std::move(constructor.GetMove()) };
         }
     }
 

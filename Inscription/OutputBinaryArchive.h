@@ -32,6 +32,8 @@ namespace Inscription::Archive
         void Write(float arg) { DoWrite(arg); }
         void Write(double arg) { DoWrite(arg); }
         void Write(Buffer& arg) { DoWrite(arg); }
+
+        [[nodiscard]] File::OutputBinary* File() const;
     private:
         using Sink = std::variant<File::OutputBinary*, Buffer*>;
         Sink sink;

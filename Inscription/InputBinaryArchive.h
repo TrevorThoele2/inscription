@@ -33,6 +33,8 @@ namespace Inscription::Archive
         void Read(float& arg) { DoRead(arg); }
         void Read(double& arg) { DoRead(arg); }
         void Read(Buffer& arg) { DoRead(arg); }
+
+        [[nodiscard]] File::InputBinary* File() const;
     private:
         using Source = std::variant<File::InputBinary*, Buffer*>;
         Source source;

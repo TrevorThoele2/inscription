@@ -33,9 +33,12 @@ namespace Inscription::Format
         if (!HasValue(name))
             throw JsonParseError(R"(The element ")" + name + R"(" could not be found.)");
 
-        value = name.empty()
-            ? std::get<std::string>(*rootElement)
-            : std::get<std::string>(collectionStack.back()->elements.find(name)->second);
+        const auto& variant = name.empty()
+            ? *rootElement
+            : collectionStack.back()->elements.find(name)->second;
+        if (!std::holds_alternative<std::string>(variant))
+            throw JsonParseError(R"(The element ")" + name + R"(" was not a string.)");
+        value = std::get<std::string>(variant);
 
         return *this;
     }
@@ -51,7 +54,22 @@ namespace Inscription::Format
 
             const auto elements = collectionStack.back()->elements;
             const auto found = elements.find(name);
-            return found != elements.end() && std::holds_alternative<std::string>(found->second);
+            return found != elements.end();
+        }
+    }
+
+    bool InputJson::IsNull(const std::string& name)
+    {
+        if (name.empty())
+            return collectionStack.empty() && rootElement && std::holds_alternative<std::string>(*rootElement) && std::get<std::string>(*rootElement) == "null";
+        else
+        {
+            if (collectionStack.empty())
+                return false;
+
+            const auto elements = collectionStack.back()->elements;
+            const auto found = elements.find(name);
+            return found != elements.end() && std::holds_alternative<std::string>(found->second) && std::get<std::string>(found->second) == "null";
         }
     }
 
@@ -327,11 +345,12 @@ namespace Inscription::Format
                 break;
             }
             case ',':
-                if (!buildingName)
-                    throw JsonParseError();
-                object->elements.emplace(*buildingName, building);
-                buildingName = {};
-                building = {};
+                if (!building.empty() && buildingName)
+                {
+                    object->elements.emplace(*buildingName, building);
+                    buildingName = {};
+                    building = {};
+                }
                 break;
             case ':':
                 break;

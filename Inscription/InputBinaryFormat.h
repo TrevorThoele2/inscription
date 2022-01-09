@@ -28,6 +28,8 @@ namespace Inscription::Format
         void Read(float& arg) { DoRead(arg); }
         void Read(double& arg) { DoRead(arg); }
         void Read(Buffer& arg) { DoRead(arg); }
+
+        [[nodiscard]] Archive::InputBinary& Archive() const;
     private:
         Archive::InputBinary* archive = nullptr;
     private:

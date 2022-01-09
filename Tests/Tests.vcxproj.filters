@@ -112,6 +112,9 @@
     <ClCompile Include="JsonStringTests.cpp">
       <Filter>Source Files\Test\Json</Filter>
     </ClCompile>
+    <ClCompile Include="PlaintextTests.cpp">
+      <Filter>Source Files\Test\Plaintext</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralFixture.h">
@@ -169,6 +172,9 @@
     </Filter>
     <Filter Include="Header Files\Test\Binary">
       <UniqueIdentifier>{39e773bc-cf0a-498b-a9c0-94a4bac1e99d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Test\Plaintext">
+      <UniqueIdentifier>{45f51894-d2f5-4cb7-8561-c4a8edfd021d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

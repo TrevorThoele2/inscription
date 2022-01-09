@@ -623,5 +623,8 @@
     <ClCompile Include="EscapeJson.cpp">
       <Filter>Source Files\Format\Json</Filter>
     </ClCompile>
+    <ClCompile Include="Plaintext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
