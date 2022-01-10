@@ -12,7 +12,7 @@ namespace Inscription::Format
     {
     public:
         template<class T>
-        OutputJson(T& value, Archive::OutputText& archive, const TypeRegistrationContext& typeRegistrationContext);
+        OutputJson(T& value, Archive::OutputText& archive, const TypeRegistrationContext& typeRegistrationContext = TypeRegistrationContext());
         OutputJson(OutputJson&& arg) noexcept;
 
         OutputJson& operator=(OutputJson&& arg) noexcept;
