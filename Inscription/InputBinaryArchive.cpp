@@ -19,6 +19,20 @@ namespace Inscription::Archive
         return *this;
     }
 
+    void InputBinary::Read(Buffer& arg)
+    {
+        if (std::holds_alternative<File::InputBinary*>(source))
+        {
+            const auto file = std::get<File::InputBinary*>(source);
+            file->ReadData(arg.value, static_cast<size_t>(file->Size()));
+        }
+        else
+            arg = *std::get<Buffer*>(source);
+
+        if (!IsLittleEndian())
+            EnsureCorrectEndianness(arg);
+    }
+
     File::InputBinary* InputBinary::File() const
     {
         return std::holds_alternative<File::InputBinary*>(source) ? std::get<File::InputBinary*>(source) : nullptr;
