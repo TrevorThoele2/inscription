@@ -18,12 +18,6 @@ public:
         typeRegistrationContext.RegisterType<Derived>();
     }
 
-    template<class T>
-    T CreateRegistered() const
-    {
-        static_assert(false, "A generic registered type cannot be created. Use one of the explicit overloads.");
-    }
-
     class Base
     {
     public:

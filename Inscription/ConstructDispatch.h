@@ -82,7 +82,7 @@ namespace Inscription
 
         template<class T, class Format>
         static constexpr bool category_has_custom_construct_v = category_has_custom_construct<T, Format>::value;
-    private:
+    public:
         template<class T, class Format, class = void>
         struct table_has_custom_construct : std::false_type
         {};
@@ -100,97 +100,48 @@ namespace Inscription
         template<class T, class Format>
         static constexpr bool table_has_custom_construct_v = table_has_custom_construct<T, Format>::value;
     public:
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<scribe_has_custom_construct<T, Format>::value, int> = 0
-        > static void Execute(T* storage, Format& format)
+        template<class T, class Format>
+        static void Execute(T* storage, Format& format)
         {
-            format.types.AttemptTrackObject(storage);
+            static_assert(
+                scribe_has_custom_construct_v<T, Format>
+                || category_has_custom_construct_v<T, Format>
+                || is_braces_constructible_v<T>
+                || std::is_abstract_v<T>,
 
-            auto trackingContext = ObjectTrackingContext::Active(format.types);
-
-            Scribe<T> scribe;
-            scribe.Construct(storage, format);
-        }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<scribe_has_custom_construct<T, Format>>,
-                    category_has_custom_construct<T, Format>>::value,
-            int> = 0
-        > static void Execute(T* storage, Format& format)
-        {
-            format.types.AttemptTrackObject(storage);
-
-            auto trackingContext = ObjectTrackingContext::Active(format.types);
-
-            KnownScribeCategory<T, Format>::Construct(storage, format);
-        }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<scribe_has_custom_construct<T, Format>>,
-                    std::negation<category_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    is_braces_default_constructible<T>>::value,
-            int> = 0
-        > static void Execute(T* storage, Format& format)
-        {
-            format.types.AttemptTrackObject(storage);
-
-            auto trackingContext = ObjectTrackingContext::Active(format.types);
-            new (storage) T{};
-            ScrivenDispatch::Execute(*storage, format);
-        }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<scribe_has_custom_construct<T, Format>>,
-                    std::negation<category_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    std::negation<is_braces_default_constructible<T>>>::value,
-            int> = 0
-        > static void Execute(T* storage, Format& format)
-        {
-            static_assert(false,
                 "Basic construction of this object requires a default constructor, "
                 "Construct method in the Scribe, "
                 "or Construct method in the Scribe's Category. ");
+
+            if constexpr (!std::is_abstract_v<T>)
+            {
+                format.types.AttemptTrackObject(storage);
+                auto trackingContext = ObjectTrackingContext::Active(format.types);
+
+                if constexpr (scribe_has_custom_construct_v<T, Format>)
+                {
+                    Scribe<T> scribe;
+                    scribe.Construct(storage, format);
+                }
+                else if constexpr (category_has_custom_construct_v<T, Format>)
+                {
+                    KnownScribeCategory<T, Format>::Construct(storage, format);
+                }
+                else if constexpr (is_braces_default_constructible_v<T>)
+                {
+                    new (storage) T{};
+                    ScrivenDispatch::Execute(*storage, format);
+                }
+            }
         }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<scribe_has_custom_construct<T, Format>>,
-                    std::is_abstract<T>>::value,
-            int> = 0
-        > static void Execute(T* storage, Format& format)
-        {}
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<scribe_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    is_braces_default_constructible<T>>::value,
-            int> = 0
-        > static void NamedExecute(
-            const std::string& name, T* storage, Format& format)
+        template<class T, class Format>
+        static void NamedExecute(const std::string& name, T* storage, Format& format)
         {
+            static_assert(
+                !scribe_has_custom_construct_v<T, Format>
+                || is_braces_default_constructible_v<T>
+                || std::is_abstract_v<T>);
+
             format.types.AttemptTrackObject(storage);
 
             auto trackingContext = ObjectTrackingContext::Active(format.types);
@@ -198,68 +149,27 @@ namespace Inscription
             ScrivenDispatch::NamedExecute(name, *storage, format);
         }
     public:
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<table_has_custom_construct<T, Format>::value, int> = 0
-        > static void TableExecute(T* storage, Format& format, Table<T>& table)
+        template<class T, class Format>
+        static void TableExecute(T* storage, Format& format, Table<T>& table)
         {
-            table.Construct(storage, format);
-        }
+            static_assert(
+                table_has_custom_construct_v<T, Format>
+                || is_braces_default_constructible_v<T>
+                || is_braces_constructible_v<T, const TableData<T, Format>&>
+                || std::is_abstract_v<T>,
 
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<table_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    is_braces_default_constructible<T>>::value,
-            int> = 0
-        > static void TableExecute(T* storage, Format& format, Table<T>& table)
-        {
-            new (storage) T{};
-        }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<table_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    std::negation<is_braces_default_constructible<T>>,
-                    is_braces_constructible<T, const TableData<T, Format>&>>::value,
-            int> = 0
-        > static void TableExecute(T* storage, Format& format, Table<T>& table)
-        {
-            new (storage) T{ table.data };
-        }
-
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::conjunction<
-                    std::negation<table_has_custom_construct<T, Format>>,
-                    std::negation<std::is_abstract<T>>,
-                    std::negation<is_braces_default_constructible<T>>,
-                    std::negation<is_braces_constructible<T, const TableData<T, Format>&>>>::value,
-            int> = 0
-        > static void TableExecute(T* storage, Format& format, Table<T>& table)
-        {
-            static_assert(false,
                 "Basic table construction requires either a "
                 "default constructor or a constructor taking a (const DataT&) on ObjectT.");
-        }
 
-        template<
-            class T,
-            class Format,
-            std::enable_if_t<
-                std::is_abstract<T>::value,
-            int> = 0
-        > static void TableExecute(T* storage, Format& format, Table<T>& table)
-        {}
+            if constexpr (!std::is_abstract_v<T>)
+            {
+                if constexpr (table_has_custom_construct_v<T, Format>)
+                    table.Construct(storage, format);
+                else if constexpr (is_braces_constructible_v<T>)
+                    new (storage) T{};
+                else if constexpr ( is_braces_constructible_v<T, const TableData<T, Format>&>)
+                    new (storage) T{ table.data };
+            }
+        }
     };
 }
