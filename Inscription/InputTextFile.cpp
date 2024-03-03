@@ -42,13 +42,10 @@ namespace Inscription
     {
         const auto startPosition = stream.tellg();
 
-        stream.seekg(0, std::ios::end);
-        const auto fileSize = stream.tellg();
-
-        stream.seekg(startPosition + StreamPosition(size));
-        const auto endPosition = std::min(stream.tellg(), fileSize);
-        const auto useSize = endPosition - startPosition;
-        stream.seekg(startPosition);
+        stream.ignore(std::numeric_limits<std::streamsize>::max());
+        const auto useSize = stream.gcount();
+        stream.clear();
+        stream.seekg(startPosition, std::ios_base::beg);
 
         std::string buffer;
         buffer.resize(static_cast<size_t>(useSize));
