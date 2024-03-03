@@ -83,16 +83,17 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Debug|Win32'" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Debug|x64'" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Trevor\Documents\wxWidgets\lib\vc_lib\mswud;C:\Users\Trevor\Documents\wxWidgets\include;C:\Users\Trevor\Documents\Ogg\Built\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\SailSerialization;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\GUI;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Engine;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Affecter;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Trevor\Documents\Programming Projects\wxWidgets\lib\vc_lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Users\Trevor\Documents\wxWidgets\include;C:\Users\Trevor\Documents\Ogg\Built\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\SailSerialization;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\GUI;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Engine;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Affecter;$(IncludePath)</IncludePath>
