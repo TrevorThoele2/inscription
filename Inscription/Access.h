@@ -5,7 +5,9 @@
 #define INSCRIPTION_ACCESS                  \
 friend ::Inscription::ConstructDispatch;    \
 template<class Object>                      \
-friend class ::Inscription::Scribe
+friend class ::Inscription::Scribe;         \
+template<class Object, class Format>        \
+friend struct ::Inscription::ScribeTraits
 
 #define INSCRIPTION_TABLE_ACCESS        \
 INSCRIPTION_ACCESS;                     \
