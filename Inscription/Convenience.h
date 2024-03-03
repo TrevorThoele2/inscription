@@ -22,11 +22,11 @@ Defines for your convenience
 #endif
 
 // Access
-#define INSCRIPTION_ACCESS friend ::inscription::Access;
+#define INSCRIPTION_ACCESS friend ::Inscription::Access;
 
 #define INSCRIPTION_FRIEND_INSCRIPTER   \
 template<class T>                       \
-friend class ::inscription::Inscripter;
+friend class ::Inscription::Inscripter;
 
 #define INSCRIPTION_SIMPLE_INSCRIPTER_ACCESS    \
 INSCRIPTION_ACCESS                              \
@@ -51,19 +51,19 @@ Inscripter<type>::TableT Inscripter<type>::CreateTable(Scribe &scribe)  \
     TableT INSCRIPTION_TABLE_SYMBOL;
 
 #define INSCRIPTION_INSCRIPTER_DECLARE_CLASS_NAME_CONTAINER                 \
-static const ::inscription::ClassNameContainer& GetClassNameContainer();    \
+static const ::Inscription::ClassNameContainer& GetClassNameContainer();    \
 
 #define INSCRIPTION_INSCRIPTER_DEFINE_CLASS_NAME_CONTAINER(type, defaultName)                                                                       \
-const ::inscription::ClassNameContainer& Inscripter<type>::GetClassNameContainer()                                                                  \
+const ::Inscription::ClassNameContainer& Inscripter<type>::GetClassNameContainer()                                                                  \
 {                                                                                                                                                   \
-    static ::inscription::ClassNameContainer container(defaultName, [](::inscription::ClassNameContainer &INSCRIPTION_CLASS_NAME_CONTAINER_SYMBOL)  \
+    static ::Inscription::ClassNameContainer container(defaultName, [](::Inscription::ClassNameContainer &INSCRIPTION_CLASS_NAME_CONTAINER_SYMBOL)  \
     {
 
 #define INSCRIPTION_INSCRIPTER_DEFINE_CLASS_NAME_CONTAINER_END  \
     });                                                         \
                                                                 \
     return container;                                           \
-    ::inscription::Scribe::RegisterPolymorphic<ManagedT>();     \
+    ::Inscription::Scribe::RegisterPolymorphic<ManagedT>();     \
 }
 
 #define INSCRIPTION_INSCRIPTER_DEFINE_SIMPLE_CLASS_NAME_CONTAINER(type) \
@@ -71,10 +71,10 @@ INSCRIPTION_INSCRIPTER_DEFINE_CLASS_NAME_CONTAINER(type, #type)         \
 INSCRIPTION_INSCRIPTER_DEFINE_CLASS_NAME_CONTAINER_END
 
 #define INSCRIPTION_INSCRIPTER_DECLARE_SERIALIZE_FUNCTION                                                                                           \
-static void SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, ManagedT &INSCRIPTION_OBJECT_SYMBOL);
+static void SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, ManagedT &INSCRIPTION_OBJECT_SYMBOL);
 
 #define INSCRIPTION_INSCRIPTER_DEFINE_SERIALIZE_FUNCTION(type)                                                                                                  \
-void Inscripter<type>::SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, ManagedT &INSCRIPTION_OBJECT_SYMBOL)
+void Inscripter<type>::SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, ManagedT &INSCRIPTION_OBJECT_SYMBOL)
 
 #define INSCRIPTION_INSCRIPTER_DECLARE_CONSTRUCT_FUNCTION                                       \
 static void ConstructTable(TableT &INSCRIPTION_TABLE_SYMBOL, Scribe &INSCRIPTION_SCRIBE_SYMBOL);
@@ -103,25 +103,25 @@ void Inscripter<type>::PostConstruct(ManagedT &INSCRIPTION_OBJECT_SYMBOL)
 /////////////////////
 // CLASS NAME DEFINES
 #define INSCRIPTION_SIMPLE_CLASS_NAME_CONTAINER(defaultName)            \
-static const ::inscription::ClassNameContainer& GetClassNameContainer() \
+static const ::Inscription::ClassNameContainer& GetClassNameContainer() \
 {                                                                       \
-    static ::inscription::ClassNameContainer container(defaultName);    \
+    static ::Inscription::ClassNameContainer container(defaultName);    \
     return container;                                                   \
                                                                         \
-    ::inscription::Scribe::RegisterPolymorphic<ManagedT>();             \
+    ::Inscription::Scribe::RegisterPolymorphic<ManagedT>();             \
 }
 
 #define INSCRIPTION_CLASS_NAME_CONTAINER_BEGIN(defaultName)                                                                                         \
-static const ::inscription::ClassNameContainer& GetClassNameContainer()                                                                             \
+static const ::Inscription::ClassNameContainer& GetClassNameContainer()                                                                             \
 {                                                                                                                                                   \
-    static ::inscription::ClassNameContainer container(defaultName, [](::inscription::ClassNameContainer &INSCRIPTION_CLASS_NAME_CONTAINER_SYMBOL)  \
+    static ::Inscription::ClassNameContainer container(defaultName, [](::Inscription::ClassNameContainer &INSCRIPTION_CLASS_NAME_CONTAINER_SYMBOL)  \
     {
 
 #define INSCRIPTION_CLASS_NAME_CONTAINER_END                    \
     });                                                         \
                                                                 \
     return container;                                           \
-    ::inscription::Scribe::RegisterPolymorphic<ManagedT>();     \
+    ::Inscription::Scribe::RegisterPolymorphic<ManagedT>();     \
 }
 
 #define INSCRIPTION_CLASS_NAME_CONTAINER_ADD(name, op, scribeType, version) \
@@ -130,39 +130,39 @@ INSCRIPTION_CLASS_NAME_CONTAINER_SYMBOL.AddName<scribeType>(name, op, version);
 ////////////////////////
 // SERIALIZATION DEFINES
 #define INSCRIPTION_SERIALIZATION \
-static void SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, Managed &INSCRIPTION_OBJECT_SYMBOL)
+static void SerializeTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL, Managed &INSCRIPTION_OBJECT_SYMBOL)
 
 #define INSCRIPTION_SERIALIZE_TABLE \
 INSCRIPTION_TABLE_SYMBOL.Serialize(INSCRIPTION_SCRIBE_SYMBOL, INSCRIPTION_OBJECT_SYMBOL);
 
 #define INSCRIPTION_CONSTRUCTION \
-static void ConstructTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
+static void ConstructTable(TableT &INSCRIPTION_TABLE_SYMBOL, ::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
 
 #define INSCRIPTION_CONSTRUCT_TABLE \
 INSCRIPTION_TABLE_SYMBOL.Construct(INSCRIPTION_SCRIBE_SYMBOL);
 
 #ifdef INSCRIPTION_SERIALIZE_SYMBOL
-    #define INSCRIPTION_SERIALIZE_FUNCTION void INSCRIPTION_SERIALIZE_SYMBOL(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
+    #define INSCRIPTION_SERIALIZE_FUNCTION void INSCRIPTION_SERIALIZE_SYMBOL(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
 #else
-    #define INSCRIPTION_SERIALIZE_FUNCTION void Serialize(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
+    #define INSCRIPTION_SERIALIZE_FUNCTION void Serialize(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
 #endif
 
 #ifdef INSCRIPTION_SERIALIZE_SYMBOL
-    #define INSCRIPTION_SERIALIZE_FUNCTION_DECLARE void INSCRIPTION_SERIALIZE_SYMBOL(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL);
+    #define INSCRIPTION_SERIALIZE_FUNCTION_DECLARE void INSCRIPTION_SERIALIZE_SYMBOL(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL);
 #else
-    #define INSCRIPTION_SERIALIZE_FUNCTION_DECLARE void Serialize(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL);
+    #define INSCRIPTION_SERIALIZE_FUNCTION_DECLARE void Serialize(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL);
 #endif
 
 #ifdef INSCRIPTION_SERIALIZE_SYMBOL
-    #define INSCRIPTION_SERIALIZE_FUNCTION_DEFINE(type) void type::INSCRIPTION_SERIALIZE_SYMBOL(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
+    #define INSCRIPTION_SERIALIZE_FUNCTION_DEFINE(type) void type::INSCRIPTION_SERIALIZE_SYMBOL(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
 #else
-    #define INSCRIPTION_SERIALIZE_FUNCTION_DEFINE(type) void type::Serialize(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
+    #define INSCRIPTION_SERIALIZE_FUNCTION_DEFINE(type) void type::Serialize(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL)
 #endif
 
 ////////////////
 // TABLE DEFINES
 #define INSCRIPTION_TABLE_BEGIN                                             \
-static TableT CreateTable(::inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL) \
+static TableT CreateTable(::Inscription::Scribe &INSCRIPTION_SCRIBE_SYMBOL) \
 {                                                                           \
     TableT INSCRIPTION_TABLE_SYMBOL;
 
@@ -233,7 +233,7 @@ INSCRIPTION_TABLE_END
 
 #define INSCRIPTION_TABLE_ASSIGN(var) var = INSCRIPTION_TABLE_SYMBOL.Get<decltype(var)>(#var)
 
-#define INSCRIPTION_TABLE_CONSTRUCTOR_DECLARE(type) type(const ::inscription::Table<type> &INSCRIPTION_TABLE_SYMBOL);
+#define INSCRIPTION_TABLE_CONSTRUCTOR_DECLARE(type) type(const ::Inscription::Table<type> &INSCRIPTION_TABLE_SYMBOL);
 #define INSCRIPTION_TABLE_CONSTRUCTOR_SIMPLE_DECLARE(type, endingAccess)    \
 public:                                                                     \
 INSCRIPTION_TABLE_CONSTRUCTOR_DECLARE(type)                                 \
@@ -241,10 +241,10 @@ INSCRIPTION_SIMPLE_INSCRIPTER_ACCESS                                        \
 endingAccess:
 
 #define INSCRIPTION_TABLE_CONSTRUCTOR_DEFINE(type) \
-type::type(const ::inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)
+type::type(const ::Inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)
 
 #define INSCRIPTION_TABLE_CONSTRUCTOR_DEFINE_EX(type, realT)   \
-type::realT(const ::inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)
+type::realT(const ::Inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)
 
 #define INSCRIPTION_TABLE_CONSTRUCTOR(type)    \
-type(const ::inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)
+type(const ::Inscription::Table<type>& INSCRIPTION_TABLE_SYMBOL)

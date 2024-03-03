@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     void Serialize(Scribe &scribe, std::string &obj);

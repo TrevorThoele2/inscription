@@ -16,7 +16,7 @@
 
 #include "Exception.h"
 
-namespace inscription
+namespace Inscription
 {
     class ScribeDirectionException : public Exception
     {
@@ -34,7 +34,7 @@ namespace inscription
     {
     public:
         typedef unsigned long long StreamPos;
-        typedef inscription::Path Path;
+        typedef ::Inscription::Path Path;
     public:
         virtual ~Scribe() = 0;
         template<class... Args>

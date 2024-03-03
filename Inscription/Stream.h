@@ -4,16 +4,16 @@
 #include <fstream>
 #include "Path.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class T>
     class Stream
     {
     public:
-        typedef inscription::Path Path;
+        typedef ::Inscription::Path Path;
         typedef std::ios_base::openmode Mode;
         typedef T StreamT;
-        typedef typename StreamT::streampos StreamPos;
+        typedef std::streampos StreamPos;
         typedef StreamPos SizeT;
     private:
         Path path;

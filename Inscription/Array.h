@@ -4,7 +4,7 @@
 #include "Scribe.h"
 #include "StackConstructor.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class T, std::size_t N>
     void Save(Scribe &scribe, std::array<T, N> &obj)

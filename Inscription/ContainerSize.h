@@ -9,7 +9,7 @@
 
 #include "TrackingTraits.h"
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     class ContainerSize

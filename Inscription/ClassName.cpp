@@ -2,7 +2,7 @@
 #include "ClassName.h"
 #include "Scribe.h"
 
-namespace inscription
+namespace Inscription
 {
     bool EqualComp(Version first, Version second)
     {

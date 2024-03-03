@@ -2,7 +2,7 @@
 #pragma once
 #include <string>
 
-namespace inscription
+namespace Inscription
 {
     typedef std::string Path;
 }

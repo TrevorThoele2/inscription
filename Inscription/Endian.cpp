@@ -1,7 +1,7 @@
 
 #include "Endian.h"
 
-namespace inscription
+namespace Inscription
 {
     bool IsLittleEndian()
     {

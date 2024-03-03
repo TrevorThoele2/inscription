@@ -1,7 +1,7 @@
 
 #include "Scribe.h"
 
-namespace inscription
+namespace Inscription
 {
     ScribeDirectionException::ScribeDirectionException() : Exception("Attempted operation in the opposite direction of the scribe. (Saving while scribe is a loader and vice versa)")
     {}

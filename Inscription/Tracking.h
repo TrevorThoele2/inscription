@@ -11,7 +11,7 @@
 #include "TypeTable.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     namespace detail
     {
@@ -230,7 +230,7 @@ namespace inscription
         void TrackerInstancer::Push(Group &group)
         {
             for (auto &loop : Instance().types)
-                group.table.Add(inscription::Tracker(), loop);
+                group.table.Add(::Inscription::Tracker(), loop);
         }
 
         template<class T>

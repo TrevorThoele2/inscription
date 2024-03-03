@@ -7,7 +7,7 @@
 #include "StackConstructor.h"
 #include "Const.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class Key, class T, class Hash, class Pred, class Alloc>
     void Save(Scribe &scribe, std::unordered_map<Key, T, Hash, Pred, Alloc> &obj)

@@ -2,7 +2,7 @@
 
 #include "Table.h"
 
-namespace inscription
+namespace Inscription
 {
     class Scribe;
     class ClassNameContainer;
@@ -13,7 +13,7 @@ namespace inscription
     public:
         static constexpr bool exists = true;
         typedef T ManagedT;
-        typedef inscription::Table<ManagedT> TableT;
+        typedef ::Inscription::Table<ManagedT> TableT;
     public:
         static void SerializeTable(TableT &table, Scribe &scribe, ManagedT &obj);
         static void ConstructTable(TableT &table, Scribe &scribe);

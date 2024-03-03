@@ -6,7 +6,7 @@
 #include "ContainerSize.h"
 #include "StackConstructor.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class T, class Alloc>
     void Save(Scribe &scribe, std::vector<T, Alloc> &obj)

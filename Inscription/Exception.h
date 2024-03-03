@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace inscription
+namespace Inscription
 {
     class Exception : public std::runtime_error
     {

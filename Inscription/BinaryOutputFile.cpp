@@ -1,7 +1,7 @@
 
 #include "BinaryOutputFile.h"
 
-namespace inscription
+namespace Inscription
 {
     BinaryOutputFile::BinaryOutputFile(const Path &path) : Stream(path, std::ios::out | std::ios::binary)
     {}

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace inscription
+namespace Inscription
 {
     // The buffer has ownership over the value while it is within this
     struct Buffer

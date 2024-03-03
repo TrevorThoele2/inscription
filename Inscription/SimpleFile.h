@@ -3,7 +3,7 @@
 
 #include "Stream.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class T>
     class SimpleFile : public Stream<T>

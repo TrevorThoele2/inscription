@@ -4,7 +4,7 @@
 #include <fstream>
 #include "SimpleFile.h"
 
-namespace inscription
+namespace Inscription
 {
     class TextInFile : public SimpleFile<std::ifstream>
     {

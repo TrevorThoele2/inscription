@@ -2,7 +2,7 @@
 
 #include "Polymorphic.h"
 
-namespace inscription
+namespace Inscription
 {
     template<class T>
     void PolymorphicManagerRegistration::Register()

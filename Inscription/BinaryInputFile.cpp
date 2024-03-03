@@ -1,7 +1,7 @@
 
 #include "BinaryInputFile.h"
 
-namespace inscription
+namespace Inscription
 {
     BinaryInputFile::BinaryInputFile(const Path &path) : Stream(path, std::ios::in | std::ios::binary)
     {}
