@@ -6,6 +6,8 @@ namespace Inscription::File
     {
         stream.exceptions(std::ios::badbit);
         SanitizeStreamFailure([this, path]() {stream.open(path, std::ios::in); }, path);
+        if (stream.fail())
+            failedOpening = true;
     }
 
     InputText::InputText(InputText&& arg) noexcept : path(std::move(arg.path)), stream(std::move(arg.stream))
@@ -87,11 +89,13 @@ namespace Inscription::File
 
     Position InputText::Position()
     {
-        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellg(); }, path);
+        return !failedOpening
+            ? SanitizeStreamFailure<File::Position>([this]() { return stream.tellg(); }, path)
+            : 0;
     }
 
     bool InputText::IsAtEnd() const
     {
-        return stream.eof();
+        return failedOpening || stream.eof();
     }
 }

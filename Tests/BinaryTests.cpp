@@ -16,6 +16,27 @@ public:
     }
 };
 
+SCENARIO_METHOD(BinaryTestsFixture, "opening input binary file", "[binary]")
+{
+    GIVEN("nonexistent file")
+    {
+        WHEN("loading directly")
+        {
+            auto inputFile = Inscription::File::InputBinary("Nonexistent.txt");
+
+            THEN("position is 0")
+            {
+                REQUIRE(inputFile.Position() == 0);
+            }
+
+            THEN("size is 0")
+            {
+                REQUIRE(inputFile.Size() == 0);
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(BinaryTestsFixture, "loading basics in binary", "[binary]")
 {
     GIVEN("saved all integers")

@@ -6,6 +6,8 @@ namespace Inscription::File
     {
         stream.exceptions(std::ios::badbit);
         SanitizeStreamFailure([this, path]() { stream.open(path, std::ios::in | std::ios::binary); }, path);
+        if (stream.fail())
+            failedOpening = true;
     }
 
     InputBinary::InputBinary(InputBinary&& arg) noexcept :
@@ -37,30 +39,24 @@ namespace Inscription::File
 
     void InputBinary::Seek(File::Position position)
     {
-        SanitizeStreamFailure(
-            [this, position]() { stream.seekg(position); },
-            path);
+        SanitizeStreamFailure([this, position]() { stream.seekg(position); }, path);
     }
 
     void InputBinary::SeekFromBeginning(File::Position offset)
     {
-        SanitizeStreamFailure(
-            [this, offset]() { stream.seekg(offset, std::ifstream::beg); },
-            path);
+        SanitizeStreamFailure([this, offset]() { stream.seekg(offset, std::ifstream::beg); }, path);
     }
 
     void InputBinary::SeekFromEnd(File::Position offset)
     {
-        SanitizeStreamFailure(
-            [this, offset]() { stream.seekg(offset, std::ifstream::end); },
-            path);
+        SanitizeStreamFailure([this, offset]() { stream.seekg(offset, std::ifstream::end); }, path);
     }
 
     Position InputBinary::Position()
     {
-        return SanitizeStreamFailure<std::ios::pos_type>(
-            [this]() { return stream.tellg(); },
-            path);
+        return !failedOpening
+            ? SanitizeStreamFailure<std::ios::pos_type>([this]() { return stream.tellg(); }, path)
+            : 0;
     }
 
     Size InputBinary::Size()

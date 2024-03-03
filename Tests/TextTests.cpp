@@ -7,6 +7,27 @@
 class TextTestsFixture : public TextFixture
 {};
 
+SCENARIO_METHOD(TextTestsFixture, "opening input text file", "[text]")
+{
+    GIVEN("nonexistent file")
+    {
+        WHEN("loading directly")
+        {
+            auto inputFile = Inscription::File::InputText("Nonexistent.txt");
+
+            THEN("position is 0")
+            {
+                REQUIRE(inputFile.Position() == 0);
+            }
+
+            THEN("is at end of file")
+            {
+                REQUIRE(inputFile.IsAtEnd());
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(TextTestsFixture, "loading strings from text archive", "[text]")
 {
     GIVEN("three saved strings")
