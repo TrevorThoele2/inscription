@@ -2,19 +2,19 @@
 
 #include <optional>
 
-#include "Archive.h"
+#include "Format.h"
 
 #include "ScrivenDispatch.h"
 #include "TableData.h"
 #include "Direction.h"
 #include "TypeManager.h"
 
-namespace Inscription::Archive
+namespace Inscription::Format
 {
     class OutputJson;
     class InputJson;
 
-    class Json : public Archive
+    class Json : public Format
     {
     private:
         using Types = TypeManager<Json>;
@@ -47,7 +47,7 @@ namespace Inscription::Archive
     private:
         const Direction direction;
     private:
-        template<class Archive>
+        template<class Format>
         friend class PolymorphicManager;
     };
 
@@ -62,5 +62,5 @@ namespace Inscription::Archive
 namespace Inscription
 {
     template<class Object>
-    using JsonTableData = TableData<Object, Archive::Json>;
+    using JsonTableData = TableData<Object, Format::Json>;
 }

@@ -5,7 +5,7 @@ namespace Inscription::File
     OutputBinary::OutputBinary(const Path& path) : path(path)
     {
         stream.exceptions(std::ios::badbit);
-        SanitizeStreamFailure([this, path]() { stream.open(path, std::ios::out | std::ios::binary); }, path);
+        SanitizeStreamFailure([this, path] { stream.open(path, std::ios::out | std::ios::binary); }, path);
     }
 
     OutputBinary::OutputBinary(OutputBinary&& arg) noexcept :
@@ -20,26 +20,26 @@ namespace Inscription::File
 
     void OutputBinary::WriteData(const Buffer& buffer)
     {
-        SanitizeStreamFailure([this, &buffer]() { stream.write(buffer.value.data(), buffer.value.size()); }, path);
+        SanitizeStreamFailure([this, &buffer] { stream.write(buffer.value.data(), buffer.value.size()); }, path);
     }
 
     void OutputBinary::Seek(File::Position position)
     {
-        SanitizeStreamFailure([this, position]() { stream.seekp(position); }, path);
+        SanitizeStreamFailure([this, position] { stream.seekp(position); }, path);
     }
 
     void OutputBinary::SeekFromBeginning(File::Position offset)
     {
-        SanitizeStreamFailure([this, offset]() { stream.seekp(offset, std::ofstream::beg); }, path);
+        SanitizeStreamFailure([this, offset] { stream.seekp(offset, std::ofstream::beg); }, path);
     }
 
     void OutputBinary::SeekFromEnd(File::Position offset)
     {
-        SanitizeStreamFailure([this, offset]() { stream.seekp(offset, std::ofstream::end); }, path);
+        SanitizeStreamFailure([this, offset] { stream.seekp(offset, std::ofstream::end); }, path);
     }
 
     Position OutputBinary::Position()
     {
-        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellp(); }, path);
+        return SanitizeStreamFailure<File::Position>([this] { return stream.tellp(); }, path);
     }
 }

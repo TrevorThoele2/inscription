@@ -2,7 +2,7 @@
 
 namespace Inscription
 {
-    template<class Object, class Archive>
+    template<class Object, class Format>
     struct TableData
     {};
 }

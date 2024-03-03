@@ -1,14 +1,17 @@
 #pragma once
 
+#include <sstream>
+#include <variant>
 #include "TextArchive.h"
 #include "OutputTextFile.h"
 
 namespace Inscription::Archive
 {
-    class OutputText : public Text
+    class OutputText final : public Text
     {
     public:
-        explicit OutputText(const File::Path& path, bool append = false);
+        explicit OutputText(File::OutputText& file);
+        explicit OutputText(std::string& string);
         OutputText(const OutputText& arg) = delete;
         OutputText(OutputText&& arg) noexcept;
         
@@ -17,16 +20,7 @@ namespace Inscription::Archive
 
         OutputText& Write(const std::string& arg);
         OutputText& Write(const char arg);
-    protected:
-        void WriteImpl(const std::string& arg) { WriteToFile(arg); }
-        void WriteImpl(const char arg) { WriteToFile(arg); }
     private:
-       File::OutputText file;
-    private:
-        template<class T>
-        void WriteToFile(T& arg)
-        {
-            file.WriteData(arg);
-        }
+        std::variant<File::OutputText*, std::string*> source;
     };
 }

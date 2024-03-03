@@ -6,7 +6,7 @@ namespace Inscription::File
     OutputText::OutputText(const Path& path, bool append) : path(path)
     {
         stream.exceptions(std::ios::badbit);
-        SanitizeStreamFailure([this, path, append]() {stream.open(path, append ? std::ios::out | std::ios::app : std::ios::out); }, path);
+        SanitizeStreamFailure([this, path, append] {stream.open(path, append ? std::ios::out | std::ios::app : std::ios::out); }, path);
     }
 
     OutputText::OutputText(OutputText&& arg) noexcept :
@@ -24,7 +24,7 @@ namespace Inscription::File
     void OutputText::WriteData(const std::string& string)
     {
         SanitizeStreamFailure(
-            [this, string]()
+            [this, string]
             {
                 if (width > 0)
                 {
@@ -47,12 +47,12 @@ namespace Inscription::File
 
     void OutputText::WriteData(const char character)
     {
-        SanitizeStreamFailure([this, character]() { stream << character; }, path);
+        SanitizeStreamFailure([this, character] { stream << character; }, path);
     }
 
     void OutputText::ClearFile()
     {
-        SanitizeStreamFailure([this]() {stream.flush(); }, path);
+        SanitizeStreamFailure([this] {stream.flush(); }, path);
     }
 
     void OutputText::SetFillCharacter(const char set)
@@ -77,11 +77,11 @@ namespace Inscription::File
 
     void OutputText::Seek(File::Position position)
     {
-        SanitizeStreamFailure([this, position]() { stream.seekp(position); }, path);
+        SanitizeStreamFailure([this, position] { stream.seekp(position); }, path);
     }
 
     Position OutputText::Position()
     {
-        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellp(); }, path);
+        return SanitizeStreamFailure<File::Position>([this] { return stream.tellp(); }, path);
     }
 }

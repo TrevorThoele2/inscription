@@ -4,19 +4,11 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class UnorderedMultiMapBinaryTestsFixture : public BinaryFixture
-{
-public:
-    using IntegerToStrings = std::unordered_multimap<int, std::string>;
-    using IntegerToClasses = std::unordered_multimap<int, TestClass>;
-};
-
-class UnorderedMultiMapJsonTestsFixture : public JsonFixture
+class UnorderedMultiMapTestsFixture : public GeneralFixture
 {
 public:
     using IntegerToStrings = std::unordered_multimap<int, std::string>;
@@ -24,7 +16,7 @@ public:
 };
 
 SCENARIO_METHOD(
-    UnorderedMultiMapBinaryTestsFixture,
+    UnorderedMultiMapTestsFixture,
     "loading unordered_multimap after saving binary",
     "[binary][container][unordered_multimap]"
 ) {
@@ -32,17 +24,13 @@ SCENARIO_METHOD(
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -66,17 +54,13 @@ SCENARIO_METHOD(
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -101,17 +85,13 @@ SCENARIO_METHOD(
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -135,8 +115,7 @@ SCENARIO_METHOD(
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -161,17 +140,13 @@ SCENARIO_METHOD(
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -182,23 +157,19 @@ SCENARIO_METHOD(
     }
 }
 
-SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap after saving json", "[json][container][unordered_multimap]")
+SCENARIO_METHOD(UnorderedMultiMapTestsFixture, "loading unordered_multimap after saving json", "[json][container][unordered_multimap]")
 {
     GIVEN("saved empty unordered_multimap")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -222,17 +193,13 @@ SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap a
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -257,17 +224,13 @@ SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap a
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -291,8 +254,7 @@ SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap a
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -317,17 +279,13 @@ SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap a
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

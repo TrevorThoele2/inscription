@@ -3,12 +3,11 @@
 #include <Inscription/UnorderedSetScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class UnorderedSetBinaryTestsFixture : public BinaryFixture
+class UnorderedSetTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::unordered_set<int>;
@@ -16,31 +15,19 @@ public:
     using Classes = std::unordered_set<TestClass>;
 };
 
-class UnorderedSetJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::unordered_set<int>;
-    using NestedIntegers = std::unordered_set<std::unordered_set<int>>;
-    using Classes = std::unordered_set<TestClass>;
-};
-
-SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after saving binary", "[binary][container][unordered_set]")
+SCENARIO_METHOD(UnorderedSetTestsFixture, "loading unordered_set after saving binary", "[binary][container][unordered_set]")
 {
     GIVEN("saved empty unordered_set")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +45,13 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -87,17 +70,13 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -115,8 +94,7 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -132,17 +110,13 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -153,23 +127,19 @@ SCENARIO_METHOD(UnorderedSetBinaryTestsFixture, "loading unordered_set after sav
     }
 }
 
-SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after saving json", "[json][container][unordered_set]")
+SCENARIO_METHOD(UnorderedSetTestsFixture, "loading unordered_set after saving json", "[json][container][unordered_set]")
 {
     GIVEN("saved empty unordered_set")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_set", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_set", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -187,17 +157,13 @@ SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after savin
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_set", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_set", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -216,17 +182,13 @@ SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after savin
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_set", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_set", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -244,8 +206,7 @@ SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after savin
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_set", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -261,17 +222,13 @@ SCENARIO_METHOD(UnorderedSetJsonTestsFixture, "loading unordered_set after savin
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_set", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_set", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

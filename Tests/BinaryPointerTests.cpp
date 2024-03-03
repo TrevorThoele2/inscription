@@ -8,11 +8,13 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class BinaryPointerFixture : public BinaryFixture
+class BinaryPointerFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryPointerFixture()
     {
         typeRegistrationContext.RegisterType<Object>();
@@ -80,14 +82,14 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::Object;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.value);
+            format(object.value);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPointerFixture::Object, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPointerFixture::Object, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPointerFixture::Object>;
     };
@@ -98,15 +100,15 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::NestedHeapObject;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.value);
-            archive(object.next);
+            format(object.value);
+            format(object.next);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPointerFixture::NestedHeapObject, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPointerFixture::NestedHeapObject, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPointerFixture::NestedHeapObject>;
     };
@@ -117,14 +119,14 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::ProtectedConstructor;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.value);
+            format(object.value);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPointerFixture::ProtectedConstructor, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPointerFixture::ProtectedConstructor, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPointerFixture::ProtectedConstructor>;
     };
@@ -135,9 +137,9 @@ namespace Inscription
     public:
         using ObjectT = BinaryPointerFixture::PrivateConstructor;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.value);
+            format(object.value);
         }
     };
 }
@@ -148,19 +150,13 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading null pointer in binary", "[binary
     {
         Object* saved = nullptr;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading pointer")
         {
             Object* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<OutputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("loaded pointer is null")
             {
@@ -178,9 +174,12 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading object before pointer in binary",
         Object* savedPointer = &savedObject;
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedObject);
-            outputArchive(savedPointer);
+            Inscription::File::OutputBinary file("Test.dat");
+            Inscription::Archive::OutputBinary archive(file);
+            Inscription::Format::OutputBinary format(archive, typeRegistrationContext);
+
+            format(savedObject);
+            format(savedPointer);
         }
 
         WHEN("loading object then pointer")
@@ -189,9 +188,12 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading object before pointer in binary",
             Object* loadedPointer;
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedObject);
-                inputArchive(loadedPointer);
+                Inscription::File::InputBinary file("Test.dat");
+                Inscription::Archive::InputBinary archive(file);
+                Inscription::Format::InputBinary format(archive, typeRegistrationContext);
+
+                format(loadedObject);
+                format(loadedPointer);
             }
 
             THEN("loaded pointer points to loaded object")
@@ -211,19 +213,13 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading nested object in binary", "[binar
         NestedHeapObject* savedObject2 = dataGeneration.RandomHeap<NestedHeapObject, int>();
         savedObject1->next = savedObject2;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedObject1);
-        }
+        Inscription::Binary::ToFile(savedObject1, "Test.dat", typeRegistrationContext);
 
         WHEN("loading nested object")
         {
             NestedHeapObject* loadedObject1 = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedObject1);
-            }
+            Inscription::Binary::FromFile(loadedObject1, "Test.dat", typeRegistrationContext);
 
             THEN("loaded nested object is valid")
             {
@@ -255,19 +251,13 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading cyclic heap objects in binary", "
         savedObject1->next = savedObject2;
         savedObject2->next = savedObject1;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedObject1);
-        }
+        Inscription::Binary::ToFile(savedObject1, "Test.dat", typeRegistrationContext);
 
         WHEN("loading cyclic object")
         {
             NestedHeapObject* loadedObject1 = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedObject1);
-            }
+            Inscription::Binary::FromFile(loadedObject1, "Test.dat", typeRegistrationContext);
 
             THEN("loaded cyclic object is valid")
             {
@@ -296,19 +286,13 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading non-public constructor object poi
     {
         auto saved = ProtectedConstructor::Construct(dataGeneration.Random<int>());
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading protected constructor object")
         {
             ProtectedConstructor* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("loaded protected constructor object is valid")
             {
@@ -325,19 +309,13 @@ SCENARIO_METHOD(BinaryPointerFixture, "loading non-public constructor object poi
     {
         auto saved = PrivateConstructor::Construct(dataGeneration.Random<int>());
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading private constructor object")
         {
             PrivateConstructor* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             THEN("loaded private constructor object is valid")
             {

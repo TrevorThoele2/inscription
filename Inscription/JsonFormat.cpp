@@ -1,10 +1,10 @@
-#include "JsonArchive.h"
+#include "JsonFormat.h"
 #include <utility>
 
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
-namespace Inscription::Archive
+namespace Inscription::Format
 {
     Json::~Json() = default;
 
@@ -51,14 +51,14 @@ namespace Inscription::Archive
     }
 
     Json::Json(Json&& arg) noexcept :
-        Archive(std::move(arg)),
+        Format(std::move(arg)),
         types(std::move(arg.types), *this),
         direction(arg.direction)
     {}
 
     Json& Json::operator=(Json&& arg) noexcept
     {
-        Archive::operator=(std::move(arg));
+        Format::operator=(std::move(arg));
         types = std::move(arg.types);
         return *this;
     }

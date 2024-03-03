@@ -5,11 +5,13 @@
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class BinaryPolymorphicManualRegistrationFixture : public BinaryFixture
+class BinaryPolymorphicManualRegistrationFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryPolymorphicManualRegistrationFixture()
     {
         typeRegistrationContext.RegisterType<Base>();
@@ -20,28 +22,6 @@ public:
     T CreateRegistered() const
     {
         static_assert(false, "A generic registered type cannot be created. Use one of the explicit overloads.");
-    }
-
-    template<>
-    [[nodiscard]] OutputArchive CreateRegistered() const
-    {
-        OutputArchive created("Test.dat");
-
-        created.types.RegisterType<Base>();
-        created.types.RegisterType<Derived>();
-
-        return created;
-    }
-
-    template<>
-    [[nodiscard]] InputArchive CreateRegistered() const
-    {
-        InputArchive created("Test.dat");
-
-        created.types.RegisterType<Base>();
-        created.types.RegisterType<Derived>();
-
-        return created;
     }
 
     class Base
@@ -90,11 +70,11 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicManualRegistrationFixture::Base;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Base, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Base, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicManualRegistrationFixture::Base>;
     };
@@ -105,13 +85,13 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicManualRegistrationFixture::Derived;
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Derived, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Derived, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicManualRegistrationFixture::Derived>;
     };
@@ -127,19 +107,13 @@ SCENARIO_METHOD(
         Base* saved = dataGeneration.Generator<Derived>().RandomHeap();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loading manually registered polymorphic object")
         {
             Base* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
 
@@ -158,19 +132,19 @@ SCENARIO_METHOD(
 
 namespace Inscription
 {
-    void Scribe<BinaryPolymorphicManualRegistrationFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicManualRegistrationFixture::Base>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        archive(object.baseValue);
+        format(object.baseValue);
     }
 
-    Type Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::OutputType(const Format::Binary& format)
     {
         return "CustomConstructionDerived";
     }
 
-    void Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
-        archive(object.derivedValue);
+        BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, format);
+        format(object.derivedValue);
     }
 }

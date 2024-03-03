@@ -2,10 +2,10 @@
 
 #include "ObjectTrackingContext.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 #include <Chroma/StringUtility.h>
 
@@ -20,9 +20,9 @@ namespace Inscription
         static constexpr bool requiresScribe = false;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Binary& archive);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        static void Scriven(ObjectT& object, Format::Binary& format);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Binary& format);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     private:
         static_assert(std::is_enum_v<ObjectT>,
             "The Object given to an EnumScribeCategory is not an enum.");
@@ -30,36 +30,36 @@ namespace Inscription
 
     template<class Object>
     void EnumScribeCategory<Object>::Scriven(
-        ObjectT& object, Archive::Binary& archive)
+        ObjectT& object, Format::Binary& format)
     {
-        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
-        if (archive.IsOutput())
+        auto trackingContext = ObjectTrackingContext::Inactive(format.types);
+        if (format.IsOutput())
         {
             auto castedObject = static_cast<std::underlying_type_t<Object>>(object);
-            archive.AsOutput()->Write(castedObject);
+            format.AsOutput()->Write(castedObject);
         }
         else
         {
             std::underlying_type_t<Object> loaded;
-            archive.AsInput()->Read(loaded);
+            format.AsInput()->Read(loaded);
             object = static_cast<Object>(loaded);
         }
     }
 
     template<class Object>
     void EnumScribeCategory<Object>::Scriven(
-        const std::string& name, ObjectT& object, Archive::Json& archive)
+        const std::string& name, ObjectT& object, Format::Json& format)
     {
-        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
-        if (archive.IsOutput())
+        auto trackingContext = ObjectTrackingContext::Inactive(format.types);
+        if (format.IsOutput())
         {
             auto castedObject = Chroma::ToString(static_cast<std::underlying_type_t<Object>>(object));
-            archive.AsOutput()->WriteValue(name, castedObject);
+            format.AsOutput()->WriteValue(name, castedObject);
         }
         else
         {
             std::string loaded;
-            archive.AsInput()->TakeValue(name, loaded);
+            format.AsInput()->TakeValue(name, loaded);
             object = static_cast<Object>(Chroma::FromString<std::underlying_type_t<Object>>(loaded));
         }
     }

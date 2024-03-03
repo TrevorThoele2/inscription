@@ -34,6 +34,6 @@ namespace Inscription::File
     template<class T>
     void OutputBinary::WriteData(T var)
     {
-        SanitizeStreamFailure([this, &var]() { stream.write(reinterpret_cast<const char*>(&var), sizeof(var)); }, path);
+        SanitizeStreamFailure([this, &var] { stream.write(reinterpret_cast<const char*>(&var), sizeof(var)); }, path);
     }
 }

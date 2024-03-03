@@ -2,38 +2,27 @@
 
 #include <Inscription/OptionalScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class OptionalBinaryTestsFixture : public BinaryFixture
+class OptionalTestsFixture : public GeneralFixture
 {
 public:
     using Integer = std::optional<int>;
 };
 
-class OptionalJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integer = std::optional<int>;
-};
-
-SCENARIO_METHOD(OptionalBinaryTestsFixture, "loading optional after save binary", "[binary][std][optional]")
+SCENARIO_METHOD(OptionalTestsFixture, "loading optional after save binary", "[binary][std][optional]")
 {
     GIVEN("saved occupied optional")
     {
         Integer saved = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading optional")
         {
             Integer loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -51,17 +40,13 @@ SCENARIO_METHOD(OptionalBinaryTestsFixture, "loading optional after save binary"
     {
         Integer saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading optional")
         {
             Integer loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -76,23 +61,19 @@ SCENARIO_METHOD(OptionalBinaryTestsFixture, "loading optional after save binary"
     }
 }
 
-SCENARIO_METHOD(OptionalJsonTestsFixture, "loading optional after save json", "[json][std][optional]")
+SCENARIO_METHOD(OptionalTestsFixture, "loading optional after save json", "[json][std][optional]")
 {
     GIVEN("saved occupied optional")
     {
         Integer saved = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("optional", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading optional")
         {
             Integer loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("optional", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -110,17 +91,13 @@ SCENARIO_METHOD(OptionalJsonTestsFixture, "loading optional after save json", "[
     {
         Integer saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("optional", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading optional")
         {
             Integer loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("optional", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

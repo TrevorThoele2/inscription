@@ -2,26 +2,26 @@
 
 #include "GeneralFixture.h"
 
-#include "Inscription/Archive.h"
+#include <Inscription/Format.h>
 
-class ArchiveTestsFixture : public GeneralFixture
+class UserContextTests : public GeneralFixture
 {
 public:
-    class DerivedArchive final : public Inscription::Archive::Archive
+    class DerivedFormat final : public Inscription::Format::Format
     {
         
     };
 };
 
-SCENARIO_METHOD(ArchiveTestsFixture, "user contexts")
+SCENARIO_METHOD(UserContextTests, "user contexts")
 {
-    GIVEN("archive")
+    GIVEN("format")
     {
-        DerivedArchive archive;
+        DerivedFormat format;
 
         WHEN("retrieving user context")
         {
-            auto retrieved = archive.UserContext<std::string>();
+            auto retrieved = format.UserContext<std::string>();
 
             THEN("is nullptr")
             {
@@ -33,7 +33,7 @@ SCENARIO_METHOD(ArchiveTestsFixture, "user contexts")
         {
             THEN("does not throw exception")
             {
-                REQUIRE_NOTHROW(archive.RemoveUserContext<std::string>());
+                REQUIRE_NOTHROW(format.RemoveUserContext<std::string>());
             }
         }
 
@@ -41,72 +41,72 @@ SCENARIO_METHOD(ArchiveTestsFixture, "user contexts")
         {
             auto string = dataGeneration.Random<std::string>();
 
-            archive.EmplaceUserContext(&string);
+            format.EmplaceUserContext(&string);
 
             THEN("retrieving that user context gives valid pointer")
             {
-                auto retrieved = archive.UserContext<std::string>();
+                auto retrieved = format.UserContext<std::string>();
 
                 REQUIRE(retrieved == &string);
             }
 
             THEN("retrieving other user context gives nullptr")
             {
-                auto retrieved = archive.UserContext<int>();
+                auto retrieved = format.UserContext<int>();
 
                 REQUIRE(retrieved == nullptr);
             }
 
             WHEN("removing user context")
             {
-                archive.RemoveUserContext<std::string>();
+                format.RemoveUserContext<std::string>();
 
-                THEN("retrieving user context in old archive gives nullptr")
+                THEN("retrieving user context in old format gives nullptr")
                 {
-                    auto retrieved = archive.UserContext<std::string>();
+                    auto retrieved = format.UserContext<std::string>();
 
                     REQUIRE(retrieved == nullptr);
                 }
             }
 
-            WHEN("move constructing archive")
+            WHEN("move constructing format")
             {
-                auto newArchive(std::move(archive));
+                auto newFormat(std::move(format));
 
-                WHEN("retrieving from new archive")
+                WHEN("retrieving from new format")
                 {
-                    THEN("retrieving user context in old archive gives valid pointer")
+                    THEN("retrieving user context in old format gives valid pointer")
                     {
-                        auto retrieved = newArchive.UserContext<std::string>();
+                        auto retrieved = newFormat.UserContext<std::string>();
 
                         REQUIRE(retrieved == &string);
                     }
 
                     THEN("retrieving other user context gives nullptr")
                     {
-                        auto retrieved = newArchive.UserContext<int>();
+                        auto retrieved = newFormat.UserContext<int>();
 
                         REQUIRE(retrieved == nullptr);
                     }
                 }
             }
 
-            WHEN("move assigning archive")
+            WHEN("move assigning format")
             {
-                auto newArchive = std::move(archive);
+                auto newFormat = std::move(format);
 
-                WHEN("retrieving from new archive")
+                WHEN("retrieving from new format")
                 {
-                    THEN("retrieving user context in old archive gives valid pointer")
+                    THEN("retrieving user context in old format gives valid pointer")
                     {
-                        auto retrieved = newArchive.UserContext<std::string>();
+                        auto retrieved = newFormat.UserContext<std::string>();
 
                         REQUIRE(retrieved == &string);
                     }
 
                     THEN("retrieving other user context gives nullptr")
                     {
-                        auto retrieved = newArchive.UserContext<int>();
+                        auto retrieved = newFormat.UserContext<int>();
 
                         REQUIRE(retrieved == nullptr);
                     }

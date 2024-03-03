@@ -8,11 +8,13 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class BinaryPolymorphicConstructionFixture : public BinaryFixture
+class BinaryPolymorphicConstructionFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryPolymorphicConstructionFixture()
     {
         typeRegistrationContext.RegisterType<Base>();
@@ -51,11 +53,11 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicConstructionFixture::Base;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Base, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Base, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicConstructionFixture::Base>;
     };
@@ -66,15 +68,15 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicConstructionFixture::Derived;
     public:
-        static void Construct(ObjectT* storage, Archive::Binary& archive);
+        static void Construct(ObjectT* storage, Format::Binary& format);
 
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Derived, Archive> final
+    template<class Format>
+    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Derived, Format> final
     {
         using Category = CompositeScribeCategory<BinaryPolymorphicConstructionFixture::Derived>;
     };
@@ -90,19 +92,13 @@ SCENARIO_METHOD(
         Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat", typeRegistrationContext);
 
         WHEN("loaded construction-overidden pointer through base pointer")
         {
             Base* loaded = nullptr;
 
-            {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loaded);
-            }
+            Inscription::Binary::FromFile(loaded, "Test.dat", typeRegistrationContext);
 
             Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
 
@@ -127,9 +123,12 @@ SCENARIO_METHOD(
         Derived* savedUnownedCasted = savedOwnedCasted;
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedUnowned);
-            outputArchive(savedOwned);
+            auto file = Inscription::File::OutputBinary("Test.dat");
+            auto archive = Inscription::Archive::OutputBinary(file);
+            auto format = Inscription::Format::OutputBinary(archive, typeRegistrationContext);
+
+            format(savedUnowned);
+            format(savedOwned);
         }
 
         WHEN("multiple polymorphic pointers loaded")
@@ -138,9 +137,12 @@ SCENARIO_METHOD(
             Base* loadedUnowned = nullptr;
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedUnowned);
-                inputArchive(loadedOwned);
+                auto file = Inscription::File::InputBinary("Test.dat");
+                auto archive = Inscription::Archive::InputBinary(file);
+                auto format = Inscription::Format::InputBinary(archive, typeRegistrationContext);
+
+                format(loadedUnowned);
+                format(loadedOwned);
             }
 
             Derived* loadedOwnedCasted = dynamic_cast<Derived*>(loadedOwned);
@@ -163,30 +165,30 @@ SCENARIO_METHOD(
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicConstructionFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Base>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        archive(object.baseValue);
+        format(object.baseValue);
     }
 
-    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Construct(ObjectT* storage, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Construct(ObjectT* storage, Format::Binary& format)
     {
         int baseValue;
-        archive(baseValue);
+        format(baseValue);
 
         std::string derivedValue;
-        archive(derivedValue);
+        format(derivedValue);
 
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    Type Scribe<BinaryPolymorphicConstructionFixture::Derived>::OutputType(const Archive::Binary& archive)
+    Type Scribe<BinaryPolymorphicConstructionFixture::Derived>::OutputType(const Format::Binary& format)
     {
         return "BinaryPolymorphicConstructionDerived";
     }
 
-    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
-        archive(object.derivedValue);
+        BaseScriven<BinaryPolymorphicConstructionFixture::Base>(object, format);
+        format(object.derivedValue);
     }
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "BinaryArchive.h"
-#include "JsonArchive.h"
-#include "TextArchive.h"
+#include "BinaryFormat.h"
+#include "JsonFormat.h"
+#include "PlaintextFormat.h"
 
 namespace Inscription
 {
@@ -15,44 +15,44 @@ namespace Inscription
         static constexpr bool requiresScribe = true;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe);
-        static void Scriven(ObjectT& object, Archive::Text& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Format::Binary& format, ScribeT& scribe);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Format::Plaintext& format, ScribeT& scribe);
     };
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Format::Binary& format, ScribeT& scribe)
     {
         {
-            auto trackingID = archive.types.AttemptTrackObject(&object);
+            auto trackingID = format.types.AttemptTrackObject(&object);
             if (trackingID.has_value())
-                archive.types.TrackSavedConstruction(*trackingID);
+                format.types.TrackSavedConstruction(*trackingID);
         }
 
         {
-            auto trackingContext = ObjectTrackingContext::Active(archive.types);
-            scribe.Scriven(object, archive);
+            auto trackingContext = ObjectTrackingContext::Active(format.types);
+            scribe.Scriven(object, format);
         }
     }
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe)
     {
         {
-            auto trackingID = archive.types.AttemptTrackObject(&object);
+            auto trackingID = format.types.AttemptTrackObject(&object);
             if (trackingID.has_value())
-                archive.types.TrackSavedConstruction(*trackingID);
+                format.types.TrackSavedConstruction(*trackingID);
         }
 
         {
-            auto trackingContext = ObjectTrackingContext::Active(archive.types);
-            scribe.Scriven(name, object, archive);
+            auto trackingContext = ObjectTrackingContext::Active(format.types);
+            scribe.Scriven(name, object, format);
         }
     }
 
     template <class Object>
-    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Archive::Text& archive, ScribeT& scribe)
+    void TrackingScribeCategory<Object>::Scriven(ObjectT& object, Format::Plaintext& format, ScribeT& scribe)
     {
-        scribe.Scriven(object, archive);
+        scribe.Scriven(object, format);
     }
 }

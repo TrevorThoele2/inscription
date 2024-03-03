@@ -3,19 +3,11 @@
 #include <Inscription/UnorderedMultisetScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class UnorderedMultiSetBinaryTestsFixture : public BinaryFixture
-{
-public:
-    using Integers = std::unordered_multiset<int>;
-    using Classes = std::unordered_multiset<TestClass>;
-};
-
-class UnorderedMultiSetJsonTestsFixture : public JsonFixture
+class UnorderedMultiSetTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::unordered_multiset<int>;
@@ -23,24 +15,20 @@ public:
 };
 
 SCENARIO_METHOD(
-    UnorderedMultiSetBinaryTestsFixture,
+    UnorderedMultiSetTestsFixture,
     "loading unordered_multiset after saving binary", "[binary][container][unordered_multiset]"
 ) {
     GIVEN("saved empty unordered_multiset")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +46,13 @@ SCENARIO_METHOD(
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -86,17 +70,14 @@ SCENARIO_METHOD(
 
         for (auto& loop : startingGroup)
             saved.emplace(loop);
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -114,8 +95,7 @@ SCENARIO_METHOD(
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -131,17 +111,13 @@ SCENARIO_METHOD(
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -153,24 +129,20 @@ SCENARIO_METHOD(
 }
 
 SCENARIO_METHOD(
-    UnorderedMultiSetJsonTestsFixture,
+    UnorderedMultiSetTestsFixture,
     "loading unordered_multiset after saving json", "[json][container][unordered_multiset]"
 ) {
     GIVEN("saved empty unordered_multiset")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -188,17 +160,13 @@ SCENARIO_METHOD(
         for (auto& loop : startingGroup)
             saved.emplace(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -216,17 +184,14 @@ SCENARIO_METHOD(
 
         for (auto& loop : startingGroup)
             saved.emplace(loop);
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multiset", saved);
-        }
+
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -244,8 +209,7 @@ SCENARIO_METHOD(
             for (auto& loop : occupiedGroup)
                 loaded.emplace(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -261,17 +225,13 @@ SCENARIO_METHOD(
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("unordered_multiset", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("unordered_multiset", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

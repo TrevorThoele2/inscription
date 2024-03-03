@@ -232,15 +232,6 @@
     <ClInclude Include="VariantScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="JsonArchive.h">
-      <Filter>Header Files\Archive\Json</Filter>
-    </ClInclude>
-    <ClInclude Include="InputJsonArchive.h">
-      <Filter>Header Files\Archive\Json</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputJsonArchive.h">
-      <Filter>Header Files\Archive\Json</Filter>
-    </ClInclude>
     <ClInclude Include="TypeManager.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -301,8 +292,50 @@
     <ClInclude Include="SanitizeStreamFailure.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
+    <ClInclude Include="InputJsonFormat.h">
+      <Filter>Header Files\Format\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputJsonFormat.h">
+      <Filter>Header Files\Format\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonFormat.h">
+      <Filter>Header Files\Format\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="Format.h">
+      <Filter>Header Files\Format</Filter>
+    </ClInclude>
+    <ClInclude Include="InputBinaryFormat.h">
+      <Filter>Header Files\Format\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryFormat.h">
+      <Filter>Header Files\Format\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputBinaryFormat.h">
+      <Filter>Header Files\Format\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="InputPlaintextFormat.h">
+      <Filter>Header Files\Format\Plaintext</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaintextFormat.h">
+      <Filter>Header Files\Format\Plaintext</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPlaintextFormat.h">
+      <Filter>Header Files\Format\Plaintext</Filter>
+    </ClInclude>
     <ClInclude Include="JsonParseError.h">
+      <Filter>Header Files\Format\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="Json.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Binary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plaintext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EscapeJson.h">
+      <Filter>Header Files\Format\Json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -417,12 +450,6 @@
     <Filter Include="Source Files\Scribe\Types\Std">
       <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Archive\Json">
-      <UniqueIdentifier>{db441b5d-57f2-44d1-b660-9f3a842eb6dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Archive\Json">
-      <UniqueIdentifier>{aaf80b7f-1b58-4adc-be88-7e0affe82db5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Type">
       <UniqueIdentifier>{fd2aefa9-04db-408b-aa54-428df515884b}</UniqueIdentifier>
     </Filter>
@@ -443,6 +470,30 @@
     </Filter>
     <Filter Include="Header Files\Scribe\Table\Entry">
       <UniqueIdentifier>{1e4ca7dd-787d-4c6b-a2c2-3d2e7e3a0b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Format">
+      <UniqueIdentifier>{899faf2c-16f1-45d2-adc4-bd022a682e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Format\Json">
+      <UniqueIdentifier>{35160c4e-6d00-422a-abb0-33778c51e136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Format">
+      <UniqueIdentifier>{ccfaff6b-aa29-404a-838a-111da02c416d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Format\Binary">
+      <UniqueIdentifier>{8f6cdafb-f21b-4d9d-96b4-db7e1142b684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Format\Json">
+      <UniqueIdentifier>{36d8d7e8-e7bf-40bd-af58-43dac2484ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Format\Binary">
+      <UniqueIdentifier>{e77d532a-a770-4e42-9fa3-d82643fa593d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Format\Plaintext">
+      <UniqueIdentifier>{612a1f6a-c861-4d90-b81c-ebc6932a269c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Format\Plaintext">
+      <UniqueIdentifier>{50c5a4c8-e1a8-4f44-8d5a-5f65ee9e1007}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -509,15 +560,6 @@
     <ClCompile Include="FilePathScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
-    <ClCompile Include="JsonArchive.cpp">
-      <Filter>Source Files\Archive\Json</Filter>
-    </ClCompile>
-    <ClCompile Include="InputJsonArchive.cpp">
-      <Filter>Source Files\Archive\Json</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputJsonArchive.cpp">
-      <Filter>Source Files\Archive\Json</Filter>
-    </ClCompile>
     <ClCompile Include="TypeManager.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
@@ -526,9 +568,6 @@
     </ClCompile>
     <ClCompile Include="InputTypesAlreadyRegistered.cpp">
       <Filter>Source Files\Polymorphic</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonParseError.cpp">
-      <Filter>Source Files\Archive\Json</Filter>
     </ClCompile>
     <ClCompile Include="BufferScribe.cpp">
       <Filter>Source Files\Scribe</Filter>
@@ -547,6 +586,42 @@
     </ClCompile>
     <ClCompile Include="FileEncounteredError.cpp">
       <Filter>Source Files\File</Filter>
+    </ClCompile>
+    <ClCompile Include="InputJsonFormat.cpp">
+      <Filter>Source Files\Format\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonFormat.cpp">
+      <Filter>Source Files\Format\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputJsonFormat.cpp">
+      <Filter>Source Files\Format\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="Format.cpp">
+      <Filter>Source Files\Format</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputBinaryFormat.cpp">
+      <Filter>Source Files\Format\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryFormat.cpp">
+      <Filter>Source Files\Format\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="InputBinaryFormat.cpp">
+      <Filter>Source Files\Format\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="InputPlaintextFormat.cpp">
+      <Filter>Source Files\Format\Plaintext</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaintextFormat.cpp">
+      <Filter>Source Files\Format\Plaintext</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPlaintextFormat.cpp">
+      <Filter>Source Files\Format\Plaintext</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonParseError.cpp">
+      <Filter>Source Files\Format\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="EscapeJson.cpp">
+      <Filter>Source Files\Format\Json</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

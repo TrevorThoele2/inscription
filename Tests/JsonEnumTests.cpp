@@ -2,9 +2,9 @@
 
 #include <Inscription/EnumScribeCategory.h>
 
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class JsonEnumFixture : public JsonFixture
+class JsonEnumFixture : public GeneralFixture
 {
 public:
     enum Enum
@@ -17,8 +17,8 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<JsonEnumFixture::Enum, Archive> final
+    template<class Format>
+    struct ScribeTraits<JsonEnumFixture::Enum, Format> final
     {
         using Category = EnumScribeCategory<JsonEnumFixture::Enum>;
     };
@@ -30,17 +30,13 @@ SCENARIO_METHOD(JsonEnumFixture, "loading enum after saving json", "[json][enum]
     {
         auto saved = Two;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("enum", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading enum")
         {
             Enum loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("enum", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("enum is same as saved")
             {

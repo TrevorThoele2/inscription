@@ -6,7 +6,7 @@
 
 namespace Inscription
 {
-    template<class Archive>
+    template<class Format>
     class TypeRegistrationContext
     {
     public:
@@ -23,7 +23,7 @@ namespace Inscription
         template<class T>
         [[nodiscard]] bool HasStored() const;
 
-        void PushAll(Archive& archive);
+        void PushAll(Format& format);
     private:
         class EntryBase
         {
@@ -33,7 +33,7 @@ namespace Inscription
             virtual EntryBase* Clone() const = 0;
 
             [[nodiscard]] virtual std::type_index Type() const = 0;
-            virtual void PushTo(Archive& archive) const = 0;
+            virtual void PushTo(Format& format) const = 0;
         };
 
         template<class T>
@@ -45,7 +45,7 @@ namespace Inscription
             Entry* Clone() const override;
 
             [[nodiscard]] std::type_index Type() const override;
-            void PushTo(Archive& archive) const override;
+            void PushTo(Format& format) const override;
         };
 
         using EntryBasePtr = std::unique_ptr<EntryBase>;
@@ -55,45 +55,45 @@ namespace Inscription
         static void CopyEntryList(const EntryList& from, EntryList& to);
     };
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>::TypeRegistrationContext()
+    template<class Format>
+    TypeRegistrationContext<Format>::TypeRegistrationContext()
     {}
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>::TypeRegistrationContext(const TypeRegistrationContext& arg)
+    template<class Format>
+    TypeRegistrationContext<Format>::TypeRegistrationContext(const TypeRegistrationContext& arg)
     {
         CopyEntryList(arg.entryList, entryList);
     }
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>::TypeRegistrationContext(TypeRegistrationContext&& arg) noexcept :
+    template<class Format>
+    TypeRegistrationContext<Format>::TypeRegistrationContext(TypeRegistrationContext&& arg) noexcept :
         entryList(std::move(arg.entryList))
     {}
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>& TypeRegistrationContext<Archive>::operator=(const TypeRegistrationContext& arg)
+    template<class Format>
+    TypeRegistrationContext<Format>& TypeRegistrationContext<Format>::operator=(const TypeRegistrationContext& arg)
     {
         CopyEntryList(arg.entryList, entryList);
         return *this;
     }
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>& TypeRegistrationContext<Archive>::operator=(TypeRegistrationContext&& arg) noexcept
+    template<class Format>
+    TypeRegistrationContext<Format>& TypeRegistrationContext<Format>::operator=(TypeRegistrationContext&& arg) noexcept
     {
         entryList = std::move(arg.entryList);
         return *this;
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void TypeRegistrationContext<Archive>::RegisterType()
+    void TypeRegistrationContext<Format>::RegisterType()
     {
         entryList.push_back(EntryBasePtr(new Entry<T>()));
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    bool TypeRegistrationContext<Archive>::HasStored() const
+    bool TypeRegistrationContext<Format>::HasStored() const
     {
         auto checkType = std::type_index(typeid(T));
         for (auto& loop : entryList)
@@ -103,40 +103,40 @@ namespace Inscription
         return false;
     }
 
-    template<class Archive>
-    void TypeRegistrationContext<Archive>::PushAll(Archive& archive)
+    template<class Format>
+    void TypeRegistrationContext<Format>::PushAll(Format& format)
     {
         for (auto& loop : entryList)
-            loop->PushTo(archive);
+            loop->PushTo(format);
     }
 
-    template<class Archive>
-    TypeRegistrationContext<Archive>::EntryBase::~EntryBase()
+    template<class Format>
+    TypeRegistrationContext<Format>::EntryBase::~EntryBase()
     {}
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    typename TypeRegistrationContext<Archive>::template Entry<T>* TypeRegistrationContext<Archive>::Entry<T>::Clone() const
+    typename TypeRegistrationContext<Format>::template Entry<T>* TypeRegistrationContext<Format>::Entry<T>::Clone() const
     {
         return new Entry<T>();
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    std::type_index TypeRegistrationContext<Archive>::Entry<T>::Type() const
+    std::type_index TypeRegistrationContext<Format>::Entry<T>::Type() const
     {
         return std::type_index(typeid(T));
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void TypeRegistrationContext<Archive>::Entry<T>::PushTo(Archive& archive) const
+    void TypeRegistrationContext<Format>::Entry<T>::PushTo(Format& format) const
     {
-        archive.types.template RegisterType<T>();
+        format.types.template RegisterType<T>();
     }
 
-    template<class Archive>
-    void TypeRegistrationContext<Archive>::CopyEntryList(const EntryList& from, EntryList& to)
+    template<class Format>
+    void TypeRegistrationContext<Format>::CopyEntryList(const EntryList& from, EntryList& to)
     {
         to.clear();
         for (auto& loop : from)

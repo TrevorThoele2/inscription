@@ -7,13 +7,13 @@
 
 namespace Inscription
 {
-    template<class Table, class Object, class Archive>
+    template<class Table, class Object, class Format>
     class AutoTableDataLink
     {
     public:
         using TableT = Table;
         using ObjectT = Object;
-        using ArchiveT = Archive;
+        using FormatT = Format;
 
         using DataT = typename TableT::DataT;
     public:
@@ -22,7 +22,7 @@ namespace Inscription
         template<class BaseT>
         static AutoTableDataLink Base(TypeIdentity<BaseT>);
         template<class BaseT>
-        static AutoTableDataLink Base(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
+        static AutoTableDataLink Base(BaseTableDataLink<BaseT, ObjectT, FormatT>& link);
 
         AutoTableDataLink(const AutoTableDataLink& arg);
         AutoTableDataLink(AutoTableDataLink&& arg) noexcept;
@@ -30,18 +30,18 @@ namespace Inscription
         AutoTableDataLink& operator=(const AutoTableDataLink& arg);
         AutoTableDataLink& operator=(AutoTableDataLink&& arg) noexcept;
 
-        void Scriven(TableT& table, ArchiveT& archive);
-        void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive);
+        void Scriven(TableT& table, FormatT& format);
+        void ObjectScriven(TableT& table, ObjectT& object, FormatT& format);
 
-        void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive);
-        void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive);
+        void PullFromObject(TableT& table, ObjectT& object, FormatT& format);
+        void PushToObject(TableT& table, ObjectT& object, FormatT& format);
     private:
         template<class ObjectMemberT, class DataMemberT>
         AutoTableDataLink(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
         template<class BaseT>
         explicit AutoTableDataLink(TypeIdentity<BaseT> type);
         template<class BaseT>
-        explicit AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link);
+        explicit AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, FormatT>& link);
     private:
         class Implementation
         {
@@ -50,11 +50,11 @@ namespace Inscription
 
             [[nodiscard]] virtual Implementation* Clone() const = 0;
 
-            virtual void Scriven(TableT& table, ArchiveT& archive) = 0;
-            virtual void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
+            virtual void Scriven(TableT& table, FormatT& format) = 0;
+            virtual void ObjectScriven(TableT& table, ObjectT& object, FormatT& format) = 0;
 
-            virtual void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
-            virtual void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) = 0;
+            virtual void PullFromObject(TableT& table, ObjectT& object, FormatT& format) = 0;
+            virtual void PushToObject(TableT& table, ObjectT& object, FormatT& format) = 0;
         };
 
         template<class ObjectMemberT, class DataMemberT>
@@ -70,11 +70,11 @@ namespace Inscription
 
             AutoImplementation* Clone() const override;
 
-            void Scriven(TableT& table, ArchiveT& archive) override;
-            void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void Scriven(TableT& table, FormatT& format) override;
+            void ObjectScriven(TableT& table, ObjectT& object, FormatT& format) override;
 
-            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
-            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PullFromObject(TableT& table, ObjectT& object, FormatT& format) override;
+            void PushToObject(TableT& table, ObjectT& object, FormatT& format) override;
         };
 
         template<class T>
@@ -90,36 +90,36 @@ namespace Inscription
 
             AutoSameTypeImplementation* Clone() const override;
 
-            void Scriven(TableT& table, ArchiveT& archive) override;
-            void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void Scriven(TableT& table, FormatT& format) override;
+            void ObjectScriven(TableT& table, ObjectT& object, FormatT& format) override;
 
-            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
-            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PullFromObject(TableT& table, ObjectT& object, FormatT& format) override;
+            void PushToObject(TableT& table, ObjectT& object, FormatT& format) override;
         };
 
         template<class BaseT>
         class BaseImplementation : public Implementation
         {
         public:
-            using BaseLink = BaseTableDataLink<BaseT, ObjectT, ArchiveT>;
+            using BaseLink = BaseTableDataLink<BaseT, ObjectT, FormatT>;
             BaseLink baseLink;
         public:
             ~BaseImplementation() = default;
 
             BaseImplementation* Clone() const override;
 
-            void Scriven(TableT& table, ArchiveT& archive) override;
-            void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void Scriven(TableT& table, FormatT& format) override;
+            void ObjectScriven(TableT& table, ObjectT& object, FormatT& format) override;
 
-            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
-            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PullFromObject(TableT& table, ObjectT& object, FormatT& format) override;
+            void PushToObject(TableT& table, ObjectT& object, FormatT& format) override;
         };
 
         template<class BaseT>
         class BaseReferenceImplementation : public Implementation
         {
         public:
-            using BaseLink = BaseTableDataLink<BaseT, ObjectT, ArchiveT>;
+            using BaseLink = BaseTableDataLink<BaseT, ObjectT, FormatT>;
             BaseLink* baseLink;
         public:
             explicit BaseReferenceImplementation(BaseLink& baseLink);
@@ -128,11 +128,11 @@ namespace Inscription
 
             BaseReferenceImplementation* Clone() const override;
 
-            void Scriven(TableT& table, ArchiveT& archive) override;
-            void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void Scriven(TableT& table, FormatT& format) override;
+            void ObjectScriven(TableT& table, ObjectT& object, FormatT& format) override;
 
-            void PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
-            void PushToObject(TableT& table, ObjectT& object, ArchiveT& archive) override;
+            void PullFromObject(TableT& table, ObjectT& object, FormatT& format) override;
+            void PushToObject(TableT& table, ObjectT& object, FormatT& format) override;
         };
 
         using ImplementationPtr = std::unique_ptr<Implementation>;
@@ -151,282 +151,282 @@ namespace Inscription
         }
     };
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    AutoTableDataLink<Data, Object, Archive> AutoTableDataLink<Data, Object, Archive>::Auto(
+    AutoTableDataLink<Data, Object, Format> AutoTableDataLink<Data, Object, Format>::Auto(
         ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember)
     {
         return AutoTableDataLink(objectMember, dataMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive> AutoTableDataLink<Data, Object, Archive>::Base(
+    AutoTableDataLink<Data, Object, Format> AutoTableDataLink<Data, Object, Format>::Base(
         TypeIdentity<BaseT> type)
     {
         return AutoTableDataLink(type);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive> AutoTableDataLink<Data, Object, Archive>::Base(
-        BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link)
+    AutoTableDataLink<Data, Object, Format> AutoTableDataLink<Data, Object, Format>::Base(
+        BaseTableDataLink<BaseT, ObjectT, FormatT>& link)
     {
         return AutoTableDataLink(link);
     }
 
-    template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(const AutoTableDataLink& arg) :
+    template<class Data, class Object, class Format>
+    AutoTableDataLink<Data, Object, Format>::AutoTableDataLink(const AutoTableDataLink& arg) :
         implementation(arg.implementation->Clone())
     {}
 
-    template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(AutoTableDataLink&& arg) noexcept :
+    template<class Data, class Object, class Format>
+    AutoTableDataLink<Data, Object, Format>::AutoTableDataLink(AutoTableDataLink&& arg) noexcept :
         implementation(std::move(arg.implementation))
     {}
 
-    template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>& AutoTableDataLink<Data, Object, Archive>::operator=(
+    template<class Data, class Object, class Format>
+    AutoTableDataLink<Data, Object, Format>& AutoTableDataLink<Data, Object, Format>::operator=(
         const AutoTableDataLink& arg)
     {
         implementation.reset(arg.implementation->Clone());
         return *this;
     }
 
-    template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>& AutoTableDataLink<Data, Object, Archive>::operator=(
+    template<class Data, class Object, class Format>
+    AutoTableDataLink<Data, Object, Format>& AutoTableDataLink<Data, Object, Format>::operator=(
         AutoTableDataLink&& arg) noexcept
     {
         implementation = std::move(arg.implementation);
         return *this;
     }
 
-    template<class Data, class Object, class Archive>
-    void AutoTableDataLink<Data, Object, Archive>::Scriven(TableT& table, ArchiveT& archive)
+    template<class Data, class Object, class Format>
+    void AutoTableDataLink<Data, Object, Format>::Scriven(TableT& table, FormatT& format)
     {
-        implementation->Scriven(table, archive);
+        implementation->Scriven(table, format);
     }
 
-    template<class Data, class Object, class Archive>
-    void AutoTableDataLink<Data, Object, Archive>::ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive)
+    template<class Data, class Object, class Format>
+    void AutoTableDataLink<Data, Object, Format>::ObjectScriven(TableT& table, ObjectT& object, FormatT& format)
     {
-        implementation->ObjectScriven(table, object, archive);
+        implementation->ObjectScriven(table, object, format);
     }
 
-    template<class Data, class Object, class Archive>
-    void AutoTableDataLink<Data, Object, Archive>::PullFromObject(TableT& table, ObjectT& object, ArchiveT& archive)
+    template<class Data, class Object, class Format>
+    void AutoTableDataLink<Data, Object, Format>::PullFromObject(TableT& table, ObjectT& object, FormatT& format)
     {
-        implementation->PullFromObject(table, object, archive);
+        implementation->PullFromObject(table, object, format);
     }
 
-    template<class Data, class Object, class Archive>
-    void AutoTableDataLink<Data, Object, Archive>::PushToObject(TableT& table, ObjectT& object, ArchiveT& archive)
+    template<class Data, class Object, class Format>
+    void AutoTableDataLink<Data, Object, Format>::PushToObject(TableT& table, ObjectT& object, FormatT& format)
     {
-        implementation->PushToObject(table, object, archive);
+        implementation->PushToObject(table, object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember) :
+    AutoTableDataLink<Data, Object, Format>::AutoTableDataLink(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember) :
         implementation(CreateImplementation(objectMember, dataMember))
     {}
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(TypeIdentity<BaseT> type) :
+    AutoTableDataLink<Data, Object, Format>::AutoTableDataLink(TypeIdentity<BaseT> type) :
         implementation(new BaseImplementation<BaseT>())
     {}
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive>::AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, ArchiveT>& link) :
+    AutoTableDataLink<Data, Object, Format>::AutoTableDataLink(BaseTableDataLink<BaseT, ObjectT, FormatT>& link) :
         implementation(new BaseReferenceImplementation<BaseT>(link))
     {}
 
-    template<class Data, class Object, class Archive>
-    AutoTableDataLink<Data, Object, Archive>::Implementation::~Implementation() = default;
+    template<class Data, class Object, class Format>
+    AutoTableDataLink<Data, Object, Format>::Implementation::~Implementation() = default;
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::AutoImplementation(
+    AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::AutoImplementation(
         ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember) :
 
         objectMember(objectMember), dataMember(dataMember)
     {}
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    auto AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Clone() const
+    auto AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::Clone() const
         -> AutoImplementation<ObjectMemberT, DataMemberT>*
     {
         return new AutoImplementation(*this);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Scriven(
-        TableT& table, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::Scriven(
+        TableT& table, FormatT& format)
     {
-        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
-        archive(table.data.*dataMember);
+        auto trackingContext = ObjectTrackingContext::Inactive(format.types);
+        format(table.data.*dataMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::ObjectScriven(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::ObjectScriven(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        archive.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
+        format.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PullFromObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::PullFromObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
         RemoveConst(table.data.*dataMember) = RemoveConst(object.*objectMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class ObjectMemberT, class DataMemberT>
-    void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PushToObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoImplementation<ObjectMemberT, DataMemberT>::PushToObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
         RemoveConst(object.*objectMember) = std::move(table.data.*dataMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::AutoSameTypeImplementation(
+    AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::AutoSameTypeImplementation(
         T ObjectT::*objectMember, T DataT::*dataMember)
         :
         objectMember(objectMember), dataMember(dataMember)
     {}
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    auto AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::Clone() const
+    auto AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::Clone() const
         -> AutoSameTypeImplementation<T>*
     {
         return new AutoSameTypeImplementation(*this);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::Scriven(
-        TableT& table, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::Scriven(
+        TableT& table, FormatT& format)
     {
-        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
-        archive(table.data.*dataMember);
+        auto trackingContext = ObjectTrackingContext::Inactive(format.types);
+        format(table.data.*dataMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::ObjectScriven(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::ObjectScriven(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        archive.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
+        format.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::PullFromObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::PullFromObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
         RemoveConst(table.data.*dataMember) = object.*objectMember;
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::PushToObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::AutoSameTypeImplementation<T>::PushToObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
         RemoveConst(object.*objectMember) = std::move(table.data.*dataMember);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class T>
-    auto AutoTableDataLink<Data, Object, Archive>::BaseImplementation<T>::Clone() const
+    auto AutoTableDataLink<Data, Object, Format>::BaseImplementation<T>::Clone() const
         -> BaseImplementation<T>*
     {
         return new BaseImplementation(*this);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseImplementation<BaseT>::Scriven(
-        TableT& table, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseImplementation<BaseT>::Scriven(
+        TableT& table, FormatT& format)
     {
-        baseLink.Scriven(archive);
+        baseLink.Scriven(format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseImplementation<BaseT>::ObjectScriven(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseImplementation<BaseT>::ObjectScriven(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink.ObjectScriven(object, archive);
+        baseLink.ObjectScriven(object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseImplementation<BaseT>::PullFromObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseImplementation<BaseT>::PullFromObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink.PullFromObject(object, archive);
+        baseLink.PullFromObject(object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseImplementation<BaseT>::PushToObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseImplementation<BaseT>::PushToObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink.PushToObject(object, archive);
+        baseLink.PushToObject(object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::BaseReferenceImplementation(
+    AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::BaseReferenceImplementation(
         BaseLink& baseLink) : baseLink(&baseLink)
     {}
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    auto AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::Clone() const
+    auto AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::Clone() const
         -> BaseReferenceImplementation<BaseT>*
     {
         return new BaseReferenceImplementation(*this);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::Scriven(
-        TableT& table, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::Scriven(
+        TableT& table, FormatT& format)
     {
-        baseLink->Scriven(archive);
+        baseLink->Scriven(format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::ObjectScriven(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::ObjectScriven(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink->ObjectScriven(object, archive);
+        baseLink->ObjectScriven(object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::PullFromObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::PullFromObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink->PullFromObject(object, archive);
+        baseLink->PullFromObject(object, format);
     }
 
-    template<class Data, class Object, class Archive>
+    template<class Data, class Object, class Format>
     template<class BaseT>
-    void AutoTableDataLink<Data, Object, Archive>::BaseReferenceImplementation<BaseT>::PushToObject(
-        TableT& table, ObjectT& object, ArchiveT& archive)
+    void AutoTableDataLink<Data, Object, Format>::BaseReferenceImplementation<BaseT>::PushToObject(
+        TableT& table, ObjectT& object, FormatT& format)
     {
-        baseLink->PushToObject(object, archive);
+        baseLink->PushToObject(object, format);
     }
 }

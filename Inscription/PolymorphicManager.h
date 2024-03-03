@@ -18,25 +18,25 @@
 
 namespace Inscription
 {
-    template<class Archive>
+    template<class Format>
     class PolymorphicManager
     {
     public:
-        using ArchiveT = Archive;
+        using FormatT = Format;
     public:
-        void Scriven(void* object, const std::type_index& typeIndex, ArchiveT& archive);
+        void Scriven(void* object, const std::type_index& typeIndex, FormatT& format);
         template<class T>
-        void Save(const T* object, ArchiveT& archive);
-        void Save(void* object, const std::type_index& typeIndex, ArchiveT& archive);
-        void Load(void* object, const std::type_index& typeIndex, ArchiveT& archive);
-        void Construct(void*& storage, const std::type_index& typeIndex, ArchiveT& archive);
+        void Save(const T* object, FormatT& format);
+        void Save(void* object, const std::type_index& typeIndex, FormatT& format);
+        void Load(void* object, const std::type_index& typeIndex, FormatT& format);
+        void Construct(void*& storage, const std::type_index& typeIndex, FormatT& format);
         void* CreateStorage(const std::type_index& typeIndex);
 
         Type OutputTypeFor(const std::type_index& typeIndex);
         std::type_index TypeIndexFor(const Type& type);
 
         template<class T>
-        void Register(ArchiveT& archive);
+        void Register(FormatT& format);
     private:
         class Entry
         {
@@ -47,9 +47,9 @@ namespace Inscription
         public:
             virtual ~Entry() = 0;
 
-            virtual void Save(const void* object, ArchiveT& archive) = 0;
-            virtual void Load(void* object, ArchiveT& archive) = 0;
-            virtual void Construct(void*& storage, ArchiveT& archive) = 0;
+            virtual void Save(const void* object, FormatT& format) = 0;
+            virtual void Load(void* object, FormatT& format) = 0;
+            virtual void Construct(void*& storage, FormatT& format) = 0;
             [[nodiscard]] virtual void* CreateStorage() const = 0;
         protected:
             Entry
@@ -66,9 +66,9 @@ namespace Inscription
         public:
             EntryDerived(Type outputType, std::vector<Type> inputTypes);
 
-            void Save(const void* object, ArchiveT& archive) override;
-            void Load(void* object, ArchiveT& archive) override;
-            void Construct(void*& storage, ArchiveT& archive) override;
+            void Save(const void* object, FormatT& format) override;
+            void Load(void* object, FormatT& format) override;
+            void Construct(void*& storage, FormatT& format) override;
             [[nodiscard]] void* CreateStorage() const override;
         private:
             using DerivedT = remove_const_t<T>;
@@ -88,76 +88,76 @@ namespace Inscription
         EntryIterator FindRequiredEntry(const std::type_index& typeIndex);
     private:
         template<class T>
-        TrackingID RequiredTypeTrackingIDFor(const T* object, ArchiveT& archive);
+        TrackingID RequiredTypeTrackingIDFor(const T* object, FormatT& format);
     };
 
-    template<class Archive>
-    void PolymorphicManager<Archive>::Scriven(void* object, const std::type_index& typeIndex, ArchiveT& archive)
+    template<class Format>
+    void PolymorphicManager<Format>::Scriven(void* object, const std::type_index& typeIndex, FormatT& format)
     {
-        if (archive.IsOutput())
-            Save(object, typeIndex, archive);
+        if (format.IsOutput())
+            Save(object, typeIndex, format);
         else
-            Load(object, typeIndex, archive);
+            Load(object, typeIndex, format);
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void PolymorphicManager<Archive>::Save(const T* object, ArchiveT& archive)
+    void PolymorphicManager<Format>::Save(const T* object, FormatT& format)
     {
-        auto typeID = RequiredTypeTrackingIDFor(object, archive);
+        auto typeID = RequiredTypeTrackingIDFor(object, format);
         auto found = FindRequiredEntry(typeid(*RemoveConst(object)));
-        (*found)->Save(object, archive);
+        (*found)->Save(object, format);
     }
 
-    template<class Archive>
-    void PolymorphicManager<Archive>::Save(void* object, const std::type_index& typeIndex, ArchiveT& archive)
+    template<class Format>
+    void PolymorphicManager<Format>::Save(void* object, const std::type_index& typeIndex, FormatT& format)
     {
         auto found = FindRequiredEntry(typeIndex);
-        (*found)->Save(object, archive);
+        (*found)->Save(object, format);
     }
 
-    template<class Archive>
-    void PolymorphicManager<Archive>::Load(void* object, const std::type_index& typeIndex, ArchiveT& archive)
+    template<class Format>
+    void PolymorphicManager<Format>::Load(void* object, const std::type_index& typeIndex, FormatT& format)
     {
         auto found = FindRequiredEntry(typeIndex);
-        (*found)->Load(object, archive);
+        (*found)->Load(object, format);
     }
 
-    template<class Archive>
-    void PolymorphicManager<Archive>::Construct(
-        void*& storage, const std::type_index& typeIndex, ArchiveT& archive)
+    template<class Format>
+    void PolymorphicManager<Format>::Construct(
+        void*& storage, const std::type_index& typeIndex, FormatT& format)
     {
         auto found = FindRequiredEntry(typeIndex);
-        (*found)->Construct(storage, archive);
+        (*found)->Construct(storage, format);
     }
 
-    template<class Archive>
-    void* PolymorphicManager<Archive>::CreateStorage(
+    template<class Format>
+    void* PolymorphicManager<Format>::CreateStorage(
         const std::type_index& typeIndex)
     {
         auto found = FindRequiredEntry(typeIndex);
         return (*found)->CreateStorage();
     }
 
-    template<class Archive>
-    Type PolymorphicManager<Archive>::OutputTypeFor(const std::type_index& typeIndex)
+    template<class Format>
+    Type PolymorphicManager<Format>::OutputTypeFor(const std::type_index& typeIndex)
     {
         auto found = FindRequiredEntry(typeIndex);
         return (*found)->outputType;
     }
 
-    template<class Archive>
-    auto PolymorphicManager<Archive>::TypeIndexFor(const Type& type) -> std::type_index
+    template<class Format>
+    auto PolymorphicManager<Format>::TypeIndexFor(const Type& type) -> std::type_index
     {
         auto found = FindRequiredEntry(type);
         return (*found)->typeIndex;
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void PolymorphicManager<Archive>::Register(ArchiveT& archive)
+    void PolymorphicManager<Format>::Register(FormatT& format)
     {
-        auto newInputTypes = InputTypesFor<T>(archive);
+        auto newInputTypes = InputTypesFor<T>(format);
 
         std::vector<Type> duplicateTypes;
         for (auto& currentInput : inputTypes)
@@ -168,7 +168,7 @@ namespace Inscription
         if (!duplicateTypes.empty())
             throw InputTypesAlreadyRegistered(duplicateTypes);
 
-        auto outputType = ::Inscription::OutputTypeFor<T>(archive);
+        auto outputType = ::Inscription::OutputTypeFor<T>(format);
         entryList.push_back(std::make_unique<EntryDerived<T>>(outputType, newInputTypes));
         std::move
         (
@@ -178,11 +178,11 @@ namespace Inscription
         );
     }
 
-    template<class Archive>
-    PolymorphicManager<Archive>::Entry::~Entry() = default;
+    template<class Format>
+    PolymorphicManager<Format>::Entry::~Entry() = default;
 
-    template<class Archive>
-    PolymorphicManager<Archive>::Entry::Entry(
+    template<class Format>
+    PolymorphicManager<Format>::Entry::Entry(
         Type outputType,
         std::vector<Type> inputTypes,
         std::type_index typeIndex)
@@ -190,47 +190,47 @@ namespace Inscription
         outputType(outputType), inputTypes(inputTypes), typeIndex(typeIndex)
     {}
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    PolymorphicManager<Archive>::EntryDerived<T>::EntryDerived(
+    PolymorphicManager<Format>::EntryDerived<T>::EntryDerived(
         Type outputType, std::vector<Type> inputTypes)
         :
         Entry(outputType, inputTypes, typeid(T))
     {}
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void PolymorphicManager<Archive>::EntryDerived<T>::Save(const void* object, ArchiveT& archive)
+    void PolymorphicManager<Format>::EntryDerived<T>::Save(const void* object, FormatT& format)
     {
         auto castedObject = reinterpret_cast<const T*>(object);
-        ScrivenDispatch::Execute(RemoveConst(*castedObject), archive);
+        ScrivenDispatch::Execute(RemoveConst(*castedObject), format);
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void PolymorphicManager<Archive>::EntryDerived<T>::Load(void* object, ArchiveT& archive)
+    void PolymorphicManager<Format>::EntryDerived<T>::Load(void* object, FormatT& format)
     {
         auto castedObject = reinterpret_cast<T*>(object);
-        ScrivenDispatch::Execute(RemoveConst(*castedObject), archive);
+        ScrivenDispatch::Execute(RemoveConst(*castedObject), format);
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void PolymorphicManager<Archive>::EntryDerived<T>::Construct(void*& storage, ArchiveT& archive)
+    void PolymorphicManager<Format>::EntryDerived<T>::Construct(void*& storage, FormatT& format)
     {
         DerivedT* castedStorage = reinterpret_cast<DerivedT*>(storage);
-        ConstructDispatch::Execute(castedStorage, archive);
+        ConstructDispatch::Execute(castedStorage, format);
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    void* PolymorphicManager<Archive>::EntryDerived<T>::CreateStorage() const
+    void* PolymorphicManager<Format>::EntryDerived<T>::CreateStorage() const
     {
         return ::Inscription::CreateStorage(sizeof(T));
     }
 
-    template<class Archive>
-    auto PolymorphicManager<Archive>::FindRequiredEntry(const Type& type)
+    template<class Format>
+    auto PolymorphicManager<Format>::FindRequiredEntry(const Type& type)
         -> EntryIterator
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
@@ -244,8 +244,8 @@ namespace Inscription
         throw InputTypeNotFound(type);
     }
 
-    template<class Archive>
-    auto PolymorphicManager<Archive>::FindRequiredEntry(const std::type_index& typeIndex)
+    template<class Format>
+    auto PolymorphicManager<Format>::FindRequiredEntry(const std::type_index& typeIndex)
         -> EntryIterator
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
@@ -255,12 +255,12 @@ namespace Inscription
         throw InputTypeNotFound(typeIndex);
     }
 
-    template<class Archive>
+    template<class Format>
     template<class T>
-    TrackingID PolymorphicManager<Archive>::RequiredTypeTrackingIDFor(const T* object, ArchiveT& archive)
+    TrackingID PolymorphicManager<Format>::RequiredTypeTrackingIDFor(const T* object, FormatT& format)
     {
         auto& type = typeid(*RemoveConst(object));
-        auto found = archive.types.FindTypeID(type);
+        auto found = format.types.FindTypeID(type);
         if (found.has_value())
             return *found;
 

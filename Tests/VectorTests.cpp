@@ -3,12 +3,11 @@
 #include <Inscription/VectorScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class VectorBinaryTestsFixture : public BinaryFixture
+class VectorTestsFixture : public GeneralFixture
 {
 public:
     using Integers = std::vector<int>;
@@ -16,31 +15,19 @@ public:
     using Classes = std::vector<TestClass>;
 };
 
-class VectorJsonTestsFixture : public JsonFixture
-{
-public:
-    using Integers = std::vector<int>;
-    using NestedIntegers = std::vector<std::vector<int>>;
-    using Classes = std::vector<TestClass>;
-};
-
-SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", "[binary][container][vector]")
+SCENARIO_METHOD(VectorTestsFixture, "loading vector after saving binary", "[binary][container][vector]")
 {
     GIVEN("saved empty vector")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -58,17 +45,13 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
         for (auto& loop : startingGroup)
             saved.push_back(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -86,17 +69,13 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
         for (auto& loop : startingGroup)
             saved.push_back(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -113,8 +92,7 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
             for (auto& loop : occupiedGroup)
                 loaded.push_back(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -141,17 +119,13 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -167,17 +141,13 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -188,23 +158,19 @@ SCENARIO_METHOD(VectorBinaryTestsFixture, "loading vector after saving binary", 
     }
 }
 
-SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[json][container][vector]")
+SCENARIO_METHOD(VectorTestsFixture, "loading vector after saving json", "[json][container][vector]")
 {
     GIVEN("saved empty vector")
     {
         Integers saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("vector", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -222,17 +188,13 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
         for (auto& loop : startingGroup)
             saved.push_back(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("vector", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -250,17 +212,13 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
         for (auto& loop : startingGroup)
             saved.push_back(loop);
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("vector", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Integers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -277,8 +235,7 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
             for (auto& loop : occupiedGroup)
                 loaded.push_back(loop);
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -305,17 +262,13 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
             Integers(startingGroup4.begin(), startingGroup4.end())
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("nested_vector", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             NestedIntegers loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("nested_vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -331,17 +284,13 @@ SCENARIO_METHOD(VectorJsonTestsFixture, "loading vector after saving json", "[js
 
         const Classes saved{ objects.begin(), objects.end() };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("vector", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             Classes loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("vector", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

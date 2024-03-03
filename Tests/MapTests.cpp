@@ -4,42 +4,30 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class MapBinaryTestsFixture : public BinaryFixture
+class MapTestsFixture : public GeneralFixture
 {
 public:
     using IntegerToStrings = std::map<int, std::string>;
     using IntegerToClasses = std::map<int, TestClass>;
 };
 
-class MapJsonTestsFixture : public JsonFixture
-{
-public:
-    using IntegerToStrings = std::map<int, std::string>;
-    using IntegerToClasses = std::map<int, TestClass>;
-};
-
-SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[binary][container][map]")
+SCENARIO_METHOD(MapTestsFixture, "loading map after saving binary", "[binary][container][map]")
 {
     GIVEN("saved empty map")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -63,17 +51,13 @@ SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[bina
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -98,17 +82,13 @@ SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[bina
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -132,8 +112,7 @@ SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[bina
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -158,17 +137,13 @@ SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[bina
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -179,23 +154,19 @@ SCENARIO_METHOD(MapBinaryTestsFixture, "loading map after saving binary", "[bina
     }
 }
 
-SCENARIO_METHOD(MapJsonTestsFixture, "loading map after saving json", "[json][container][map]")
+SCENARIO_METHOD(MapTestsFixture, "loading map after saving json", "[json][container][map]")
 {
     GIVEN("saved empty map")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -219,17 +190,13 @@ SCENARIO_METHOD(MapJsonTestsFixture, "loading map after saving json", "[json][co
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -254,17 +221,13 @@ SCENARIO_METHOD(MapJsonTestsFixture, "loading map after saving json", "[json][co
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -288,8 +251,7 @@ SCENARIO_METHOD(MapJsonTestsFixture, "loading map after saving json", "[json][co
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -314,17 +276,13 @@ SCENARIO_METHOD(MapJsonTestsFixture, "loading map after saving json", "[json][co
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("map", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("map", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

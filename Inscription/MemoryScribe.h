@@ -13,27 +13,27 @@ namespace Inscription
     public:
         using ObjectT = std::unique_ptr<T, Deleter>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
     template<class T, class Deleter>
-    void Scribe<std::unique_ptr<T, Deleter>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::unique_ptr<T, Deleter>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             T* saved = object.get();
-            archive(saved);
+            format(saved);
         }
         else
         {
             T* loaded = nullptr;
-            archive(loaded);
+            format(loaded);
             object.reset(loaded);
         }
     }
 
-    template<class T, class Deleter, class Archive>
-    struct ScribeTraits<std::unique_ptr<T, Deleter>, Archive>
+    template<class T, class Deleter, class Format>
+    struct ScribeTraits<std::unique_ptr<T, Deleter>, Format>
     {
         using Category = TrackingScribeCategory<std::unique_ptr<T, Deleter>>;
     };

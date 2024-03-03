@@ -2,8 +2,8 @@
 
 #include "TrackingScribeCategory.h"
 
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -16,8 +16,8 @@ namespace Inscription
         static constexpr bool requiresScribe = true;
         using ScribeT = Scribe<Object>;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Format::Binary& format, ScribeT& scribe);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe);
     private:
         static_assert(std::is_class_v<ObjectT>,
             "The Object given to a CompositeScribeCategory is not a class/struct.");
@@ -25,27 +25,27 @@ namespace Inscription
 
     template<class Object>
     void CompositeScribeCategory<Object>::Scriven(
-        ObjectT& object, Archive::Binary& archive, ScribeT& scribe)
+        ObjectT& object, Format::Binary& format, ScribeT& scribe)
     {
-        TrackingScribeCategory<Object>::Scriven(object, archive, scribe);
+        TrackingScribeCategory<Object>::Scriven(object, format, scribe);
     }
 
     template<class Object>
     void CompositeScribeCategory<Object>::Scriven(
-        const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe)
+        const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto output = archive.AsOutput();
+            const auto output = format.AsOutput();
             output->StartObject(name);
-            scribe.Scriven(object, archive);
+            scribe.Scriven(object, format);
             output->EndObject();
         }
         else
         {
-            auto input = archive.AsInput();
+            const auto input = format.AsInput();
             input->StartObject(name);
-            scribe.Scriven(object, archive);
+            scribe.Scriven(object, format);
             input->EndObject();
         }
     }

@@ -5,7 +5,7 @@
 
 namespace Inscription
 {
-    namespace Archive
+    namespace Format
     {
         class Binary;
     }
@@ -16,11 +16,11 @@ namespace Inscription
     public:
         using ObjectT = File::Position;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<File::Position, Archive>
+    template<class Format>
+    struct ScribeTraits<File::Position, Format>
     {
         using Category = TrackingScribeCategory<File::Position>;
     };

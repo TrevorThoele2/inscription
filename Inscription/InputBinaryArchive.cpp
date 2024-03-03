@@ -2,51 +2,32 @@
 
 namespace Inscription::Archive
 {
-    InputBinary::InputBinary(const File::Path& path) :
-        Binary(Direction::Input),
-        file(path)
+    InputBinary::InputBinary(File::InputBinary& file) : Binary(Direction::Input), source(&file)
     {}
 
-    InputBinary::InputBinary(
-        const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
-        :
-        Binary(Direction::Input, typeRegistrationContext),
-        file(path)
+    InputBinary::InputBinary(Buffer& buffer) : Binary(Direction::Input), source(&buffer)
     {}
-
+    
     InputBinary::InputBinary(InputBinary&& arg) noexcept :
-        Binary(std::move(arg)), file(std::move(arg.file))
+        Binary(std::move(arg)), source(std::move(arg.source))
     {}
 
     InputBinary& InputBinary::operator=(InputBinary&& arg) noexcept
     {
         Binary::operator=(std::move(arg));
-        file = std::move(arg.file);
+        source = std::move(arg.source);
         return *this;
     }
-
-    void InputBinary::Seek(File::Position offset)
+    
+	void InputBinary::PullFromBuffer(Buffer& arg, Buffer& buffer)
     {
-        file.Seek(offset);
-    }
-
-    void InputBinary::SeekFromBeginning(File::Position offset)
-    {
-        file.SeekFromBeginning(offset);
-    }
-
-    void InputBinary::SeekFromEnd(File::Position offset)
-    {
-        file.SeekFromEnd(offset);
-    }
-
-    File::Position InputBinary::Position()
-    {
-        return file.Position();
-    }
-
-    File::Size InputBinary::Size()
-    {
-        return file.Size();
+        const auto size = arg.value.size();
+        if (size > 0)
+        {
+            memcpy(&arg.value[0], &buffer.value[0], size);
+            buffer.value.erase(buffer.value.begin(), buffer.value.begin() + size);
+        }
+        else
+            arg = {};
     }
 }

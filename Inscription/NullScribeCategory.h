@@ -1,8 +1,8 @@
 #pragma once
 
-#include "BinaryArchive.h"
-#include "JsonArchive.h"
-#include "TextArchive.h"
+#include "BinaryFormat.h"
+#include "JsonFormat.h"
+#include "PlaintextFormat.h"
 
 namespace Inscription
 {
@@ -14,20 +14,20 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
-        static void Scriven(ObjectT& object, Archive::Text& archive);
+        static void Scriven(ObjectT& object, Format::Binary& format);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
+        static void Scriven(ObjectT& object, Format::Plaintext& format);
     };
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void NullScribeCategory<Object>::Scriven(ObjectT& object, Format::Binary& format)
     {}
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void NullScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {}
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(ObjectT& object, Archive::Text& archive)
+    void NullScribeCategory<Object>::Scriven(ObjectT& object, Format::Plaintext& format)
     {}
 }

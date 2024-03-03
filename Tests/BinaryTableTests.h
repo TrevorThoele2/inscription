@@ -1,12 +1,14 @@
 #pragma once
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
 #include <Inscription/TableScribeCategory.h>
 
-class BinaryTableFixture : public BinaryFixture
+class BinaryTableFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryTableFixture();
 
     class Base;
@@ -43,8 +45,8 @@ public:
 namespace Inscription
 {
     template<>
-    struct TableData<BinaryTableFixture::Base, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::Base, Archive::Binary>
+    struct TableData<BinaryTableFixture::Base, Format::Binary> :
+        TableDataBase<BinaryTableFixture::Base, Format::Binary>
     {
         int baseValue;
     };
@@ -53,7 +55,7 @@ namespace Inscription
     class Scribe<BinaryTableFixture::Base> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::Base, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::Base, Format::Binary>
         {
         public:
             Table();
@@ -61,14 +63,14 @@ namespace Inscription
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::Base, Archive::Binary> final
+    struct ScribeTraits<BinaryTableFixture::Base, Format::Binary> final
     {
         using Category = TableScribeCategory<BinaryTableFixture::Base>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::DefaultConstructionDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::DefaultConstructionDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::DefaultConstructionDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::DefaultConstructionDerived, Format::Binary>
     {
         Base<BinaryTableFixture::Base> base;
         std::string derivedValue;
@@ -78,24 +80,24 @@ namespace Inscription
     class Scribe<BinaryTableFixture::DefaultConstructionDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::DefaultConstructionDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::DefaultConstructionDerived, Format::Binary>
         {
         public:
             Table();
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::DefaultConstructionDerived, Archive::Binary> final
+    struct ScribeTraits<BinaryTableFixture::DefaultConstructionDerived, Format::Binary> final
     {
         using Category = TableScribeCategory<BinaryTableFixture::DefaultConstructionDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::CustomConstructionDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::CustomConstructionDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::CustomConstructionDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::CustomConstructionDerived, Format::Binary>
     {
         Base<BinaryTableFixture::Base> base;
         std::string derivedValue;
@@ -105,26 +107,26 @@ namespace Inscription
     class Scribe<BinaryTableFixture::CustomConstructionDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::CustomConstructionDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::CustomConstructionDerived, Format::Binary>
         {
         public:
             Table();
 
-            void Construct(ObjectT* storage, ArchiveT& archive);
+            void Construct(ObjectT* storage, FormatT& format);
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::CustomConstructionDerived, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::CustomConstructionDerived, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::CustomConstructionDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::ObjectScrivenBase, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::ObjectScrivenBase, Archive::Binary>
+    struct TableData<BinaryTableFixture::ObjectScrivenBase, Format::Binary> :
+        TableDataBase<BinaryTableFixture::ObjectScrivenBase, Format::Binary>
     {
         int baseValue;
     };
@@ -133,24 +135,24 @@ namespace Inscription
     class Scribe<BinaryTableFixture::ObjectScrivenBase> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::ObjectScrivenBase, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::ObjectScrivenBase, Format::Binary>
         {
         public:
             Table();
         protected:
-            void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+            void ObjectScrivenImplementation(ObjectT& object, FormatT& format) override;
         };
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::ObjectScrivenBase, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::ObjectScrivenBase, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::ObjectScrivenBase>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::ObjectScrivenDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::ObjectScrivenDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::ObjectScrivenDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::ObjectScrivenDerived, Format::Binary>
     {
         Base<BinaryTableFixture::ObjectScrivenBase> base;
         std::string derivedValue;
@@ -160,28 +162,28 @@ namespace Inscription
     class Scribe<BinaryTableFixture::ObjectScrivenDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::ObjectScrivenDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::ObjectScrivenDerived, Format::Binary>
         {
         public:
             Table();
 
-            void Construct(ObjectT* storage, ArchiveT& archive);
+            void Construct(ObjectT* storage, FormatT& format);
         protected:
-            void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+            void ObjectScrivenImplementation(ObjectT& object, FormatT& format) override;
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::ObjectScrivenDerived, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::ObjectScrivenDerived, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::ObjectScrivenDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::TableConstructionBase, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::TableConstructionBase, Archive::Binary>
+    struct TableData<BinaryTableFixture::TableConstructionBase, Format::Binary> :
+        TableDataBase<BinaryTableFixture::TableConstructionBase, Format::Binary>
     {
         int baseValue;
     };
@@ -190,7 +192,7 @@ namespace Inscription
     class Scribe<BinaryTableFixture::TableConstructionBase> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::TableConstructionBase, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::TableConstructionBase, Format::Binary>
         {
         public:
             Table();
@@ -198,14 +200,14 @@ namespace Inscription
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::TableConstructionBase, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::TableConstructionBase, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::TableConstructionBase>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::TableConstructionDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::TableConstructionDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::TableConstructionDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::TableConstructionDerived, Format::Binary>
     {
         Base<BinaryTableFixture::TableConstructionBase> base;
         std::string derivedValue;
@@ -215,24 +217,24 @@ namespace Inscription
     class Scribe<BinaryTableFixture::TableConstructionDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::TableConstructionDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::TableConstructionDerived, Format::Binary>
         {
         public:
             Table();
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::TableConstructionDerived, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::TableConstructionDerived, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::TableConstructionDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::UsingEntriesDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::UsingEntriesDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::UsingEntriesDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::UsingEntriesDerived, Format::Binary>
     {
         Base<BinaryTableFixture::Base> base;
         Entry<BinaryTableFixture::NonDefault> derivedValue;
@@ -242,24 +244,24 @@ namespace Inscription
     class Scribe<BinaryTableFixture::UsingEntriesDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::UsingEntriesDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::UsingEntriesDerived, Format::Binary>
         {
         public:
             Table();
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::UsingEntriesDerived, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::UsingEntriesDerived, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::UsingEntriesDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::UsingEntryPointerDerived, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::UsingEntryPointerDerived, Archive::Binary>
+    struct TableData<BinaryTableFixture::UsingEntryPointerDerived, Format::Binary> :
+        TableDataBase<BinaryTableFixture::UsingEntryPointerDerived, Format::Binary>
     {
         Base<BinaryTableFixture::Base> base;
         BinaryTableFixture::NonDefault* derivedValue = nullptr;
@@ -269,24 +271,24 @@ namespace Inscription
     class Scribe<BinaryTableFixture::UsingEntryPointerDerived> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::UsingEntryPointerDerived, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::UsingEntryPointerDerived, Format::Binary>
         {
         public:
             Table();
         };
     public:
-        static Type OutputType(const Archive::Binary& archive);
+        static Type OutputType(const Format::Binary& format);
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::UsingEntryPointerDerived, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::UsingEntryPointerDerived, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::UsingEntryPointerDerived>;
     };
 
     template<>
-    struct TableData<BinaryTableFixture::NonDefault, Archive::Binary> :
-        TableDataBase<BinaryTableFixture::NonDefault, Archive::Binary>
+    struct TableData<BinaryTableFixture::NonDefault, Format::Binary> :
+        TableDataBase<BinaryTableFixture::NonDefault, Format::Binary>
     {
         std::string value;
     };
@@ -295,7 +297,7 @@ namespace Inscription
     class Scribe<BinaryTableFixture::NonDefault> final
     {
     public:
-        class Table final : public TableBase<BinaryTableFixture::NonDefault, Archive::Binary>
+        class Table final : public TableBase<BinaryTableFixture::NonDefault, Format::Binary>
         {
         public:
             Table();
@@ -303,7 +305,7 @@ namespace Inscription
     };
 
     template<>
-    struct ScribeTraits<BinaryTableFixture::NonDefault, Archive::Binary>
+    struct ScribeTraits<BinaryTableFixture::NonDefault, Format::Binary>
     {
         using Category = TableScribeCategory<BinaryTableFixture::NonDefault>;
     };

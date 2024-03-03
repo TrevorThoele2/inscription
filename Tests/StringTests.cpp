@@ -3,16 +3,12 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/ListScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
-class StringBinaryTestsFixture : public BinaryFixture
+class StringTestsFixture : public GeneralFixture
 {};
 
-class StringJsonTestsFixture : public JsonFixture
-{};
-
-SCENARIO_METHOD(StringBinaryTestsFixture, "loading string in binary", "[binary][std][string]")
+SCENARIO_METHOD(StringTestsFixture, "loading string in binary", "[binary][std][string]")
 {
     using TestedObject = std::string;
 
@@ -20,17 +16,13 @@ SCENARIO_METHOD(StringBinaryTestsFixture, "loading string in binary", "[binary][
     {
         auto saved = dataGeneration.Random<TestedObject>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading string")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -40,7 +32,7 @@ SCENARIO_METHOD(StringBinaryTestsFixture, "loading string in binary", "[binary][
     }
 }
 
-SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][string]")
+SCENARIO_METHOD(StringTestsFixture, "loading string in json", "[json][std][string]")
 {
     using TestedObject = std::string;
 
@@ -48,17 +40,13 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][s
     {
         auto saved = dataGeneration.Random<TestedObject>();
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("string", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading string")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("string", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -69,19 +57,15 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][s
 
     GIVEN("saved string with sensitive character")
     {
-        auto saved = GENERATE(std::string("abc:123"), std::string("abc\\123"), std::string("abc\"123"));
+        auto saved = GENERATE(std::string("abc:123"), std::string("abc\\123"), std::string("abc\\\"123"));
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("string", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading string")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("string", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -91,7 +75,7 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string in json", "[json][std][s
     }
 }
 
-SCENARIO_METHOD(StringJsonTestsFixture, "loading string list in json", "[json][std][string][list]")
+SCENARIO_METHOD(StringTestsFixture, "loading string list in json", "[json][std][string][list]")
 {
     using TestedObject = std::list<std::string>;
 
@@ -101,20 +85,16 @@ SCENARIO_METHOD(StringJsonTestsFixture, "loading string list in json", "[json][s
         {
             std::string("abc:123"),
             std::string("abc\\123"),
-            std::string("abc\"123")
+            std::string("abc\\\"123")
         };
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("string", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading string")
         {
             TestedObject loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("string", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

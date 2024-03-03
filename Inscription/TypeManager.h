@@ -18,24 +18,24 @@ namespace Inscription
         TypeManagerBase() = default;
     };
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     class TypeManager final : public TypeManagerBase
     {
     public:
-        using TypeRegistrationContext = TypeRegistrationContext<DerivedArchive>;
+        using TypeRegistrationContext = TypeRegistrationContext<DerivedFormat>;
     public:
-        TypeManager(DerivedArchive& archive);
-        TypeManager(DerivedArchive& archive, TypeRegistrationContext typeRegistrationContext);
-        TypeManager(TypeManager&& arg, DerivedArchive& archive) noexcept;
+        TypeManager(DerivedFormat& format);
+        TypeManager(DerivedFormat& format, TypeRegistrationContext typeRegistrationContext);
+        TypeManager(TypeManager&& arg, DerivedFormat& format) noexcept;
         TypeManager& operator=(TypeManager&& arg) noexcept;
     public:
         // Will remove all of the target's tracking history
         // For this reason, this should probably be called at the beginning of the target's lifetime
-        void CopyTrackersTo(DerivedArchive& target) const;
+        void CopyTrackersTo(DerivedFormat& target) const;
         // Will remove all of the target's tracking history
         // For this reason, this should probably be called at the beginning of the target's lifetime
-        // Be sure that this archive will no longer need to handle pointers through tracking when calling this
-        void MoveTrackersTo(DerivedArchive& target);
+        // Be sure that this format will no longer need to handle pointers through tracking when calling this
+        void MoveTrackersTo(DerivedFormat& target);
 
         void ClearTrackers();
     public:
@@ -77,11 +77,11 @@ namespace Inscription
         template<class T>
         void RegisterType();
     private:
-        DerivedArchive* archive = nullptr;
+        DerivedFormat* format = nullptr;
     private:
         ObjectTracker objectTracker;
         TypeTracker typeTracker;
-        PolymorphicManager<DerivedArchive> polymorphicManager;
+        PolymorphicManager<DerivedFormat> polymorphicManager;
     private:
         TypeRegistrationContext typeRegistrationContext;
 
@@ -91,29 +91,29 @@ namespace Inscription
         void RegisterTypeImpl();
     };
 
-    template<class DerivedArchive>
-    TypeManager<DerivedArchive>::TypeManager(DerivedArchive& archive) :
-        archive(&archive)
+    template<class DerivedFormat>
+    TypeManager<DerivedFormat>::TypeManager(DerivedFormat& format) :
+        format(&format)
     {}
 
-    template<class DerivedArchive>
-    TypeManager<DerivedArchive>::TypeManager(DerivedArchive& archive, TypeRegistrationContext typeRegistrationContext) :
-        archive(&archive), typeRegistrationContext(typeRegistrationContext)
+    template<class DerivedFormat>
+    TypeManager<DerivedFormat>::TypeManager(DerivedFormat& format, TypeRegistrationContext typeRegistrationContext) :
+        format(&format), typeRegistrationContext(typeRegistrationContext)
     {}
 
-    template<class DerivedArchive>
-    TypeManager<DerivedArchive>::TypeManager(TypeManager&& arg, DerivedArchive& archive) noexcept :
-        archive(&archive),
+    template<class DerivedFormat>
+    TypeManager<DerivedFormat>::TypeManager(TypeManager&& arg, DerivedFormat& format) noexcept :
+        format(&format),
         objectTracker(std::move(arg.objectTracker)),
         typeTracker(std::move(arg.typeTracker)),
         polymorphicManager(std::move(arg.polymorphicManager)),
         typeRegistrationContext(std::move(arg.typeRegistrationContext))
     {}
 
-    template<class DerivedArchive>
-    TypeManager<DerivedArchive>& TypeManager<DerivedArchive>::operator=(TypeManager&& arg) noexcept
+    template<class DerivedFormat>
+    TypeManager<DerivedFormat>& TypeManager<DerivedFormat>::operator=(TypeManager&& arg) noexcept
     {
-        archive = std::move(arg.archive);
+        format = std::move(arg.format);
         objectTracker = std::move(arg.objectTracker);
         typeTracker = std::move(arg.typeTracker);
         polymorphicManager = std::move(arg.polymorphicManager);
@@ -121,170 +121,170 @@ namespace Inscription
         return*this;
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::CopyTrackersTo(DerivedArchive& target) const
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::CopyTrackersTo(DerivedFormat& target) const
     {
         target.objectTracker = objectTracker;
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::MoveTrackersTo(DerivedArchive& target)
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::MoveTrackersTo(DerivedFormat& target)
     {
         target.objectTracker = std::move(objectTracker);
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::ClearTrackers()
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::ClearTrackers()
     {
         objectTracker.Clear();
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    std::optional<TrackingID> TypeManager<DerivedArchive>::AttemptTrackObject(T* arg)
+    std::optional<TrackingID> TypeManager<DerivedFormat>::AttemptTrackObject(T* arg)
     {
-        if (!should_track_v<T, DerivedArchive>)
+        if (!should_track_v<T, DerivedFormat>)
             return {};
 
         return objectTracker.Add(arg);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    std::optional<TrackingID> TypeManager<DerivedArchive>::AttemptTrackObject(T* arg, TrackingID id)
+    std::optional<TrackingID> TypeManager<DerivedFormat>::AttemptTrackObject(T* arg, TrackingID id)
     {
-        if (!should_track_v<T, DerivedArchive>)
+        if (!should_track_v<T, DerivedFormat>)
             return {};
 
         return objectTracker.Add(arg, id);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    void TypeManager<DerivedArchive>::AttemptReplaceTrackedObject(T& here, T& newObject)
+    void TypeManager<DerivedFormat>::AttemptReplaceTrackedObject(T& here, T& newObject)
     {
-        if (!should_track_v<T, DerivedArchive>)
+        if (!should_track_v<T, DerivedFormat>)
             return;
 
         objectTracker.ReplaceObject(&here, &newObject);
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::AttemptReplaceTrackedObject(void* here, void* newObject)
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::AttemptReplaceTrackedObject(void* here, void* newObject)
     {
         objectTracker.ReplaceObject(here, newObject);
     }
 
-    template<class DerivedArchive>
-    bool TypeManager<DerivedArchive>::TrackObjects(bool set)
+    template<class DerivedFormat>
+    bool TypeManager<DerivedFormat>::TrackObjects(bool set)
     {
         const auto isActive = objectTracker.IsActive();
         objectTracker.Activate(set);
         return isActive;
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::TrackSavedConstruction(TrackingID trackingID)
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::TrackSavedConstruction(TrackingID trackingID)
     {
         objectTracker.SignalSavedConstruction(trackingID);
     }
 
-    template<class DerivedArchive>
-    bool TypeManager<DerivedArchive>::HasSavedConstruction(TrackingID trackingID) const
+    template<class DerivedFormat>
+    bool TypeManager<DerivedFormat>::HasSavedConstruction(TrackingID trackingID) const
     {
         return objectTracker.HasSavedConstruction(trackingID);
     }
 
-    template<class DerivedArchive>
-    void* TypeManager<DerivedArchive>::FindObject(TrackingID id)
+    template<class DerivedFormat>
+    void* TypeManager<DerivedFormat>::FindObject(TrackingID id)
     {
         return objectTracker.FindObject(id);
     }
 
-    template<class DerivedArchive>
-    std::optional<TrackingID> TypeManager<DerivedArchive>::FindObjectID(void* object)
+    template<class DerivedFormat>
+    std::optional<TrackingID> TypeManager<DerivedFormat>::FindObjectID(void* object)
     {
         return objectTracker.FindID(object);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    TrackingID TypeManager<DerivedArchive>::AddType()
+    TrackingID TypeManager<DerivedFormat>::AddType()
     {
         return typeTracker.Add<T>();
     }
 
-    template<class DerivedArchive>
-    TrackingID TypeManager<DerivedArchive>::AddType(const std::type_index& type)
+    template<class DerivedFormat>
+    TrackingID TypeManager<DerivedFormat>::AddType(const std::type_index& type)
     {
         return typeTracker.Add(type);
     }
 
-    template<class DerivedArchive>
-    TrackingID TypeManager<DerivedArchive>::AddType(const std::type_index& type, TrackingID id)
+    template<class DerivedFormat>
+    TrackingID TypeManager<DerivedFormat>::AddType(const std::type_index& type, TrackingID id)
     {
         return typeTracker.Add(type, id);
     }
 
-    template<class DerivedArchive>
-    std::optional<std::type_index> TypeManager<DerivedArchive>::FindType(TrackingID id) const
+    template<class DerivedFormat>
+    std::optional<std::type_index> TypeManager<DerivedFormat>::FindType(TrackingID id) const
     {
         return typeTracker.FindType(id);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    std::optional<TrackingID> TypeManager<DerivedArchive>::FindTypeID() const
+    std::optional<TrackingID> TypeManager<DerivedFormat>::FindTypeID() const
     {
         return typeTracker.FindID<T>();
     }
 
-    template<class DerivedArchive>
-    std::optional<TrackingID> TypeManager<DerivedArchive>::FindTypeID(const std::type_index& type) const
+    template<class DerivedFormat>
+    std::optional<TrackingID> TypeManager<DerivedFormat>::FindTypeID(const std::type_index& type) const
     {
         return typeTracker.FindID(type);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    void TypeManager<DerivedArchive>::PolymorphicSave(const T* object)
+    void TypeManager<DerivedFormat>::PolymorphicSave(const T* object)
     {
-        polymorphicManager.Save(object, *archive);
+        polymorphicManager.Save(object, *format);
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::PolymorphicSave(void* object, const std::type_index& typeIndex)
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::PolymorphicSave(void* object, const std::type_index& typeIndex)
     {
-        polymorphicManager.Save(object, typeIndex, *archive);
+        polymorphicManager.Save(object, typeIndex, *format);
     }
 
-    template<class DerivedArchive>
-    void TypeManager<DerivedArchive>::ConstructPolymorphic(void*& storage, const std::type_index& typeIndex)
+    template<class DerivedFormat>
+    void TypeManager<DerivedFormat>::ConstructPolymorphic(void*& storage, const std::type_index& typeIndex)
     {
-        polymorphicManager.Construct(storage, typeIndex, *archive);
+        polymorphicManager.Construct(storage, typeIndex, *format);
     }
 
-    template<class DerivedArchive>
-    void* TypeManager<DerivedArchive>::CreatePolymorphicStorage(const std::type_index& typeIndex)
+    template<class DerivedFormat>
+    void* TypeManager<DerivedFormat>::CreatePolymorphicStorage(const std::type_index& typeIndex)
     {
         return polymorphicManager.CreateStorage(typeIndex);
     }
 
-    template<class DerivedArchive>
-    std::type_index TypeManager<DerivedArchive>::PolymorphicTypeIndexFor(const Type& type)
+    template<class DerivedFormat>
+    std::type_index TypeManager<DerivedFormat>::PolymorphicTypeIndexFor(const Type& type)
     {
         return polymorphicManager.TypeIndexFor(type);
     }
 
-    template<class DerivedArchive>
-    Type TypeManager<DerivedArchive>::PolymorphicOutputTypeFor(const std::type_index& typeIndex)
+    template<class DerivedFormat>
+    Type TypeManager<DerivedFormat>::PolymorphicOutputTypeFor(const std::type_index& typeIndex)
     {
         return polymorphicManager.OutputTypeFor(typeIndex);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T>
-    void TypeManager<DerivedArchive>::RegisterType()
+    void TypeManager<DerivedFormat>::RegisterType()
     {
         static_assert(std::is_class_v<T>, "A registered type must be a class type.");
 
@@ -292,15 +292,15 @@ namespace Inscription
         RegisterTypeImpl<T>();
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int>>
-    void TypeManager<DerivedArchive>::RegisterTypeImpl()
+    void TypeManager<DerivedFormat>::RegisterTypeImpl()
     {
-        polymorphicManager.template Register<T>(*archive);
+        polymorphicManager.template Register<T>(*format);
     }
 
-    template<class DerivedArchive>
+    template<class DerivedFormat>
     template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int>>
-    void TypeManager<DerivedArchive>::RegisterTypeImpl()
+    void TypeManager<DerivedFormat>::RegisterTypeImpl()
     {}
 }

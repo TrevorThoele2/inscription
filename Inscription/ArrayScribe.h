@@ -6,10 +6,10 @@
 
 #include "ScopeConstructor.h"
 
-#include "OutputBinaryArchive.h"
-#include "InputBinaryArchive.h"
-#include "OutputJsonArchive.h"
-#include "InputJsonArchive.h"
+#include "OutputBinaryFormat.h"
+#include "InputBinaryFormat.h"
+#include "OutputJsonFormat.h"
+#include "InputJsonFormat.h"
 
 namespace Inscription
 {
@@ -19,64 +19,65 @@ namespace Inscription
     public:
         using ObjectT = std::array<T, N>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     };
 
     template<class T, size_t N>
-    void Scribe<std::array<T, N>>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<std::array<T, N>>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             for (auto value = object.begin(); value != object.end(); ++value)
-                archive(*value);
+                format(*value);
         }
         else
         {
             std::size_t count = 0;
             while (count < N)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(format);
                 object[count] = std::move(constructor.GetMove());
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
                 ++count;
             }
         }
     }
 
     template<class T, size_t N>
-    void Scribe<std::array<T, N>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void Scribe<std::array<T, N>>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto outputArchive = archive.AsOutput();
+            const auto outputFormat = format.AsOutput();
 
-            outputArchive->StartList(name);
-            for (auto loop = object.begin(); loop != object.end(); ++loop)
-                archive("", *loop);
-            outputArchive->EndList();
+            outputFormat->StartList(name);
+            size_t i = 0;
+            for (auto loop = object.begin(); loop != object.end(); ++loop, ++i)
+                format(Chroma::ToString(i), *loop);
+            outputFormat->EndList();
         }
         else
         {
-            auto inputArchive = archive.AsInput();
+            const auto inputFormat = format.AsInput();
 
-            auto size = inputArchive->StartList(name);
+            auto size = inputFormat->StartList(name);
 
-            auto i = 0;
+            size_t i = 0;
             while (size-- > 0)
             {
-                ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+                ScopeConstructor<typename ObjectT::value_type> constructor(Chroma::ToString(i), format);
                 object[i] = std::move(constructor.GetMove());
-                archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+                format.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
                 ++i;
             }
 
-            inputArchive->EndList();
+            inputFormat->EndList();
         }
     }
 
-    template<class T, size_t N, class Archive>
-    struct ScribeTraits<std::array<T, N>, Archive>
+    template<class T, size_t N, class Format>
+    struct ScribeTraits<std::array<T, N>, Format>
     {
         using Category = TrackingScribeCategory<std::array<T, N>>;
     };

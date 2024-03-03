@@ -4,42 +4,30 @@
 #include <Inscription/StringScribe.h>
 #include <Inscription/NumericScribe.h>
 
-#include "BinaryFixture.h"
-#include "JsonFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class MultiMapBinaryTestsFixture : public BinaryFixture
+class MultiMapTestsFixture : public GeneralFixture
 {
 public:
     using IntegerToStrings = std::multimap<int, std::string>;
     using IntegerToClasses = std::multimap<int, TestClass>;
 };
 
-class MultiMapJsonTestsFixture : public JsonFixture
-{
-public:
-    using IntegerToStrings = std::multimap<int, std::string>;
-    using IntegerToClasses = std::multimap<int, TestClass>;
-};
-
-SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binary", "[binary][container][multimap]")
+SCENARIO_METHOD(MultiMapTestsFixture, "loading multimap after saving binary", "[binary][container][multimap]")
 {
     GIVEN("saved empty multimap")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -63,17 +51,13 @@ SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binar
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -98,17 +82,13 @@ SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binar
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -132,8 +112,7 @@ SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binar
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -158,17 +137,13 @@ SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binar
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
+        Inscription::Binary::ToFile(saved, "Test.dat");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Inscription::Binary::FromFile(loaded, "Test.dat");
 
             THEN("is same as saved")
             {
@@ -179,23 +154,19 @@ SCENARIO_METHOD(MultiMapBinaryTestsFixture, "loading multimap after saving binar
     }
 }
 
-SCENARIO_METHOD(MultiMapJsonTestsFixture, "loading multimap after saving json", "[json][container][multimap]")
+SCENARIO_METHOD(MultiMapTestsFixture, "loading multimap after saving json", "[json][container][multimap]")
 {
     GIVEN("saved empty multimap")
     {
         IntegerToStrings saved;
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("empty_multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("empty_multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -219,17 +190,13 @@ SCENARIO_METHOD(MultiMapJsonTestsFixture, "loading multimap after saving json", 
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -254,17 +221,13 @@ SCENARIO_METHOD(MultiMapJsonTestsFixture, "loading multimap after saving json", 
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToStrings loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -288,8 +251,7 @@ SCENARIO_METHOD(MultiMapJsonTestsFixture, "loading multimap after saving json", 
                 loaded.emplace(key, value);
             }
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {
@@ -314,17 +276,13 @@ SCENARIO_METHOD(MultiMapJsonTestsFixture, "loading multimap after saving json", 
             saved.emplace(key, value);
         }
 
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive("multimap", saved);
-        }
+        Inscription::Json::ToFile(saved, "Test.json");
 
         WHEN("loading")
         {
             IntegerToClasses loaded;
 
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive("multimap", loaded);
+            Inscription::Json::FromFile(loaded, "Test.json");
 
             THEN("is same as saved")
             {

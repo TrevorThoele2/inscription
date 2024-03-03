@@ -35,21 +35,21 @@ namespace Inscription
     public:
         using ObjectT = TestClass;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive)
+        void Scriven(ObjectT& object, Format::Binary& format)
         {
-            archive(object.integer);
-            archive(object.string);
+            format(object.integer);
+            format(object.string);
         }
 
-        void Scriven(ObjectT& object, Archive::Json& archive)
+        void Scriven(ObjectT& object, Format::Json& format)
         {
-            archive("integer", object.integer);
-            archive("string", object.string);
+            format("integer", object.integer);
+            format("string", object.string);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<TestClass, Archive> final
+    template<class Format>
+    struct ScribeTraits<TestClass, Format> final
     {
         using Category = CompositeScribeCategory<TestClass>;
     };

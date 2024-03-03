@@ -11,36 +11,36 @@
 
 namespace Inscription
 {
-    template<class Object, class Archive>
+    template<class Object, class Format>
     class TableBase
     {
     public:
         using ObjectT = Object;
-        using ArchiveT = Archive;
+        using FormatT = Format;
     public:
-        using DataT = TableData<ObjectT, ArchiveT>;
+        using DataT = TableData<ObjectT, FormatT>;
         DataT data = {};
     public:
         template<class T>
         using ComposingScribe = Scribe<T>;
     public:
-        void Scriven(ArchiveT& archive);
-        void ObjectScriven(ObjectT& object, ArchiveT& archive);
+        void Scriven(FormatT& format);
+        void ObjectScriven(ObjectT& object, FormatT& format);
 
-        void PushToObject(ObjectT& object, ArchiveT& archive);
-        void PullFromObject(ObjectT& object, ArchiveT& archive);
+        void PushToObject(ObjectT& object, FormatT& format);
+        void PullFromObject(ObjectT& object, FormatT& format);
     public:
         virtual ~TableBase() = 0;
     protected:
         TableBase() = default;
     protected:
-        virtual void ScrivenImplementation(ArchiveT& archive);
-        virtual void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive);
+        virtual void ScrivenImplementation(FormatT& format);
+        virtual void ObjectScrivenImplementation(ObjectT& object, FormatT& format);
 
-        virtual void PushToObjectImplementation(ObjectT& object, ArchiveT& archive);
-        virtual void PullFromObjectImplementation(ObjectT& object, ArchiveT& archive);
+        virtual void PushToObjectImplementation(ObjectT& object, FormatT& format);
+        virtual void PullFromObjectImplementation(ObjectT& object, FormatT& format);
     protected:
-        using DataLink = AutoTableDataLink<TableBase, ObjectT, ArchiveT>;
+        using DataLink = AutoTableDataLink<TableBase, ObjectT, FormatT>;
         using DataLinkList = std::vector<DataLink>;
         void AddDataLink(DataLink&& link);
         void MergeDataLinks(DataLinkList&& links);
@@ -51,75 +51,75 @@ namespace Inscription
         friend class TableScribe;
     };
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::Scriven(ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::Scriven(FormatT& format)
     {
         for (auto& loop : dataEntryList)
-            loop.Scriven(*this, archive);
+            loop.Scriven(*this, format);
 
-        ScrivenImplementation(archive);
+        ScrivenImplementation(format);
     }
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::ObjectScriven(ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::ObjectScriven(ObjectT& object, FormatT& format)
     {
         for (auto& loop : dataEntryList)
-            loop.ObjectScriven(*this, object, archive);
+            loop.ObjectScriven(*this, object, format);
 
-        archive.types.AttemptTrackObject(&object);
+        format.types.AttemptTrackObject(&object);
 
-        ObjectScrivenImplementation(object, archive);
+        ObjectScrivenImplementation(object, format);
     }
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::PushToObject(ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::PushToObject(ObjectT& object, FormatT& format)
     {
         for (auto& loop : dataEntryList)
-            loop.PushToObject(*this, object, archive);
+            loop.PushToObject(*this, object, format);
 
-        PushToObjectImplementation(object, archive);
+        PushToObjectImplementation(object, format);
     }
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::PullFromObject(ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::PullFromObject(ObjectT& object, FormatT& format)
     {
         for (auto& loop : dataEntryList)
-            loop.PullFromObject(*this, object, archive);
+            loop.PullFromObject(*this, object, format);
 
-        PullFromObjectImplementation(object, archive);
+        PullFromObjectImplementation(object, format);
     }
 
-    template <class Object, class Archive>
-    TableBase<Object, Archive>::~TableBase() = default;
+    template <class Object, class Format>
+    TableBase<Object, Format>::~TableBase() = default;
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::ScrivenImplementation(
-        ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::ScrivenImplementation(
+        FormatT& format)
     {}
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::ObjectScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::ObjectScrivenImplementation(
+        ObjectT& object, FormatT& format)
     {}
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::PushToObjectImplementation(
-        ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::PushToObjectImplementation(
+        ObjectT& object, FormatT& format)
     {}
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::PullFromObjectImplementation(
-        ObjectT& object, ArchiveT& archive)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::PullFromObjectImplementation(
+        ObjectT& object, FormatT& format)
     {}
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::AddDataLink(DataLink&& link)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::AddDataLink(DataLink&& link)
     {
         dataEntryList.push_back(std::move(link));
     }
 
-    template<class Object, class Archive>
-    void TableBase<Object, Archive>::MergeDataLinks(DataLinkList&& links)
+    template<class Object, class Format>
+    void TableBase<Object, Format>::MergeDataLinks(DataLinkList&& links)
     {
         dataEntryList.insert(
             dataEntryList.end(),

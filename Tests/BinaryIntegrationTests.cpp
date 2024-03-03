@@ -23,13 +23,15 @@
 #include <Inscription/UnorderedSetScribe.h>
 #include <Inscription/VectorScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
 #include "TestClass.h"
 
-class BinaryIntegrationTestsFixture : public BinaryFixture
+class BinaryIntegrationTestsFixture : public GeneralFixture
 {
 public:
+    Inscription::TypeRegistrationContext<Inscription::Format::Binary> typeRegistrationContext;
+
     BinaryIntegrationTestsFixture()
     {
         typeRegistrationContext.RegisterType<TestClass>();
@@ -160,46 +162,49 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
         auto savedStreamPosition = Inscription::File::Position(dataGeneration.Random<unsigned long long>());
 
         {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(savedInt8);
-            outputArchive(savedInt16);
-            outputArchive(savedInt32);
-            outputArchive(savedInt64);
+            auto file = Inscription::File::OutputBinary("Test.dat");
+            auto archive = Inscription::Archive::OutputBinary(file);
+            auto format = Inscription::Format::OutputBinary(archive, typeRegistrationContext);
+            
+            format(savedInt8);
+            format(savedInt16);
+            format(savedInt32);
+            format(savedInt64);
 
-            outputArchive(savedUint8);
-            outputArchive(savedUint16);
-            outputArchive(savedUint32);
-            outputArchive(savedUint64);
+            format(savedUint8);
+            format(savedUint16);
+            format(savedUint32);
+            format(savedUint64);
 
-            outputArchive(savedFloat);
-            outputArchive(savedDouble);
+            format(savedFloat);
+            format(savedDouble);
 
-            outputArchive(savedObject);
-            outputArchive(savedPointer);
-            outputArchive(savedUniquePtr);
+            format(savedObject);
+            format(savedPointer);
+            format(savedUniquePtr);
 
-            outputArchive(savedString);
+            format(savedString);
 
-            outputArchive(savedTuple);
+            format(savedTuple);
 
-            outputArchive(savedVariant);
+            format(savedVariant);
 
-            outputArchive(savedArray);
-            outputArchive(savedForwardList);
-            outputArchive(savedList);
-            outputArchive(savedMap);
-            outputArchive(savedMultiMap);
-            outputArchive(savedMultiSet);
-            outputArchive(savedQueue);
-            outputArchive(savedSet);
-            outputArchive(savedStack);
-            outputArchive(savedUnorderedMap);
-            outputArchive(savedUnorderedMultiMap);
-            outputArchive(savedUnorderedMultiSet);
-            outputArchive(savedUnorderedSet);
-            outputArchive(savedVector);
+            format(savedArray);
+            format(savedForwardList);
+            format(savedList);
+            format(savedMap);
+            format(savedMultiMap);
+            format(savedMultiSet);
+            format(savedQueue);
+            format(savedSet);
+            format(savedStack);
+            format(savedUnorderedMap);
+            format(savedUnorderedMultiMap);
+            format(savedUnorderedMultiSet);
+            format(savedUnorderedSet);
+            format(savedVector);
 
-            outputArchive(savedStreamPosition);
+            format(savedStreamPosition);
         }
 
         WHEN("loading every type")
@@ -245,46 +250,49 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
             Inscription::File::Position loadedStreamPosition;
 
             {
-                auto inputArchive = CreateRegistered<InputArchive>();
-                inputArchive(loadedInt8);
-                inputArchive(loadedInt16);
-                inputArchive(loadedInt32);
-                inputArchive(loadedInt64);
+                auto file = Inscription::File::InputBinary("Test.dat");
+                auto archive = Inscription::Archive::InputBinary(file);
+                auto format = Inscription::Format::InputBinary(archive, typeRegistrationContext);
+                
+                format(loadedInt8);
+                format(loadedInt16);
+                format(loadedInt32);
+                format(loadedInt64);
 
-                inputArchive(loadedUint8);
-                inputArchive(loadedUint16);
-                inputArchive(loadedUint32);
-                inputArchive(loadedUint64);
+                format(loadedUint8);
+                format(loadedUint16);
+                format(loadedUint32);
+                format(loadedUint64);
 
-                inputArchive(loadedFloat);
-                inputArchive(loadedDouble);
+                format(loadedFloat);
+                format(loadedDouble);
 
-                inputArchive(loadedObject);
-                inputArchive(loadedPointer);
-                inputArchive(loadedUniquePtr);
+                format(loadedObject);
+                format(loadedPointer);
+                format(loadedUniquePtr);
 
-                inputArchive(loadedString);
+                format(loadedString);
 
-                inputArchive(loadedTuple);
+                format(loadedTuple);
 
-                inputArchive(loadedVariant);
+                format(loadedVariant);
 
-                inputArchive(loadedArray);
-                inputArchive(loadedForwardList);
-                inputArchive(loadedList);
-                inputArchive(loadedMap);
-                inputArchive(loadedMultiMap);
-                inputArchive(loadedMultiSet);
-                inputArchive(loadedQueue);
-                inputArchive(loadedSet);
-                inputArchive(loadedStack);
-                inputArchive(loadedUnorderedMap);
-                inputArchive(loadedUnorderedMultiMap);
-                inputArchive(loadedUnorderedMultiSet);
-                inputArchive(loadedUnorderedSet);
-                inputArchive(loadedVector);
+                format(loadedArray);
+                format(loadedForwardList);
+                format(loadedList);
+                format(loadedMap);
+                format(loadedMultiMap);
+                format(loadedMultiSet);
+                format(loadedQueue);
+                format(loadedSet);
+                format(loadedStack);
+                format(loadedUnorderedMap);
+                format(loadedUnorderedMultiMap);
+                format(loadedUnorderedMultiSet);
+                format(loadedUnorderedSet);
+                format(loadedVector);
 
-                inputArchive(loadedStreamPosition);
+                format(loadedStreamPosition);
             }
 
             THEN("every loaded type is same as saved type")

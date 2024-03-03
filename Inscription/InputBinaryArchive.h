@@ -1,5 +1,7 @@
 #pragma once
 
+#include <variant>
+
 #include "BinaryArchive.h"
 #include "InputBinaryFile.h"
 
@@ -10,58 +12,62 @@ namespace Inscription::Archive
     class InputBinary final : public Binary
     {
     public:
-        InputBinary(const File::Path& path);
-        InputBinary(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        InputBinary(File::InputBinary& file);
+        InputBinary(Buffer& buffer);
         InputBinary(InputBinary&& arg) noexcept;
 
         InputBinary& operator=(InputBinary&& arg) noexcept;
 
-        template<class T>
-        InputBinary& Read(T& object);
-    public:
-        void Seek(File::Position offset) override;
-        void SeekFromBeginning(File::Position offset = 0) override;
-        void SeekFromEnd(File::Position offset = 0) override;
-        [[nodiscard]] File::Position Position() override;
-        [[nodiscard]] File::Size Size();
-    protected:
-        void ReadImpl(bool& arg) { ReadFromFile(arg); }
-        void ReadImpl(signed char& arg) { ReadFromFile(arg); }
-        void ReadImpl(char& arg) { ReadFromFile(arg); }
-        void ReadImpl(short& arg) { ReadFromFile(arg); }
-        void ReadImpl(int& arg) { ReadFromFile(arg); }
-        void ReadImpl(long& arg) { ReadFromFile(arg); }
-        void ReadImpl(long long& arg) { ReadFromFile(arg); }
-        void ReadImpl(unsigned char& arg) { ReadFromFile(arg); }
-        void ReadImpl(unsigned short& arg) { ReadFromFile(arg); }
-        void ReadImpl(unsigned int& arg) { ReadFromFile(arg); }
-        void ReadImpl(unsigned long& arg) { ReadFromFile(arg); }
-        void ReadImpl(unsigned long long&  arg) { ReadFromFile(arg); }
-        void ReadImpl(float& arg) { ReadFromFile(arg); }
-        void ReadImpl(double& arg) { ReadFromFile(arg); }
-        void ReadImpl(Buffer& arg) { file.ReadData(arg.value, arg.value.size()); }
+        void Read(bool& arg) { DoRead(arg); }
+        void Read(signed char& arg) { DoRead(arg); }
+        void Read(char& arg) { DoRead(arg); }
+        void Read(short& arg) { DoRead(arg); }
+        void Read(int& arg) { DoRead(arg); }
+        void Read(long& arg) { DoRead(arg); }
+        void Read(long long& arg) { DoRead(arg); }
+        void Read(unsigned char& arg) { DoRead(arg); }
+        void Read(unsigned short& arg) { DoRead(arg); }
+        void Read(unsigned int& arg) { DoRead(arg); }
+        void Read(unsigned long& arg) { DoRead(arg); }
+        void Read(unsigned long long& arg) { DoRead(arg); }
+        void Read(float& arg) { DoRead(arg); }
+        void Read(double& arg) { DoRead(arg); }
+        void Read(Buffer& arg) { DoRead(arg); }
     private:
-        File::InputBinary file;
+        using Source = std::variant<File::InputBinary*, Buffer*>;
+        Source source;
     private:
         template<class T>
-        void ReadFromFile(T& arg)
-        {
-            file.ReadData(arg);
-        }
-    };
+        void DoRead(T& arg);
 
+        static void PullFromBuffer(Buffer& arg, Buffer& buffer);
+        template<class T>
+        static void PullFromBuffer(T arg, Buffer& buffer);
+    };
+    
     template<class T>
-    InputBinary& InputBinary::Read(T& object)
+    void InputBinary::DoRead(T& arg)
     {
         static_assert(
             std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,
             "The T given to Read was not arithmetic or a Buffer.");
 
-        ReadImpl(object);
+        if (std::holds_alternative<File::InputBinary*>(source))
+            std::get<File::InputBinary*>(source)->ReadData(arg);
+        else
+            PullFromBuffer(arg, *std::get<Buffer*>(source));
 
         if (!IsLittleEndian())
-            EnsureCorrectEndianness(object);
+            EnsureCorrectEndianness(arg);
+    }
 
-        return *this;
+    template<class T>
+	void InputBinary::PullFromBuffer(T arg, Buffer& buffer)
+    {
+        const auto bytes = reinterpret_cast<char*>(&arg);
+        const auto size = sizeof(arg);
+        for (size_t i = 0; i < size; ++i)
+            bytes[i] = buffer.value[i];
+        buffer.value.erase(buffer.value.begin(), buffer.value.begin() + size);
     }
 }

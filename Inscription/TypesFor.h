@@ -10,26 +10,26 @@
 
 namespace Inscription
 {
-    template<class T, class Archive, std::enable_if_t<scribe_has_output_type_v<T, Archive>, int> = 0>
-    Type OutputTypeFor(Archive& archive)
+    template<class T, class Format, std::enable_if_t<scribe_has_output_type_v<T, Format>, int> = 0>
+    Type OutputTypeFor(Format& format)
     {
         using RegisteredScribe = Scribe<T>;
-        return RegisteredScribe::OutputType(archive);
+        return RegisteredScribe::OutputType(format);
     }
 
-    template<class T, class Archive, std::enable_if_t<!scribe_has_output_type_v<T, Archive>, int> = 0>
-    Type OutputTypeFor(Archive& archive)
+    template<class T, class Format, std::enable_if_t<!scribe_has_output_type_v<T, Format>, int> = 0>
+    Type OutputTypeFor(Format& format)
     {
-        using RegisteredScribeCategory = typename ScribeTraits<T, Archive>::Category;
-        return RegisteredScribeCategory::OutputType(archive);
+        using RegisteredScribeCategory = typename ScribeTraits<T, Format>::Category;
+        return RegisteredScribeCategory::OutputType(format);
     }
 
-    template<class T, class Archive, std::enable_if_t<scribe_has_input_types_v<T, Archive>, int> = 0>
-    std::vector<Type> InputTypesFor(Archive& archive)
+    template<class T, class Format, std::enable_if_t<scribe_has_input_types_v<T, Format>, int> = 0>
+    std::vector<Type> InputTypesFor(Format& format)
     {
         using RegisteredScribe = Scribe<T>;
-        auto outputType = OutputTypeFor<T>(archive);
-        auto inputTypes = RegisteredScribe::InputTypes(archive);
+        auto outputType = OutputTypeFor<T>(format);
+        auto inputTypes = RegisteredScribe::InputTypes(format);
 
         {
             std::vector<Type> duplicateTypes;
@@ -58,10 +58,10 @@ namespace Inscription
         return inputTypes;
     }
 
-    template<class T, class Archive, std::enable_if_t<!scribe_has_input_types_v<T, Archive>, int> = 0>
-    static std::vector<Type> InputTypesFor(Archive& archive)
+    template<class T, class Format, std::enable_if_t<!scribe_has_input_types_v<T, Format>, int> = 0>
+    static std::vector<Type> InputTypesFor(Format& format)
     {
         using RegisteredScribe = Scribe<T>;
-        return std::vector<Type> { OutputTypeFor<T>(archive) };
+        return std::vector<Type> { OutputTypeFor<T>(format) };
     }
 }

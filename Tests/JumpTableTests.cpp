@@ -8,9 +8,9 @@
 
 #include <Inscription/StringScribe.h>
 
-#include "BinaryFixture.h"
+#include "GeneralFixture.h"
 
-class JumpTableFixture : public BinaryFixture
+class JumpTableFixture : public GeneralFixture
 {
 public:
     struct Object
@@ -25,11 +25,11 @@ SCENARIO_METHOD(JumpTableFixture, "default jump table", "[jumptable]")
 {
     GIVEN("default save")
     {
-        const ::Inscription::OutputJumpTable<int, int> jumpTable;
+        const Inscription::OutputJumpTable<int, int> jumpTable;
 
         WHEN("querying all ids")
         {
-            auto allIDs = jumpTable.AllIDs();
+            const auto allIDs = jumpTable.AllIDs();
 
             THEN("is empty")
             {
@@ -40,11 +40,11 @@ SCENARIO_METHOD(JumpTableFixture, "default jump table", "[jumptable]")
 
     GIVEN("default load")
     {
-        const ::Inscription::InputJumpTable<int, int> jumpTable;
+        const Inscription::InputJumpTable<int, int> jumpTable;
 
         WHEN("querying all ids")
         {
-            auto allIDs = jumpTable.AllIDs();
+            const auto allIDs = jumpTable.AllIDs();
 
             THEN("is empty")
             {
@@ -58,12 +58,14 @@ SCENARIO_METHOD(JumpTableFixture, "saving jump table", "[jumptable]")
 {
     GIVEN("integer jump table")
     {
-        auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
-        auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
+        auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range(-100, 100));
+        auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range(-10000, 10000));
 
-        auto outputArchive = std::make_unique<::Inscription::Archive::OutputBinary>("Test.dat");
+        auto outputFile = std::make_unique<Inscription::File::OutputBinary>("Test.dat");
+        auto outputArchive = std::make_unique<Inscription::Archive::OutputBinary>(*outputFile);
+        auto outputFormat = std::make_unique<Inscription::Format::OutputBinary>(*outputArchive);
 
-        ::Inscription::OutputJumpTable<int, int> savedJumpTable;
+        Inscription::OutputJumpTable<int, int> savedJumpTable;
 
         WHEN("adding entry")
         {
@@ -99,14 +101,18 @@ SCENARIO_METHOD(JumpTableFixture, "saving jump table", "[jumptable]")
 
                 THEN("saving and loading returns only one entry")
                 {
-                    (*outputArchive)(savedJumpTable);
+                    savedJumpTable.Save(*outputFile, *outputFormat);
 
+                    outputFormat.reset();
                     outputArchive.reset();
+                    outputFile.reset();
 
-                    ::Inscription::InputJumpTable<int, int> loadedJumpTable;
+                    auto inputFile = std::make_unique<Inscription::File::InputBinary>("Test.dat");
+                    auto inputArchive = std::make_unique<Inscription::Archive::InputBinary>(*inputFile);
+                    auto inputFormat = std::make_unique<Inscription::Format::InputBinary>(*inputArchive);
 
-                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                    inputArchive(loadedJumpTable);
+                    Inscription::InputJumpTable<int, int> loadedJumpTable;
+                    loadedJumpTable.Load(*inputFile, *inputFormat);
 
                     REQUIRE(loadedJumpTable.AllIDs().size() == 1);
                 }
@@ -122,31 +128,36 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
         auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
         auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
 
-        auto outputArchive = std::make_unique<::Inscription::Archive::OutputBinary>("Test.dat");
+        auto outputFile = std::make_unique<Inscription::File::OutputBinary>("Test.dat");
+        auto outputArchive = std::make_unique<Inscription::Archive::OutputBinary>(*outputFile);
+        auto outputFormat = std::make_unique<Inscription::Format::OutputBinary>(*outputArchive);
 
         {
-            ::Inscription::OutputJumpTable<int, int> savedJumpTable;
+            Inscription::OutputJumpTable<int, int> savedJumpTable;
             for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
                 savedJumpTable.Add(savedIntegerIDs[loop], savedIntegerValues[loop]);
 
-            (*outputArchive)(savedJumpTable);
+            savedJumpTable.Save(*outputFile, *outputFormat);
         }
 
         WHEN("loading integer jump table")
         {
             outputArchive.reset();
 
-            ::Inscription::InputJumpTable<int, int> loadedJumpTable;
+            Inscription::InputJumpTable<int, int> loadedJumpTable;
 
-            auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-            inputArchive(loadedJumpTable);
+            auto inputFile = std::make_unique<Inscription::File::InputBinary>("Test.dat");
+            auto inputArchive = std::make_unique<Inscription::Archive::InputBinary>(*inputFile);
+            auto inputFormat = std::make_unique<Inscription::Format::InputBinary>(*inputArchive);
+
+            loadedJumpTable.Load(*inputFile, *inputFormat);
 
             THEN("all objects fillable")
             {
                 for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
                 {
                     int object = 0;
-                    auto wasLoaded = loadedJumpTable.FillObject(savedIntegerIDs[loop], object, inputArchive);
+                    auto wasLoaded = loadedJumpTable.FillObject(savedIntegerIDs[loop], object, *inputFormat);
                     REQUIRE(wasLoaded == true);
                     REQUIRE(object == savedIntegerValues[loop]);
                 }
@@ -166,7 +177,7 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
             THEN("filling object with invalid id")
             {
                 int object = std::numeric_limits<int>::max();
-                auto wasLoaded = loadedJumpTable.FillObject(std::numeric_limits<int>::min(), object, inputArchive);
+                auto wasLoaded = loadedJumpTable.FillObject(std::numeric_limits<int>::min(), object, *inputFormat);
                 REQUIRE(wasLoaded == false);
                 REQUIRE(object == std::numeric_limits<int>::max());
             }
@@ -177,23 +188,28 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
             auto savedPostTable = dataGeneration.RandomGroup<std::string>(10);
 
             for(auto& loop : savedPostTable)
-                (*outputArchive)(loop);
+                (*outputFormat)(loop);
 
             WHEN("loading integer jump table")
             {
+                outputFormat.reset();
                 outputArchive.reset();
+                outputFile.reset();
 
-                ::Inscription::InputJumpTable<int, int> loadedJumpTable;
+                Inscription::InputJumpTable<int, int> loadedJumpTable;
 
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(loadedJumpTable);
+                auto inputFile = std::make_unique<Inscription::File::InputBinary>("Test.dat");
+                auto inputArchive = std::make_unique<Inscription::Archive::InputBinary>(*inputFile);
+                auto inputFormat = std::make_unique<Inscription::Format::InputBinary>(*inputArchive);
+
+                loadedJumpTable.Load(*inputFile, *inputFormat);
 
                 THEN("can load all post table data")
                 {
                     for (const auto& loop : savedPostTable)
                     {
                         std::string postTable;
-                        inputArchive(postTable);
+                        (*inputFormat)(postTable);
                         REQUIRE(postTable == loop);
                     }
                 }
@@ -203,11 +219,11 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
                     for(size_t loop = 0; loop < savedPostTable.size(); ++loop)
                     {
                         int object = 0;
-                        loadedJumpTable.FillObject(savedIntegerIDs[loop], object, inputArchive);
+                        loadedJumpTable.FillObject(savedIntegerIDs[loop], object, *inputFormat);
                         REQUIRE(object == savedIntegerValues[loop]);
 
                         std::string postTable;
-                        inputArchive(postTable);
+                        (*inputFormat)(postTable);
                         REQUIRE(postTable == savedPostTable[loop]);
                     }
                 }
