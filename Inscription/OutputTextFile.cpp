@@ -1,4 +1,3 @@
-
 #include "OutputTextFile.h"
 #include <iomanip>
 
@@ -11,22 +10,20 @@ namespace Inscription
         ResetWidth();
     }
 
-    OutputTextFile& OutputTextFile::operator<<(const std::string& str)
+    void OutputTextFile::WriteData(const std::string& string)
     {
         if (width > 0)
         {
-            stream << std::setfill(fillChar);
+            stream << std::setfill(fillCharacter);
             stream << std::setw(width);
         }
 
-        stream << str;
-        return *this;
+        stream << string;
     }
 
-    OutputTextFile& OutputTextFile::operator<<(const char ch)
+    void OutputTextFile::WriteData(const char character)
     {
-        stream << ch;
-        return *this;
+        stream << character;
     }
 
     void OutputTextFile::ClearFile()
@@ -36,12 +33,12 @@ namespace Inscription
 
     void OutputTextFile::SetFillCharacter(const char set)
     {
-        fillChar = set;
+        fillCharacter = set;
     }
 
     void OutputTextFile::ResetFillCharacter()
     {
-        fillChar = ' ';
+        fillCharacter = ' ';
     }
 
     void OutputTextFile::SetWidth(Width set)

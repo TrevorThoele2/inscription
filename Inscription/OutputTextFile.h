@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <fstream>
@@ -13,8 +12,8 @@ namespace Inscription
     public:
         OutputTextFile(const Path& path, bool append = false);
 
-        OutputTextFile& operator<<(const std::string& str);
-        OutputTextFile& operator<<(const char ch);
+        void WriteData(const std::string& string);
+        void WriteData(const char character);
 
         void ClearFile();
 
@@ -25,7 +24,7 @@ namespace Inscription
         void SetWidth(Width set);
         void ResetWidth();
     private:
-        char fillChar;
+        char fillCharacter;
         Width width;
     };
 }

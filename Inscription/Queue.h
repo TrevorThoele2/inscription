@@ -1,10 +1,11 @@
-
 #pragma once
 
 #include <queue>
-#include "Scribe.h"
+
+#include "BinaryScribe.h"
+
 #include "ContainerSize.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 
 namespace Inscription
 {
@@ -13,7 +14,7 @@ namespace Inscription
         template<class T, class Container>
         struct QueueSaver : public std::queue<T, Container>
         {
-            void operator()(Scribe &scribe)
+            void operator()(BinaryScribe& scribe)
             {
                 ContainerSize size(c.size());
                 scribe.Save(size);
@@ -25,7 +26,7 @@ namespace Inscription
         template<class T, class Container>
         struct QueueLoader : public std::queue<T, Container>
         {
-            void operator()(Scribe &scribe)
+            void operator()(BinaryScribe& scribe)
             {
                 typedef std::queue<T, Container> ContainerT;
 
@@ -35,7 +36,7 @@ namespace Inscription
                 c.clear();
                 while (size-- > 0)
                 {
-                    StackConstructor<typename ContainerT::value_type> constructor(scribe);
+                    ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
                     push(std::move(constructor.GetMove()));
                     scribe.ReplaceTrackedObject(*constructor.Get(), c.back());
                 }
@@ -44,19 +45,19 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    void Save(Scribe &scribe, std::queue<T, Container> &obj)
+    void Save(BinaryScribe& scribe, std::queue<T, Container>& obj)
     {
         static_cast<detail::QueueSaver<T, Container>&>(obj)(scribe);
     }
 
     template<class T, class Container>
-    void Load(Scribe &scribe, std::queue<T, Container> &obj)
+    void Load(BinaryScribe& scribe, std::queue<T, Container>& obj)
     {
         static_cast<detail::QueueLoader<T, Container>&>(obj)(scribe);
     }
 
     template<class T, class Container>
-    void Serialize(Scribe &scribe, std::queue<T, Container> &obj)
+    void Serialize(BinaryScribe& scribe, std::queue<T, Container>& obj)
     {
         (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
     }

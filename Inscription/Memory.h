@@ -2,25 +2,26 @@
 
 #include <memory>
 
+#include "BinaryScribe.h"
+
 namespace Inscription
 {
-    class Scribe;
     template<class T, class Delete>
-    void Save(Scribe &scribe, const std::unique_ptr<T, Delete> &obj)
+    void Save(BinaryScribe& scribe, const std::unique_ptr<T, Delete>& obj)
     {
         scribe.SaveOwningPointer(obj.get());
     }
 
     template<class T, class Delete>
-    void Load(Scribe &scribe, std::unique_ptr<T, Delete> &obj)
+    void Load(BinaryScribe& scribe, std::unique_ptr<T, Delete>& obj)
     {
-        T *ptr = nullptr;
+        T* ptr = nullptr;
         scribe.LoadOwningPointer(ptr);
         obj.reset(ptr);
     }
 
     template<class T, class Delete>
-    void Serialize(Scribe &scribe, std::unique_ptr<T, Delete> &obj)
+    void Serialize(BinaryScribe& scribe, std::unique_ptr<T, Delete>& obj)
     {
         (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
     }

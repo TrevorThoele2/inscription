@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <typeindex>
@@ -7,34 +6,34 @@
 
 namespace Inscription
 {
-    template<class Cont, class T>
+    template<class Container, class T>
     class TypeTableBase
     {
     private:
-        typedef Cont Indexes;
+        typedef Container Indices;
     public:
-        typedef typename Indexes::iterator iterator;
-        typedef typename Indexes::const_iterator const_iterator;
-        typedef typename Indexes::size_type size_type;
-    private:
-        Indexes indexes;
+        typedef typename Indices::iterator iterator;
+        typedef typename Indices::const_iterator const_iterator;
+        typedef typename Indices::size_type size_type;
     public:
         TypeTableBase() = default;
-        TypeTableBase(const TypeTableBase &arg) = default;
-        TypeTableBase(TypeTableBase &&arg);
-        TypeTableBase& operator=(const TypeTableBase &arg) = default;
-        TypeTableBase& operator=(TypeTableBase &&arg);
-        std::pair<iterator, bool> Add(T &obj);
-        std::pair<iterator, bool> Add(T &&obj);
-        std::pair<iterator, bool> Add(T &obj, const std::type_info &info);
-        std::pair<iterator, bool> Add(T &&obj, const std::type_info &info);
-        std::pair<iterator, bool> Add(T &obj, const std::type_index &info);
-        std::pair<iterator, bool> Add(T &&obj, const std::type_index &info);
+        TypeTableBase(const TypeTableBase& arg) = default;
+        TypeTableBase(TypeTableBase&& arg);
 
-        T* Find(const std::type_info &info);
-        const T* Find(const std::type_info &info) const;
-        T* Find(const std::type_index &index);
-        const T* Find(const std::type_index &index) const;
+        TypeTableBase& operator=(const TypeTableBase& arg) = default;
+        TypeTableBase& operator=(TypeTableBase&& arg);
+
+        std::pair<iterator, bool> Add(T& obj);
+        std::pair<iterator, bool> Add(T&& obj);
+        std::pair<iterator, bool> Add(T& obj, const std::type_info& info);
+        std::pair<iterator, bool> Add(T&& obj, const std::type_info& info);
+        std::pair<iterator, bool> Add(T& obj, const std::type_index& info);
+        std::pair<iterator, bool> Add(T&& obj, const std::type_index& info);
+
+        T* Find(const std::type_info& info);
+        const T* Find(const std::type_info& info) const;
+        T* Find(const std::type_index& index);
+        const T* Find(const std::type_index& index) const;
 
         iterator begin();
         const_iterator begin() const;
@@ -42,121 +41,123 @@ namespace Inscription
         const_iterator end() const;
         size_type size() const;
         bool empty() const;
+    private:
+        Indices indices;
     };
     
-    template<class Cont, class T>
-    TypeTableBase<Cont, T>::TypeTableBase(TypeTableBase &&arg) : indexes(std::move(arg.indexes))
+    template<class Container, class T>
+    TypeTableBase<Container, T>::TypeTableBase(TypeTableBase&& arg) : indices(std::move(arg.indices))
     {}
 
-    template<class Cont, class T>
-    TypeTableBase<Cont, T>& TypeTableBase<Cont, T>::operator=(TypeTableBase &&arg)
+    template<class Container, class T>
+    TypeTableBase<Container, T>& TypeTableBase<Container, T>::operator=(TypeTableBase&& arg)
     {
-        indexes = std::move(arg.indexes);
+        indices = std::move(arg.indices);
         return *this;
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &obj)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T& obj)
     {
-        return indexes.emplace(std::type_index(typeid(obj)), obj);
+        return indices.emplace(std::type_index(typeid(obj)), obj);
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &&obj)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T&& obj)
     {
-        return indexes.emplace(std::type_index(typeid(obj)), std::move(obj));
+        return indices.emplace(std::type_index(typeid(obj)), std::move(obj));
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &obj, const std::type_info &info)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T& obj, const std::type_info& info)
     {
-        return indexes.emplace(std::type_index(info), obj);
+        return indices.emplace(std::type_index(info), obj);
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &&obj, const std::type_info &info)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T&& obj, const std::type_info& info)
     {
-        return indexes.emplace(std::type_index(info), std::move(obj));
+        return indices.emplace(std::type_index(info), std::move(obj));
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &obj, const std::type_index &info)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T& obj, const std::type_index& info)
     {
-        return indexes.emplace(info, obj);
+        return indices.emplace(info, obj);
     }
 
-    template<class Cont, class T>
-    std::pair<typename TypeTableBase<Cont, T>::iterator, bool> TypeTableBase<Cont, T>::Add(T &&obj, const std::type_index &info)
+    template<class Container, class T>
+    std::pair<typename TypeTableBase<Container, T>::iterator, bool> TypeTableBase<Container, T>::Add(T&& obj, const std::type_index& info)
     {
-        return indexes.emplace(info, std::move(obj));
+        return indices.emplace(info, std::move(obj));
     }
 
-    template<class Cont, class T>
-    T* TypeTableBase<Cont, T>::Find(const std::type_info &info)
+    template<class Container, class T>
+    T* TypeTableBase<Container, T>::Find(const std::type_info& info)
     {
         return Find(std::type_index(info));
     }
 
-    template<class Cont, class T>
-    const T* TypeTableBase<Cont, T>::Find(const std::type_info &info) const
+    template<class Container, class T>
+    const T* TypeTableBase<Container, T>::Find(const std::type_info& info) const
     {
         return Find(std::type_index(info));
     }
 
-    template<class Cont, class T>
-    T* TypeTableBase<Cont, T>::Find(const std::type_index &index)
+    template<class Container, class T>
+    T* TypeTableBase<Container, T>::Find(const std::type_index& index)
     {
-        auto possibleFound = indexes.find(index);
-        if(possibleFound != indexes.end())
+        auto possibleFound = indices.find(index);
+        if(possibleFound != indices.end())
             return &possibleFound->second;
 
         return nullptr;
     }
 
-    template<class Cont, class T>
-    const T* TypeTableBase<Cont, T>::Find(const std::type_index &index) const
+    template<class Container, class T>
+    const T* TypeTableBase<Container, T>::Find(const std::type_index& index) const
     {
-        auto possibleFound = indexes.find(index);
-        if (possibleFound != indexes.end())
+        auto possibleFound = indices.find(index);
+        if (possibleFound != indices.end())
             return &possibleFound->second;
 
         return nullptr;
     }
 
-    template<class Cont, class T>
-    typename TypeTableBase<Cont, T>::iterator TypeTableBase<Cont, T>::begin()
+    template<class Container, class T>
+    typename TypeTableBase<Container, T>::iterator TypeTableBase<Container, T>::begin()
     {
-        return indexes.begin();
+        return indices.begin();
     }
 
-    template<class Cont, class T>
-    typename TypeTableBase<Cont, T>::const_iterator TypeTableBase<Cont, T>::begin() const
+    template<class Container, class T>
+    typename TypeTableBase<Container, T>::const_iterator TypeTableBase<Container, T>::begin() const
     {
-        return indexes.begin();
+        return indices.begin();
     }
 
-    template<class Cont, class T>
-    typename TypeTableBase<Cont, T>::iterator TypeTableBase<Cont, T>::end()
+    template<class Container, class T>
+    typename TypeTableBase<Container, T>::iterator TypeTableBase<Container, T>::end()
     {
-        return indexes.end();
+        return indices.end();
     }
 
-    template<class Cont, class T>
-    typename TypeTableBase<Cont, T>::const_iterator TypeTableBase<Cont, T>::end() const
+    template<class Container, class T>
+    typename TypeTableBase<Container, T>::const_iterator TypeTableBase<Container, T>::end() const
     {
-        return indexes.end();
+        return indices.end();
     }
 
-    template<class Cont, class T>
-    typename TypeTableBase<Cont, T>::size_type TypeTableBase<Cont, T>::size() const
+    template<class Container, class T>
+    typename TypeTableBase<Container, T>::size_type TypeTableBase<Container, T>::size() const
     {
-        return indexes.size();
+        return indices.size();
     }
 
-    template<class Cont, class T>
-    bool TypeTableBase<Cont, T>::empty() const
+    template<class Container, class T>
+    bool TypeTableBase<Container, T>::empty() const
     {
-        return indexes.empty();
+        return indices.empty();
     }
 
     template<class T>

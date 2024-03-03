@@ -1,4 +1,3 @@
-
 #include "OutputSimpleFile.h"
 
 namespace Inscription

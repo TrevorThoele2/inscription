@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <memory>
@@ -10,9 +9,7 @@
 #include "PointerDelegate.h"
 #include "PolymorphicID.h"
 
-#include "Tracking.h"
 #include "ClassNameResolver.h"
-#include "Function.h"
 #include "Direction.h"
 
 #include "String.h"
@@ -21,29 +18,34 @@
 
 namespace Inscription
 {
+    class BinaryScribe;
+    class TrackerMap;
+
     class PointerManager
     {
     public:
         PointerManager(Direction direction);
-        PointerManager(PointerManager &&arg);
-        PointerManager& operator=(PointerManager &&arg);
-        void Fill(Scribe &scribe);
+        PointerManager(PointerManager&& arg);
+
+        PointerManager& operator=(PointerManager&& arg);
+
+        void Fill(BinaryScribe& scribe);
 
         template<class T>
-        void HandleOwning(T*& obj, Scribe& scribe, TrackerGroup& trackers);
+        void HandleOwning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers);
         template<class T>
-        void HandleUnowning(T*& obj, Scribe& scribe, TrackerGroup& trackers);
+        void HandleUnowning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers);
     private:
         std::unique_ptr<PointerDelegate> delegate;
         Direction direction;
     private:
-        PointerManager(const PointerManager &arg) = delete;
-        PointerManager& operator=(const PointerManager &arg) = delete;
+        PointerManager(const PointerManager& arg) = delete;
+        PointerManager& operator=(const PointerManager& arg) = delete;
     private:
         void Setup(Direction direction);
 
         template<class T>
-        void Add(const ClassName &name);
+        void Add(const ClassName& name);
     private:
         friend class RegisteredTypes;
     };

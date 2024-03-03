@@ -1,13 +1,12 @@
-
 #include "PointerInput.h"
 
-#include "Scribe.h"
+#include "BinaryScribe.h"
 
-#include "PointerSpecialIDs.h"
+#include "PointerSpecialID.h"
 
 namespace Inscription
 {
-    void PointerInput::PolymorphicEntry::LoadObject(void*& obj, Scribe &scribe, TrackerGroup& trackers, bool owns)
+    void PointerInput::PolymorphicEntry::LoadObject(void*& obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         _loadObject(obj, scribe, trackers, owns);
     }
@@ -20,24 +19,24 @@ namespace Inscription
 
     bool PointerInput::ShouldHandleNullptr(PolymorphicID id) const
     {
-        return id == PointerSpecialIDs::NULLPTR;
+        return id == PointerSpecialID::NULLPTR;
     }
 
     bool PointerInput::ShouldHandleNonpolymorphically(PolymorphicID id) const
     {
-        return id == PointerSpecialIDs::HANDLE_NONPOLYMORPHICALLY;
+        return id == PointerSpecialID::HANDLE_NONPOLYMORPHICALLY;
     }
 
-    PolymorphicID PointerInput::LoadPolymorphicID(Scribe& scribe)
+    PolymorphicID PointerInput::LoadPolymorphicID(BinaryScribe& scribe)
     {
-        PolymorphicID loaded = PointerSpecialIDs::NULLPTR;
+        PolymorphicID loaded = PointerSpecialID::NULLPTR;
         scribe.Load(loaded);
         return loaded;
     }
 
-    TrackerID PointerInput::LoadTrackerID(Scribe& scribe)
+    TrackingID PointerInput::LoadTrackingID(BinaryScribe& scribe)
     {
-        TrackerID loaded = 0;
+        TrackingID loaded = 0;
         scribe.Load(loaded);
         return loaded;
     }

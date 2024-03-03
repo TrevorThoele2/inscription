@@ -4,13 +4,13 @@
 #include <vector>
 #include <typeindex>
 
+#include "PointerManager.h"
 #include "Access.h"
 
 namespace Inscription
 {
-    class TrackerGroup;
-    class PointerManager;
-    class Scribe;
+    class TrackerMap;
+    class BinaryScribe;
     template<class T>
     class Inscripter;
 
@@ -20,8 +20,8 @@ namespace Inscription
         template<class T>
         static void Register();
 
-        static void PushToTracking(TrackerGroup& group);
-        static void PushToPolymorphic(PointerManager& manager, Scribe& scribe);
+        static void CopyRegisteredTo(TrackerMap& group);
+        static void CopyRegisteredTo(PointerManager& manager, BinaryScribe& scribe);
 
         template<class T>
         static bool Has();
@@ -36,20 +36,20 @@ namespace Inscription
             virtual ~Base() = 0;
 
             virtual std::type_index Type() const = 0;
-            virtual void FillPolymorphic(PointerManager& manager, Scribe& scribe) const = 0;
+            virtual void FillPolymorphic(PointerManager& manager, BinaryScribe& scribe) const = 0;
         };
 
         template<class T, typename std::enable_if<!std::is_abstract<T>::value && Access::InscripterT<T>::exists, int>::type = 0>
-        static void DelegateFillPolymorphic(PointerManager& manager, Scribe& scribe);
+        static void DelegateFillPolymorphic(PointerManager& manager, BinaryScribe& scribe);
         template<class T, typename std::enable_if<std::is_abstract<T>::value || !Access::InscripterT<T>::exists, int>::type = 0>
-        static void DelegateFillPolymorphic(PointerManager& manager, Scribe& scribe);
+        static void DelegateFillPolymorphic(PointerManager& manager, BinaryScribe& scribe);
 
         template<class T>
         class Derived : public Base
         {
         public:
             std::type_index Type() const override;
-            void FillPolymorphic(PointerManager& manager, Scribe& scribe) const override;
+            void FillPolymorphic(PointerManager& manager, BinaryScribe& scribe) const override;
         };
 
         typedef std::unique_ptr<Base> BasePtr;
@@ -78,13 +78,13 @@ namespace Inscription
     }
 
     template<class T, typename std::enable_if<!std::is_abstract<T>::value && Access::InscripterT<T>::exists, int>::type>
-    void RegisteredTypes::DelegateFillPolymorphic(PointerManager& manager, Scribe& scribe)
+    void RegisteredTypes::DelegateFillPolymorphic(PointerManager& manager, BinaryScribe& scribe)
     {
         manager.Add<T>(Inscripter<T>::classNameResolver.NameFor(scribe));
     }
 
     template<class T, typename std::enable_if<std::is_abstract<T>::value || !Access::InscripterT<T>::exists, int>::type>
-    void RegisteredTypes::DelegateFillPolymorphic(PointerManager& manager, Scribe& scribe)
+    void RegisteredTypes::DelegateFillPolymorphic(PointerManager& manager, BinaryScribe& scribe)
     {}
 
     template<class T>
@@ -94,7 +94,7 @@ namespace Inscription
     }
 
     template<class T>
-    void RegisteredTypes::Derived<T>::FillPolymorphic(PointerManager& manager, Scribe& scribe) const
+    void RegisteredTypes::Derived<T>::FillPolymorphic(PointerManager& manager, BinaryScribe& scribe) const
     {
         DelegateFillPolymorphic<T>(manager, scribe);
     }

@@ -1,33 +1,32 @@
-
 #include "PointerOutput.h"
 
-#include "Scribe.h"
+#include "BinaryScribe.h"
 
-#include "PointerSpecialIDs.h"
+#include "PointerSpecialID.h"
 
 namespace Inscription
 {
-    void PointerOutput::PolymorphicEntry::SaveID(Scribe& scribe)
+    void PointerOutput::PolymorphicEntry::SaveID(BinaryScribe& scribe)
     {
         scribe.Save(id);
     }
 
-    void PointerOutput::PolymorphicEntry::SaveClassName(Scribe& scribe)
+    void PointerOutput::PolymorphicEntry::SaveClassName(BinaryScribe& scribe)
     {
         scribe.Save(RemoveConst(className));
     }
 
-    void PointerOutput::PolymorphicEntry::SaveObject(const void* obj, Scribe& scribe, TrackerGroup& trackers, bool owns)
+    void PointerOutput::PolymorphicEntry::SaveObject(const void* obj, BinaryScribe& scribe, TrackerMap& trackers, bool owns)
     {
         _saveObject(obj, scribe, trackers, owns);
     }
 
-    TrackerID PointerOutput::PolymorphicEntry::FindFromTracker(const void* obj, TrackerGroup& trackers)
+    TrackingID PointerOutput::PolymorphicEntry::FindFromTracker(const void* obj, TrackerMap& trackers)
     {
         return _findFromTracker(obj, trackers);
     }
 
-    TrackerID PointerOutput::PolymorphicEntry::Track(const void* obj, TrackerGroup& trackers)
+    TrackingID PointerOutput::PolymorphicEntry::Track(const void* obj, TrackerMap& trackers)
     {
         return _track(obj, trackers);
     }
@@ -38,8 +37,8 @@ namespace Inscription
         types.emplace(type, --list.end());
     }
 
-    void PointerOutput::HandleNullptr(Scribe& scribe)
+    void PointerOutput::HandleNullptr(BinaryScribe& scribe)
     {
-        scribe.Save(PolymorphicID(PointerSpecialIDs::NULLPTR));
+        scribe.Save(PolymorphicID(PointerSpecialID::NULLPTR));
     }
 }

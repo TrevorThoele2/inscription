@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Pointer.h"
+#include "PointerManager.h"
 #include "PointerOutput.h"
 #include "PointerInput.h"
 
 namespace Inscription
 {
     template<class T>
-    void PointerManager::HandleOwning(T*& obj, Scribe& scribe, TrackerGroup& trackers)
+    void PointerManager::HandleOwning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers)
     {
         switch (direction)
         {
@@ -21,7 +21,7 @@ namespace Inscription
     }
 
     template<class T>
-    void PointerManager::HandleUnowning(T*& obj, Scribe& scribe, TrackerGroup& trackers)
+    void PointerManager::HandleUnowning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers)
     {
         switch (direction)
         {

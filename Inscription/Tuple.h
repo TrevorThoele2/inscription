@@ -1,16 +1,16 @@
-
 #pragma once
 
 #include <memory>
 #include <tuple>
 
+#include "BinaryScribe.h"
+
 #include "Access.h"
-#include "StackConstructor.h"
+#include "ScopedConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    class Scribe;
     namespace detail
     {
         template<unsigned int I>
@@ -18,47 +18,47 @@ namespace Inscription
         {
         private:
             template<class T>
-            inline static void SerializeSingle(Scribe &scribe, T &obj)
+            inline static void SerializeSingle(BinaryScribe& scribe, T& obj)
             {
                 scribe(obj);
             }
 
             template<class T>
-            inline static void SerializeSingle(Scribe &scribe, const T &obj)
+            inline static void SerializeSingle(BinaryScribe& scribe, const T& obj)
             {
                 scribe(RemoveConst(obj));
             }
 
             template<class T, typename std::enable_if<!IsConst<T>::value, int>::type = 0>
-            inline static std::unique_ptr<T> ConstructSingle(Scribe &scribe)
+            inline static std::unique_ptr<T> ConstructSingle(BinaryScribe& scribe)
             {
                 typedef std::unique_ptr<T> Ret;
 
-                T *obj = nullptr;
+                T* obj = nullptr;
                 ::inscription::Construct(scribe, obj);
                 return Ret(obj);
             }
 
             template<class T, typename std::enable_if<IsConst<T>::value, int>::type = 0>
-            inline static std::unique_ptr<typename RemoveConstTrait<T>::type> ConstructSingle(Scribe &scribe)
+            inline static std::unique_ptr<typename RemoveConstTrait<T>::type> ConstructSingle(BinaryScribe& scribe)
             {
                 typedef RemoveConstTrait<T>::type Type;
                 typedef std::unique_ptr<Type> Ret;
 
-                Type *obj = nullptr;
+                Type* obj = nullptr;
                 ::inscription::Construct(scribe, obj);
                 return Ret(obj);
             }
         public:
             template<class... Args>
-            inline static void SerializeGroup(Scribe &scribe, std::tuple<Args...> &argTuple)
+            inline static void SerializeGroup(BinaryScribe& scribe, std::tuple<Args...>& argTuple)
             {
                 SerializeSingle(scribe, std::get<I - 1>(argTuple));
                 UnpackTuple<I - 1>::SerializeGroup(scribe, argTuple);
             }
 
             template<class... Args, class... Holder>
-            inline static void ConstructGroup(Scribe &scribe, std::tuple<Args...> *&obj, Holder && ... holder)
+            inline static void ConstructGroup(BinaryScribe& scribe, std::tuple<Args...>*& obj, Holder&& ... holder)
             {
                 typedef std::tuple<Args...> Tuple;
                 auto ptr = ConstructSingle<std::tuple_element<I - 1, Tuple>::type>(scribe);
@@ -71,11 +71,11 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            inline static void SerializeGroup(Scribe &scribe, std::tuple<Args...> &argTuple)
+            inline static void SerializeGroup(BinaryScribe& scribe, std::tuple<Args...>& argTuple)
             {}
 
             template<class... Args, class... Holder>
-            inline static void ConstructGroup(Scribe &scribe, std::tuple<Args...> *&obj, Holder && ... holder)
+            inline static void ConstructGroup(BinaryScribe& scribe, std::tuple<Args...>*& obj, Holder&& ... holder)
             {
                 obj = new std::tuple<Args...>(std::forward<Holder>(holder)...);
             }
@@ -83,14 +83,14 @@ namespace Inscription
     }
 
     template<class... Args>
-    void Serialize(Scribe &scribe, std::tuple<Args...> &arg)
+    void Serialize(BinaryScribe& scribe, std::tuple<Args...>& arg)
     {
         detail::UnpackTuple<sizeof...(Args)>::SerializeGroup(scribe, arg);
     }
 
     template<class... Args>
-    void Construct(Scribe &scribe, std::tuple<Args...> *&obj)
+    void Construct(BinaryScribe& scribe, std::tuple<Args...>*& obj)
     {
-        inscription::detail::UnpackTuple<sizeof...(Args)>::ConstructGroup(scribe, obj);
+        detail::UnpackTuple<sizeof...(Args)>::ConstructGroup(scribe, obj);
     }
 }

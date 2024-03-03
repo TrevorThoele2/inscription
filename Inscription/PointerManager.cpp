@@ -1,10 +1,9 @@
-
-#include "Pointer.h"
+#include "PointerManager.h"
 
 #include "PointerOutput.h"
 #include "PointerInput.h"
 
-#include "Scribe.h"
+#include "RegisteredTypes.h"
 
 namespace Inscription
 {
@@ -13,19 +12,19 @@ namespace Inscription
         Setup(direction);
     }
 
-    PointerManager::PointerManager(PointerManager &&arg) : direction(arg.direction), delegate(std::move(arg.delegate))
+    PointerManager::PointerManager(PointerManager&& arg) : direction(arg.direction), delegate(std::move(arg.delegate))
     {}
 
-    PointerManager& PointerManager::operator=(PointerManager &&arg)
+    PointerManager& PointerManager::operator=(PointerManager&& arg)
     {
         direction = arg.direction;
         delegate = std::move(arg.delegate);
         return *this;
     }
 
-    void PointerManager::Fill(Scribe &scribe)
+    void PointerManager::Fill(BinaryScribe& scribe)
     {
-        RegisteredTypes::PushToPolymorphic(*this, scribe);
+        RegisteredTypes::CopyRegisteredTo(*this, scribe);
     }
 
     void PointerManager::Setup(Direction direction)

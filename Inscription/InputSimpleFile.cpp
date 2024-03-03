@@ -1,4 +1,3 @@
-
 #include "InputSimpleFile.h"
 
 namespace Inscription

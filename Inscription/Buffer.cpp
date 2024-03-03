@@ -1,6 +1,6 @@
+#include "Buffer.h"
 
 #include <utility>
-#include "Buffer.h"
 
 namespace Inscription
 {

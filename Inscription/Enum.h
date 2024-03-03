@@ -11,7 +11,7 @@ namespace Inscription
     }
 
     template<class EnumT>
-    typename std::underlying_type<EnumT>::type& CastEnumToUnderlyingRef(EnumT &e)
+    typename std::underlying_type<EnumT>::type& CastEnumToUnderlyingRef(EnumT& e)
     {
         return reinterpret_cast<typename std::underlying_type<EnumT>::type&>(e);
     }
