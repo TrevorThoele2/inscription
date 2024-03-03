@@ -22,12 +22,106 @@ public:
     };
 };
 
+SCENARIO_METHOD(JumpTableFixture, "default jump table", "[jumptable]")
+{
+    GIVEN("default save")
+    {
+        const ::Inscription::OutputJumpTable<int, int> jumpTable;
+
+        WHEN("querying all ids")
+        {
+            auto allIDs = jumpTable.AllIDs();
+
+            THEN("is empty")
+            {
+                REQUIRE(allIDs.empty());
+            }
+        }
+    }
+
+    GIVEN("default load")
+    {
+        const ::Inscription::InputJumpTable<int, int> jumpTable;
+
+        WHEN("querying all ids")
+        {
+            auto allIDs = jumpTable.AllIDs();
+
+            THEN("is empty")
+            {
+                REQUIRE(allIDs.empty());
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(JumpTableFixture, "saving jump table", "[jumptable]")
+{
+    GIVEN("integer jump table")
+    {
+        auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
+        auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
+
+        auto outputArchive = std::make_unique<::Inscription::OutputBinaryArchive>("Test.dat", "testing", 1);
+
+        ::Inscription::OutputJumpTable<int, int> savedJumpTable;
+
+        WHEN("adding entry")
+        {
+            auto added1 = savedJumpTable.Add(savedIntegerIDs[0], savedIntegerValues[0]);
+
+            THEN("returns true")
+            {
+                REQUIRE(added1 == true);
+            }
+
+            THEN("all ids contain id")
+            {
+                auto allIds = savedJumpTable.AllIDs();
+                REQUIRE(allIds.size() == 1);
+                REQUIRE(allIds[0] == savedIntegerIDs[0]);
+            }
+
+            WHEN("adding entry with duplicate id")
+            {
+                auto added2 = savedJumpTable.Add(savedIntegerIDs[0], savedIntegerValues[0]);
+
+                THEN("returns false")
+                {
+                    REQUIRE(added2 == false);
+                }
+
+                THEN("all ids only contain one id")
+                {
+                    auto allIds = savedJumpTable.AllIDs();
+                    REQUIRE(allIds.size() == 1);
+                    REQUIRE(allIds[0] == savedIntegerIDs[0]);
+                }
+
+                THEN("saving and loading returns only one entry")
+                {
+                    (*outputArchive)(savedJumpTable);
+
+                    outputArchive.reset();
+
+                    ::Inscription::InputJumpTable<int, int> loadedJumpTable;
+
+                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
+                    inputArchive(loadedJumpTable);
+
+                    REQUIRE(loadedJumpTable.AllIDs().size() == 1);
+                }
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
 {
     GIVEN("saved integer jump table")
     {
-        auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10);
-        auto savedIntegerValues = dataGeneration.RandomGroup<int>(10);
+        auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
+        auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
 
         auto outputArchive = std::make_unique<::Inscription::OutputBinaryArchive>("Test.dat", "testing", 1);
 
@@ -48,54 +142,13 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
             auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
             inputArchive(loadedJumpTable);
 
-            THEN("all objects are constructible")
-            {
-                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
-                {
-                    auto object = loadedJumpTable.ConstructObject(savedIntegerIDs[loop], inputArchive);
-                    REQUIRE(object == savedIntegerValues[loop]);
-                }
-            }
-
-            THEN("all objects constructible through function")
-            {
-                auto function = [](::Inscription::InputBinaryArchive& archive) -> int
-                {
-                    int i;
-                    archive(i);
-                    return i;
-                };
-
-                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
-                {
-                    auto object = loadedJumpTable.ConstructObject(function, savedIntegerIDs[loop], inputArchive);
-                    REQUIRE(object == savedIntegerValues[loop]);
-                }
-            }
-
             THEN("all objects fillable")
             {
                 for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
                 {
-                    int object;
-                    loadedJumpTable.FillObject(object, savedIntegerIDs[loop], inputArchive);
-                    REQUIRE(object == savedIntegerValues[loop]);
-                }
-            }
-
-            THEN("all objects fillable through function")
-            {
-                auto function = [](::Inscription::InputBinaryArchive& archive) -> int
-                {
-                    int i;
-                    archive(i);
-                    return i;
-                };
-
-                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
-                {
-                    int object;
-                    loadedJumpTable.FillObject(function, object, savedIntegerIDs[loop], inputArchive);
+                    int object = 0;
+                    auto wasLoaded = loadedJumpTable.FillObject(savedIntegerIDs[loop], object, inputArchive);
+                    REQUIRE(wasLoaded == true);
                     REQUIRE(object == savedIntegerValues[loop]);
                 }
             }
@@ -109,6 +162,14 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
                     auto found = std::find(allIDs.begin(), allIDs.end(), savedIntegerID);
                     REQUIRE(found != allIDs.end());
                 }
+            }
+
+            THEN("filling object with invalid id")
+            {
+                int object = std::numeric_limits<int>::max();
+                auto wasLoaded = loadedJumpTable.FillObject(std::numeric_limits<int>::min(), object, inputArchive);
+                REQUIRE(wasLoaded == false);
+                REQUIRE(object == std::numeric_limits<int>::max());
             }
         }
 
@@ -142,7 +203,8 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
                 {
                     for(size_t loop = 0; loop < savedPostTable.size(); ++loop)
                     {
-                        auto object = loadedJumpTable.ConstructObject(savedIntegerIDs[loop], inputArchive);
+                        int object = 0;
+                        loadedJumpTable.FillObject(savedIntegerIDs[loop], object, inputArchive);
                         REQUIRE(object == savedIntegerValues[loop]);
 
                         std::string postTable;

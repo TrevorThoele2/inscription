@@ -262,12 +262,6 @@
     <ClInclude Include="StreamPositionScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="RepresentedTypeHandlesAlreadyRegistered.h">
-      <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
-    <ClInclude Include="RepresentedTypeHandleNotFound.h">
-      <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
     <ClInclude Include="Type.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -277,14 +271,23 @@
     <ClInclude Include="TypeMap.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="ScribeHasRepresentedTypeHandles.h">
-      <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
     <ClInclude Include="OptionalScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
     <ClInclude Include="TypeHandlesFor.h">
       <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriven.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputTypeHandleNotFound.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="InputTypeHandlesAlreadyRegistered.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="ScribeHasInputTypeHandles.h">
+      <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,10 +533,10 @@
     <ClCompile Include="StreamPositionScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
-    <ClCompile Include="RepresentedTypeHandlesAlreadyRegistered.cpp">
+    <ClCompile Include="InputTypeHandleNotFound.cpp">
       <Filter>Source Files\Polymorphic</Filter>
     </ClCompile>
-    <ClCompile Include="RepresentedTypeHandleNotFound.cpp">
+    <ClCompile Include="InputTypeHandlesAlreadyRegistered.cpp">
       <Filter>Source Files\Polymorphic</Filter>
     </ClCompile>
   </ItemGroup>

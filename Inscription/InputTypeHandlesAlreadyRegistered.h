@@ -6,11 +6,11 @@
 
 namespace Inscription
 {
-    class RepresentedTypeHandlesAlreadyRegistered : public Exception
+    class InputTypeHandlesAlreadyRegistered : public Exception
     {
     public:
-        RepresentedTypeHandlesAlreadyRegistered();
-        explicit RepresentedTypeHandlesAlreadyRegistered(const std::vector<TypeHandle>& typeHandles);
+        InputTypeHandlesAlreadyRegistered();
+        explicit InputTypeHandlesAlreadyRegistered(const std::vector<TypeHandle>& typeHandles);
     private:
         static std::string DefaultString();
         static std::string Join(const std::vector<TypeHandle>& typeHandles);

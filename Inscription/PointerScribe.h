@@ -174,7 +174,7 @@ namespace Inscription
             archive(typeID);
             if (needsTypeHandle)
             {
-                auto typeHandle = archive.polymorphicManager.PrincipleTypeHandleFor(type);
+                auto typeHandle = archive.polymorphicManager.OutputTypeHandleFor(type);
                 archive(typeHandle);
             }
         }

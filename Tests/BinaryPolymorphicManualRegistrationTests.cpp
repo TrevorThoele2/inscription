@@ -5,6 +5,7 @@
 #include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
+#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicManualRegistrationFixture : public BinaryFixture
 {
@@ -96,7 +97,7 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
     {
     public:
-        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
+        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -149,7 +150,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    TypeHandle Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";
@@ -158,7 +159,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        archive.BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object);
+        BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
 }

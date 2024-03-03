@@ -4,56 +4,56 @@
 #include <algorithm>
 
 #include "TypeHandle.h"
-#include "ScribeHasRepresentedTypeHandles.h"
-#include "RepresentedTypeHandlesAlreadyRegistered.h"
+#include "ScribeHasInputTypeHandles.h"
+#include "InputTypeHandlesAlreadyRegistered.h"
 
 namespace Inscription
 {
     template<class T, class Archive>
-    TypeHandle PrincipleTypeHandleFor(Archive& archive)
+    TypeHandle OutputTypeHandleFor(Archive& archive)
     {
         using RegisteredScribe = Scribe<T, Archive>;
-        return RegisteredScribe::PrincipleTypeHandle(archive);
+        return RegisteredScribe::OutputTypeHandle(archive);
     }
 
-    template<class T, class Archive, std::enable_if_t<scribe_has_represented_type_handles_v<T, Archive>, int> = 0>
-    std::vector<TypeHandle> RepresentedTypeHandlesFor(Archive& archive)
+    template<class T, class Archive, std::enable_if_t<scribe_has_input_type_handles_v<T, Archive>, int> = 0>
+    std::vector<TypeHandle> InputTypeHandlesFor(Archive& archive)
     {
         using RegisteredScribe = Scribe<T, Archive>;
-        auto principleTypeHandle = RegisteredScribe::PrincipleTypeHandle(archive);
-        auto representedTypeHandles = RegisteredScribe::RepresentedTypeHandles(archive);
+        auto outputTypeHandle = RegisteredScribe::OutputTypeHandle(archive);
+        auto inputTypeHandles = RegisteredScribe::InputTypeHandles(archive);
 
         {
             std::vector<TypeHandle> duplicateTypeHandles;
-            for (auto& currentRepresented : representedTypeHandles)
+            for (auto& inputTypeHandle : inputTypeHandles)
             {
                 auto count = std::count(
-                    representedTypeHandles.begin(),
-                    representedTypeHandles.end(),
-                    currentRepresented);
+                    inputTypeHandles.begin(),
+                    inputTypeHandles.end(),
+                    inputTypeHandle);
                 if (count > 1)
-                    duplicateTypeHandles.push_back(currentRepresented);
+                    duplicateTypeHandles.push_back(inputTypeHandle);
             }
 
             if (!duplicateTypeHandles.empty())
-                throw RepresentedTypeHandlesAlreadyRegistered(duplicateTypeHandles);
+                throw InputTypeHandlesAlreadyRegistered(duplicateTypeHandles);
         }
 
-        auto isPrincipleIn = [principleTypeHandle](const TypeHandle& typeHandle)
+        auto isOutputTypeHandleIn = [outputTypeHandle](const TypeHandle& typeHandle)
         {
-            return typeHandle == principleTypeHandle;
+            return typeHandle == outputTypeHandle;
         };
 
-        if (!std::any_of(representedTypeHandles.begin(), representedTypeHandles.end(), isPrincipleIn))
-            representedTypeHandles.push_back(principleTypeHandle);
+        if (!std::any_of(inputTypeHandles.begin(), inputTypeHandles.end(), isOutputTypeHandleIn))
+            inputTypeHandles.push_back(outputTypeHandle);
 
-        return representedTypeHandles;
+        return inputTypeHandles;
     }
 
-    template<class T, class Archive, std::enable_if_t<!scribe_has_represented_type_handles_v<T, Archive>, int> = 0>
-    static std::vector<TypeHandle> RepresentedTypeHandlesFor(Archive& archive)
+    template<class T, class Archive, std::enable_if_t<!scribe_has_input_type_handles_v<T, Archive>, int> = 0>
+    static std::vector<TypeHandle> InputTypeHandlesFor(Archive& archive)
     {
         using RegisteredScribe = Scribe<T, Archive>;
-        return std::vector<TypeHandle> { RegisteredScribe::PrincipleTypeHandle(archive) };
+        return std::vector<TypeHandle> { RegisteredScribe::OutputTypeHandle(archive) };
     }
 }

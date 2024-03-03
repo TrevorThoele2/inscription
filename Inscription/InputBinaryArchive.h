@@ -27,8 +27,6 @@ namespace Inscription
 
         template<class T>
         InputBinaryArchive& Read(T& object);
-        template<class T>
-        InputBinaryArchive& Construct(T*& object, const std::type_index& type);
     public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
@@ -72,13 +70,6 @@ namespace Inscription
         if (!IsLittleEndian())
             EnsureCorrectEndianness(object);
 
-        return *this;
-    }
-
-    template<class T>
-    InputBinaryArchive& InputBinaryArchive::Construct(T*& object, const std::type_index& type)
-    {
-        DoConstruct(object, type);
         return *this;
     }
 }

@@ -9,6 +9,7 @@
 #include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
+#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicConstructionFixture : public BinaryFixture
 {
@@ -46,7 +47,7 @@ BinaryPolymorphicConstructionFixture::Base::~Base() = default;
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive> : public
+    class Scribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive> final : public
         CompositeScribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive>
     {
     protected:
@@ -54,13 +55,13 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive> : public
+    class Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive> final : public
         CompositeScribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>
     {
     public:
         static void Construct(ObjectT* storage, ArchiveT& archive);
 
-        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
+        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -167,7 +168,7 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    TypeHandle Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
+    TypeHandle Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::OutputTypeHandle(
         const ArchiveT& archive
     ) {
         return "BinaryPolymorphicConstructionDerived";
@@ -176,7 +177,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        archive.BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object);
+        BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
 }

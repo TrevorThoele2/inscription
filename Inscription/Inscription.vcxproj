@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,6 +122,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -187,6 +188,7 @@
     <ClInclude Include="BaseClassNotInTable.h" />
     <ClInclude Include="ArrayScribe.h" />
     <ClInclude Include="Assert.h" />
+    <ClInclude Include="BaseScriven.h" />
     <ClInclude Include="BaseTableDataLink.h" />
     <ClInclude Include="BufferScribe.h" />
     <ClInclude Include="CompositeScribe.h" />
@@ -200,7 +202,7 @@
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
     <ClInclude Include="TypeHandlesFor.h" />
-    <ClInclude Include="ScribeHasRepresentedTypeHandles.h" />
+    <ClInclude Include="ScribeHasInputTypeHandles.h" />
     <ClInclude Include="Storage.h" />
     <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
@@ -237,7 +239,7 @@
     <ClInclude Include="MultimapScribe.h" />
     <ClInclude Include="MultisetScribe.h" />
     <ClInclude Include="SpecialTypeTrackingID.h" />
-    <ClInclude Include="RepresentedTypeHandleNotFound.h" />
+    <ClInclude Include="InputTypeHandleNotFound.h" />
     <ClInclude Include="QueueScribe.h" />
     <ClInclude Include="Archive.h" />
     <ClInclude Include="SetScribe.h" />
@@ -254,7 +256,7 @@
     <ClInclude Include="TableDataEntry.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataLink.h" />
-    <ClInclude Include="RepresentedTypeHandlesAlreadyRegistered.h" />
+    <ClInclude Include="InputTypeHandlesAlreadyRegistered.h" />
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />
@@ -300,8 +302,8 @@
     <ClCompile Include="OutputBinaryArchive.cpp" />
     <ClCompile Include="OutputSimpleFile.cpp" />
     <ClCompile Include="OutputTextArchive.cpp" />
-    <ClCompile Include="RepresentedTypeHandlesAlreadyRegistered.cpp" />
-    <ClCompile Include="RepresentedTypeHandleNotFound.cpp" />
+    <ClCompile Include="InputTypeHandlesAlreadyRegistered.cpp" />
+    <ClCompile Include="InputTypeHandleNotFound.cpp" />
     <ClCompile Include="RelativeFilePathScribe.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="StreamPositionScribe.cpp" />
