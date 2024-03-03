@@ -111,14 +111,14 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);

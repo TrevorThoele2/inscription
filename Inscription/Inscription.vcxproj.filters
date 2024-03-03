@@ -40,9 +40,6 @@
     <ClInclude Include="InvalidSignature.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
-    <ClInclude Include="RegisteredTypeNotFound.h">
-      <Filter>Header Files\Exception</Filter>
-    </ClInclude>
     <ClInclude Include="Exception.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
@@ -99,12 +96,6 @@
     </ClInclude>
     <ClInclude Include="TrackingID.h">
       <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectTrackingMap.h">
-      <Filter>Header Files\Tracking\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectTrackingMapEntry.h">
-      <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
     <ClInclude Include="TypeTracker.h">
       <Filter>Header Files\Tracking\Types</Filter>
@@ -277,6 +268,21 @@
     <ClInclude Include="TableDataBase.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
     </ClInclude>
+    <ClInclude Include="Pointer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackerLookaheadEntry.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackerEntry.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackerEntryBase.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -428,9 +434,6 @@
     <ClCompile Include="InvalidSignature.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
-    <ClCompile Include="RegisteredTypeNotFound.cpp">
-      <Filter>Source Files\Exception</Filter>
-    </ClCompile>
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
@@ -465,12 +468,6 @@
       <Filter>Source Files\Scribe</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTracker.cpp">
-      <Filter>Source Files\Tracking\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectTrackingMap.cpp">
-      <Filter>Source Files\Tracking\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectTrackingMapEntry.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
     </ClCompile>
     <ClCompile Include="TypeTracker.cpp">
@@ -523,6 +520,15 @@
     </ClCompile>
     <ClCompile Include="BufferScribe.cpp">
       <Filter>Source Files\Types\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTrackerLookaheadEntry.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTrackerEntry.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTrackerEntryBase.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

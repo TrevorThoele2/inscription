@@ -10,13 +10,12 @@
 #include "Scribe.h"
 #include "TableData.h"
 
+#include "Pointer.h"
 #include "Direction.h"
 #include "Endian.h"
 #include "Const.h"
 #include "Buffer.h"
 #include "VerifyNonConst.h"
-
-#include "RegisteredTypeNotFound.h"
 
 namespace Inscription
 {
@@ -38,24 +37,14 @@ namespace Inscription
         BinaryArchive& operator()(T& object);
         template<class T>
         BinaryArchive& operator()(T*& object);
+        template<class T>
+        BinaryArchive& operator()(T*& object, Pointer pointerType);
     public:
         template<class T>
         void TrackObject(T* arg);
         template<class T>
         void ReplaceTrackedObject(T& here, T& newObj);
         bool TrackObjects(bool set = true);
-
-        // A tracking section will hold all entries made.
-        // Later, you can clear the section out (removes the entries from tracking)
-        void StartTrackingSection();
-        // A tracking section will hold all entries made.
-        // Later, you can clear the section out (removes the entries from tracking)
-        // This does NOT destroy the section entries if the clear variable is false
-        void StopTrackingSection(bool clear = false);
-        // A tracking section will hold all entries made.
-        // Later, you can clear the section out (removes the entries from tracking)
-        // This WILL destroy the section entries, and keep the section active
-        void ClearTrackingSection();
 
         // Will remove all of the target's tracking history
         // For this reason, this should probably be called at the beginning of the target's lifetime
@@ -142,15 +131,22 @@ namespace Inscription
     }
 
     template<class T>
+    BinaryArchive& BinaryArchive::operator()(T*& object, Pointer pointerType)
+    {
+        KnownScribe<typename RemoveConstTrait<T>::type*>::Scriven(RemoveConst(object), *this, pointerType);
+        return *this;
+    }
+
+    template<class T>
     void BinaryArchive::TrackObject(T* arg)
     {
-        objectTracker.AttemptAdd(arg);
+        objectTracker.Add(arg);
     }
 
     template<class T>
     void BinaryArchive::ReplaceTrackedObject(T& here, T& newObj)
     {
-        objectTracker.ReplaceObject(here, newObj);
+        objectTracker.ReplaceObject(&here, &newObj);
     }
 
     template<class T>
@@ -165,15 +161,12 @@ namespace Inscription
     template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int>>
     void BinaryArchive::RegisterTypeImpl()
     {
-        objectTracker.Register<T>();
         polymorphicManager.Register<T>(*this);
     }
 
     template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int>>
     void BinaryArchive::RegisterTypeImpl()
-    {
-        objectTracker.Register<T>();
-    }
+    {}
 
     template<class T>
     using BinaryScribe = Scribe<T, BinaryArchive>;

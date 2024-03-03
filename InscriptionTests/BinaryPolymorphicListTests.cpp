@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
         ::Inscription::ContainerSize containerSize(savedOwning.size());
         outputArchive(containerSize);
         for (auto& loop : savedOwning)
-            outputArchive(loop);
+            outputArchive(loop, ::Inscription::Pointer::Owning);
     }
 
     std::vector<Base*> loadedOwning;
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(PolymorphicPointer_SavesAndLoads)
         while (containerSize-- > 0)
         {
             Base* ptr = nullptr;
-            inputArchive(ptr);
+            inputArchive(ptr, ::Inscription::Pointer::Owning);
             loadedOwning.push_back(ptr);
         }
     }

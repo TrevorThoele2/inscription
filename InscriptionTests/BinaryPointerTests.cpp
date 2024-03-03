@@ -28,9 +28,6 @@ public:
         Object(int baseValue) : value(value)
         {}
     };
-
-    class Unregistered
-    {};
 };
 
 namespace Inscription
@@ -44,15 +41,6 @@ namespace Inscription
         {
             archive(object.value);
         }
-    };
-
-    template<>
-    class Scribe<::BinaryPointerFixture::Unregistered, BinaryArchive> : public
-        CompositeScribe<::BinaryPointerFixture::Unregistered, BinaryArchive>
-    {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-        {}
     };
 }
 
@@ -75,17 +63,6 @@ BOOST_AUTO_TEST_CASE(NullPointer_SavesAndLoads)
     }
 
     BOOST_REQUIRE(loaded == nullptr);
-}
-
-BOOST_AUTO_TEST_CASE(UnregisteredType_ThrowsExceptionOnSave)
-{
-    Unregistered* saved = dataGeneration.Generator<Unregistered>().RandomHeap();
-
-    auto outputArchive = CreateRegistered<OutputArchive>();
-
-    BOOST_REQUIRE_THROW(outputArchive(saved), ::Inscription::RegisteredTypeNotFound);
-
-    delete saved;
 }
 
 BOOST_AUTO_TEST_CASE(Loads_ObjectSavedBeforehand)

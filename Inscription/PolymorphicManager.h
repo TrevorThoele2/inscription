@@ -5,8 +5,8 @@
 #include "ObjectTracker.h"
 #include "TypeTracker.h"
 
+#include "Memory.h"
 #include "ClassName.h"
-
 #include "Type.h"
 
 #include "PolymorphicTypeNotFound.h"
@@ -21,8 +21,7 @@ namespace Inscription
     public:
         template<class T>
         void SaveConstruction(const T* object, ArchiveT& archive);
-        template<class T>
-        void ConstructFromLoad(T*& object, const ClassName& className, ArchiveT& archive);
+        void ConstructFromLoad(void*& storage, const ClassName& className, ArchiveT& archive);
 
         ClassName ClassNameFor(TrackingID type, ArchiveT& archive);
 
@@ -39,7 +38,7 @@ namespace Inscription
             Entry(const ClassName& className, TypeTracker& typeTracker, Type<T>);
 
             void SaveConstruction(const void* object, ArchiveT& archive);
-            void ConstructFromLoad(void*& object, ArchiveT& archive);
+            void ConstructFromLoad(void*& storage, ArchiveT& archive);
         private:
             std::function<void(const void*, ArchiveT&)> _saveConstruction;
             std::function<void(void*&, ArchiveT&)> _constructFromLoad;
@@ -68,11 +67,11 @@ namespace Inscription
     }
 
     template<class Archive>
-    template<class T>
-    void PolymorphicManager<Archive>::ConstructFromLoad(T*& object, const ClassName& className, ArchiveT& archive)
+    void PolymorphicManager<Archive>::ConstructFromLoad(
+        void*& storage, const ClassName& className, ArchiveT& archive)
     {
         auto found = FindRequiredEntry(className);
-        found->ConstructFromLoad(object, archive);
+        found->ConstructFromLoad(storage, archive);
     }
 
     template<class Archive>
@@ -103,11 +102,12 @@ namespace Inscription
             DerivedScribe::Scriven(RemoveConst(*castedObject), archive);
         };
 
-        _constructFromLoad = [](void*& object, ArchiveT& archive)
+        _constructFromLoad = [](void*& storage, ArchiveT& archive)
         {
-            T* storage = nullptr;
-            DerivedScribe::Construct(storage, archive);
-            object = storage;
+            if (!storage)
+                storage = CreateStorage<T>();
+
+            DerivedScribe::Construct(reinterpret_cast<T*>(storage), archive);
         };
     }
 
@@ -118,13 +118,14 @@ namespace Inscription
     }
 
     template<class Archive>
-    void PolymorphicManager<Archive>::Entry::ConstructFromLoad(void*& object, ArchiveT& archive)
+    void PolymorphicManager<Archive>::Entry::ConstructFromLoad(void*& storage, ArchiveT& archive)
     {
-        _constructFromLoad(object, archive);
+        return _constructFromLoad(storage, archive);
     }
 
     template<class Archive>
-    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(const ClassName& className)
+    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
+        const ClassName& className)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
             if (loop->className == className)
@@ -144,7 +145,8 @@ namespace Inscription
     }
 
     template<class Archive>
-    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(TrackingID typeID, const std::type_index& type)
+    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
+        TrackingID typeID, const std::type_index& type)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
             if (loop->typeID == typeID)

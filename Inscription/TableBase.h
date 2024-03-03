@@ -26,7 +26,7 @@ namespace Inscription
     public:
         void Scriven(ArchiveT& archive);
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
-        ObjectT* Construct(ArchiveT& archive);
+        void Construct(ObjectT* storage, ArchiveT& archive);
 
         void PushToObject(ObjectT& object);
         void PullFromObject(ObjectT& object);
@@ -52,19 +52,19 @@ namespace Inscription
         constexpr static bool shouldIgnoreConstruct = std::is_abstract_v<T>;
 
         template<class T, std::enable_if_t<shouldDefaultConstruct<T>, int> = 0>
-        ObjectT* DoConstruct(ArchiveT& archive)
+        void DoConstruct(ObjectT* storage, ArchiveT& archive)
         {
-            return new ObjectT();
+            new (storage) ObjectT();
         }
 
         template<class T, std::enable_if_t<shouldDataConstruct<T>, int> = 0>
-        ObjectT* DoConstruct(ArchiveT& archive)
+        void DoConstruct(ObjectT* storage, ArchiveT& archive)
         {
-            return DataConstructionImplementation<T>(data);
+            DataConstructionImplementation<T>(storage, data);
         }
 
         template<class T, std::enable_if_t<shouldIgnoreConstruct<T>, int> = 0>
-        ObjectT* DoConstruct(ArchiveT& archive)
+        void DoConstruct(ObjectT* storage, ArchiveT& archive)
         {
             static_assert(false,
                 "Non-shadowed construction requires either a default constructor or a constructor taking a TableT. "
@@ -74,13 +74,13 @@ namespace Inscription
         }
 
         template<class T, std::enable_if_t<std::is_constructible_v<T, const DataT&>, int> = 0>
-        static ObjectT* DataConstructionImplementation(DataT& data)
+        static void DataConstructionImplementation(ObjectT* storage, DataT& data)
         {
-            return new ObjectT(data);
+            new (storage) ObjectT(data);
         }
 
         template<class T, std::enable_if_t<!std::is_constructible_v<T, const DataT&>, int> = 0>
-        static ObjectT* DataConstructionImplementation(DataT& table)
+        static void DataConstructionImplementation(ObjectT* storage, DataT& table)
         {
             static_assert(
                 false,
@@ -113,9 +113,9 @@ namespace Inscription
     }
 
     template<class Object, class Archive>
-    auto TableBase<Object, Archive>::Construct(ArchiveT& archive) -> ObjectT*
+    void TableBase<Object, Archive>::Construct(ObjectT* storage, ArchiveT& archive)
     {
-        return DoConstruct<ObjectT>(archive);
+        DoConstruct<ObjectT>(storage, archive);
     }
 
     template<class Object, class Archive>

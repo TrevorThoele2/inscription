@@ -87,7 +87,7 @@ namespace Inscription
         public:
             Table();
 
-            ObjectT* Construct(ArchiveT& archive);
+            void Construct(ObjectT* storage, ArchiveT& archive);
         };
     public:
         static const ClassNameResolver classNameResolver;
@@ -132,7 +132,7 @@ namespace Inscription
         public:
             Table();
 
-            ObjectT* Construct(ArchiveT& archive);
+            void Construct(ObjectT* storage, ArchiveT& archive);
         protected:
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
         };
@@ -322,14 +322,14 @@ BOOST_AUTO_TEST_CASE(DefaultConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     DefaultConstructionDerived* loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
@@ -370,14 +370,14 @@ BOOST_AUTO_TEST_CASE(CustomConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     CustomConstructionDerived* loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
@@ -417,14 +417,14 @@ BOOST_AUTO_TEST_CASE(TableConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     TableConstructionBase* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     TableConstructionDerived* loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
@@ -471,14 +471,14 @@ BOOST_AUTO_TEST_CASE(ObjectScriven_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
+        outputArchive(saved, ::Inscription::Pointer::Owning);
     }
 
     ObjectScrivenBase* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
+        inputArchive(loaded, ::Inscription::Pointer::Owning);
     }
 
     ObjectScrivenDerived* loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
@@ -514,12 +514,13 @@ namespace Inscription
         Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::classNameResolver =
         CreateSingleNameResolver("DefaultConstructionDerived");
 
-    auto Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Construct(
-        ArchiveT& archive) -> ObjectT*
+    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Construct(
+        ObjectT* storage, ArchiveT& archive)
     {
-        return new ObjectT(
+        new (storage) ObjectT(
             data.base->baseValue,
-            data.derivedValue);
+            data.derivedValue
+        );
     }
 
     Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Table()
@@ -551,12 +552,13 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    auto Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::
-        Construct(ArchiveT& archive) -> ObjectT*
+    void Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::Construct(
+        ObjectT* storage, ArchiveT& archive)
     {
-        return new ObjectT(
+        new (storage) ObjectT(
             data.base->baseValue,
-            data.derivedValue);
+            data.derivedValue
+        );
     }
 
     Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::Table()

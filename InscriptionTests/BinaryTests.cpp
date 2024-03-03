@@ -159,26 +159,4 @@ BOOST_AUTO_TEST_CASE(Class_SavesAndLoads)
     BOOST_REQUIRE(loadedTestClass.Value() == savedTestClass.Value());
 }
 
-BOOST_AUTO_TEST_CASE(Pointer_SavesAndLoads)
-{
-    auto saved = CreateRandomHeapTestClass();
-
-    {
-        auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved);
-    }
-
-    TestClass* loaded = nullptr;
-
-    {
-        auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded);
-    }
-
-    BOOST_REQUIRE(loaded->Value() == saved->Value());
-
-    delete saved;
-    delete loaded;
-}
-
 BOOST_AUTO_TEST_SUITE_END()
