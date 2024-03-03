@@ -14,6 +14,9 @@
 
 namespace Inscription
 {
+    class OutputBinaryScribe;
+    class InputBinaryScribe;
+
     class BinaryScribe : public Scribe
     {
     public:
@@ -25,10 +28,6 @@ namespace Inscription
     public:
         template<class T>
         inline BinaryScribe& operator()(T&& arg);
-        template<class T>
-        inline BinaryScribe& Save(T&& arg);
-        template<class T>
-        inline BinaryScribe& Load(T&& arg);
 
         /*
         Call this if the pointer owns its resource
@@ -37,46 +36,11 @@ namespace Inscription
         template<class T>
         inline BinaryScribe& OwningPointer(T*& arg);
         /*
-        Call this if the pointer owns its resource
-        Creates the resource
-        */
-        template<class T>
-        inline BinaryScribe& SaveOwningPointer(T* arg);
-        /*
-        Call this if the pointer owns its resource
-        Creates the resource
-        */
-        template<class T>
-        inline BinaryScribe& LoadOwningPointer(T*& arg);
-        /*
         Call this if the pointer does not own its own resource
         Never creates the resource
         */
         template<class T>
         inline BinaryScribe& UnowningPointer(T*& arg);
-        /*
-        Call this if the pointer does not own its own resource
-        Never creates the resource
-        */
-        template<class T>
-        inline BinaryScribe& SaveUnowningPointer(T* arg);
-        /*
-        Call this if the pointer does not own its own resource
-        Never creates the resource
-        */
-        template<class T>
-        inline BinaryScribe& LoadUnowningPointer(T*& arg);
-
-        template<class T>
-        void WriteNumeric(T arg);
-        template<class T>
-        void ReadNumeric(T& arg);
-        template<class T>
-        T ReadNumeric();
-
-        void WriteBuffer(const Buffer& write);
-        void ReadBuffer(Buffer& read);
-        Buffer ReadBuffer();
     public:
         template<class T>
         void TrackObject(T* arg);
@@ -104,6 +68,11 @@ namespace Inscription
         bool IsOutput() const;
         bool IsInput() const;
 
+        OutputBinaryScribe* AsOutput();
+        InputBinaryScribe* AsInput();
+        const OutputBinaryScribe* AsOutput() const;
+        const InputBinaryScribe* AsInput() const;
+
         const Signature& GetSignature() const;
         Version GetVersion() const;
 
@@ -111,6 +80,9 @@ namespace Inscription
 
         virtual void SeekStream(StreamPosition position) = 0;
         virtual StreamPosition TellStream() = 0;
+    public:
+        template<class T>
+        static void RegisterType();
     protected:
         Signature signature;
         Version version;
@@ -121,46 +93,6 @@ namespace Inscription
 
         BinaryScribe& operator=(BinaryScribe&& arg);
     protected:
-        virtual void WriteImpl(bool arg) = 0;
-        virtual void WriteImpl(signed char arg) = 0;
-        virtual void WriteImpl(char arg) = 0;
-        virtual void WriteImpl(short arg) = 0;
-        virtual void WriteImpl(int arg) = 0;
-        virtual void WriteImpl(long arg) = 0;
-        virtual void WriteImpl(long long arg) = 0;
-        virtual void WriteImpl(unsigned char arg) = 0;
-        virtual void WriteImpl(unsigned short arg) = 0;
-        virtual void WriteImpl(unsigned int arg) = 0;
-        virtual void WriteImpl(unsigned long arg) = 0;
-        virtual void WriteImpl(unsigned long long arg) = 0;
-        virtual void WriteImpl(float arg) = 0;
-        virtual void WriteImpl(double arg) = 0;
-        virtual void WriteImpl(const Buffer& arg) = 0;
-
-        virtual void ReadImpl(bool& arg) = 0;
-        virtual void ReadImpl(char& arg) = 0;
-        virtual void ReadImpl(signed char& arg) = 0;
-        virtual void ReadImpl(short& arg) = 0;
-        virtual void ReadImpl(int& arg) = 0;
-        virtual void ReadImpl(long& arg) = 0;
-        virtual void ReadImpl(long long& arg) = 0;
-        virtual void ReadImpl(unsigned char& arg) = 0;
-        virtual void ReadImpl(unsigned short& arg) = 0;
-        virtual void ReadImpl(unsigned int& arg) = 0;
-        virtual void ReadImpl(unsigned long& arg) = 0;
-        virtual void ReadImpl(unsigned long long& arg) = 0;
-        virtual void ReadImpl(float& arg) = 0;
-        virtual void ReadImpl(double& arg) = 0;
-        virtual void ReadImpl(Buffer& arg) = 0;
-    private:
-        const Direction direction;
-    private:
-        PointerManager pointerManager;
-        TrackerMap trackers;
-    private:
-        BinaryScribe(const BinaryScribe& arg) = delete;
-        BinaryScribe& operator=(const BinaryScribe& arg) = delete;
-    private:
         template<class T, typename std::enable_if<std::is_class<T>::value, int>::type = 0>
         void Process(T& arg);
         template<class T, typename std::enable_if<!std::is_class<T>::value, int>::type = 0>
@@ -212,19 +144,62 @@ namespace Inscription
         T ReadNumericImplementation();
         template<class T, typename std::enable_if<std::is_enum<T>::value, int>::type = 0>
         T ReadNumericImplementation();
+    protected:
+        virtual void WriteImpl(bool arg) = 0;
+        virtual void WriteImpl(signed char arg) = 0;
+        virtual void WriteImpl(char arg) = 0;
+        virtual void WriteImpl(short arg) = 0;
+        virtual void WriteImpl(int arg) = 0;
+        virtual void WriteImpl(long arg) = 0;
+        virtual void WriteImpl(long long arg) = 0;
+        virtual void WriteImpl(unsigned char arg) = 0;
+        virtual void WriteImpl(unsigned short arg) = 0;
+        virtual void WriteImpl(unsigned int arg) = 0;
+        virtual void WriteImpl(unsigned long arg) = 0;
+        virtual void WriteImpl(unsigned long long arg) = 0;
+        virtual void WriteImpl(float arg) = 0;
+        virtual void WriteImpl(double arg) = 0;
+        virtual void WriteImpl(const Buffer& arg) = 0;
+
+        virtual void ReadImpl(bool& arg) = 0;
+        virtual void ReadImpl(char& arg) = 0;
+        virtual void ReadImpl(signed char& arg) = 0;
+        virtual void ReadImpl(short& arg) = 0;
+        virtual void ReadImpl(int& arg) = 0;
+        virtual void ReadImpl(long& arg) = 0;
+        virtual void ReadImpl(long long& arg) = 0;
+        virtual void ReadImpl(unsigned char& arg) = 0;
+        virtual void ReadImpl(unsigned short& arg) = 0;
+        virtual void ReadImpl(unsigned int& arg) = 0;
+        virtual void ReadImpl(unsigned long& arg) = 0;
+        virtual void ReadImpl(unsigned long long& arg) = 0;
+        virtual void ReadImpl(float& arg) = 0;
+        virtual void ReadImpl(double& arg) = 0;
+        virtual void ReadImpl(Buffer& arg) = 0;
+    private:
+        const Direction direction;
+    private:
+        PointerManager<BinaryScribe> pointerManager;
+        TrackerMap trackers;
+    private:
+        static RegisteredTypes<BinaryScribe> registeredTypes;
+    private:
+        BinaryScribe(const BinaryScribe& arg) = delete;
+        BinaryScribe& operator=(const BinaryScribe& arg) = delete;
     private:
         template<class T>
         inline void CheckConst() const
         {
             static_assert(
                 !IsConst<T>::value,
-                "A const object cannot be serialized. You must remove const with const_cast, or call inscription::RemoveConst in Const.h.");
+                "A const object cannot be serialized. "
+                "You must remove const with const_cast, or call inscription::RemoveConst in Const.h.");
         }
 
         template<class T>
         inline void EnsureTypeRegistered() const
         {
-            if (!RegisteredTypes::Has<T>())
+            if (!registeredTypes.Has<T>())
                 throw RegisteredTypeNotFound();
         }
     };
@@ -237,87 +212,31 @@ namespace Inscription
     }
 
     template<class T>
-    BinaryScribe& BinaryScribe::Save(T&& arg)
-    {
-        ProcessSave(arg);
-        return *this;
-    }
-
-    template<class T>
-    BinaryScribe& BinaryScribe::Load(T&& arg)
-    {
-        ProcessLoad(arg);
-        return *this;
-    }
-
-    template<class T>
     BinaryScribe& BinaryScribe::OwningPointer(T*& arg)
     {
-        if (!RegisteredTypes::Has<T>())
+        if (!registeredTypes.Has<T>())
             throw RegisteredTypeNotFound();
 
         if (IsOutput())
-            return SaveOwningPointer(arg);
+            ProcessSaveOwningPointerImpl(arg);
         else
-            return LoadOwningPointer(arg);
-    }
+            ProcessLoadOwningPointerImpl(arg);
 
-    template<class T>
-    BinaryScribe& BinaryScribe::SaveOwningPointer(T* arg)
-    {
-        ProcessSaveOwningPointerImpl(arg);
-        return *this;
-    }
-
-    template<class T>
-    BinaryScribe& BinaryScribe::LoadOwningPointer(T*& arg)
-    {
-        ProcessLoadOwningPointerImpl(arg);
         return *this;
     }
 
     template<class T>
     BinaryScribe& BinaryScribe::UnowningPointer(T*& arg)
     {
-        if (!RegisteredTypes::Has<T>())
+        if (!registeredTypes.Has<T>())
             throw RegisteredTypeNotFound();
 
         if (IsOutput())
-            return SaveUnowningPointer(arg);
+            ProcessSaveUnowningPointerImpl(arg);
         else
-            return LoadUnowningPointer(arg);
-    }
+            ProcessLoadUnowningPointerImpl(arg);
 
-    template<class T>
-    BinaryScribe& BinaryScribe::SaveUnowningPointer(T* arg)
-    {
-        ProcessSaveUnowningPointerImpl(arg);
         return *this;
-    }
-
-    template<class T>
-    BinaryScribe& BinaryScribe::LoadUnowningPointer(T*& arg)
-    {
-        ProcessLoadUnowningPointerImpl(arg);
-        return *this;
-    }
-
-    template<class T>
-    void BinaryScribe::WriteNumeric(T arg)
-    {
-        WriteNumericImplementation(arg);
-    }
-
-    template<class T>
-    void BinaryScribe::ReadNumeric(T& arg)
-    {
-        ReadNumericImplementation(arg);
-    }
-
-    template<class T>
-    T BinaryScribe::ReadNumeric()
-    {
-        return ReadNumericImplementation<T>();
     }
 
     template<class T>
@@ -330,6 +249,12 @@ namespace Inscription
     void BinaryScribe::ReplaceTrackedObject(T& here, T& newObj)
     {
         trackers.ReplaceObject(here, newObj);
+    }
+
+    template<class T>
+    void BinaryScribe::RegisterType()
+    {
+        registeredTypes.Register<T>();
     }
 
     template<class T, typename std::enable_if<std::is_class<T>::value, int>::type>

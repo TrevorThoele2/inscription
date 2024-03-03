@@ -14,7 +14,7 @@ namespace Inscription
         template<class T, class Container>
         struct QueueSaver : public std::queue<T, Container>
         {
-            void operator()(BinaryScribe& scribe)
+            void operator()(OutputBinaryScribe& scribe)
             {
                 ContainerSize size(c.size());
                 scribe.Save(size);
@@ -26,7 +26,7 @@ namespace Inscription
         template<class T, class Container>
         struct QueueLoader : public std::queue<T, Container>
         {
-            void operator()(BinaryScribe& scribe)
+            void operator()(InputBinaryScribe& scribe)
             {
                 typedef std::queue<T, Container> ContainerT;
 
@@ -45,13 +45,13 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    void Save(BinaryScribe& scribe, std::queue<T, Container>& obj)
+    void Save(OutputBinaryScribe& scribe, std::queue<T, Container>& obj)
     {
         static_cast<detail::QueueSaver<T, Container>&>(obj)(scribe);
     }
 
     template<class T, class Container>
-    void Load(BinaryScribe& scribe, std::queue<T, Container>& obj)
+    void Load(InputBinaryScribe& scribe, std::queue<T, Container>& obj)
     {
         static_cast<detail::QueueLoader<T, Container>&>(obj)(scribe);
     }
@@ -59,6 +59,6 @@ namespace Inscription
     template<class T, class Container>
     void Serialize(BinaryScribe& scribe, std::queue<T, Container>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

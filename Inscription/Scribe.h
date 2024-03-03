@@ -10,9 +10,6 @@ namespace Inscription
     {
     public:
         virtual ~Scribe() = 0;
-    public:
-        template<class T>
-        static void RegisterType();
     protected:
         Scribe();
         Scribe(Scribe&& arg);
@@ -21,10 +18,4 @@ namespace Inscription
         Scribe(const Scribe& arg) = delete;
         Scribe& operator=(const Scribe& arg) = delete;
     };
-
-    template<class T>
-    void Scribe::RegisterType()
-    {
-        RegisteredTypes::Register<T>();
-    }
 }

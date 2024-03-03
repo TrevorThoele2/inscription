@@ -50,7 +50,7 @@ namespace Inscription
     template<class ScribeT, class ClassT, class T, T ClassT::*var>
     void UnowningPointerTableEntry<ScribeT, ClassT, T, var>::Construct(ScribeT& scribe)
     {
-        scribe.LoadUnowningPointer(obj);
+        scribe.AsInput()->LoadUnowningPointer(obj);
     }
 
     template<class ScribeT, class ClassT, class T, T ClassT::*var>

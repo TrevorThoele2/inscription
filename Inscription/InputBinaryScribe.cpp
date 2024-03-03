@@ -37,6 +37,18 @@ namespace Inscription
         return *this;
     }
 
+    void InputBinaryScribe::ReadBuffer(Buffer& read)
+    {
+        ReadImpl(read);
+    }
+
+    Buffer InputBinaryScribe::ReadBuffer()
+    {
+        Buffer buffer;
+        ReadBuffer(buffer);
+        return buffer;
+    }
+
     void InputBinaryScribe::SeekStream(StreamPosition position)
     {
         file.SeekStream(position);

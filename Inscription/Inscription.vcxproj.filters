@@ -139,9 +139,6 @@
     <ClInclude Include="Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RegisteredTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryScribe.h">
       <Filter>Header Files\Scribe\Binary</Filter>
     </ClInclude>
@@ -286,6 +283,12 @@
     <ClInclude Include="BinaryConvenience.h">
       <Filter>Header Files\Convenience</Filter>
     </ClInclude>
+    <ClInclude Include="TypeRegisterableScribe.h">
+      <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisteredTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -389,15 +392,6 @@
     <ClCompile Include="Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PointerDelegate.cpp">
-      <Filter>Source Files\Pointer</Filter>
-    </ClCompile>
-    <ClCompile Include="PointerOutput.cpp">
-      <Filter>Source Files\Pointer</Filter>
-    </ClCompile>
-    <ClCompile Include="PointerInput.cpp">
-      <Filter>Source Files\Pointer</Filter>
-    </ClCompile>
     <ClCompile Include="TableNotLinkedException.cpp">
       <Filter>Source Files\Table</Filter>
     </ClCompile>
@@ -406,9 +400,6 @@
     </ClCompile>
     <ClCompile Include="TableVariableNotHereException.cpp">
       <Filter>Source Files\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="RegisteredTypes.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scribe.cpp">
       <Filter>Source Files\Scribe</Filter>
@@ -473,9 +464,6 @@
     <ClCompile Include="OutputTextFile.cpp">
       <Filter>Source Files\File\Text</Filter>
     </ClCompile>
-    <ClCompile Include="PointerManager.cpp">
-      <Filter>Source Files\Pointer</Filter>
-    </ClCompile>
     <ClCompile Include="TextScribe.cpp">
       <Filter>Source Files\Scribe\Text</Filter>
     </ClCompile>
@@ -487,6 +475,12 @@
     </ClCompile>
     <ClCompile Include="String.cpp">
       <Filter>Source Files\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="PointerDelegate.cpp">
+      <Filter>Source Files\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeRegisterableScribe.cpp">
+      <Filter>Source Files\Scribe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

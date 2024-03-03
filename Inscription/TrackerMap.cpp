@@ -5,9 +5,7 @@
 namespace Inscription
 {
     TrackerMap::TrackerMap() : active(true), usingSection(false)
-    {
-        RegisteredTypes::CopyRegisteredTo(*this);
-    }
+    {}
 
     TrackerMap::TrackerMap(TrackerMap&& arg) : active(arg.active), table(std::move(arg.table)), usingSection(arg.usingSection)
     {}

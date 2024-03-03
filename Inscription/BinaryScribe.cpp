@@ -1,26 +1,12 @@
 #include "BinaryScribe.h"
 
+#include "OutputBinaryScribe.h"
+#include "InputBinaryScribe.h"
+
 namespace Inscription
 {
     BinaryScribe::~BinaryScribe()
     {}
-
-    void BinaryScribe::WriteBuffer(const Buffer& write)
-    {
-        WriteImpl(write);
-    }
-
-    void BinaryScribe::ReadBuffer(Buffer& read)
-    {
-        ReadImpl(read);
-    }
-
-    Buffer BinaryScribe::ReadBuffer()
-    {
-        Buffer buffer;
-        ReadBuffer(buffer);
-        return buffer;
-    }
 
     bool BinaryScribe::TrackObjects(bool set)
     {
@@ -67,6 +53,38 @@ namespace Inscription
         return direction == Direction::INPUT;
     }
 
+    OutputBinaryScribe* BinaryScribe::AsOutput()
+    {
+        if (!IsOutput())
+            return nullptr;
+
+        return static_cast<OutputBinaryScribe*>(this);
+    }
+
+    InputBinaryScribe* BinaryScribe::AsInput()
+    {
+        if (!IsInput())
+            return nullptr;
+
+        return static_cast<InputBinaryScribe*>(this);
+    }
+
+    const OutputBinaryScribe* BinaryScribe::AsOutput() const
+    {
+        if (!IsOutput())
+            return nullptr;
+
+        return static_cast<const OutputBinaryScribe*>(this);
+    }
+
+    const InputBinaryScribe* BinaryScribe::AsInput() const
+    {
+        if (!IsInput())
+            return nullptr;
+
+        return static_cast<const InputBinaryScribe*>(this);
+    }
+
     const BinaryScribe::Signature& BinaryScribe::GetSignature() const
     {
         return signature;
@@ -85,19 +103,21 @@ namespace Inscription
 
     BinaryScribe::BinaryScribe(Direction direction, const Signature& signature, Version version) :
         direction(direction), signature(signature), version(version),
-        pointerManager(direction),
+        pointerManager(direction, registeredTypes),
         postHeaderPosition(0)
     {
-        pointerManager.Fill(*this);
+        registeredTypes.CopyRegisteredTo(trackers);
+        registeredTypes.CopyRegisteredTo(pointerManager, *this);
     }
 
     BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
         Scribe(std::move(arg)),
         direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
-        pointerManager(arg.direction),
+        pointerManager(arg.direction, registeredTypes),
         postHeaderPosition(std::move(arg.postHeaderPosition))
     {
-        pointerManager.Fill(*this);
+        registeredTypes.CopyRegisteredTo(trackers);
+        registeredTypes.CopyRegisteredTo(pointerManager, *this);
     }
 
     BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
@@ -109,4 +129,6 @@ namespace Inscription
         postHeaderPosition = std::move(arg.postHeaderPosition);
         return *this;
     }
+
+    RegisteredTypes<BinaryScribe> BinaryScribe::registeredTypes;
 }

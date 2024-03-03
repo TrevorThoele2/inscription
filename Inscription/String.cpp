@@ -1,6 +1,7 @@
 #include "String.h"
 
-#include "BinaryScribe.h"
+#include "OutputBinaryScribe.h"
+#include "InputBinaryScribe.h"
 
 #include "ContainerSize.h"
 #include "ScopedTrackingChanger.h"
@@ -8,7 +9,7 @@
 
 namespace Inscription
 {
-    void Save(BinaryScribe& scribe, const std::string& obj)
+    void Save(OutputBinaryScribe& scribe, const std::string& obj)
     {
         ScopedTrackingChanger tracking(scribe, false);
 
@@ -18,7 +19,7 @@ namespace Inscription
             scribe.Save(RemoveConst(loop));
     }
 
-    void Load(BinaryScribe& scribe, std::string& obj)
+    void Load(InputBinaryScribe& scribe, std::string& obj)
     {
         ScopedTrackingChanger tracking(scribe, false);
 
@@ -36,6 +37,6 @@ namespace Inscription
 
     void Serialize(BinaryScribe& scribe, std::string& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

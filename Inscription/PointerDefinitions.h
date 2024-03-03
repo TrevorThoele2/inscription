@@ -6,44 +6,79 @@
 
 namespace Inscription
 {
+    template<class ScribeT>
+    PointerManager<ScribeT>::PointerManager(Direction direction, RegisteredTypesT& registeredTypes) : direction(direction), registeredTypes(&registeredTypes)
+    {
+        Setup(direction);
+    }
+
+    template<class ScribeT>
+    PointerManager<ScribeT>::PointerManager(PointerManager&& arg) : direction(arg.direction), delegate(std::move(arg.delegate))
+    {}
+
+    template<class ScribeT>
+    PointerManager<ScribeT>& PointerManager<ScribeT>::operator=(PointerManager&& arg)
+    {
+        direction = arg.direction;
+        delegate = std::move(arg.delegate);
+        return *this;
+    }
+
+    template<class ScribeT>
     template<class T>
-    void PointerManager::HandleOwning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers)
+    void PointerManager<ScribeT>::HandleOwning(T*& obj, ScribeT& scribe, TrackerMap& trackers)
     {
         switch (direction)
         {
         case Direction::OUTPUT:
-            static_cast<PointerOutput*>(delegate.get())->HandleOwning(obj, scribe, trackers);
+            static_cast<OutputDelegate*>(delegate.get())->HandleOwning(obj, *scribe.AsOutput(), trackers);
             break;
         case Direction::INPUT:
-            static_cast<PointerInput*>(delegate.get())->HandleOwning(obj, scribe, trackers);
+            static_cast<InputDelegate*>(delegate.get())->HandleOwning(obj, *scribe.AsInput(), trackers);
             break;
         }
     }
 
+    template<class ScribeT>
     template<class T>
-    void PointerManager::HandleUnowning(T*& obj, BinaryScribe& scribe, TrackerMap& trackers)
+    void PointerManager<ScribeT>::HandleUnowning(T*& obj, ScribeT& scribe, TrackerMap& trackers)
     {
         switch (direction)
         {
         case Direction::OUTPUT:
-            static_cast<PointerOutput*>(delegate.get())->HandleUnowning(obj, scribe, trackers);
+            static_cast<OutputDelegate*>(delegate.get())->HandleUnowning(obj, *scribe.AsOutput(), trackers);
             break;
         case Direction::INPUT:
-            static_cast<PointerInput*>(delegate.get())->HandleUnowning(obj, scribe, trackers);
+            static_cast<InputDelegate*>(delegate.get())->HandleUnowning(obj, *scribe.AsInput(), trackers);
             break;
         }
     }
 
-    template<class T>
-    void PointerManager::Add(const ClassName &name)
+    template<class ScribeT>
+    void PointerManager<ScribeT>::Setup(Direction direction)
     {
         switch (direction)
         {
         case Direction::OUTPUT:
-            static_cast<PointerOutput*>(delegate.get())->Push<T>(name);
+            delegate.reset(new OutputDelegate(*registeredTypes));
             break;
         case Direction::INPUT:
-            static_cast<PointerInput*>(delegate.get())->Push<T>(name);
+            delegate.reset(new InputDelegate());
+            break;
+        }
+    }
+
+    template<class ScribeT>
+    template<class T>
+    void PointerManager<ScribeT>::Add(const ClassName &name)
+    {
+        switch (direction)
+        {
+        case Direction::OUTPUT:
+            static_cast<OutputDelegate*>(delegate.get())->Push<T>(name);
+            break;
+        case Direction::INPUT:
+            static_cast<InputDelegate*>(delegate.get())->Push<T>(name);
             break;
         }
     }

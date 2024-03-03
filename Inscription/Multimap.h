@@ -11,7 +11,7 @@
 namespace Inscription
 {
     template<class Key, class T, class Hash, class Alloc>
-    void Save(BinaryScribe& scribe, std::multimap<Key, T, Hash, Alloc>& obj)
+    void Save(OutputBinaryScribe& scribe, std::multimap<Key, T, Hash, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -23,7 +23,7 @@ namespace Inscription
     }
 
     template<class Key, class T, class Hash, class Alloc>
-    void Load(BinaryScribe& scribe, std::multimap<Key, T, Hash, Alloc>& obj)
+    void Load(InputBinaryScribe& scribe, std::multimap<Key, T, Hash, Alloc>& obj)
     {
         typedef std::multimap<Key, T, Hash, Alloc> ContainerT;
 
@@ -48,6 +48,6 @@ namespace Inscription
     template<class Key, class T, class Hash, class Alloc>
     void Serialize(BinaryScribe& scribe, std::multimap<Key, T, Hash, Alloc>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

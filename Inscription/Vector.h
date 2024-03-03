@@ -10,7 +10,7 @@
 namespace Inscription
 {
     template<class T, class Alloc>
-    void Save(BinaryScribe& scribe, std::vector<T, Alloc>& obj)
+    void Save(OutputBinaryScribe& scribe, std::vector<T, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -19,7 +19,7 @@ namespace Inscription
     }
 
     template<class T, class Alloc>
-    void Load(BinaryScribe& scribe, std::vector<T, Alloc>& obj)
+    void Load(InputBinaryScribe& scribe, std::vector<T, Alloc>& obj)
     {
         typedef std::vector<T, Alloc> ContainerT;
 
@@ -38,6 +38,6 @@ namespace Inscription
     template<class T, class Alloc>
     void Serialize(BinaryScribe& scribe, std::vector<T, Alloc>& obj)
     {
-        (scribe.IsOutput()) ? Save(scribe, obj) : Load(scribe, obj);
+        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }
