@@ -65,7 +65,7 @@ namespace inscription
     Tracker::ID Tracker::NextID() const
     {
         if (!map.empty())
-            return map.size() + 1;
+            return static_cast<Tracker::ID>(map.size() + 1);
         else
             return TrackerGroup::nullID + 1;
     }

@@ -4,8 +4,20 @@
 
 namespace inscription
 {
-    TextInFile::TextInFile(const std::string &name) : SimpleFile(name, std::ios::in)
+    TextInFile::TextInFile(const Path &path) : SimpleFile(path, std::ios::in)
     {}
+
+    TextInFile& TextInFile::operator>>(std::string &str)
+    {
+        stream >> str;
+        return *this;
+    }
+
+    TextInFile& TextInFile::operator>>(char &ch)
+    {
+        stream >> ch;
+        return *this;
+    }
 
     void TextInFile::GetLine(std::string &str)
     {
@@ -17,7 +29,7 @@ namespace inscription
         std::getline(stream, str, delimiter);
     }
 
-    TextOutFile::TextOutFile(const std::string &name, bool append) : SimpleFile(name, (!append) ? std::ios::out : std::ios::out | std::ios::app)
+    TextOutFile::TextOutFile(const Path &path, bool append) : SimpleFile(path, (!append) ? std::ios::out : std::ios::out | std::ios::app)
     {
         ResetFillCharacter();
         ResetWidth();

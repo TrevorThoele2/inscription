@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <fstream>
 #include "SimpleFile.h"
 
 namespace inscription
@@ -8,7 +9,9 @@ namespace inscription
     class TextInFile : public SimpleFile<std::ifstream>
     {
     public:
-        TextInFile(const std::string &name);
+        TextInFile(const Path &path);
+        TextInFile& operator>>(std::string &str);
+        TextInFile& operator>>(char &ch);
 
         void GetLine(std::string &str);
         void GetLine(std::string &str, char delimiter);
@@ -16,9 +19,10 @@ namespace inscription
 
     class TextOutFile : public SimpleFile<std::ofstream>
     {
-    public: typedef std::streamsize Width;
     public:
-        TextOutFile(const std::string &name, bool append = false);
+        typedef std::streamsize Width;
+    public:
+        TextOutFile(const Path &path, bool append = false);
         TextOutFile& operator<<(const std::string &str);
         TextOutFile& operator<<(const char ch);
         void Flush();

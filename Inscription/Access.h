@@ -119,6 +119,7 @@ namespace inscription
     template<class BaseT, class T>
     void BaseSerialize(Scribe &scribe, T &obj)
     {
+        static_assert(!std::is_same<BaseT, T>::value, "A type has been attempted to be converted to itself and serialized.");
         Access::Serialize(scribe, static_cast<BaseT&>(obj));
     }
 

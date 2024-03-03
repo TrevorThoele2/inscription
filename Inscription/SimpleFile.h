@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <fstream>
 #include "Stream.h"
 
 namespace inscription
@@ -14,11 +13,21 @@ namespace inscription
         using typename Stream<T>::Mode;
         using typename Stream<T>::StreamT;
         using typename Stream<T>::StreamPos;
-    public:
+        using typename Stream<T>::SizeT;
+    protected:
+        // This constructor will not open the stream automatically
+        // Be sure to ChangeMode into something that actually makes sense
+        // Call reopen when you're ready to open the stream
+        SimpleFile(const Path &path);
         SimpleFile(const Path &path, Mode mode);
+    public:
         virtual ~SimpleFile() = 0;
         bool Eof() const;
     };
+
+    template<class T>
+    SimpleFile<T>::SimpleFile(const Path &path) : Stream<T>(path)
+    {}
 
     template<class T>
     SimpleFile<T>::SimpleFile(const Path &path, Mode mode) : Stream<T>(path, mode)

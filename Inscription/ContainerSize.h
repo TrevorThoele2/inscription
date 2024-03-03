@@ -2,6 +2,11 @@
 #pragma once
 
 #include <cstddef>
+
+#ifndef INSCRIPTION_CONTAINER_SIZE_VALUE_T
+    #include <cstdint>
+#endif
+
 #include "TrackingTraits.h"
 
 namespace inscription
@@ -10,7 +15,11 @@ namespace inscription
     class ContainerSize
     {
     public:
+#ifndef INSCRIPTION_CONTAINER_SIZE_VALUE_T
         typedef std::size_t ValueT;
+#else
+        typedef INSCRIPTION_CONTAINER_SIZE_VALUE_T ValueT;
+#endif
     private:
         void Serialize(Scribe &scribe);
         friend class Access;

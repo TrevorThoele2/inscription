@@ -573,6 +573,7 @@ namespace inscription
     template<class T, typename std::enable_if<std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessSavePointerImpl(T *arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         polyManager.HandleObject(arg, *this, trackers);
@@ -581,6 +582,7 @@ namespace inscription
     template<class T, typename std::enable_if<!std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessSavePointerImpl(T *arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         SaveTracked(arg);
@@ -589,6 +591,7 @@ namespace inscription
     template<class T, typename std::enable_if<std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessLoadPointerImpl(T *&arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         polyManager.HandleObject(arg, *this, trackers);
@@ -597,6 +600,7 @@ namespace inscription
     template<class T, typename std::enable_if<!std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessLoadPointerImpl(T *&arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         LoadTracked(arg);
@@ -605,6 +609,7 @@ namespace inscription
     template<class T, typename std::enable_if<std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessSaveSimplePointerImpl(T *arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         polyManager.HandleObjectNoConstruct(arg, *this, trackers);
@@ -613,6 +618,7 @@ namespace inscription
     template<class T, typename std::enable_if<!std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessSaveSimplePointerImpl(T *arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         SimpleSaveTracked(arg);
@@ -621,6 +627,7 @@ namespace inscription
     template<class T, typename std::enable_if<std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessLoadSimplePointerImpl(T *&arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         polyManager.HandleObjectNoConstruct(arg, *this, trackers);
@@ -629,6 +636,7 @@ namespace inscription
     template<class T, typename std::enable_if<!std::is_polymorphic<T>::value, int>::type>
     void Scribe::ProcessLoadSimplePointerImpl(T *&arg)
     {
+        CheckConst<T>();
         CheckPointer<T>();
         trackers.AttemptEnableSelectiveTracking<T>();
         SimpleLoadTracked(arg);
