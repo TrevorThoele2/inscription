@@ -7,10 +7,10 @@
 
 namespace Inscription
 {
-    class BinaryInputFile : public Stream<std::ifstream>
+    class InputBinaryFile : public Stream<std::ifstream>
     {
     public:
-        BinaryInputFile(const Path &path);
+        InputBinaryFile(const Path &path);
 
         void ReadData(Buffer &buffer);
         template<class T>
@@ -21,7 +21,7 @@ namespace Inscription
     };
 
     template<class T>
-    void BinaryInputFile::ReadData(T &var)
+    void InputBinaryFile::ReadData(T &var)
     {
         stream.read(reinterpret_cast<char*>(&var), sizeof(var));
     }

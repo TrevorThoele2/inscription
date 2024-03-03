@@ -7,10 +7,10 @@
 
 namespace Inscription
 {
-    class BinaryOutputFile : public Stream<std::ofstream>
+    class OutputBinaryFile : public Stream<std::ofstream>
     {
     public:
-        BinaryOutputFile(const Path &path);
+        OutputBinaryFile(const Path &path);
 
         void WriteData(const Buffer &buffer);
         template<class T>
@@ -21,7 +21,7 @@ namespace Inscription
     };
 
     template<class T>
-    void BinaryOutputFile::WriteData(const T var)
+    void OutputBinaryFile::WriteData(const T var)
     {
         stream.write(reinterpret_cast<const char*>(&var), sizeof(var));
     }

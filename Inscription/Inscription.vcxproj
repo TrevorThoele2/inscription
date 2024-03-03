@@ -180,8 +180,10 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Assign.h" />
-    <ClInclude Include="BinaryInputFile.h" />
-    <ClInclude Include="BinaryOutputFile.h" />
+    <ClInclude Include="InputBinaryFile.h" />
+    <ClInclude Include="InputSimpleFile.h" />
+    <ClInclude Include="InputTextFile.h" />
+    <ClInclude Include="OutputBinaryFile.h" />
     <ClInclude Include="BinaryScribe.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ClassName.h" />
@@ -200,6 +202,7 @@
     <ClInclude Include="Inscripter.h" />
     <ClInclude Include="InscripterBase.h" />
     <ClInclude Include="IsDefaultConstructible.h" />
+    <ClInclude Include="OutputSimpleFile.h" />
     <ClInclude Include="RegisteredTypeNotFoundException.h" />
     <ClInclude Include="RegisteredTypes.h" />
     <ClInclude Include="TableEntryBase.h" />
@@ -241,7 +244,7 @@
     <ClInclude Include="TableNotConstructedException.h" />
     <ClInclude Include="TableNotLinkedException.h" />
     <ClInclude Include="TableVariableNotHereException.h" />
-    <ClInclude Include="TextFile.h" />
+    <ClInclude Include="OutputTextFile.h" />
     <ClInclude Include="TrackerID.h" />
     <ClInclude Include="Tracking.h" />
     <ClInclude Include="Tuple.h" />
@@ -256,14 +259,17 @@
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BinaryInputFile.cpp" />
-    <ClCompile Include="BinaryOutputFile.cpp" />
+    <ClCompile Include="InputBinaryFile.cpp" />
+    <ClCompile Include="InputSimpleFile.cpp" />
+    <ClCompile Include="InputTextFile.cpp" />
+    <ClCompile Include="OutputBinaryFile.cpp" />
     <ClCompile Include="BinaryScribe.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="ClassNameResolver.cpp" />
     <ClCompile Include="ContainerSize.cpp" />
     <ClCompile Include="Endian.cpp" />
     <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="OutputSimpleFile.cpp" />
     <ClCompile Include="Pointer.cpp" />
     <ClCompile Include="PointerDelegate.cpp" />
     <ClCompile Include="PointerInput.cpp" />
@@ -272,12 +278,11 @@
     <ClCompile Include="RegisteredTypeNotFoundException.cpp" />
     <ClCompile Include="RegisteredTypes.cpp" />
     <ClCompile Include="Scribe.cpp" />
-    <ClCompile Include="SimpleFile.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="TableNotConstructedException.cpp" />
     <ClCompile Include="TableNotLinkedException.cpp" />
     <ClCompile Include="TableVariableNotHereException.cpp" />
-    <ClCompile Include="TextFile.cpp" />
+    <ClCompile Include="OutputTextFile.cpp" />
     <ClCompile Include="Tracking.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

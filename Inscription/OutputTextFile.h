@@ -6,26 +6,18 @@
 
 namespace Inscription
 {
-    class TextInFile : public SimpleFile<std::ifstream>
-    {
-    public:
-        TextInFile(const Path &path);
-        TextInFile& operator>>(std::string &str);
-        TextInFile& operator>>(char &ch);
-
-        void GetLine(std::string &str);
-        void GetLine(std::string &str, char delimiter);
-    };
-
-    class TextOutFile : public SimpleFile<std::ofstream>
+    class OutputTextFile : public SimpleFile<std::ofstream>
     {
     public:
         typedef std::streamsize Width;
     public:
-        TextOutFile(const Path &path, bool append = false);
-        TextOutFile& operator<<(const std::string &str);
-        TextOutFile& operator<<(const char ch);
-        void Flush();
+        OutputTextFile(const Path& path, bool append = false);
+
+        OutputTextFile& operator<<(const std::string& str);
+        OutputTextFile& operator<<(const char ch);
+
+        void ClearFile();
+
         // Set this to output strings at a given width. If the string is lower than the width set, it'll fill with this character.
         void SetFillCharacter(const char set);
         void ResetFillCharacter();
