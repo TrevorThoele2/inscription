@@ -148,5 +148,5 @@ namespace Inscription
 
     const Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ClassNameResolver
         Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("Derived");
+        CreateSingleNameResolver("CustomConstructionDerived");
 }

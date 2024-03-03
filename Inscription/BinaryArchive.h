@@ -177,4 +177,7 @@ namespace Inscription
     {
         objectTracker.Register<T>();
     }
+
+    template<class T>
+    using BinaryScribe = Scribe<T, BinaryArchive>;
 }

@@ -187,11 +187,13 @@
     <ClInclude Include="ArrayScribe.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="BaseScriven.h" />
+    <ClInclude Include="BaseTableDataEntry.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="FileName.h" />
     <ClInclude Include="FileNameScribe.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
+    <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="FileEncounteredError.h" />
@@ -214,6 +216,7 @@
     <ClInclude Include="Endian.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="ForwardListScribe.h" />
+    <ClInclude Include="RelativeFilePathScribe.h" />
     <ClInclude Include="Scribe.h" />
     <ClInclude Include="ScribeBase.h" />
     <ClInclude Include="OutputBinaryArchive.h" />
@@ -240,6 +243,7 @@
     <ClInclude Include="ScopeConstructor.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="StringScribe.h" />
+    <ClInclude Include="TableBase.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataEntry.h" />
     <ClInclude Include="TypeTracker.h" />
@@ -289,6 +293,7 @@
     <ClCompile Include="OutputTextArchive.cpp" />
     <ClCompile Include="PolymorphicTypeNotFound.cpp" />
     <ClCompile Include="RegisteredTypeNotFound.cpp" />
+    <ClCompile Include="RelativeFilePathScribe.cpp" />
     <ClCompile Include="ScopeTrackingModifier.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="StringScribe.cpp" />

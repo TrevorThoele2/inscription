@@ -153,5 +153,5 @@ namespace Inscription
     }
 
     const Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("Derived");
+        Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("CustomConstructionDerived");
 }
