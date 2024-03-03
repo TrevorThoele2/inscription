@@ -53,7 +53,10 @@ namespace Inscription
         std::string buffer;
         buffer.resize(static_cast<size_t>(useSize));
 
-        stream.get(&buffer[0], useSize);
+        stream.read(&buffer[0], useSize);
+
+        while (buffer[buffer.size() - 1] == '\0')
+            buffer.erase(buffer.size() - 1);
 
         return buffer;
     }

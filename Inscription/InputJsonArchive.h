@@ -110,7 +110,7 @@ namespace Inscription
         Collection* writeCollection = nullptr;
         Collection* readCollection = nullptr;
 
-        void ScanFile(const std::string& name);
+        void ScanFile();
 
         [[nodiscard]] std::optional<std::string> TakeValueFrom(const std::string& name, Collection& from);
         [[nodiscard]] std::optional<std::string> ReadValueFrom(const std::string& name, Collection& from);
@@ -124,8 +124,6 @@ namespace Inscription
         [[nodiscard]] static T& RequiredTransformation(const std::string& name, Item& item);
         template<class T>
         [[nodiscard]] static T* OptionalTransformation(Item& item);
-
-        [[nodiscard]] static std::string Trim(const std::string& layer);
 
         [[nodiscard]] static std::string ParseName(const std::string& string);
         [[nodiscard]] static std::string ParseValue(const std::string& string);

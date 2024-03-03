@@ -152,6 +152,12 @@ namespace Inscription
             {
                 switch (character)
                 {
+                case ' ':
+                    break;
+                case '\n':
+                    break;
+                case '\r':
+                    break;
                 case '{':
                 {
                     if (!valueElement.empty())
@@ -257,6 +263,12 @@ namespace Inscription
             {
                 switch (character)
                 {
+                case ' ':
+                    break;
+                case '\n':
+                    break;
+                case '\r':
+                    break;
                 case '{':
                 {
                     if (nameElement.empty())
@@ -331,14 +343,12 @@ namespace Inscription
         return items.size();
     }
 
-    void InputJsonArchive::ScanFile(const std::string& name)
+    void InputJsonArchive::ScanFile()
     {
         if (file.IsAtEndOfFile())
             return;
 
-        std::string read;
-        while (!file.IsAtEndOfFile())
-            read += Trim(file.ReadLine());
+        auto read = file.ReadSize(std::numeric_limits<size_t>::max());
 
         while (!read.empty())
         {
@@ -405,7 +415,7 @@ namespace Inscription
 
         if (!string)
         {
-            ScanFile(name);
+            ScanFile();
             string = findItem();
             if (!string)
                 return {};
@@ -454,7 +464,7 @@ namespace Inscription
 
         if (!string)
         {
-            ScanFile(name);
+            ScanFile();
             string = findItem();
             if (!string)
                 return {};
@@ -488,7 +498,7 @@ namespace Inscription
                 return item;
         }
 
-        ScanFile(name);
+        ScanFile();
         return findItem();
     }
 
@@ -497,18 +507,6 @@ namespace Inscription
         const auto destroyCollection = collection;
         collection = collection->parent;
         collection->Destroy(destroyCollection);
-    }
-
-    std::string InputJsonArchive::Trim(const std::string& layer)
-    {
-        const auto withoutSpaces = Chroma::ReplaceString(
-            layer,
-            " ",
-            "");
-        return Chroma::ReplaceString(
-            withoutSpaces,
-            "\n",
-            "");
     }
 
     std::string InputJsonArchive::ParseName(const std::string& string)

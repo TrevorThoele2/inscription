@@ -16,7 +16,7 @@ namespace Inscription
 
     void OutputBinaryFile::WriteData(const Buffer& buffer)
     {
-        stream.write(buffer.data(), buffer.size());
+        stream.write(buffer.value.data(), buffer.value.size());
         if (FailedStream())
             throw FileEncounteredError();
     }

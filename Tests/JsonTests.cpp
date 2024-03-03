@@ -197,4 +197,79 @@ SCENARIO_METHOD(JsonTestsFixture, "loading basics in json", "[json]")
             }
         }
     }
+
+    GIVEN("saved string with space in value")
+    {
+        const std::string savedString = "the string";
+
+        {
+            auto outputArchive = CreateRegistered<OutputArchive>();
+            outputArchive("str", savedString);
+        }
+
+        THEN("loading")
+        {
+            std::string loadedString;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive("str", loadedString);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loadedString == savedString);
+            }
+        }
+    }
+
+    GIVEN("saved string with newline in value")
+    {
+        const std::string savedString = "the\nstring";
+
+        {
+            auto outputArchive = CreateRegistered<OutputArchive>();
+            outputArchive("str", savedString);
+        }
+
+        THEN("loading")
+        {
+            std::string loadedString;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive("str", loadedString);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loadedString == savedString);
+            }
+        }
+    }
+
+    GIVEN("saved string with carriage return and line feed in value")
+    {
+        const std::string savedString = "the\r\nstring";
+
+        {
+            auto outputArchive = CreateRegistered<OutputArchive>();
+            outputArchive("str", savedString);
+        }
+
+        THEN("loading")
+        {
+            std::string loadedString;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive("str", loadedString);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loadedString == savedString);
+            }
+        }
+    }
 }
