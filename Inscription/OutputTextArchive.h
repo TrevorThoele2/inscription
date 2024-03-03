@@ -3,25 +3,25 @@
 #include "TextArchive.h"
 #include "OutputTextFile.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputTextArchive : public TextArchive
+    class OutputText : public Text
     {
     public:
-        explicit OutputTextArchive(const FilePath& path, bool append = false);
-        OutputTextArchive(const OutputTextArchive& arg) = delete;
-        OutputTextArchive(OutputTextArchive&& arg) noexcept;
+        explicit OutputText(const File::Path& path, bool append = false);
+        OutputText(const OutputText& arg) = delete;
+        OutputText(OutputText&& arg) noexcept;
         
-        OutputTextArchive& operator=(const OutputTextArchive& arg) = delete;
-        OutputTextArchive& operator=(OutputTextArchive&& arg) noexcept;
+        OutputText& operator=(const OutputText& arg) = delete;
+        OutputText& operator=(OutputText&& arg) noexcept;
 
-        OutputTextArchive& Write(const std::string& arg);
-        OutputTextArchive& Write(const char arg);
+        OutputText& Write(const std::string& arg);
+        OutputText& Write(const char arg);
     protected:
         void WriteImpl(const std::string& arg) { WriteToFile(arg); }
         void WriteImpl(const char arg) { WriteToFile(arg); }
     private:
-        OutputTextFile file;
+       File::OutputText file;
     private:
         template<class T>
         void WriteToFile(T& arg)

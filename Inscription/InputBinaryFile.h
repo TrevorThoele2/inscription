@@ -2,35 +2,42 @@
 
 #include <fstream>
 
-#include "Stream.h"
+#include "FilePath.h"
+#include "FilePosition.h"
+#include "FileSize.h"
+#include "SanitizeStreamFailure.h"
+
 #include "Buffer.h"
 
-namespace Inscription
+namespace Inscription::File
 {
-    class InputBinaryFile : public Stream<std::ifstream>
+    class InputBinary final
     {
     public:
-        explicit InputBinaryFile(const FilePath& path);
-        InputBinaryFile(InputBinaryFile&& arg) noexcept;
+        explicit InputBinary(const Path& path);
+        InputBinary(InputBinary&& arg) noexcept;
 
-        InputBinaryFile& operator=(InputBinaryFile&& arg) noexcept;
+        InputBinary& operator=(InputBinary&& arg) noexcept;
 
         void ReadData(std::vector<char>& buffer, size_t size);
         template<class T>
         void ReadData(T& var);
 
-        void SeekStream(StreamPosition offset);
-        void SeekStreamFromBegin(StreamPosition offset = 0);
-        void SeekStreamFromEnd(StreamPosition offset = 0);
-        [[nodiscard]] StreamPosition TellStream();
-        [[nodiscard]] SizeT Size();
+        void Seek(Position position);
+        void SeekFromBeginning(Position offset = 0);
+        void SeekFromEnd(Position offset = 0);
+        [[nodiscard]] Position Position();
+        [[nodiscard]] Size Size();
+    private:
+        Path path;
+        std::ifstream stream;
     };
 
     template<class T>
-    void InputBinaryFile::ReadData(T& var)
+    void InputBinary::ReadData(T& var)
     {
-        stream.read(reinterpret_cast<char*>(&var), sizeof(var));
-        if (stream.bad())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure(
+            [this, &var]() { stream.read(reinterpret_cast<char*>(&var), sizeof(var)); },
+            path);
     }
 }

@@ -11,8 +11,6 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     namespace detail
     {
         template<unsigned int I>
@@ -20,7 +18,7 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void Scriven(std::tuple<Args...>& object, BinaryArchive& archive)
+            static void Scriven(std::tuple<Args...>& object, Archive::Binary& archive)
             {
                 auto& value = std::get<I - 1>(object);
                 archive(value);
@@ -28,7 +26,7 @@ namespace Inscription
             }
 
             template<class... Args>
-            static void Scriven(std::tuple<Args...>& object, JsonArchive& archive)
+            static void Scriven(std::tuple<Args...>& object, Archive::Json& archive)
             {
                 auto& value = std::get<I - 1>(object);
                 archive("", value);
@@ -41,11 +39,11 @@ namespace Inscription
         {
         public:
             template<class... Args>
-            static void Scriven(std::tuple<Args...>&, BinaryArchive&)
+            static void Scriven(std::tuple<Args...>&, Archive::Binary&)
             {}
 
             template<class... Args>
-            static void Scriven(std::tuple<Args...>&, JsonArchive&)
+            static void Scriven(std::tuple<Args...>&, Archive::Json&)
             {}
         };
     }
@@ -56,18 +54,18 @@ namespace Inscription
     public:
         using ObjectT = std::tuple<Args...>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::tuple<Args...>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
     }
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::tuple<Args...>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

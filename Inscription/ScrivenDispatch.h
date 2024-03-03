@@ -7,7 +7,10 @@
 
 namespace Inscription
 {
-    class JsonArchive;
+    namespace Archive
+    {
+        class Json;
+    }
 
     class ScrivenDispatch
     {
@@ -60,7 +63,7 @@ namespace Inscription
         }
 
         template<class T>
-        static void Execute(T& object, JsonArchive& archive)
+        static void Execute(T& object, Archive::Json& archive)
         {
             NamedExecute("", object, archive);
         }

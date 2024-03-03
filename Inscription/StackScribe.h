@@ -14,20 +14,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class T, class Container>
     class Scribe<std::stack<T, Container>> final
     {
     public:
         using ObjectT = std::stack<T, Container>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -67,7 +65,7 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    void Scribe<std::stack<T, Container>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::stack<T, Container>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {
@@ -112,7 +110,7 @@ namespace Inscription
     }
 
     template<class T, class Container>
-    struct ScribeTraits<std::stack<T, Container>, Archive>
+    struct ScribeTraits<std::stack<T, Container>, Archive::Archive>
     {
         using Category = TrackingScribeCategory<std::stack<T, Container>>;
     };

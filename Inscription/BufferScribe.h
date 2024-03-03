@@ -12,7 +12,7 @@ namespace Inscription
     public:
         using ObjectT = Buffer;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>

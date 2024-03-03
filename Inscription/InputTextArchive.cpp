@@ -1,51 +1,51 @@
 #include "InputTextArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    InputTextArchive::InputTextArchive(const FilePath& path) :
-        TextArchive(Direction::Input), file(path)
+    InputText::InputText(const File::Path& path) :
+        Text(Direction::Input), file(path)
     {}
 
-    InputTextArchive::InputTextArchive(InputTextArchive&& arg) noexcept :
-        TextArchive(std::move(arg)), file(std::move(arg.file))
+    InputText::InputText(InputText&& arg) noexcept :
+        Text(std::move(arg)), file(std::move(arg.file))
     {}
 
-    InputTextArchive& InputTextArchive::operator=(InputTextArchive&& arg) noexcept
+    InputText& InputText::operator=(InputText&& arg) noexcept
     {
-        TextArchive::operator=(std::move(arg));
+        Text::operator=(std::move(arg));
         file = std::move(arg.file);
         return *this;
     }
 
-    InputTextArchive& InputTextArchive::ReadLine(std::string& arg)
+    InputText& InputText::ReadLine(std::string& arg)
     {
         ReadLineImpl(arg);
         return *this;
     }
 
-    InputTextArchive& InputTextArchive::ReadLine(std::string& arg, char delimiter)
+    InputText& InputText::ReadLine(std::string& arg, char delimiter)
     {
         ReadLineImpl(arg, delimiter);
         return *this;
     }
 
-    InputTextArchive& InputTextArchive::ReadSize(std::string& arg, size_t size)
+    InputText& InputText::ReadSize(std::string& arg, size_t size)
     {
         ReadSizeImpl(arg, size);
         return *this;
     }
 
-    void InputTextArchive::ReadLineFromFile(std::string& arg)
+    void InputText::ReadLineFromFile(std::string& arg)
     {
         arg = file.ReadLine();
     }
 
-    void InputTextArchive::ReadLineFromFile(std::string& arg, char delimiter)
+    void InputText::ReadLineFromFile(std::string& arg, char delimiter)
     {
         arg = file.ReadLine(delimiter);
     }
 
-    void InputTextArchive::ReadSizeFromFile(std::string& arg, size_t size)
+    void InputText::ReadSizeFromFile(std::string& arg, size_t size)
     {
         arg = file.ReadSize(size);
     }

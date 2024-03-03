@@ -14,20 +14,20 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-        static void Scriven(ObjectT& object, TextArchive& archive);
+        static void Scriven(ObjectT& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        static void Scriven(ObjectT& object, Archive::Text& archive);
     };
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void NullScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive)
     {}
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void NullScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {}
 
     template<class Object>
-    void NullScribeCategory<Object>::Scriven(ObjectT& object, TextArchive& archive)
+    void NullScribeCategory<Object>::Scriven(ObjectT& object, Archive::Text& archive)
     {}
 }

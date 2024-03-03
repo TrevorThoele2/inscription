@@ -13,12 +13,12 @@
 class JsonFixture : public GeneralFixture
 {
 public:
-    using TypeRegistrationContext = Inscription::TypeRegistrationContext<Inscription::JsonArchive>;
+    using TypeRegistrationContext = Inscription::TypeRegistrationContext<Inscription::Archive::Json>;
     TypeRegistrationContext typeRegistrationContext;
 
-    using OutputArchive = Inscription::OutputJsonArchive;
-    using InputArchive = Inscription::InputJsonArchive;
-    using OutputTextArchive = Inscription::OutputTextArchive;
+    using OutputArchive = Inscription::Archive::OutputJson;
+    using InputArchive = Inscription::Archive::InputJson;
+    using OutputTextArchive = Inscription::Archive::OutputText;
 
     template<class T, std::enable_if_t<std::is_same_v<T, OutputArchive>, int> = 0>
     [[nodiscard]] OutputArchive CreateRegistered() const;
@@ -43,5 +43,5 @@ auto JsonFixture::CreateRegistered() const -> InputArchive
 template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::OutputTextArchive>, int>>
 auto JsonFixture::CreateRegistered() const -> OutputTextArchive
 {
-    return Inscription::OutputTextArchive("Test.json");
+    return OutputTextArchive("Test.json");
 }

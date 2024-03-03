@@ -13,20 +13,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class T, size_t N>
     class Scribe<std::array<T, N>> final
     {
     public:
         using ObjectT = std::array<T, N>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class T, size_t N>
-    void Scribe<std::array<T, N>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::array<T, N>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -47,7 +45,7 @@ namespace Inscription
     }
 
     template<class T, size_t N>
-    void Scribe<std::array<T, N>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::array<T, N>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

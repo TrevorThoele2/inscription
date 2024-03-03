@@ -2,34 +2,38 @@
 
 #include <fstream>
 
-#include "Stream.h"
+#include "FilePath.h"
+#include "FilePosition.h"
+#include "SanitizeStreamFailure.h"
+
 #include "Buffer.h"
 
-namespace Inscription
+namespace Inscription::File
 {
-    class OutputBinaryFile : public Stream<std::ofstream>
+    class OutputBinary final
     {
     public:
-        explicit OutputBinaryFile(const FilePath& path);
-        OutputBinaryFile(OutputBinaryFile&& arg) noexcept;
+        explicit OutputBinary(const Path& path);
+        OutputBinary(OutputBinary&& arg) noexcept;
 
-        OutputBinaryFile& operator=(OutputBinaryFile&& arg) noexcept;
+        OutputBinary& operator=(OutputBinary&& arg) noexcept;
 
         void WriteData(const Buffer& buffer);
         template<class T>
         void WriteData(T var);
 
-        void SeekStreamFromCurrent(StreamPosition offset);
-        void SeekStreamFromBegin(StreamPosition offset = 0);
-        void SeekStreamFromEnd(StreamPosition offset = 0);
-        [[nodiscard]] StreamPosition TellStream();
+        void Seek(Position position);
+        void SeekFromBeginning(Position offset = 0);
+        void SeekFromEnd(Position offset = 0);
+        [[nodiscard]] Position Position();
+    private:
+        Path path;
+        std::ofstream stream;
     };
 
     template<class T>
-    void OutputBinaryFile::WriteData(T var)
+    void OutputBinary::WriteData(T var)
     {
-        stream.write(reinterpret_cast<const char*>(&var), sizeof(var));
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure([this, &var]() { stream.write(reinterpret_cast<const char*>(&var), sizeof(var)); }, path);
     }
 }

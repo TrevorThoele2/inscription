@@ -5,26 +5,26 @@
 
 #include <Chroma/StringUtility.h>
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputJsonArchive final : public JsonArchive
+    class OutputJson final : public Json
     {
     public:
-        OutputJsonArchive(const FilePath& path);
-        OutputJsonArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
-        OutputJsonArchive(OutputJsonArchive&& arg) noexcept;
-        ~OutputJsonArchive();
+        OutputJson(const File::Path& path);
+        OutputJson(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        OutputJson(OutputJson&& arg) noexcept;
+        ~OutputJson();
 
-        OutputJsonArchive& operator=(OutputJsonArchive&& arg) noexcept;
+        OutputJson& operator=(OutputJson&& arg) noexcept;
 
-        OutputJsonArchive& WriteValue(const std::string& name, const std::string& value);
+        OutputJson& WriteValue(const std::string& name, const std::string& value);
     public:
         void StartList(const std::string& name);
         void EndList();
         void StartObject(const std::string& name);
         void EndObject();
     private:
-        OutputTextFile file;
+        File::OutputText file;
 
         std::vector<uint32_t> levelCount;
 

@@ -61,7 +61,7 @@ SCENARIO_METHOD(JumpTableFixture, "saving jump table", "[jumptable]")
         auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
         auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
 
-        auto outputArchive = std::make_unique<::Inscription::OutputBinaryArchive>("Test.dat");
+        auto outputArchive = std::make_unique<::Inscription::Archive::OutputBinary>("Test.dat");
 
         ::Inscription::OutputJumpTable<int, int> savedJumpTable;
 
@@ -105,7 +105,7 @@ SCENARIO_METHOD(JumpTableFixture, "saving jump table", "[jumptable]")
 
                     ::Inscription::InputJumpTable<int, int> loadedJumpTable;
 
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                     inputArchive(loadedJumpTable);
 
                     REQUIRE(loadedJumpTable.AllIDs().size() == 1);
@@ -122,7 +122,7 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
         auto savedIntegerIDs = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-100, 100));
         auto savedIntegerValues = dataGeneration.RandomGroup<int>(10, TestFramework::Range<int>(-10000, 10000));
 
-        auto outputArchive = std::make_unique<::Inscription::OutputBinaryArchive>("Test.dat");
+        auto outputArchive = std::make_unique<::Inscription::Archive::OutputBinary>("Test.dat");
 
         {
             ::Inscription::OutputJumpTable<int, int> savedJumpTable;
@@ -138,7 +138,7 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
 
             ::Inscription::InputJumpTable<int, int> loadedJumpTable;
 
-            auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+            auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
             inputArchive(loadedJumpTable);
 
             THEN("all objects fillable")
@@ -185,7 +185,7 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
 
                 ::Inscription::InputJumpTable<int, int> loadedJumpTable;
 
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(loadedJumpTable);
 
                 THEN("can load all post table data")

@@ -8,44 +8,42 @@
 #include "TableData.h"
 #include "Direction.h"
 #include "TypeManager.h"
-#include "StreamPosition.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputJsonArchive;
-    class InputJsonArchive;
+    class OutputJson;
+    class InputJson;
 
-    class JsonArchive : public Archive
+    class Json : public Archive
     {
     private:
-        using Types = TypeManager<JsonArchive>;
+        using Types = TypeManager<Json>;
     public:
-        using StreamPosition = StreamPosition;
         using TypeRegistrationContext = Types::TypeRegistrationContext;
     public:
         Types types;
     public:
-        JsonArchive(const JsonArchive& arg) = delete;
-        JsonArchive& operator=(const JsonArchive& arg) = delete;
+        Json(const Json& arg) = delete;
+        Json& operator=(const Json& arg) = delete;
 
-        virtual ~JsonArchive() = 0;
+        virtual ~Json() = 0;
     public:
         template<class T>
-        JsonArchive& operator()(const std::string& name, T& object);
+        Json& operator()(const std::string& name, T& object);
     public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
 
-        OutputJsonArchive* AsOutput();
-        InputJsonArchive* AsInput();
-        [[nodiscard]] const OutputJsonArchive* AsOutput() const;
-        [[nodiscard]] const InputJsonArchive* AsInput() const;
+        OutputJson* AsOutput();
+        InputJson* AsInput();
+        [[nodiscard]] const OutputJson* AsOutput() const;
+        [[nodiscard]] const InputJson* AsInput() const;
     protected:
-        JsonArchive(Direction direction);
-        JsonArchive(Direction direction, TypeRegistrationContext typeRegistrationContext);
-        JsonArchive(JsonArchive&& arg) noexcept;
+        Json(Direction direction);
+        Json(Direction direction, TypeRegistrationContext typeRegistrationContext);
+        Json(Json&& arg) noexcept;
 
-        JsonArchive& operator=(JsonArchive&& arg) noexcept;
+        Json& operator=(Json&& arg) noexcept;
     private:
         const Direction direction;
     private:
@@ -54,12 +52,15 @@ namespace Inscription
     };
 
     template<class T>
-    JsonArchive& JsonArchive::operator()(const std::string& name, T& object)
+    Json& Json::operator()(const std::string& name, T& object)
     {
         ScrivenDispatch::NamedExecute(name, RemoveConst(object), *this);
         return *this;
     }
+}
 
+namespace Inscription
+{
     template<class Object>
-    using JsonTableData = TableData<Object, JsonArchive>;
+    using JsonTableData = TableData<Object, Archive::Json>;
 }

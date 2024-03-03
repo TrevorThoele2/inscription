@@ -1,4 +1,4 @@
-#include "StreamPositionScribe.h"
+#include "FilePositionScribe.h"
 
 #include "NumericScribe.h"
 
@@ -7,7 +7,7 @@
 
 namespace Inscription
 {
-    void Scribe<StreamPosition>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<File::Position>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         if (archive.IsOutput())

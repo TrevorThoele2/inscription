@@ -14,20 +14,18 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-
     template<class Key, class T, class Hash, class Predicate, class Allocator>
     class Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>> final
     {
     public:
         using ObjectT = std::unordered_multimap<Key, T, Hash, Predicate, Allocator>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class Key, class T, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -61,7 +59,7 @@ namespace Inscription
     }
 
     template<class Key, class T, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

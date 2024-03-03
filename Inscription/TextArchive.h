@@ -6,37 +6,37 @@
 #include "Direction.h"
 #include "Const.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputTextArchive;
-    class InputTextArchive;
+    class OutputText;
+    class InputText;
 
-    class TextArchive : public Archive
+    class Text : public Archive
     {
     public:
-        virtual ~TextArchive() = 0;
+        virtual ~Text() = 0;
     public:
         template<class T>
-        TextArchive& operator()(T& object);
+        Text& operator()(T& object);
     public:
         [[nodiscard]] bool IsOutput() const;
         [[nodiscard]] bool IsInput() const;
 
-        OutputTextArchive* AsOutput();
-        InputTextArchive* AsInput();
-        [[nodiscard]] const OutputTextArchive* AsOutput() const;
-        [[nodiscard]] const InputTextArchive* AsInput() const;
+        OutputText* AsOutput();
+        InputText* AsInput();
+        [[nodiscard]] const OutputText* AsOutput() const;
+        [[nodiscard]] const InputText* AsInput() const;
     protected:
-        explicit TextArchive(Direction direction);
-        TextArchive(TextArchive&& arg) noexcept;
+        explicit Text(Direction direction);
+        Text(Text&& arg) noexcept;
 
-        TextArchive& operator=(TextArchive&& arg) noexcept;
+        Text& operator=(Text&& arg) noexcept;
     private:
         const Direction direction;
     };
 
     template<class T>
-    TextArchive& TextArchive::operator()(T& object)
+    Text& Text::operator()(T& object)
     {
         ScrivenDispatch::Execute(object, *this);
         return *this;

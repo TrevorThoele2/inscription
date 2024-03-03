@@ -2,10 +2,10 @@
 
 #include <Chroma/StringUtility.h>
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    InputJsonArchive::InputJsonArchive(const FilePath& path) :
-        JsonArchive(Direction::Input),
+    InputJson::InputJson(const File::Path& path) :
+        Json(Direction::Input),
         file(path),
         baseObject(nullptr),
         writeCollection(&baseObject),
@@ -15,10 +15,10 @@ namespace Inscription
         file.ReadData(character);
     }
 
-    InputJsonArchive::InputJsonArchive(
-        const FilePath& path, const TypeRegistrationContext& typeRegistrationContext)
+    InputJson::InputJson(
+        const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
         :
-        JsonArchive(Direction::Input, typeRegistrationContext),
+        Json(Direction::Input, typeRegistrationContext),
         file(path),
         baseObject(nullptr),
         writeCollection(&baseObject),
@@ -28,17 +28,17 @@ namespace Inscription
         file.ReadData(character);
     }
 
-    InputJsonArchive::InputJsonArchive(InputJsonArchive&& arg) noexcept :
-        JsonArchive(std::move(arg)),
+    InputJson::InputJson(InputJson&& arg) noexcept :
+        Json(std::move(arg)),
         file(std::move(arg.file)),
         baseObject(std::move(arg.baseObject)),
         writeCollection(&baseObject),
         readCollection(&baseObject)
     {}
 
-    InputJsonArchive& InputJsonArchive::operator=(InputJsonArchive&& arg) noexcept
+    InputJson& InputJson::operator=(InputJson&& arg) noexcept
     {
-        JsonArchive::operator=(std::move(arg));
+        Json::operator=(std::move(arg));
         file = std::move(arg.file);
         baseObject = std::move(arg.baseObject);
         writeCollection = &baseObject;
@@ -46,7 +46,7 @@ namespace Inscription
         return *this;
     }
 
-    InputJsonArchive& InputJsonArchive::TakeValue(const std::string& name, std::string& value)
+    InputJson& InputJson::TakeValue(const std::string& name, std::string& value)
     {
         auto readValue = TakeValueFrom(name, *readCollection);
         if (!readValue)
@@ -56,7 +56,7 @@ namespace Inscription
         return *this;
     }
 
-    InputJsonArchive& InputJsonArchive::ReadValue(const std::string& name, std::string& value)
+    InputJson& InputJson::ReadValue(const std::string& name, std::string& value)
     {
         auto readValue = ReadValueFrom(name, *readCollection);
         if (!readValue)
@@ -66,46 +66,46 @@ namespace Inscription
         return *this;
     }
 
-    bool InputJsonArchive::HasValue(const std::string& name)
+    bool InputJson::HasValue(const std::string& name)
     {
         return static_cast<bool>(OptionalItem(name, *readCollection));
     }
 
-    ContainerSize InputJsonArchive::StartList(const std::string& name)
+    ContainerSize InputJson::StartList(const std::string& name)
     {
         StartCollection<List>(name, readCollection);
         return readCollection->Size();
     }
 
-    void InputJsonArchive::EndList()
+    void InputJson::EndList()
     {
         EndCollection(readCollection);
     }
 
-    void InputJsonArchive::StartObject(const std::string& name)
+    void InputJson::StartObject(const std::string& name)
     {
         StartCollection<Object>(name, readCollection);
     }
 
-    void InputJsonArchive::EndObject()
+    void InputJson::EndObject()
     {
         EndCollection(readCollection);
     }
 
-    InputJsonArchive::Item::~Item() = default;
+    InputJson::Item::~Item() = default;
 
-    InputJsonArchive::Value::Value(const std::string& string) : string(string)
+    InputJson::Value::Value(const std::string& string) : string(string)
     {}
 
-    InputJsonArchive::Collection::~Collection() = default;
+    InputJson::Collection::~Collection() = default;
 
-    InputJsonArchive::Collection::Collection(Collection* parent) : parent(parent)
+    InputJson::Collection::Collection(Collection* parent) : parent(parent)
     {}
 
-    InputJsonArchive::List::List(Collection* parent) : Collection(parent)
+    InputJson::List::List(Collection* parent) : Collection(parent)
     {}
 
-    void InputJsonArchive::List::Emplace(const std::string& name, ItemPtr&& item)
+    void InputJson::List::Emplace(const std::string& name, ItemPtr&& item)
     {
         if (!name.empty())
             throw JsonParseError("Lists do not use names (attempted name: " + name + ").");
@@ -113,7 +113,7 @@ namespace Inscription
         items.push_back(std::move(item));
     }
 
-    void InputJsonArchive::List::Destroy(Item* item)
+    void InputJson::List::Destroy(Item* item)
     {
         for (auto currentItem = items.begin(); currentItem != items.end(); ++currentItem)
         {
@@ -125,7 +125,7 @@ namespace Inscription
         }
     }
 
-    auto InputJsonArchive::List::Read(const std::string& read) -> ReadResult
+    auto InputJson::List::Read(const std::string& read) -> ReadResult
     {
         std::string valueElement;
         auto readingString = false;
@@ -207,15 +207,15 @@ namespace Inscription
         return { nullptr, read.size() };
     }
 
-    size_t InputJsonArchive::List::Size() const
+    size_t InputJson::List::Size() const
     {
         return items.size();
     }
 
-    InputJsonArchive::Object::Object(Collection* parent) : Collection(parent)
+    InputJson::Object::Object(Collection* parent) : Collection(parent)
     {}
 
-    void InputJsonArchive::Object::Emplace(const std::string& name, ItemPtr&& item)
+    void InputJson::Object::Emplace(const std::string& name, ItemPtr&& item)
     {
         if (name.empty())
             throw JsonParseError();
@@ -223,7 +223,7 @@ namespace Inscription
         items.emplace(name, std::move(item));
     }
 
-    void InputJsonArchive::Object::Destroy(Item* item)
+    void InputJson::Object::Destroy(Item* item)
     {
         for (auto currentItem = items.begin(); currentItem != items.end(); ++currentItem)
         {
@@ -235,7 +235,7 @@ namespace Inscription
         }
     }
 
-    auto InputJsonArchive::Object::Read(const std::string& read) -> ReadResult
+    auto InputJson::Object::Read(const std::string& read) -> ReadResult
     {
         std::string readElement;
         std::string nameElement;
@@ -338,14 +338,14 @@ namespace Inscription
         return { nullptr, read.size() };
     }
 
-    size_t InputJsonArchive::Object::Size() const
+    size_t InputJson::Object::Size() const
     {
         return items.size();
     }
 
-    void InputJsonArchive::ScanFile()
+    void InputJson::ScanFile()
     {
-        if (file.IsAtEndOfFile())
+        if (file.IsAtEnd())
             return;
 
         auto read = file.ReadSize(std::numeric_limits<size_t>::max());
@@ -367,7 +367,7 @@ namespace Inscription
         }
     }
 
-    std::optional<std::string> InputJsonArchive::TakeValueFrom(const std::string& name, Collection& from)
+    std::optional<std::string> InputJson::TakeValueFrom(const std::string& name, Collection& from)
     {
         const auto findItem = [name, &from]() -> std::optional<std::string>
         {
@@ -424,7 +424,7 @@ namespace Inscription
         return *string;
     }
 
-    std::optional<std::string> InputJsonArchive::ReadValueFrom(const std::string& name, Collection& from)
+    std::optional<std::string> InputJson::ReadValueFrom(const std::string& name, Collection& from)
     {
         const auto findItem = [name, &from]() -> std::optional<std::string>
         {
@@ -473,7 +473,7 @@ namespace Inscription
         return *string;
     }
 
-    auto InputJsonArchive::OptionalItem(const std::string& name, Collection& from) -> Item*
+    auto InputJson::OptionalItem(const std::string& name, Collection& from) -> Item*
     {
         const auto findItem = [name, &from]()
         {
@@ -502,14 +502,14 @@ namespace Inscription
         return findItem();
     }
 
-    void InputJsonArchive::EndCollection(Collection*& collection)
+    void InputJson::EndCollection(Collection*& collection)
     {
         const auto destroyCollection = collection;
         collection = collection->parent;
         collection->Destroy(destroyCollection);
     }
 
-    std::string InputJsonArchive::ParseName(const std::string& string)
+    std::string InputJson::ParseName(const std::string& string)
     {
         if (string.empty() || string[string.size() - 1] != '\"')
             throw JsonParseError();
@@ -518,7 +518,7 @@ namespace Inscription
         return string.substr(start + 1, string.size() - 2 - start);
     }
 
-    std::string InputJsonArchive::ParseValue(const std::string& string)
+    std::string InputJson::ParseValue(const std::string& string)
     {
         if (string.empty())
             throw JsonParseError();

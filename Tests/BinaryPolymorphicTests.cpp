@@ -108,7 +108,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicFixture::Base;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -123,9 +123,9 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicFixture::Derived;
     public:
-        static Type OutputType(const BinaryArchive& archive);
+        static Type OutputType(const Archive::Binary& archive);
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<class Archive>
@@ -140,10 +140,10 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicFixture::GeneralDerived<differentiator>;
     public:
-        static Type OutputType(const BinaryArchive& archive);
-        static std::vector<Type> InputTypes(const BinaryArchive& archive);
+        static Type OutputType(const Archive::Binary& archive);
+        static std::vector<Type> InputTypes(const Archive::Binary& archive);
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
     };
 
     template<size_t differentiator, class Archive>
@@ -158,7 +158,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicFixture::UnregisteredBase;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {}
     };
 
@@ -174,7 +174,7 @@ namespace Inscription
     public:
         using ObjectT = BinaryPolymorphicFixture::UnregisteredDerived;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive)
+        void Scriven(ObjectT& object, Archive::Binary& archive)
         {}
     };
 
@@ -317,7 +317,7 @@ SCENARIO_METHOD
         Saved2::outputType = saved2OutputType;
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive.types.RegisterType<Base>();
             outputArchive.types.RegisterType<Saved0>();
             outputArchive.types.RegisterType<Saved1>();
@@ -333,7 +333,7 @@ SCENARIO_METHOD
 
         WHEN("loading unregistered pointer")
         {
-            auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+            auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
 
             Base* loaded = nullptr;
 
@@ -351,7 +351,7 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive.types.RegisterType<Base>();
                 inputArchive.types.RegisterType<SameOutputType>();
                 inputArchive(loaded);
@@ -374,7 +374,7 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive.types.RegisterType<Base>();
                 inputArchive.types.RegisterType<InInputTypes>();
                 inputArchive(loaded);
@@ -401,7 +401,7 @@ SCENARIO_METHOD
             std::unique_ptr<Base> loaded2 = nullptr;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive.types.RegisterType<Base>();
                 inputArchive.types.RegisterType<InInputTypes>();
                 inputArchive(loaded0);
@@ -429,7 +429,7 @@ SCENARIO_METHOD
 
     GIVEN("output archive")
     {
-        auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+        auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
 
         WHEN("registering same type handle in output and input handles on same type")
         {
@@ -530,30 +530,30 @@ SCENARIO_METHOD
 
 namespace Inscription
 {
-    void Scribe<BinaryPolymorphicFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<BinaryPolymorphicFixture::Base>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         archive(object.baseValue);
     }
 
-    Type Scribe<::BinaryPolymorphicFixture::Derived>::OutputType(const BinaryArchive& archive)
+    Type Scribe<::BinaryPolymorphicFixture::Derived>::OutputType(const Archive::Binary& archive)
     {
         return "BinaryPolymorphicDerived";
     }
 
-    void Scribe<::BinaryPolymorphicFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<::BinaryPolymorphicFixture::Derived>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
 
     template<size_t differentiator>
-    Type Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::OutputType(const BinaryArchive& archive)
+    Type Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::OutputType(const Archive::Binary& archive)
     {
         return ObjectT::outputType;
     }
 
     template<size_t differentiator>
-    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::InputTypes(const BinaryArchive& archive)
+    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::InputTypes(const Archive::Binary& archive)
         -> std::vector<Type>
     {
         return ObjectT::inputTypes;
@@ -561,7 +561,7 @@ namespace Inscription
 
     template<size_t differentiator>
     void Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>>::Scriven(
-        ObjectT& object, BinaryArchive& archive)
+        ObjectT& object, Archive::Binary& archive)
     {
         BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
         archive(object.derivedValue);

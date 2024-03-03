@@ -4,59 +4,59 @@
 #include "OutputBinaryArchive.h"
 #include "InputBinaryArchive.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    BinaryArchive::~BinaryArchive() = default;
+    Binary::~Binary() = default;
 
-    bool BinaryArchive::IsOutput() const
+    bool Binary::IsOutput() const
     {
         return direction == Direction::Output;
     }
 
-    bool BinaryArchive::IsInput() const
+    bool Binary::IsInput() const
     {
         return direction == Direction::Input;
     }
 
-    OutputBinaryArchive* BinaryArchive::AsOutput()
+    OutputBinary* Binary::AsOutput()
     {
-        return dynamic_cast<OutputBinaryArchive*>(this);
+        return dynamic_cast<OutputBinary*>(this);
     }
 
-    InputBinaryArchive* BinaryArchive::AsInput()
+    InputBinary* Binary::AsInput()
     {
-        return dynamic_cast<InputBinaryArchive*>(this);
+        return dynamic_cast<InputBinary*>(this);
     }
 
-    const OutputBinaryArchive* BinaryArchive::AsOutput() const
+    const OutputBinary* Binary::AsOutput() const
     {
-        return dynamic_cast<const OutputBinaryArchive*>(this);
+        return dynamic_cast<const OutputBinary*>(this);
     }
 
-    const InputBinaryArchive* BinaryArchive::AsInput() const
+    const InputBinary* Binary::AsInput() const
     {
-        return dynamic_cast<const InputBinaryArchive*>(this);
+        return dynamic_cast<const InputBinary*>(this);
     }
 
-    BinaryArchive::BinaryArchive(Direction direction) :
+    Binary::Binary(Direction direction) :
         types(*this),
         direction(direction)
     {}
 
-    BinaryArchive::BinaryArchive(Direction direction, TypeRegistrationContext typeRegistrationContext) :
+    Binary::Binary(Direction direction, TypeRegistrationContext typeRegistrationContext) :
         types(*this, typeRegistrationContext),
         direction(direction)
     {
         typeRegistrationContext.PushAll(*this);
     }
 
-    BinaryArchive::BinaryArchive(BinaryArchive&& arg) noexcept :
+    Binary::Binary(Binary&& arg) noexcept :
         Archive(std::move(arg)),
         types(std::move(arg.types), *this),
         direction(arg.direction)
     {}
 
-    BinaryArchive& BinaryArchive::operator=(BinaryArchive&& arg) noexcept
+    Binary& Binary::operator=(Binary&& arg) noexcept
     {
         Archive::operator=(std::move(arg));
         types = std::move(arg.types);

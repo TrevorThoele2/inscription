@@ -159,7 +159,7 @@
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SetTests.cpp" />
     <ClCompile Include="StackTests.cpp" />
-    <ClCompile Include="StreamPositionTests.cpp" />
+    <ClCompile Include="FilePositionTests.cpp" />
     <ClCompile Include="StringTests.cpp" />
     <ClCompile Include="TextTests.cpp" />
     <ClCompile Include="TupleTests.cpp" />

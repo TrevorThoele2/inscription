@@ -4,7 +4,10 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
+    namespace Archive
+    {
+        class Binary;
+    }
 
     template<class Object>
     class TableScribeCategory final
@@ -14,8 +17,8 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive);
-        static void Construct(ObjectT* storage, BinaryArchive& archive);
+        static void Scriven(ObjectT& object, Archive::Binary& archive);
+        static void Construct(ObjectT* storage, Archive::Binary& archive);
     private:
         template<class T, class Archive, class = void>
         struct scribe_has_table : std::false_type
@@ -29,8 +32,8 @@ namespace Inscription
 #define REQUIRE_TABLE(ArchiveT) \
 static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require a declared Table object.")
 
-        template<class T, std::enable_if_t<scribe_has_table<T, BinaryArchive>::value, int> = 0>
-        static void DoScriven(T& object, BinaryArchive& archive)
+        template<class T, std::enable_if_t<scribe_has_table<T, Archive::Binary>::value, int> = 0>
+        static void DoScriven(T& object, Archive::Binary& archive)
         {
             {
                 auto trackingID = archive.types.AttemptTrackObject(&object);
@@ -58,14 +61,14 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
             }
         }
 
-        template<class T, std::enable_if_t<!scribe_has_table<T, BinaryArchive>::value, int> = 0>
-        static void DoScriven(T& object, BinaryArchive& archive)
+        template<class T, std::enable_if_t<!scribe_has_table<T, Archive::Binary>::value, int> = 0>
+        static void DoScriven(T& object, Archive::Binary& archive)
         {
-            REQUIRE_TABLE(BinaryArchive);
+            REQUIRE_TABLE(Archive::Binary);
         }
 
-        template<class T, std::enable_if_t<scribe_has_table<T, BinaryArchive>::value, int> = 0>
-        static void DoConstruct(T* storage, BinaryArchive& archive)
+        template<class T, std::enable_if_t<scribe_has_table<T, Archive::Binary>::value, int> = 0>
+        static void DoConstruct(T* storage, Archive::Binary& archive)
         {
             {
                 archive.types.AttemptTrackObject(storage);
@@ -83,10 +86,10 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
             }
         }
 
-        template<class T, std::enable_if_t<!scribe_has_table<T, Archive>::value, int> = 0>
-        static void DoConstruct(T* storage, BinaryArchive& archive)
+        template<class T, std::enable_if_t<!scribe_has_table<T, Archive::Archive>::value, int> = 0>
+        static void DoConstruct(T* storage, Archive::Binary& archive)
         {
-            REQUIRE_TABLE(BinaryArchive);
+            REQUIRE_TABLE(Archive::Binary);
         }
 
 #undef REQUIRE_TABLE
@@ -97,13 +100,13 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
     };
 
     template<class Object>
-    void TableScribeCategory<Object>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void TableScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         DoScriven(object, archive);
     }
 
     template<class Object>
-    void TableScribeCategory<Object>::Construct(ObjectT* storage, BinaryArchive& archive)
+    void TableScribeCategory<Object>::Construct(ObjectT* storage, Archive::Binary& archive)
     {
         DoConstruct(storage, archive);
     }

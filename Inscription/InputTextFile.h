@@ -1,27 +1,33 @@
 #pragma once
 
 #include <fstream>
-#include "SimpleFile.h"
 
-namespace Inscription
+#include "FilePath.h"
+#include "FilePosition.h"
+#include "SanitizeStreamFailure.h"
+
+namespace Inscription::File
 {
-    class InputTextFile final : public SimpleFile<std::ifstream>
+    class InputText final
     {
     public:
-        explicit InputTextFile(const FilePath& path);
-        InputTextFile(InputTextFile&& arg) noexcept;
+        explicit InputText(const Path& path);
+        InputText(InputText&& arg) noexcept;
 
-        InputTextFile& operator=(InputTextFile&& arg) noexcept;
+        InputText& operator=(InputText&& arg) noexcept;
 
         void ReadData(std::string& string);
         void ReadData(char& character);
-
         std::string ReadLine();
         std::string ReadLine(char delimiter);
-
         std::string ReadSize(size_t size);
 
-        void SeekStream(StreamPosition position);
-        [[nodiscard]] StreamPosition TellStream();
+        void Seek(Position position);
+        [[nodiscard]] Position Position();
+
+        [[nodiscard]] bool IsAtEnd() const;
+    private:
+        Path path;
+        std::ifstream stream;
     };
 }

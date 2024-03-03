@@ -198,8 +198,11 @@
     <ClInclude Include="CompositeScribeCategory.h" />
     <ClInclude Include="ConstructDispatch.h" />
     <ClInclude Include="EnumScribeCategory.h" />
+    <ClInclude Include="FileEncounteredError.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
+    <ClInclude Include="FilePosition.h" />
+    <ClInclude Include="FileSize.h" />
     <ClInclude Include="HasCategoryTrait.h" />
     <ClInclude Include="RequiresScribe.h" />
     <ClInclude Include="InputJsonArchive.h" />
@@ -211,6 +214,7 @@
     <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="PointerScribe.h" />
+    <ClInclude Include="SanitizeStreamFailure.h" />
     <ClInclude Include="ScribeHasOutputType.h" />
     <ClInclude Include="ScribeTraits.h" />
     <ClInclude Include="ScrivenDispatch.h" />
@@ -223,10 +227,8 @@
     <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
     <ClInclude Include="Direction.h" />
-    <ClInclude Include="FileEncounteredError.h" />
     <ClInclude Include="InputBinaryFile.h" />
     <ClInclude Include="InputBinaryArchive.h" />
-    <ClInclude Include="InputSimpleFile.h" />
     <ClInclude Include="InputTextFile.h" />
     <ClInclude Include="InputTextArchive.h" />
     <ClInclude Include="OptionalScribe.h" />
@@ -240,7 +242,6 @@
     <ClInclude Include="ForwardListScribe.h" />
     <ClInclude Include="Scribe.h" />
     <ClInclude Include="OutputBinaryArchive.h" />
-    <ClInclude Include="OutputSimpleFile.h" />
     <ClInclude Include="OutputTextArchive.h" />
     <ClInclude Include="PolymorphicManager.h" />
     <ClInclude Include="SpecialObjectTrackingID.h" />
@@ -254,12 +255,10 @@
     <ClInclude Include="QueueScribe.h" />
     <ClInclude Include="Archive.h" />
     <ClInclude Include="SetScribe.h" />
-    <ClInclude Include="SimpleFile.h" />
     <ClInclude Include="StackScribe.h" />
     <ClInclude Include="ScopeConstructor.h" />
     <ClInclude Include="Stream.h" />
-    <ClInclude Include="StreamPosition.h" />
-    <ClInclude Include="StreamPositionScribe.h" />
+    <ClInclude Include="FilePositionScribe.h" />
     <ClInclude Include="StringScribe.h" />
     <ClInclude Include="TableBase.h" />
     <ClInclude Include="TableData.h" />
@@ -272,7 +271,6 @@
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />
-    <ClInclude Include="NotOpenable.h" />
     <ClInclude Include="TableNotConstructed.h" />
     <ClInclude Include="TableNotLinked.h" />
     <ClInclude Include="TableVariableNotHere.h" />
@@ -300,7 +298,6 @@
     <ClCompile Include="InputBinaryFile.cpp" />
     <ClCompile Include="InputBinaryArchive.cpp" />
     <ClCompile Include="InputJsonArchive.cpp" />
-    <ClCompile Include="InputSimpleFile.cpp" />
     <ClCompile Include="InputTextFile.cpp" />
     <ClCompile Include="InputTextArchive.cpp" />
     <ClCompile Include="JsonArchive.cpp" />
@@ -312,12 +309,11 @@
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="OutputBinaryArchive.cpp" />
     <ClCompile Include="OutputJsonArchive.cpp" />
-    <ClCompile Include="OutputSimpleFile.cpp" />
     <ClCompile Include="OutputTextArchive.cpp" />
     <ClCompile Include="InputTypesAlreadyRegistered.cpp" />
     <ClCompile Include="InputTypeNotFound.cpp" />
     <ClCompile Include="Archive.cpp" />
-    <ClCompile Include="StreamPositionScribe.cpp" />
+    <ClCompile Include="FilePositionScribe.cpp" />
     <ClCompile Include="StringScribe.cpp" />
     <ClCompile Include="TableNotConstructed.cpp" />
     <ClCompile Include="TableNotLinked.cpp" />
@@ -329,7 +325,6 @@
     <ClCompile Include="TypeManager.cpp" />
     <ClCompile Include="TypeTracker.cpp" />
     <ClCompile Include="TypeTrackerEntry.cpp" />
-    <ClCompile Include="NotOpenable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">

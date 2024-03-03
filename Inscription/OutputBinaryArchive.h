@@ -5,24 +5,24 @@
 
 #include "Endian.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class OutputBinaryArchive final : public BinaryArchive
+    class OutputBinary final : public Binary
     {
     public:
-        OutputBinaryArchive(const FilePath& path);
-        OutputBinaryArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
-        OutputBinaryArchive(OutputBinaryArchive&& arg) noexcept;
+        OutputBinary(const File::Path& path);
+        OutputBinary(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        OutputBinary(OutputBinary&& arg) noexcept;
 
-        OutputBinaryArchive& operator=(OutputBinaryArchive&& arg) noexcept;
+        OutputBinary& operator=(OutputBinary&& arg) noexcept;
 
         template<class T>
-        OutputBinaryArchive& Write(T& object);
+        OutputBinary& Write(T& object);
     public:
-        void SeekStreamFromCurrent(StreamPosition position) override;
-        void SeekStreamFromBegin(StreamPosition offset = 0) override;
-        void SeekStreamFromEnd(StreamPosition offset = 0) override;
-        [[nodiscard]] StreamPosition CurrentStreamPosition() override;
+        void Seek(File::Position position) override;
+        void SeekFromBeginning(File::Position offset = 0) override;
+        void SeekFromEnd(File::Position offset = 0) override;
+        [[nodiscard]] File::Position Position() override;
     protected:
         void WriteImpl(bool arg) { WriteToFile(arg); }
         void WriteImpl(signed char arg) { WriteToFile(arg); }
@@ -40,7 +40,7 @@ namespace Inscription
         void WriteImpl(double arg) { WriteToFile(arg); }
         void WriteImpl(const Buffer& arg) { WriteToFile(arg); }
     private:
-        OutputBinaryFile file;
+        File::OutputBinary file;
     private:
         template<class T>
         void WriteToFile(T& arg)
@@ -50,7 +50,7 @@ namespace Inscription
     };
 
     template<class T>
-    OutputBinaryArchive& OutputBinaryArchive::Write(T& object)
+    OutputBinary& OutputBinary::Write(T& object)
     {
         static_assert(
             std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,

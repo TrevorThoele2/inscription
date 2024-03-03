@@ -10,9 +10,6 @@
 
 namespace Inscription
 {
-    class BinaryArchive;
-    class JsonArchive;
-
     template<class Object>
     class PointerScribeCategory final
     {
@@ -21,8 +18,8 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT*& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT*& object, JsonArchive& archive);
+        static void Scriven(ObjectT*& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT*& object, Archive::Json& archive);
     private:
         template<class Archive>
         static void Save(ObjectT*& object, Archive& archive);
@@ -55,7 +52,7 @@ namespace Inscription
 
     template<class Object>
     void PointerScribeCategory<Object>::Scriven(
-        ObjectT*& object, BinaryArchive& archive)
+        ObjectT*& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
             Save(object, archive);
@@ -65,7 +62,7 @@ namespace Inscription
 
     template<class Object>
     void PointerScribeCategory<Object>::Scriven(
-        const std::string& name, ObjectT*& object, JsonArchive& archive)
+        const std::string& name, ObjectT*& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
             Save(object, archive);

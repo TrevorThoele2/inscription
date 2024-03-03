@@ -12,8 +12,8 @@
 class TextFixture : public GeneralFixture
 {
 public:
-    using OutputArchive = Inscription::OutputTextArchive;
-    using InputArchive = Inscription::InputTextArchive;
+    using OutputArchive = Inscription::Archive::OutputText;
+    using InputArchive = Inscription::Archive::InputText;
 
     [[nodiscard]] OutputArchive CreateOutputArchive() const;
     [[nodiscard]] InputArchive CreateInputArchive() const;

@@ -5,27 +5,25 @@
 
 #include "Endian.h"
 
-namespace Inscription
+namespace Inscription::Archive
 {
-    class InputBinaryArchive final : public BinaryArchive
+    class InputBinary final : public Binary
     {
     public:
-        using SizeT = std::streamsize;
-    public:
-        InputBinaryArchive(const FilePath& path);
-        InputBinaryArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
-        InputBinaryArchive(InputBinaryArchive&& arg) noexcept;
+        InputBinary(const File::Path& path);
+        InputBinary(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        InputBinary(InputBinary&& arg) noexcept;
 
-        InputBinaryArchive& operator=(InputBinaryArchive&& arg) noexcept;
+        InputBinary& operator=(InputBinary&& arg) noexcept;
 
         template<class T>
-        InputBinaryArchive& Read(T& object);
+        InputBinary& Read(T& object);
     public:
-        void SeekStreamFromCurrent(StreamPosition offset) override;
-        void SeekStreamFromBegin(StreamPosition offset = 0) override;
-        void SeekStreamFromEnd(StreamPosition offset = 0) override;
-        [[nodiscard]] StreamPosition CurrentStreamPosition() override;
-        [[nodiscard]] SizeT Size();
+        void Seek(File::Position offset) override;
+        void SeekFromBeginning(File::Position offset = 0) override;
+        void SeekFromEnd(File::Position offset = 0) override;
+        [[nodiscard]] File::Position Position() override;
+        [[nodiscard]] File::Size Size();
     protected:
         void ReadImpl(bool& arg) { ReadFromFile(arg); }
         void ReadImpl(signed char& arg) { ReadFromFile(arg); }
@@ -43,7 +41,7 @@ namespace Inscription
         void ReadImpl(double& arg) { ReadFromFile(arg); }
         void ReadImpl(Buffer& arg) { file.ReadData(arg.value, arg.value.size()); }
     private:
-        InputBinaryFile file;
+        File::InputBinary file;
     private:
         template<class T>
         void ReadFromFile(T& arg)
@@ -53,7 +51,7 @@ namespace Inscription
     };
 
     template<class T>
-    InputBinaryArchive& InputBinaryArchive::Read(T& object)
+    InputBinary& InputBinary::Read(T& object)
     {
         static_assert(
             std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,

@@ -19,12 +19,12 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        static void Scriven(ObjectT& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<class Object>
-    void NumericScribeCategory<Object>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void NumericScribeCategory<Object>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
             archive.AsOutput()->Write(object);
@@ -33,7 +33,7 @@ namespace Inscription
     }
 
     template<class Object>
-    void NumericScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void NumericScribeCategory<Object>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
             archive.AsOutput()->WriteValue(name, Chroma::ToString(object));

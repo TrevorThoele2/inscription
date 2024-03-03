@@ -7,7 +7,7 @@
 class ArchiveTestsFixture : public GeneralFixture
 {
 public:
-    class DerivedArchive final : public Inscription::Archive
+    class DerivedArchive final : public Inscription::Archive::Archive
     {
         
     };

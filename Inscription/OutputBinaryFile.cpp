@@ -1,52 +1,43 @@
 #include "OutputBinaryFile.h"
 
-namespace Inscription
+namespace Inscription::File
 {
-    OutputBinaryFile::OutputBinaryFile(const FilePath& path) : Stream(path, std::ios::out | std::ios::binary)
+    OutputBinary::OutputBinary(const Path& path) :
+        path(path), stream(path, std::ios::out | std::ios::binary)
     {}
 
-    OutputBinaryFile::OutputBinaryFile(OutputBinaryFile&& arg) noexcept : Stream(std::move(arg))
+    OutputBinary::OutputBinary(OutputBinary&& arg) noexcept :
+        path(std::move(arg.path)), stream(std::move(arg.stream))
     {}
 
-    OutputBinaryFile& OutputBinaryFile::operator=(OutputBinaryFile&& arg) noexcept
+    OutputBinary& OutputBinary::operator=(OutputBinary&& arg) noexcept
     {
-        Stream::operator=(std::move(arg));
+        stream = std::move(arg.stream);
         return *this;
     }
 
-    void OutputBinaryFile::WriteData(const Buffer& buffer)
+    void OutputBinary::WriteData(const Buffer& buffer)
     {
-        stream.write(buffer.value.data(), buffer.value.size());
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure([this, &buffer]() { stream.write(buffer.value.data(), buffer.value.size()); }, path);
     }
 
-    void OutputBinaryFile::SeekStreamFromCurrent(StreamPosition offset)
+    void OutputBinary::Seek(File::Position position)
     {
-        stream.seekp(offset);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure([this, position]() { stream.seekp(position); }, path);
     }
 
-    void OutputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
+    void OutputBinary::SeekFromBeginning(File::Position offset)
     {
-        stream.seekp(offset, std::ofstream::beg);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure([this, offset]() { stream.seekp(offset, std::ofstream::beg); }, path);
     }
 
-    void OutputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
+    void OutputBinary::SeekFromEnd(File::Position offset)
     {
-        stream.seekp(offset, std::ofstream::end);
-        if (FailedStream())
-            throw FileEncounteredError(Path());
+        SanitizeStreamFailure([this, offset]() { stream.seekp(offset, std::ofstream::end); }, path);
     }
 
-    OutputBinaryFile::StreamPosition OutputBinaryFile::TellStream()
+    Position OutputBinary::Position()
     {
-        const auto told = stream.tellp();
-        if (FailedStream())
-            throw FileEncounteredError(Path());
-        return told;
+        return SanitizeStreamFailure<File::Position>([this]() { return stream.tellp(); }, path);
     }
 }

@@ -106,7 +106,7 @@
     <ClCompile Include="JsonTests.cpp">
       <Filter>Source Files\Test\Json</Filter>
     </ClCompile>
-    <ClCompile Include="StreamPositionTests.cpp">
+    <ClCompile Include="FilePositionTests.cpp">
       <Filter>Source Files\Test\Type\Std</Filter>
     </ClCompile>
     <ClCompile Include="TextTests.cpp">
