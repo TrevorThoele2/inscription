@@ -10,8 +10,18 @@ namespace Inscription
         stream.read(var, size);
     }
 
-    void InputSimpleFile::SeekG(StreamT::pos_type position)
+    void InputSimpleFile::Seek(StreamPosition position)
     {
         stream.seekg(position);
+    }
+
+    void InputSimpleFile::Seek(OffsetPosition position, std::ios_base::seekdir direction)
+    {
+        stream.seekg(position, direction);
+    }
+
+    auto InputSimpleFile::Tell() -> StreamPosition
+    {
+        return stream.tellg();
     }
 }

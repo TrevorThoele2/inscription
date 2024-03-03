@@ -14,7 +14,9 @@ namespace Inscription
         template<class T>
         OutputSimpleFile& operator<<(T& var);
 
-        void SeekP(StreamT::pos_type position);
+        void Seek(StreamPosition position);
+        void Seek(OffsetPosition position, std::ios_base::seekdir direction);
+        [[nodiscard]] StreamPosition Tell();
     };
 
     template<class T>
