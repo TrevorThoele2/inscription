@@ -11,9 +11,7 @@ namespace Inscription
         explicit InputTextArchive(const FilePath& path);
         InputTextArchive(const InputTextArchive& arg) = delete;
         InputTextArchive(InputTextArchive&& arg) noexcept;
-
-        ~InputTextArchive() = default;
-
+        
         InputTextArchive& operator=(const InputTextArchive& arg) = delete;
         InputTextArchive& operator=(InputTextArchive&& arg) noexcept;
 
