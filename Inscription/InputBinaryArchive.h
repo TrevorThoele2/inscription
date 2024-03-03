@@ -32,7 +32,7 @@ namespace Inscription::Archive
         void Read(unsigned long long& arg) { DoRead(arg); }
         void Read(float& arg) { DoRead(arg); }
         void Read(double& arg) { DoRead(arg); }
-        void Read(Buffer& arg) { DoRead(arg); }
+        void Read(Buffer& arg);
 
         [[nodiscard]] File::InputBinary* File() const;
     private:
