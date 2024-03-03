@@ -2,6 +2,7 @@
 
 namespace Inscription
 {
-    FileEncounteredError::FileEncounteredError() : Exception("The file has encountered an error.")
+    FileEncounteredError::FileEncounteredError(const FilePath& filePath) :
+        DetailedException("The file has encountered an error.", { {"FilePath", filePath.string()} })
     {}
 }

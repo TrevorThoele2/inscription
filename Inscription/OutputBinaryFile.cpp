@@ -18,35 +18,35 @@ namespace Inscription
     {
         stream.write(buffer.value.data(), buffer.value.size());
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void OutputBinaryFile::SeekStreamFromCurrent(StreamPosition offset)
     {
         stream.seekp(offset);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void OutputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
     {
         stream.seekp(offset, std::ofstream::beg);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void OutputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
     {
         stream.seekp(offset, std::ofstream::end);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     OutputBinaryFile::StreamPosition OutputBinaryFile::TellStream()
     {
         const auto told = stream.tellp();
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
         return told;
     }
 }

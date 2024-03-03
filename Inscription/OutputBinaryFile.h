@@ -30,6 +30,6 @@ namespace Inscription
     {
         stream.write(reinterpret_cast<const char*>(&var), sizeof(var));
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 }

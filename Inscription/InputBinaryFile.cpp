@@ -17,39 +17,39 @@ namespace Inscription
     void InputBinaryFile::ReadData(std::vector<char>& buffer, size_t size)
     {
         if (buffer.empty())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
 
         stream.read(&buffer[0], size);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void InputBinaryFile::SeekStream(StreamPosition offset)
     {
         stream.seekg(offset);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void InputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
     {
         stream.seekg(offset, std::ifstream::beg);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     void InputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
     {
         stream.seekg(offset, std::ifstream::end);
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
     }
 
     InputBinaryFile::StreamPosition InputBinaryFile::TellStream()
     {
         const auto told = stream.tellg();
         if (FailedStream())
-            throw FileEncounteredError();
+            throw FileEncounteredError(Path());
         return told;
     }
 
