@@ -9,6 +9,4 @@
 namespace Inscription
 {
     typedef INSCRIPTION_SIZE_TRACKER_ID TrackingID;
-
-    const TrackingID invalidTrackingID = 0;
 }

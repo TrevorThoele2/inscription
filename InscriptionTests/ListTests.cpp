@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/List.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,29 +12,29 @@ BOOST_FIXTURE_TEST_SUITE(ListTests, ListTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::list<int> list;
+    using TestedObject = std::list<int>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
         for (auto& loop : startingGroup)
-            list.push_front(loop);
+            saved.push_front(loop);
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(list);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::list<int> n_list;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_list);
-    }
-
-    BOOST_REQUIRE(!n_list.empty());
-    BOOST_REQUIRE(n_list == list);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/MultiMap.h>
+#include <Inscription/Numeric.h>
+#include <Inscription/String.h>
 
 #include "BinaryFixture.h"
 
@@ -11,7 +13,9 @@ BOOST_FIXTURE_TEST_SUITE(MultiMapTests, MultiMapTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::multimap<int, std::string> multiMap;
+    using TestedObject = std::multimap<int, std::string>;
+
+    TestedObject saved;
 
     {
         const auto startingGroupKeys = dataGeneration.Generator<int>().RandomGroup(5);
@@ -22,24 +26,22 @@ BOOST_AUTO_TEST_CASE(SavesAndLoads)
             const auto key = startingGroupKeys[i];
             const auto value = startingGroupValues[i];
 
-            multiMap.emplace(key, value);
+            saved.emplace(key, value);
         }
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(multiMap);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::multimap<int, std::string> n_multiMap;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_multiMap);
-    }
-
-    BOOST_REQUIRE(!n_multiMap.empty());
-    BOOST_REQUIRE(n_multiMap == multiMap);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

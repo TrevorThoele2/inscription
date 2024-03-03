@@ -2,17 +2,46 @@
 
 #include <stack>
 
+#include "Composite.h"
+
 #include "ContainerSize.h"
-#include "ScopedConstructor.h"
+#include "ScopeConstructor.h"
 
 namespace Inscription
 {
-    template<class ScribeT, class T, class Container>
-    void Save(ScribeT& scribe, std::stack<T, Container>& obj)
-    {
-        auto copied = obj;
+    class BinaryArchive;
 
-        std::stack<T, Container> reversed;
+    template<class T, class Container>
+    class Scribe<std::stack<T, Container>, BinaryArchive> final :
+        public CompositeScribe<std::stack<T, Container>, BinaryArchive>
+    {
+    private:
+        using BaseT = CompositeScribe<std::stack<T, Container>, BinaryArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    private:
+        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class T, class Container>
+    void Scribe<std::stack<T, Container>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
+    }
+
+    template<class T, class Container>
+    void Scribe<std::stack<T, Container>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        auto copied = object;
+
+        ObjectT reversed;
         while (!copied.empty())
         {
             auto& top = copied.top();
@@ -21,34 +50,26 @@ namespace Inscription
         }
 
         ContainerSize size(reversed.size());
-        scribe.Save(size);
+        archive(size);
         while (!reversed.empty())
         {
             auto& top = reversed.top();
-            scribe.Save(top);
+            archive(top);
             reversed.pop();
         }
     }
 
-    template<class ScribeT, class T, class Container>
-    void Load(ScribeT& scribe, std::stack<T, Container>& obj)
+    template<class T, class Container>
+    void Scribe<std::stack<T, Container>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
-        typedef std::stack<T, Container> ContainerT;
-
         ContainerSize size;
-        scribe.Load(size);
+        archive(size);
 
         while (size-- > 0)
         {
-            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
-            obj.push(std::move(constructor.GetMove()));
-            scribe.ReplaceTrackedObject(*constructor.Get(), obj.top());
+            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+            object.push(std::move(constructor.GetMove()));
+            archive.ReplaceTrackedObject(*constructor.Get(), object.top());
         }
-    }
-
-    template<class ScribeT, class T, class Container>
-    void Serialize(ScribeT& scribe, std::stack<T, Container>& obj)
-    {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

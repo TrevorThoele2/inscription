@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="Access.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Const.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ContainerSize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -22,68 +16,50 @@
     <ClInclude Include="Stream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TypeTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scribe.h">
-      <Filter>Header Files\Scribe</Filter>
-    </ClInclude>
-    <ClInclude Include="Tuple.h">
-      <Filter>Header Files\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="String.h">
-      <Filter>Header Files\Types</Filter>
-    </ClInclude>
     <ClInclude Include="ForwardList.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="List.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Multimap.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Multiset.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Queue.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Set.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Stack.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="UnorderedMap.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="UnorderedMultimap.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="UnorderedMultiset.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="UnorderedSet.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files\Types\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>Header Files\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="PolymorphicID.h">
-      <Filter>Header Files\Pointer</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Array.h">
-      <Filter>Header Files\Types\Containers</Filter>
+      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Header Files</Filter>
@@ -97,56 +73,14 @@
     <ClInclude Include="IsDefaultConstructible.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InscripterBase.h">
-      <Filter>Header Files\Inscripter</Filter>
-    </ClInclude>
-    <ClInclude Include="Inscripter.h">
-      <Filter>Header Files\Inscripter</Filter>
-    </ClInclude>
-    <ClInclude Include="PointerInput.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="PointerOutput.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="PointerDelegate.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="PointerDefinitions.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="Convert.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="ConvertHeap.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Assign.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
     <ClInclude Include="ClassNameResolver.h">
-      <Filter>Header Files\ClassNameResolver</Filter>
+      <Filter>Header Files\ClassName</Filter>
     </ClInclude>
     <ClInclude Include="ClassName.h">
-      <Filter>Header Files\ClassNameResolver</Filter>
+      <Filter>Header Files\ClassName</Filter>
     </ClInclude>
     <ClInclude Include="Type.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BinaryScribe.h">
-      <Filter>Header Files\Scribe\Binary</Filter>
-    </ClInclude>
-    <ClInclude Include="InputBinaryScribe.h">
-      <Filter>Header Files\Scribe\Binary</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputBinaryScribe.h">
-      <Filter>Header Files\Scribe\Binary</Filter>
     </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
@@ -157,47 +91,14 @@
     <ClInclude Include="OutputBinaryFile.h">
       <Filter>Header Files\File\Binary</Filter>
     </ClInclude>
-    <ClInclude Include="PointerSpecialID.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackingEntry.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackingID.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackingLookaheadEntry.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackingLookaheadGroup.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="Tracker.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
-    <ClInclude Include="ScopedTrackingChanger.h">
-      <Filter>Header Files\Tracking</Filter>
-    </ClInclude>
     <ClInclude Include="InvalidSignature.h">
-      <Filter>Header Files\Exception</Filter>
-    </ClInclude>
-    <ClInclude Include="InvalidScribeDirection.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
     <ClInclude Include="RegisteredTypeNotFound.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
-    <ClInclude Include="PolymorphicTypeNotFound.h">
-      <Filter>Header Files\Exception</Filter>
-    </ClInclude>
     <ClInclude Include="Exception.h">
       <Filter>Header Files\Exception</Filter>
-    </ClInclude>
-    <ClInclude Include="ScopedConstructor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackerMap.h">
-      <Filter>Header Files\Tracking</Filter>
     </ClInclude>
     <ClInclude Include="InputSimpleFile.h">
       <Filter>Header Files\File\Simple</Filter>
@@ -214,74 +115,8 @@
     <ClInclude Include="InputTextFile.h">
       <Filter>Header Files\File\Text</Filter>
     </ClInclude>
-    <ClInclude Include="PointerManager.h">
-      <Filter>Header Files\Pointer</Filter>
-    </ClInclude>
-    <ClInclude Include="TextScribe.h">
-      <Filter>Header Files\Scribe\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="InputTextScribe.h">
-      <Filter>Header Files\Scribe\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputTextScribe.h">
-      <Filter>Header Files\Scribe\Text</Filter>
-    </ClInclude>
     <ClInclude Include="NumericTraits.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TableBase.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="GettableTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseClassTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="InscripterTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="OwningPointerTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="UnowningPointerTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassTableImposter.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="NonClassTableImposter.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkableTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassLinkableTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="NonClassLinkableTableEntry.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseClassTableEntryBase.h">
-      <Filter>Header Files\Table\Entries</Filter>
-    </ClInclude>
-    <ClInclude Include="TableNotConstructed.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableNotLinked.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableVariableNotHere.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="Convenience.h">
-      <Filter>Header Files\Convenience</Filter>
-    </ClInclude>
-    <ClInclude Include="BinaryConvenience.h">
-      <Filter>Header Files\Convenience</Filter>
     </ClInclude>
     <ClInclude Include="TypeRegistrationContext.h">
       <Filter>Header Files\RegisteredTypes</Filter>
@@ -292,8 +127,119 @@
     <ClInclude Include="UnopenableFile.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
+    <ClInclude Include="TableVariableNotHere.h">
+      <Filter>Header Files\Scribe\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotConstructed.h">
+      <Filter>Header Files\Scribe\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="TableNotLinked.h">
+      <Filter>Header Files\Scribe\Errors</Filter>
+    </ClInclude>
     <ClInclude Include="BaseClassNotInTable.h">
-      <Filter>Header Files\Table</Filter>
+      <Filter>Header Files\Scribe\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="Const.h">
+      <Filter>Header Files\Const</Filter>
+    </ClInclude>
+    <ClInclude Include="VerifyNonConst.h">
+      <Filter>Header Files\Const</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTracker.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackingID.h">
+      <Filter>Header Files\Tracking</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackingMap.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTrackingMapEntry.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTracker.h">
+      <Filter>Header Files\Tracking\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecialTypeTrackingID.h">
+      <Filter>Header Files\Tracking\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTrackerEntry.h">
+      <Filter>Header Files\Tracking\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecialObjectTrackingID.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PolymorphicManager.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryArchive.h">
+      <Filter>Header Files\Archive\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="InputBinaryArchive.h">
+      <Filter>Header Files\Archive\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputBinaryArchive.h">
+      <Filter>Header Files\Archive\Binary</Filter>
+    </ClInclude>
+    <ClInclude Include="InputTextArchive.h">
+      <Filter>Header Files\Archive\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputTextArchive.h">
+      <Filter>Header Files\Archive\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="TextArchive.h">
+      <Filter>Header Files\Archive\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Archive.h">
+      <Filter>Header Files\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="InvalidArchiveDirection.h">
+      <Filter>Header Files\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopeTrackingModifier.h">
+      <Filter>Header Files\Tracking</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopeConstructor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scribe.h">
+      <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="ScribeBase.h">
+      <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScriven.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Access.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pointer.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Numeric.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Tuple.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="Optional.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="Composite.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="PolymorphicTypeNotFound.h">
+      <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -306,44 +252,8 @@
     <Filter Include="Header Files\Types">
       <UniqueIdentifier>{b579cb2a-9bba-4f1c-8df4-1605548a70af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Types\Containers">
-      <UniqueIdentifier>{a916ce06-9c94-42e8-a93b-26626c159528}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Tracking">
       <UniqueIdentifier>{bc0ace39-c741-4690-a87e-8143d975203b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Pointer">
-      <UniqueIdentifier>{a110410e-fbd2-45b5-bdb6-258ce6c08af2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Inscripter">
-      <UniqueIdentifier>{45b67b72-7559-4c58-8acd-b0aacadb3b55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Pointer">
-      <UniqueIdentifier>{bdd6846f-1fc5-4d9d-a4f8-70f642c16880}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Table">
-      <UniqueIdentifier>{76953421-881c-4130-b4bd-b6fbb9f4102b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Table">
-      <UniqueIdentifier>{9bfe4788-9f15-4f98-8665-a4fa6b8a826d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Table\Entries">
-      <UniqueIdentifier>{79516121-504c-4185-9fe6-6fa6be72c48f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ClassNameResolver">
-      <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scribe">
-      <UniqueIdentifier>{1c7926d8-bc53-4c3b-bf6e-bad708f92962}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scribe">
-      <UniqueIdentifier>{ed8b69a7-caa0-402a-98cb-603d3356a2e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scribe\Binary">
-      <UniqueIdentifier>{7fa859c5-de32-4d9b-9656-0a974e0cb0c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scribe\Binary">
-      <UniqueIdentifier>{59ebfdb7-5bcd-4245-8755-17e72479f51d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Tracking">
       <UniqueIdentifier>{c8f46b48-1813-4211-a8ac-2ae30f647a1a}</UniqueIdentifier>
@@ -378,20 +288,71 @@
     <Filter Include="Source Files\File\Text">
       <UniqueIdentifier>{846caf04-11f4-4c88-b11e-8525bd76d058}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scribe\Text">
-      <UniqueIdentifier>{34062363-d9e3-47db-a07f-2f1bd35c0893}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scribe\Text">
-      <UniqueIdentifier>{964e3636-20a4-46f0-982a-5fc792492a96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Types">
       <UniqueIdentifier>{c2af1fe6-4b31-4af2-bcdf-f378967fc23c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Convenience">
-      <UniqueIdentifier>{3d094007-d6ae-4914-82bf-c0199b009bb5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\RegisteredTypes">
       <UniqueIdentifier>{a94282ab-0153-40db-9e6e-d5084e869824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Const">
+      <UniqueIdentifier>{2b46386c-26fb-4f92-9323-b3a57372b382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tracking\Objects">
+      <UniqueIdentifier>{ed20eea7-e3f1-41d8-92c3-e883dd90cb37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tracking\Types">
+      <UniqueIdentifier>{5b03f69e-08a1-42a6-bbc2-6ce145c190cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tracking\Object">
+      <UniqueIdentifier>{2865c942-6cfd-457b-9714-ff820250220a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tracking\Type">
+      <UniqueIdentifier>{b4e6b262-6fa6-459f-af75-ddee826ed2cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Polymorphic">
+      <UniqueIdentifier>{b13e2d0f-0851-4fa5-8272-d9f607b1fe82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Polymorphic">
+      <UniqueIdentifier>{a0c0ecdd-36ed-4396-91a4-847a10f9194e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Archive">
+      <UniqueIdentifier>{1c7926d8-bc53-4c3b-bf6e-bad708f92962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Archive\Binary">
+      <UniqueIdentifier>{7fa859c5-de32-4d9b-9656-0a974e0cb0c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Archive\Text">
+      <UniqueIdentifier>{34062363-d9e3-47db-a07f-2f1bd35c0893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Archive">
+      <UniqueIdentifier>{ed8b69a7-caa0-402a-98cb-603d3356a2e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Archive\Binary">
+      <UniqueIdentifier>{59ebfdb7-5bcd-4245-8755-17e72479f51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Archive\Text">
+      <UniqueIdentifier>{964e3636-20a4-46f0-982a-5fc792492a96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe">
+      <UniqueIdentifier>{79516121-504c-4185-9fe6-6fa6be72c48f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Errors">
+      <UniqueIdentifier>{9ed82622-677f-4616-87fd-4cc582387423}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe">
+      <UniqueIdentifier>{77864077-936b-4fb6-9985-97a286f7a838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types\Basic">
+      <UniqueIdentifier>{5641c513-6962-4cea-b837-11f91c61015c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types\Std">
+      <UniqueIdentifier>{d8ac97b0-6f74-40b0-b9a9-76136d7a001e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types\Std\Containers">
+      <UniqueIdentifier>{a916ce06-9c94-42e8-a93b-26626c159528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ClassName">
+      <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -401,56 +362,20 @@
     <ClCompile Include="Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scribe.cpp">
-      <Filter>Source Files\Scribe</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryScribe.cpp">
-      <Filter>Source Files\Scribe\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="InputBinaryScribe.cpp">
-      <Filter>Source Files\Scribe\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputBinaryScribe.cpp">
-      <Filter>Source Files\Scribe\Binary</Filter>
-    </ClCompile>
     <ClCompile Include="InputBinaryFile.cpp">
       <Filter>Source Files\File\Binary</Filter>
     </ClCompile>
     <ClCompile Include="OutputBinaryFile.cpp">
       <Filter>Source Files\File\Binary</Filter>
     </ClCompile>
-    <ClCompile Include="TrackingEntry.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
-    <ClCompile Include="TrackingLookaheadEntry.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
-    <ClCompile Include="TrackingLookaheadGroup.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
-    <ClCompile Include="Tracker.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
-    <ClCompile Include="ScopedTrackingChanger.cpp">
-      <Filter>Source Files\Tracking</Filter>
-    </ClCompile>
     <ClCompile Include="InvalidSignature.cpp">
-      <Filter>Source Files\Exception</Filter>
-    </ClCompile>
-    <ClCompile Include="InvalidScribeDirection.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
     <ClCompile Include="RegisteredTypeNotFound.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
-    <ClCompile Include="PolymorphicTypeNotFound.cpp">
-      <Filter>Source Files\Exception</Filter>
-    </ClCompile>
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files\Exception</Filter>
-    </ClCompile>
-    <ClCompile Include="TrackerMap.cpp">
-      <Filter>Source Files\Tracking</Filter>
     </ClCompile>
     <ClCompile Include="InputSimpleFile.cpp">
       <Filter>Source Files\File\Simple</Filter>
@@ -464,20 +389,8 @@
     <ClCompile Include="OutputTextFile.cpp">
       <Filter>Source Files\File\Text</Filter>
     </ClCompile>
-    <ClCompile Include="TextScribe.cpp">
-      <Filter>Source Files\Scribe\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="InputTextScribe.cpp">
-      <Filter>Source Files\Scribe\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputTextScribe.cpp">
-      <Filter>Source Files\Scribe\Text</Filter>
-    </ClCompile>
     <ClCompile Include="String.cpp">
       <Filter>Source Files\Types</Filter>
-    </ClCompile>
-    <ClCompile Include="PointerDelegate.cpp">
-      <Filter>Source Files\Pointer</Filter>
     </ClCompile>
     <ClCompile Include="FileEncounteredError.cpp">
       <Filter>Source Files\File</Filter>
@@ -485,17 +398,62 @@
     <ClCompile Include="UnopenableFile.cpp">
       <Filter>Source Files\File</Filter>
     </ClCompile>
-    <ClCompile Include="BaseClassNotInTable.cpp">
-      <Filter>Source Files\Table</Filter>
-    </ClCompile>
     <ClCompile Include="TableVariableNotHere.cpp">
-      <Filter>Source Files\Table</Filter>
+      <Filter>Source Files\Scribe</Filter>
     </ClCompile>
-    <ClCompile Include="TableNotLinked.cpp">
-      <Filter>Source Files\Table</Filter>
+    <ClCompile Include="BaseClassNotInTable.cpp">
+      <Filter>Source Files\Scribe</Filter>
     </ClCompile>
     <ClCompile Include="TableNotConstructed.cpp">
-      <Filter>Source Files\Table</Filter>
+      <Filter>Source Files\Scribe</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotLinked.cpp">
+      <Filter>Source Files\Scribe</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTracker.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTrackingMap.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTrackingMapEntry.cpp">
+      <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeTracker.cpp">
+      <Filter>Source Files\Tracking\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeTrackerEntry.cpp">
+      <Filter>Source Files\Tracking\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Archive.cpp">
+      <Filter>Source Files\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryArchive.cpp">
+      <Filter>Source Files\Archive\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="InputBinaryArchive.cpp">
+      <Filter>Source Files\Archive\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputBinaryArchive.cpp">
+      <Filter>Source Files\Archive\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="InputTextArchive.cpp">
+      <Filter>Source Files\Archive\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputTextArchive.cpp">
+      <Filter>Source Files\Archive\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="TextArchive.cpp">
+      <Filter>Source Files\Archive\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="InvalidArchiveDirection.cpp">
+      <Filter>Source Files\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="ScopeTrackingModifier.cpp">
+      <Filter>Source Files\Tracking</Filter>
+    </ClCompile>
+    <ClCompile Include="PolymorphicTypeNotFound.cpp">
+      <Filter>Source Files\Polymorphic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

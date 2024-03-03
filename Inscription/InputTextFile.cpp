@@ -32,8 +32,9 @@ namespace Inscription
     std::string InputTextFile::ReadSize(size_t size)
     {
         std::string string;
-        string.resize(size);
-        stream.get(string.data(), size + 1);
+        char* buffer = nullptr;
+        stream.get(buffer, size + 1);
+        string = buffer;
         return string;
     }
 }

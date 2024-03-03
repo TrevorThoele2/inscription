@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/Tuple.h>
+#include <Inscription/Numeric.h>
+#include <Inscription/String.h>
 
 #include "BinaryFixture.h"
 
@@ -12,21 +14,21 @@ BOOST_FIXTURE_TEST_SUITE(TupleTests, TupleTestsFixture)
 BOOST_AUTO_TEST_CASE(BasicTuple_SavesAndLoads)
 {
     typedef std::tuple<int, std::string, unsigned short> TestedObject;
-    auto tuple = dataGeneration.Generator<TestedObject>().RandomStack<int, std::string, unsigned short>();
+    auto saved = dataGeneration.Generator<TestedObject>().RandomStack<int, std::string, unsigned short>();
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(tuple);
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
-    TestedObject n_tuple;
+    TestedObject loaded;
 
     {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_tuple);
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
     }
 
-    BOOST_REQUIRE(n_tuple == tuple);
+    BOOST_REQUIRE(loaded == saved);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

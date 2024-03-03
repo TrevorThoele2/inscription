@@ -2,25 +2,49 @@
 
 #include <memory>
 
+#include "Composite.h"
+
 namespace Inscription
 {
-    template<class ScribeT, class T, class Delete>
-    void Save(ScribeT& scribe, const std::unique_ptr<T, Delete>& obj)
+    class BinaryArchive;
+
+    template<class T, class Deleter>
+    class Scribe<std::unique_ptr<T, Deleter>, BinaryArchive> final :
+        public CompositeScribe<std::unique_ptr<T, Deleter>, BinaryArchive>
     {
-        scribe.SaveOwningPointer(obj.get());
+    private:
+        using BaseT = CompositeScribe<std::unique_ptr<T, Deleter>, BinaryArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    private:
+        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class T, class Deleter>
+    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
     }
 
-    template<class ScribeT, class T, class Delete>
-    void Load(ScribeT& scribe, std::unique_ptr<T, Delete>& obj)
+    template<class T, class Deleter>
+    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        T* ptr = nullptr;
-        scribe.LoadOwningPointer(ptr);
-        obj.reset(ptr);
+        T* saved = object.get();
+        archive(saved);
     }
 
-    template<class ScribeT, class T, class Delete>
-    void Serialize(ScribeT& scribe, std::unique_ptr<T, Delete>& obj)
+    template<class T, class Deleter>
+    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
+        T* loaded = nullptr;
+        archive(loaded);
+        object.reset(loaded);
     }
 }

@@ -2,43 +2,64 @@
 
 #include <unordered_set>
 
+#include "Composite.h"
+
 #include "ContainerSize.h"
-#include "ScopedConstructor.h"
+#include "ScopeConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    template<class ScribeT, class Key, class Hash, class Pred, class Alloc>
-    void Save(ScribeT& scribe, std::unordered_set<Key, Hash, Pred, Alloc>& obj)
+    class BinaryArchive;
+
+    template<class Key, class Hash, class Predicate, class Allocator>
+    class Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive> final :
+        public CompositeScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>
     {
-        ContainerSize size(obj.size());
-        scribe.Save(size);
-        for (auto loop = obj.begin(); loop != obj.end(); ++loop)
-            scribe.Save(RemoveConst(*loop));
+    private:
+        using BaseT = CompositeScribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+    public:
+        static void Scriven(ObjectT& object, ArchiveT& archive);
+    private:
+        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class Key, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(object, archive);
+        else
+            LoadImplementation(object, archive);
     }
 
-    template<class ScribeT, class Key, class Hash, class Pred, class Alloc>
-    void Load(ScribeT& scribe, std::unordered_set<Key, Hash, Pred, Alloc>& obj)
+    template<class Key, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
-        typedef std::unordered_set<Key, Hash, Pred, Alloc> ContainerT;
+        ContainerSize size(object.size());
+        archive(size);
+        for (auto loop = object.begin(); loop != object.end(); ++loop)
+            archive(*loop);
+    }
 
+    template<class Key, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_set<Key, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
+    {
         ContainerSize size;
-        scribe.Load(size);
+        archive(size);
 
-        obj.clear();
+        object.clear();
         while (size-- > 0)
         {
-            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
+            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
 
-            auto emplaced = obj.emplace(std::move(constructor.GetMove()));
+            auto emplaced = object.emplace(std::move(constructor.GetMove()));
             if (emplaced.second)
-                scribe.ReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
+                archive.ReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
         }
-    }
-
-    template<class ScribeT, class Key, class Hash, class Pred, class Alloc>
-    void Serialize(ScribeT& scribe, std::unordered_set<Key, Hash, Pred, Alloc>& obj)
-    {
-        (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
 }

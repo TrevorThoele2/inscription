@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/Stack.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,29 +12,29 @@ BOOST_FIXTURE_TEST_SUITE(StackTests, StackTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::stack<int> stack;
+    using TestedObject = std::stack<int>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
         for (auto& loop : startingGroup)
-            stack.emplace(loop);
+            saved.emplace(loop);
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(stack);
+        std::stack<int> loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::stack<int> n_stack;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_stack);
-    }
-
-    BOOST_REQUIRE(!n_stack.empty());
-    BOOST_REQUIRE(n_stack == stack);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

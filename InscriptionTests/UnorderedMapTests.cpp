@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/UnorderedMap.h>
+#include <Inscription/Numeric.h>
+#include <Inscription/String.h>
 
 #include "BinaryFixture.h"
 
@@ -11,7 +13,9 @@ BOOST_FIXTURE_TEST_SUITE(UnorderedMapTests, UnorderedMapTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::unordered_map<int, std::string> unorderedMap;
+    using TestedObject = std::unordered_map<int, std::string>;
+
+    TestedObject saved;
 
     {
         const auto startingGroupKeys = dataGeneration.Generator<int>().RandomGroup(5);
@@ -22,24 +26,22 @@ BOOST_AUTO_TEST_CASE(SavesAndLoads)
             const auto key = startingGroupKeys[i];
             const auto value = startingGroupValues[i];
 
-            unorderedMap.emplace(key, value);
+            saved.emplace(key, value);
         }
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(unorderedMap);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::unordered_map<int, std::string> n_unorderedMap;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_unorderedMap);
-    }
-
-    BOOST_REQUIRE(!n_unorderedMap.empty());
-    BOOST_REQUIRE(n_unorderedMap == unorderedMap);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

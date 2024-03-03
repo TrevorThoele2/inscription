@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/ForwardList.h>
+#include <Inscription/Numeric.h>
 
 #include "BinaryFixture.h"
 
@@ -11,29 +12,29 @@ BOOST_FIXTURE_TEST_SUITE(ForwardListTests, ForwardListTestsFixture)
 
 BOOST_AUTO_TEST_CASE(SavesAndLoads)
 {
-    std::forward_list<int> forwardList;
+    using TestedObject = std::forward_list<int>;
+
+    TestedObject saved;
 
     {
         const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
 
         for (auto& loop : startingGroup)
-            forwardList.push_front(loop);
+            saved.push_front(loop);
+
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(forwardList);
+        TestedObject loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        BOOST_REQUIRE(!loaded.empty());
+        BOOST_REQUIRE(loaded == saved);
     }
-
-    std::forward_list<int> n_forwardList;
-
-    {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_forwardList);
-    }
-
-    BOOST_REQUIRE(!n_forwardList.empty());
-    BOOST_REQUIRE(n_forwardList == forwardList);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

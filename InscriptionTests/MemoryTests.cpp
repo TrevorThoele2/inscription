@@ -1,6 +1,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Inscription/Memory.h>
+#include <Inscription/Numeric.h>
+#include <Inscription/String.h>
+#include <Inscription/Pointer.h>
 
 #include "BinaryFixture.h"
 
@@ -37,56 +40,55 @@ BOOST_FIXTURE_TEST_SUITE(MemoryTests, MemoryTestsFixture)
 
 BOOST_AUTO_TEST_CASE(UniquePtrSavesAndLoads_ThroughBaseClassPointer)
 {
-    std::unique_ptr<Base> ptr(new Derived());
+    std::unique_ptr<Base> saved(new Derived());
 
     {
-        auto outputScribe = CreateRegistered<OutputScribe>();
-        outputScribe.Save(ptr);
+        auto outputArchive = CreateRegistered<OutputArchive>();
+        outputArchive(saved);
     }
-
-    std::unique_ptr<Base> n_ptr;
 
     {
-        auto inputScribe = CreateRegistered<InputScribe>();
-        inputScribe.Load(n_ptr);
+        std::unique_ptr<Base> loaded;
+
+        auto inputArchive = CreateRegistered<InputArchive>();
+        inputArchive(loaded);
+
+        Derived* savedDerived = static_cast<Derived*>(saved.get());
+        Derived* loadedDerived = static_cast<Derived*>(loaded.get());
+
+        BOOST_REQUIRE(loaded.get() != nullptr);
+        BOOST_REQUIRE(loaded->baseValue == saved->baseValue);
+        BOOST_REQUIRE(loadedDerived->derivedValue == savedDerived->derivedValue);
     }
-
-    Derived* derivedPtr = static_cast<Derived*>(ptr.get());
-    Derived* n_derivedPtr = static_cast<Derived*>(n_ptr.get());
-
-    BOOST_REQUIRE(n_ptr.get() != nullptr);
-    BOOST_REQUIRE(n_ptr->baseValue == ptr->baseValue);
-    BOOST_REQUIRE(n_derivedPtr->derivedValue == derivedPtr->derivedValue);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
 namespace Inscription
 {
-    INSCRIPTION_INSCRIPTER_DECLARE(::MemoryTestsFixture::Base)
+    template<>
+    class Scribe<::MemoryTestsFixture::Base, BinaryArchive> : public CompositeScribe<::MemoryTestsFixture::Base, BinaryArchive>
     {
     public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
+        static void Scriven(ObjectT& object, ArchiveT& archive)
         {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD(baseValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
+            archive(object.baseValue);
+        }
     };
 
-    INSCRIPTION_INSCRIPTER_DECLARE(::MemoryTestsFixture::Derived)
+    template<>
+    class Scribe<::MemoryTestsFixture::Derived, BinaryArchive> : public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        INSCRIPTION_BINARY_INSCRIPTER_TABLE
+        static void Scriven(ObjectT& object, ArchiveT& archive)
         {
-            INSCRIPTION_BINARY_INSCRIPTER_CREATE_TABLE;
-            INSCRIPTION_TABLE_ADD_BASE(::MemoryTestsFixture::Base);
-            INSCRIPTION_TABLE_ADD(derivedValue);
-            INSCRIPTION_INSCRIPTER_RETURN_TABLE;
-        };
+            BaseScriven<::MemoryTestsFixture::Base>(object, archive);
+            archive(object.derivedValue);
+        }
 
-        INSCRIPTION_BINARY_DECLARE_CLASS_NAME_RESOLVER;
+        static ClassNameResolver classNameResolver;
     };
 
-    INSCRIPTION_BINARY_DEFINE_SIMPLE_CLASS_NAME_RESOLVER(::MemoryTestsFixture::Derived, "Derived")
+    Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("Derived");
 }
