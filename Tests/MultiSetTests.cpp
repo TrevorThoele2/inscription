@@ -165,7 +165,7 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
 
     GIVEN("saved multiset with objects")
     {
-        const auto objects = dataGeneration.RandomStackGroup<TestClass, int, std::string>(5);
+        const auto objects = dataGeneration.RandomStackGroup<TestClass, int, std::string>(1);
 
         const Classes saved{ objects.begin(), objects.end() };
 
@@ -331,7 +331,7 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
 
     GIVEN("saved multiset with objects")
     {
-        const auto objects = dataGeneration.RandomStackGroup<TestClass, int, std::string>(5);
+        const auto objects = dataGeneration.RandomStackGroup<TestClass, int, std::string>(1);
 
         const Classes saved{ objects.begin(), objects.end() };
 

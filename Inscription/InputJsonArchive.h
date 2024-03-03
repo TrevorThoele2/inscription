@@ -17,6 +17,8 @@ namespace Inscription::Archive
     public:
         InputJson(const File::Path& path);
         InputJson(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        InputJson(const std::string& json);
+        InputJson(const std::string& json, const TypeRegistrationContext& typeRegistrationContext);
         InputJson(InputJson&& arg) noexcept;
 
         InputJson& operator=(InputJson&& arg) noexcept;
@@ -30,7 +32,7 @@ namespace Inscription::Archive
         void StartObject(const std::string& name);
         void EndObject();
     private:
-        File::InputText file;
+        std::string json;
 
         class Item
         {
@@ -110,7 +112,9 @@ namespace Inscription::Archive
         Collection* writeCollection = nullptr;
         Collection* readCollection = nullptr;
 
-        void ScanFile();
+        void ParseString();
+
+        [[nodiscard]] static std::string ExtractFile(const File::Path& filePath);
 
         [[nodiscard]] std::optional<std::string> TakeValueFrom(const std::string& name, Collection& from);
         [[nodiscard]] std::optional<std::string> ReadValueFrom(const std::string& name, Collection& from);

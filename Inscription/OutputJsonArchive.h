@@ -3,6 +3,7 @@
 #include "JsonArchive.h"
 #include "OutputTextFile.h"
 
+#include <variant>
 #include <Chroma/StringUtility.h>
 
 namespace Inscription::Archive
@@ -12,6 +13,8 @@ namespace Inscription::Archive
     public:
         OutputJson(const File::Path& path);
         OutputJson(const File::Path& path, const TypeRegistrationContext& typeRegistrationContext);
+        OutputJson(std::string& json);
+        OutputJson(std::string& json, const TypeRegistrationContext& typeRegistrationContext);
         OutputJson(OutputJson&& arg) noexcept;
         ~OutputJson();
 
@@ -24,11 +27,17 @@ namespace Inscription::Archive
         void StartObject(const std::string& name);
         void EndObject();
     private:
-        File::OutputText file;
+        std::variant<File::OutputText, std::string*> output;
 
         std::vector<uint32_t> levelCount;
 
+        void Start();
+
+        [[nodiscard]] static File::OutputText FileOutput(const File::Path& path);
+        [[nodiscard]] static std::string* JsonOutput(std::string& json);
+
         void StartWrite(const std::string& name);
+        void Write(const std::string& data);
         void EndWrite();
 
         [[nodiscard]] std::string Indent() const;

@@ -4,47 +4,65 @@
 
 namespace Inscription::Archive
 {
-    OutputJson::OutputJson(const File::Path& path) :
+    OutputJson::OutputJson(
+        const File::Path& path)
+		:
         Json(Direction::Output),
-        file(path)
+        output(FileOutput(path))
     {
-        file.WriteData("{");
-        levelCount.push_back(0);
+        Start();
     }
 
     OutputJson::OutputJson(
         const File::Path& path, const TypeRegistrationContext& typeRegistrationContext)
         :
         Json(Direction::Output, typeRegistrationContext),
-        file(path)
+        output(FileOutput(path))
     {
-        file.WriteData("{");
-        levelCount.push_back(0);
+        Start();
+    }
+
+    OutputJson::OutputJson(
+        std::string& json)
+	    :
+        Json(Direction::Output),
+		output(JsonOutput(json))
+    {
+        Start();
+    }
+
+    OutputJson::OutputJson(
+        std::string& json, const TypeRegistrationContext& typeRegistrationContext)
+	    :
+        Json(Direction::Output, typeRegistrationContext),
+        output(JsonOutput(json))
+    {
+        Start();
     }
 
     OutputJson::OutputJson(OutputJson&& arg) noexcept :
-        Json(std::move(arg)), file(std::move(arg.file))
+        Json(std::move(arg)), output(std::move(arg.output))
     {}
 
     OutputJson::~OutputJson()
     {
         if (levelCount.back() > 0)
-            file.WriteData("\n}");
+            Write("\n}");
         else
-            file.WriteData("}");
+            Write("}");
     }
 
     OutputJson& OutputJson::operator=(OutputJson&& arg) noexcept
     {
         Json::operator=(std::move(arg));
-        file = std::move(arg.file);
+        output = std::move(arg.output);
         return *this;
     }
 
     OutputJson& OutputJson::WriteValue(const std::string& name, const std::string& value)
     {
         StartWrite(name);
-        file.WriteData(value);
+        Write(value);
         EndWrite();
 
         return *this;
@@ -55,13 +73,13 @@ namespace Inscription::Archive
         StartWrite(name);
 
         levelCount.push_back(0);
-        file.WriteData("[");
+        Write("[");
     }
 
     void OutputJson::EndList()
     {
         levelCount.pop_back();
-        file.WriteData("\n" + Indent() + "]");
+        Write("\n" + Indent() + "]");
 
         EndWrite();
     }
@@ -71,24 +89,48 @@ namespace Inscription::Archive
         StartWrite(name);
 
         levelCount.push_back(0);
-        file.WriteData("{");
+        Write("{");
     }
 
     void OutputJson::EndObject()
     {
         levelCount.pop_back();
-        file.WriteData("\n" + Indent() + "}");
+        Write("\n" + Indent() + "}");
 
         EndWrite();
+    }
+
+    void OutputJson::Start()
+    {
+        Write("{");
+        levelCount.push_back(0);
+    }
+
+	File::OutputText OutputJson::FileOutput(const File::Path& path)
+    {
+        return File::OutputText(path);
+    }
+
+	std::string* OutputJson::JsonOutput(std::string& json)
+    {
+        return &json;
     }
 
     void OutputJson::StartWrite(const std::string& name)
     {
         if (levelCount.back() > 0)
-            file.WriteData(",");
-        file.WriteData("\n" + Indent());
+            Write(",");
+        Write("\n" + Indent());
         if(!name.empty())
-            file.WriteData("\"" + name + "\": ");
+            Write("\"" + name + "\": ");
+    }
+
+    void OutputJson::Write(const std::string& data)
+    {
+        if (std::holds_alternative<File::OutputText>(output))
+            std::get<File::OutputText>(output).WriteData(data);
+        else
+            *std::get<std::string*>(output) += data;
     }
 
     void OutputJson::EndWrite()

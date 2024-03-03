@@ -73,17 +73,13 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
             outputArchive.Write(std::string("{1}"));
         }
 
-        WHEN("loading")
+        WHEN("creating archive")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-
-            auto element = 0;
-
             THEN("throw exception")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    inputArchive("element", element),
+                    CreateRegistered<InputArchive>(),
                     Inscription::JsonParseError,
                     Catch::Matchers::Message(
                         "Value on object requires name.")
@@ -99,15 +95,13 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
             outputArchive.Write(std::string("{[]}"));
         }
 
-        WHEN("loading")
+        WHEN("creating archive")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-
-            THEN("throw exception")
+            THEN("throws exception")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    inputArchive.StartList("list"),
+                    CreateRegistered<InputArchive>(),
                     Inscription::JsonParseError,
                     Catch::Matchers::Message(
                         "Value on object requires name.")
@@ -123,17 +117,13 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
             outputArchive.Write(std::string("{{}}"));
         }
 
-        WHEN("loading")
+        WHEN("creating archive")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-
-            auto element = 0;
-
-            THEN("throw exception")
+            THEN("throws exception")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    inputArchive("element", element),
+                    CreateRegistered<InputArchive>(),
                     Inscription::JsonParseError,
                     Catch::Matchers::Message(
                         "Value on object requires name.")
@@ -149,17 +139,13 @@ SCENARIO_METHOD(JsonParseErrorTestsFixture, "json parse errors", "[json][parse][
             outputArchive.Write(std::string("{[\"element\": 1]}"));
         }
 
-        WHEN("loading")
+        WHEN("creating archive")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-
-            auto element = 0;
-
-            THEN("throw exception")
+            THEN("throws exception")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    inputArchive("element", element),
+                    CreateRegistered<InputArchive>(),
                     Inscription::JsonParseError,
                     Catch::Matchers::Message(
                         "Value on object requires name.")

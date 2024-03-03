@@ -22,8 +22,12 @@ public:
 
     template<class T, std::enable_if_t<std::is_same_v<T, OutputArchive>, int> = 0>
     [[nodiscard]] OutputArchive CreateRegistered() const;
+    template<class T, std::enable_if_t<std::is_same_v<T, OutputArchive>, int> = 0>
+    [[nodiscard]] OutputArchive CreateRegistered(std::string& json) const;
     template<class T, std::enable_if_t<std::is_same_v<T, InputArchive>, int> = 0>
     [[nodiscard]] InputArchive CreateRegistered() const;
+    template<class T, std::enable_if_t<std::is_same_v<T, InputArchive>, int> = 0>
+    [[nodiscard]] InputArchive CreateRegistered(const std::string& json) const;
     template<class T, std::enable_if_t<std::is_same_v<T, OutputTextArchive>, int> = 0>
     [[nodiscard]] OutputTextArchive CreateRegistered() const;
 };
@@ -31,13 +35,25 @@ public:
 template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::OutputArchive>, int>>
 auto JsonFixture::CreateRegistered() const -> OutputArchive
 {
-    return OutputArchive("Test.json", typeRegistrationContext);
+    return { Inscription::File::Path("Test.json"), typeRegistrationContext };
+}
+
+template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::OutputArchive>, int>>
+auto JsonFixture::CreateRegistered(std::string& json) const -> OutputArchive
+{
+    return { json, typeRegistrationContext };
 }
 
 template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::InputArchive>, int>>
 auto JsonFixture::CreateRegistered() const -> InputArchive
 {
-    return InputArchive("Test.json", typeRegistrationContext);
+    return { Inscription::File::Path("Test.json"), typeRegistrationContext };
+}
+
+template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::InputArchive>, int>>
+auto JsonFixture::CreateRegistered(const std::string& json) const -> InputArchive
+{
+    return { json, typeRegistrationContext };
 }
 
 template<class T, std::enable_if_t<std::is_same_v<T, JsonFixture::OutputTextArchive>, int>>

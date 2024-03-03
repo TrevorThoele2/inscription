@@ -115,6 +115,9 @@
     <ClCompile Include="UserContextTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="JsonStringTests.cpp">
+      <Filter>Source Files\Test\Json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryFixture.h">
