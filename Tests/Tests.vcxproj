@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JsonStringTests.cpp" />
+    <ClCompile Include="PlaintextTests.cpp" />
     <ClCompile Include="UserContextTests.cpp" />
     <ClCompile Include="ArrayTests.cpp" />
     <ClCompile Include="BinaryEnumTests.cpp" />

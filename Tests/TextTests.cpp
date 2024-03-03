@@ -100,9 +100,9 @@ SCENARIO_METHOD(TextTestsFixture, "loading strings from text file", "[text]")
                 auto archive = Inscription::Archive::InputText(file);
                 auto format = Inscription::Format::InputPlaintext(archive);
 
-                format(loaded[0]);
-                format(loaded[1]);
-                format(loaded[2]);
+                format.ReadUntil(loaded[0], '\n');
+                format.ReadUntil(loaded[1], '\n');
+                format.ReadUntil(loaded[2], '\n');
             }
 
             THEN("loaded is same as saved")

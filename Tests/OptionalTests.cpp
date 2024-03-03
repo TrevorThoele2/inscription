@@ -4,10 +4,13 @@
 
 #include "GeneralFixture.h"
 
+#include "TestClass.h"
+
 class OptionalTestsFixture : public GeneralFixture
 {
 public:
     using Integer = std::optional<int>;
+    using Class = std::optional<TestClass>;
 };
 
 SCENARIO_METHOD(OptionalTestsFixture, "loading optional after save binary", "[binary][std][optional]")
@@ -87,6 +90,30 @@ SCENARIO_METHOD(OptionalTestsFixture, "loading optional after save json", "[json
         }
     }
 
+    GIVEN("saved occupied optional to class")
+    {
+        Class saved = TestClass{ dataGeneration.Random<int>(), dataGeneration.Random<std::string>()};
+
+        Inscription::Json::ToFile(saved, "Test.json");
+
+        WHEN("loading optional")
+        {
+            Class loaded;
+
+            Inscription::Json::FromFile(loaded, "Test.json");
+
+            THEN("is same as saved")
+            {
+                REQUIRE(loaded == saved);
+            }
+
+            THEN("is occupied")
+            {
+                REQUIRE(loaded.has_value());
+            }
+        }
+    }
+
     GIVEN("saved unoccupied optional")
     {
         Integer saved;
@@ -96,6 +123,30 @@ SCENARIO_METHOD(OptionalTestsFixture, "loading optional after save json", "[json
         WHEN("loading optional")
         {
             Integer loaded;
+
+            Inscription::Json::FromFile(loaded, "Test.json");
+
+            THEN("is same as saved")
+            {
+                REQUIRE(loaded == saved);
+            }
+
+            THEN("is not occupied")
+            {
+                REQUIRE(!loaded.has_value());
+            }
+        }
+    }
+
+    GIVEN("saved unoccupied optional to class")
+    {
+        Class saved;
+
+        Inscription::Json::ToFile(saved, "Test.json");
+
+        WHEN("loading optional")
+        {
+            Class loaded;
 
             Inscription::Json::FromFile(loaded, "Test.json");
 

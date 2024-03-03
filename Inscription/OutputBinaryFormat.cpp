@@ -17,4 +17,9 @@ namespace Inscription::Format
         archive = arg.archive;
         return *this;
     }
+
+    Archive::OutputBinary& OutputBinary::Archive() const
+    {
+        return *archive;
+    }
 }

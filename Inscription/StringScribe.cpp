@@ -56,6 +56,6 @@ namespace Inscription
         if (format.IsOutput())
             format.AsOutput()->Write(object);
         else
-            format.AsInput()->ReadUntil(object, '\n');
+            format.AsInput()->ReadSize(object);
     }
 }

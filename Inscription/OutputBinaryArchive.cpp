@@ -18,6 +18,11 @@ namespace Inscription::Archive
         sink = std::move(arg.sink);
         return *this;
     }
+
+    File::OutputBinary* OutputBinary::File() const
+    {
+        return std::holds_alternative<File::OutputBinary*>(sink) ? std::get<File::OutputBinary*>(sink) : nullptr;
+    }
     
     void OutputBinary::PushToBuffer(const Buffer& arg, Buffer& buffer)
     {

@@ -20,10 +20,11 @@ namespace Inscription::Format
         InputJson(InputJson&& arg) noexcept;
 
         InputJson& operator=(InputJson&& arg) noexcept;
-
+    public:
         InputJson& TakeValue(const std::string& name, std::string& value);
         InputJson& ReadValue(const std::string& name, std::string& value);
         [[nodiscard]] bool HasValue(const std::string& name);
+        [[nodiscard]] bool IsNull(const std::string& name);
 
         ContainerSize StartList(const std::string& name);
         void EndList();

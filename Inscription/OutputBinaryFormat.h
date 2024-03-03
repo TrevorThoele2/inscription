@@ -28,6 +28,8 @@ namespace Inscription::Format
         void Write(float arg) { DoWrite(arg); }
         void Write(double arg) { DoWrite(arg); }
         void Write(Buffer& arg) { DoWrite(arg); }
+
+        [[nodiscard]] Archive::OutputBinary& Archive() const;
     private:
         Archive::OutputBinary* archive;
     private:
