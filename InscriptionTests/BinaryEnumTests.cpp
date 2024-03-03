@@ -18,7 +18,8 @@ public:
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryEnumFixture::Enum, BinaryArchive> : public EnumScribe<::BinaryEnumFixture::Enum, BinaryArchive>
+    class Scribe<::BinaryEnumFixture::Enum, BinaryArchive> :
+        public EnumScribe<::BinaryEnumFixture::Enum, BinaryArchive>
     {};
 }
 

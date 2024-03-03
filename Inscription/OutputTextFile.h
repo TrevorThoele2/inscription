@@ -8,7 +8,7 @@ namespace Inscription
     class OutputTextFile : public SimpleFile<std::ofstream>
     {
     public:
-        typedef std::streamsize Width;
+        using Width = std::streamsize;
     public:
         OutputTextFile(const FilePath& path, bool append = false);
         OutputTextFile(OutputTextFile&& arg);

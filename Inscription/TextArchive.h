@@ -44,7 +44,8 @@ namespace Inscription
     template<class T>
     TextArchive& TextArchive::operator()(T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type>::Scriven(RemoveConst(object), *this);
+        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
+        scribe.Scriven(RemoveConst(object), *this);
         return *this;
     }
 }

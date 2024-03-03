@@ -8,11 +8,12 @@ namespace Inscription
     class TypeTrackerEntry
     {
     public:
-        typedef TrackingID ID;
-        typedef std::type_index Type;
+        using ID = TrackingID;
+        using Type = std::type_index;
     public:
         ID id;
         Type type;
+        bool hasSavedConstruction = false;
     public:
         TypeTrackerEntry();
         TypeTrackerEntry(ID id, const Type& type);

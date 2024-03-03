@@ -15,21 +15,22 @@ namespace Inscription
     class Scribe<std::string, BinaryArchive> final :
         public CompositeScribe<std::string, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
     private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<>
     class Scribe<std::string, TextArchive> final :
         public CompositeScribe<std::string, TextArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 }

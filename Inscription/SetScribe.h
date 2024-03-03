@@ -21,11 +21,20 @@ namespace Inscription
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+
+        using BaseT::Scriven;
+        using BaseT::Construct;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
+
+        using BaseT::DoBasicConstruction;
     private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(ObjectT& object, ArchiveT& archive);
     };
 
     template<class Key, class Predicate, class Allocator>
@@ -59,7 +68,7 @@ namespace Inscription
 
             auto emplaced = object.emplace(std::move(constructor.GetMove()));
             if (emplaced.second)
-                archive.ReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
+                archive.AttemptReplaceTrackedObject(*constructor.Get(), RemoveConst(*emplaced.first));
         }
     }
 }

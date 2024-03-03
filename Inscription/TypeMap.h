@@ -10,11 +10,11 @@ namespace Inscription
     class TypeMapBase
     {
     private:
-        typedef Container Indices;
+        using Indices = Container;
     public:
-        typedef typename Indices::iterator iterator;
-        typedef typename Indices::const_iterator const_iterator;
-        typedef typename Indices::size_type size_type;
+        using iterator = typename Indices::iterator;
+        using const_iterator = typename Indices::const_iterator;
+        using size_type = typename Indices::size_type;
     public:
         TypeMapBase() = default;
         TypeMapBase(const TypeMapBase& arg) = default;

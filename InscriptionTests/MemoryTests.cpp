@@ -67,28 +67,41 @@ BOOST_AUTO_TEST_SUITE_END()
 namespace Inscription
 {
     template<>
-    class Scribe<::MemoryTestsFixture::Base, BinaryArchive> : public CompositeScribe<::MemoryTestsFixture::Base, BinaryArchive>
+    class Scribe<::MemoryTestsFixture::Base, BinaryArchive> :
+        public CompositeScribe<::MemoryTestsFixture::Base, BinaryArchive>
     {
-    public:
-        static void Scriven(ObjectT& object, ArchiveT& archive)
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
             archive(object.baseValue);
+        }
+
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
         }
     };
 
     template<>
-    class Scribe<::MemoryTestsFixture::Derived, BinaryArchive> : public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
+    class Scribe<::MemoryTestsFixture::Derived, BinaryArchive> :
+        public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive)
+        static ClassNameResolver classNameResolver;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
             BaseScriven<::MemoryTestsFixture::Base>(object, archive);
             archive(object.derivedValue);
         }
 
-        static ClassNameResolver classNameResolver;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver = CreateSingleNameResolver("CustomConstructionDerived");
+        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
 }

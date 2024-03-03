@@ -12,12 +12,12 @@ namespace Inscription
     public:
         OutputBinaryArchive(
             const FilePath& path,
-            const Signature& signature,
-            Version version);
+            const Signature& clientSignature,
+            Version clientVersion);
         OutputBinaryArchive(
             const FilePath& path,
-            const Signature& signature,
-            Version version,
+            const Signature& clientSignature,
+            Version clientVersion,
             const TypeRegistrationContext& typeRegistrationContext);
         OutputBinaryArchive(OutputBinaryArchive&& arg);
 

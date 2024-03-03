@@ -7,21 +7,32 @@ namespace Inscription
 {
     OutputBinaryArchive::OutputBinaryArchive(
         const FilePath& path,
-        const Signature& signature,
-        Version version) :
+        const Signature& clientSignature,
+        Version clientVersion) :
 
-        BinaryArchive(Direction::OUTPUT, signature, version), file(path)
+        BinaryArchive(
+            Direction::OUTPUT,
+            clientSignature,
+            clientVersion,
+            ::Inscription::currentInscriptionVersion),
+        file(path)
     {
         InitialSetup();
     }
 
     OutputBinaryArchive::OutputBinaryArchive(
         const FilePath& path,
-        const Signature& signature,
-        Version version,
+        const Signature& clientSignature,
+        Version clientVersion,
         const TypeRegistrationContext& typeRegistrationContext) :
 
-        BinaryArchive(Direction::OUTPUT, signature, version, typeRegistrationContext), file(path)
+        BinaryArchive(
+            Direction::OUTPUT,
+            clientSignature,
+            clientVersion,
+            ::Inscription::currentInscriptionVersion,
+            typeRegistrationContext),
+        file(path)
     {
         InitialSetup();
     }
@@ -49,10 +60,11 @@ namespace Inscription
 
     void OutputBinaryArchive::InitialSetup()
     {
-        for (auto& loop : signature)
+        for (auto& loop : clientSignature)
             WriteImpl(RemoveConst(loop));
 
-        WriteImpl(version);
+        WriteImpl(inscriptionVersion);
+        WriteImpl(clientVersion);
         postHeaderPosition = TellStream();
     }
 }

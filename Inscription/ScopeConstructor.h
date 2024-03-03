@@ -30,7 +30,8 @@ namespace Inscription
     ScopeConstructor<T>::ScopeConstructor(Archive& archive) : object(nullptr)
     {
         object = reinterpret_cast<T*>(CreateStorage(sizeof(T)));
-        Scribe<T, Archive>::Construct(object, archive);
+        Scribe<T, Archive> scribe;
+        scribe.Construct(object, archive);
     }
 
     template<class T>

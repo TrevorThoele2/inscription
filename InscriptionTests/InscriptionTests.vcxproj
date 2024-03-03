@@ -139,7 +139,6 @@
     <ClCompile Include="MultiSetTests.cpp" />
     <ClCompile Include="BinaryPolymorphicTests.cpp" />
     <ClCompile Include="BinaryPolymorphicConstructionTests.cpp" />
-    <ClCompile Include="ObjectTrackingTests.cpp" />
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SetTests.cpp" />
     <ClCompile Include="StackTests.cpp" />

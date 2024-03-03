@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "ObjectTrackerEntry.h"
-#include "ObjectTrackerLookaheadEntry.h"
 #include "TrackingID.h"
 
 #include "TypeMap.h"
@@ -25,42 +24,30 @@ namespace Inscription
         ObjectTracker& operator=(const ObjectTracker& arg);
         ObjectTracker& operator=(ObjectTracker&& arg);
 
-        void SetActive(bool set = true);
+        void Activate(bool set = true);
+        void Deactivate();
         bool IsActive() const;
 
         Optional<ID> Add(void* add);
-        Optional<ID> CreateLookahead(size_t storageSize);
-        Optional<ID> CreateLookahead(ID id, size_t storageSize);
-
-        void* LookaheadStorage(ID id);
-        void MaterializeLookahead(ID id);
+        Optional<ID> Add(void* add, ID id);
+        void ReplaceObject(void* here, void* newObject);
 
         void SignalSavedConstruction(ID id);
         bool HasSavedConstruction(ID id) const;
 
         void* FindObject(ID id);
         Optional<ID> FindID(void* object);
-        Optional<ID> FindEntryID(void* object);
-        void ReplaceObject(void* here, void* newObject);
 
         void Clear();
     private:
         bool active = true;
     private:
         using Entry = ObjectTrackerEntry;
-        using LookaheadEntry = ObjectTrackerLookaheadEntry;
-
-        using EntryBase = ObjectTrackerEntryBase;
-        using EntryBasePtr = std::unique_ptr<EntryBase>;
-        using Map = std::unordered_map<ID, EntryBasePtr>;
+        using Map = std::unordered_map<ID, Entry>;
         using iterator = Map::iterator;
         Map map;
 
-        Optional<ID> Add(void* add, ID id);
-
         Entry* FindEntry(ID id);
-        LookaheadEntry* FindLookaheadEntry(ID id);
-
         iterator FindIterator(void* object);
     private:
         ID NextID() const;

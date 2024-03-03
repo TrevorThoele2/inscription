@@ -14,8 +14,8 @@ namespace Inscription
     class TypeTracker
     {
     public:
-        typedef TrackingID ID;
-        typedef std::type_index Type;
+        using ID = TrackingID;
+        using Type = std::type_index;
     public:
         TypeTracker() = default;
         TypeTracker(TypeTracker&& arg);
@@ -25,18 +25,28 @@ namespace Inscription
         template<class T>
         ID Add();
         ID Add(const Type& type);
+        ID Add(const Type& type, ID id);
+
+        void SignalSavedConstruction(ID id);
+        bool HasSavedConstruction(ID id) const;
 
         template<class T>
         bool IsTypeIn() const;
         bool IsTypeIn(const Type& type) const;
+        bool IsIDIn(ID id) const;
         template<class T>
         Optional<ID> FindID() const;
         Optional<ID> FindID(const Type& type) const;
+
+        Optional<Type> FindType(ID id) const;
     private:
-        typedef TypeTrackerEntry Entry;
-        typedef std::vector<Entry> EntryList;
+        using Entry = TypeTrackerEntry;
+        using EntryList = std::vector<Entry>;
         EntryList entryList;
 
+        Entry* FindEntry(ID id);
+        const Entry* FindEntry(ID id) const;
+    private:
         ID NextID() const;
     private:
         template<class T>

@@ -21,13 +21,16 @@ namespace Inscription
     {
     public:
         using ArchiveT = Archive;
+
+        using Type = std::type_index;
     public:
         template<class T>
         void SaveConstruction(const T* object, ArchiveT& archive);
-        void ConstructFromLoad(void*& storage, const ClassName& className, ArchiveT& archive);
-        void CreateLookahead(const ClassName& className, TrackingID objectID, ArchiveT& archive);
+        void ConstructFromLoad(void*& storage, const Type& type, ArchiveT& archive);
+        void* CreateStorage(const Type& type);
 
-        ClassName ClassNameFor(TrackingID type, ArchiveT& archive);
+        ClassName ClassNameFor(const Type& type);
+        Type TypeFor(const ClassName& className);
 
         template<class T>
         void Register(ArchiveT& archive);
@@ -36,28 +39,27 @@ namespace Inscription
         {
         public:
             const ClassName className;
-            const TrackingID typeID;
+            const Type type;
         public:
             template<class T>
-            Entry(const ClassName& className, TypeTracker& typeTracker, Type<T>);
+            Entry(const ClassName& className, ::Inscription::Type<T>);
 
             void SaveConstruction(const void* object, ArchiveT& archive);
             void ConstructFromLoad(void*& storage, ArchiveT& archive);
-            void CreateLookahead(TrackingID objectID, ArchiveT& archive);
+            void* CreateStorage();
         private:
             std::function<void(const void*, ArchiveT&)> _saveConstruction;
             std::function<void(void*&, ArchiveT&)> _constructFromLoad;
-            std::function<void(TrackingID, ArchiveT&)> _createLookahead;
+            std::function<void*()> _createStorage;
         };
 
-        typedef std::vector<Entry> EntryList;
-        typedef typename EntryList::iterator EntryIterator;
-        typedef typename EntryList::const_iterator EntryConstIterator;
+        using EntryList = std::vector<Entry>;
+        using EntryIterator = typename EntryList::iterator;
+        using EntryConstIterator = typename EntryList::const_iterator;
         EntryList entryList;
 
         EntryIterator FindRequiredEntry(const ClassName& className);
-        EntryIterator FindRequiredEntry(TrackingID typeID);
-        EntryIterator FindRequiredEntry(TrackingID typeID, const std::type_index& type);
+        EntryIterator FindRequiredEntry(const Type& type);
     private:
         template<class T>
         TrackingID RequiredTypeIDFor(const T* object, ArchiveT& archive);
@@ -68,31 +70,38 @@ namespace Inscription
     void PolymorphicManager<Archive>::SaveConstruction(const T* object, ArchiveT& archive)
     {
         auto typeID = RequiredTypeIDFor(object, archive);
-        auto found = FindRequiredEntry(typeID, typeid(*RemoveConst(object)));
+        auto found = FindRequiredEntry(typeid(*RemoveConst(object)));
         found->SaveConstruction(object, archive);
     }
 
     template<class Archive>
     void PolymorphicManager<Archive>::ConstructFromLoad(
-        void*& storage, const ClassName& className, ArchiveT& archive)
+        void*& storage, const Type& type, ArchiveT& archive)
     {
-        auto found = FindRequiredEntry(className);
+        auto found = FindRequiredEntry(type);
         found->ConstructFromLoad(storage, archive);
     }
 
     template<class Archive>
-    void PolymorphicManager<Archive>::CreateLookahead(
-        const ClassName& className, TrackingID objectID, ArchiveT& archive)
+    void* PolymorphicManager<Archive>::CreateStorage(
+        const Type& type)
     {
-        auto found = FindRequiredEntry(className);
-        found->CreateLookahead(objectID, archive);
+        auto found = FindRequiredEntry(type);
+        return found->CreateStorage();
     }
 
     template<class Archive>
-    ClassName PolymorphicManager<Archive>::ClassNameFor(TrackingID type, ArchiveT& archive)
+    ClassName PolymorphicManager<Archive>::ClassNameFor(const Type& type)
     {
         auto found = FindRequiredEntry(type);
         return found->className;
+    }
+
+    template<class Archive>
+    auto PolymorphicManager<Archive>::TypeFor(const ClassName& className) -> Type
+    {
+        auto found = FindRequiredEntry(className);
+        return found->type;
     }
 
     template<class Archive>
@@ -100,13 +109,13 @@ namespace Inscription
     void PolymorphicManager<Archive>::Register(ArchiveT& archive)
     {
         auto className = Scribe<T, ArchiveT>::classNameResolver.NameFor(archive);
-        entryList.push_back(Entry(className, archive.typeTracker, Type<T>{}));
+        entryList.push_back(Entry(className, ::Inscription::Type<T>{}));
     }
 
     template<class Archive>
     template<class T>
-    PolymorphicManager<Archive>::Entry::Entry(const ClassName& className, TypeTracker& typeTracker, Type<T>) :
-        className(className), typeID(typeTracker.Add<T>())
+    PolymorphicManager<Archive>::Entry::Entry(const ClassName& className, ::Inscription::Type<T>) :
+        className(className), type(typeid(T))
     {
         using DerivedT = typename RemoveConstTrait<T>::type;
         using DerivedScribe = Scribe<DerivedT, ArchiveT>;
@@ -114,21 +123,20 @@ namespace Inscription
         _saveConstruction = [](const void* object, ArchiveT& archive)
         {
             auto castedObject = reinterpret_cast<const T*>(object);
-            DerivedScribe::Scriven(RemoveConst(*castedObject), archive);
+            DerivedScribe derivedScribe;
+            derivedScribe.Scriven(RemoveConst(*castedObject), archive);
         };
 
         _constructFromLoad = [](void*& storage, ArchiveT& archive)
         {
-            if (!storage)
-                storage = CreateStorage(sizeof(DerivedT));
-
-            DerivedT* object = reinterpret_cast<DerivedT*>(storage);
-            DerivedScribe::Construct(object, archive);
+            DerivedT* castedStorage = reinterpret_cast<DerivedT*>(storage);
+            DerivedScribe derivedScribe;
+            derivedScribe.Construct(castedStorage, archive);
         };
 
-        _createLookahead = [](TrackingID objectID, ArchiveT& archive)
+        _createStorage = []() -> void*
         {
-            archive.objectTracker.CreateLookahead(objectID, sizeof(DerivedT));
+            return ::Inscription::CreateStorage(sizeof(T));
         };
     }
 
@@ -145,9 +153,9 @@ namespace Inscription
     }
 
     template<class Archive>
-    void PolymorphicManager<Archive>::Entry::CreateLookahead(TrackingID objectID, ArchiveT& archive)
+    void* PolymorphicManager<Archive>::Entry::CreateStorage()
     {
-        return _createLookahead(objectID, archive);
+        return _createStorage();
     }
 
     template<class Archive>
@@ -162,21 +170,11 @@ namespace Inscription
     }
 
     template<class Archive>
-    typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(TrackingID typeID)
-    {
-        for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
-            if (loop->typeID == typeID)
-                return loop;
-
-        throw PolymorphicTypeNotFound();
-    }
-
-    template<class Archive>
     typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        TrackingID typeID, const std::type_index& type)
+        const Type& type)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
-            if (loop->typeID == typeID)
+            if (loop->type == type)
                 return loop;
 
         throw PolymorphicTypeNotFound(type);

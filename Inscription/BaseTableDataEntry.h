@@ -31,8 +31,8 @@ namespace Inscription
         void Scriven(ArchiveT& archive);
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
 
-        void PullFromObject(ObjectT& object);
-        void PushToObject(ObjectT& object);
+        void PullFromObject(ObjectT& object, ArchiveT& archive);
+        void PushToObject(ObjectT& object, ArchiveT& archive);
     public:
         operator DataT&();
         operator const DataT&() const;
@@ -95,15 +95,15 @@ namespace Inscription
     }
 
     template<class Base, class Object, class Archive>
-    void BaseTableDataEntry<Base, Object, Archive>::PullFromObject(ObjectT& object)
+    void BaseTableDataEntry<Base, Object, Archive>::PullFromObject(ObjectT& object, ArchiveT& archive)
     {
-        baseTable.PullFromObject(object);
+        baseTable.PullFromObject(object, archive);
     }
 
     template<class Base, class Object, class Archive>
-    void BaseTableDataEntry<Base, Object, Archive>::PushToObject(ObjectT& object)
+    void BaseTableDataEntry<Base, Object, Archive>::PushToObject(ObjectT& object, ArchiveT& archive)
     {
-        baseTable.PushToObject(object);
+        baseTable.PushToObject(object, archive);
     }
 
     template<class Base, class Object, class Archive>

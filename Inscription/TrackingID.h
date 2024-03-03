@@ -8,5 +8,5 @@
 
 namespace Inscription
 {
-    typedef INSCRIPTION_SIZE_TRACKER_ID TrackingID;
+    using TrackingID = INSCRIPTION_SIZE_TRACKER_ID;
 }

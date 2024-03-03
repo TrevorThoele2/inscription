@@ -44,6 +44,11 @@ namespace Inscription
         {
         public:
             Table();
+        protected:
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+                DoBasicConstruction(storage, archive);
+            }
         };
     };
 
@@ -64,6 +69,11 @@ namespace Inscription
         {
         public:
             Table();
+        protected:
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+                DoBasicConstruction(storage, archive);
+            }
         };
     public:
         static const ClassNameResolver classNameResolver;
@@ -86,8 +96,8 @@ namespace Inscription
         {
         public:
             Table();
-
-            void Construct(ObjectT* storage, ArchiveT& archive);
+        protected:
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
         };
     public:
         static const ClassNameResolver classNameResolver;
@@ -111,6 +121,10 @@ namespace Inscription
             Table();
         protected:
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+                DoBasicConstruction(storage, archive);
+            }
         };
     };
 
@@ -135,6 +149,10 @@ namespace Inscription
             void Construct(ObjectT* storage, ArchiveT& archive);
         protected:
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+
+            }
         };
     public:
         static const ClassNameResolver classNameResolver;
@@ -156,6 +174,11 @@ namespace Inscription
         {
         public:
             Table();
+        protected:
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+                DoBasicConstruction(storage, archive);
+            }
         };
     };
 
@@ -176,6 +199,11 @@ namespace Inscription
         {
         public:
             Table();
+        protected:
+            void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+            {
+                DoBasicConstruction(storage, archive);
+            }
         };
     public:
         static const ClassNameResolver classNameResolver;
@@ -322,14 +350,14 @@ BOOST_AUTO_TEST_CASE(DefaultConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     DefaultConstructionDerived* loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
@@ -370,14 +398,14 @@ BOOST_AUTO_TEST_CASE(CustomConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     CustomConstructionDerived* loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
@@ -417,14 +445,14 @@ BOOST_AUTO_TEST_CASE(TableConstruction_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     TableConstructionBase* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     TableConstructionDerived* loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
@@ -471,14 +499,14 @@ BOOST_AUTO_TEST_CASE(ObjectScriven_Construction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     ObjectScrivenBase* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     ObjectScrivenDerived* loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
@@ -514,7 +542,7 @@ namespace Inscription
         Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::classNameResolver =
         CreateSingleNameResolver("DefaultConstructionDerived");
 
-    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Construct(
+    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::ConstructImplementation(
         ObjectT* storage, ArchiveT& archive)
     {
         new (storage) ObjectT(

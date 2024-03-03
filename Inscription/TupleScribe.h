@@ -19,8 +19,14 @@ namespace Inscription
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
+
+        using BaseT::DoBasicConstruction;
     private:
         template<unsigned int I>
         class UnpackTuple

@@ -4,5 +4,5 @@
 
 namespace Inscription
 {
-    typedef std::string ClassName;
+    using ClassName = std::string;
 }

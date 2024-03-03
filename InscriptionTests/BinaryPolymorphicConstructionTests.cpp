@@ -49,8 +49,12 @@ namespace Inscription
     class Scribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive> : public
         CompositeScribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive>
     {
-    public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
+        {
+            DoBasicConstruction(storage, archive);
+        }
     };
 
     template<>
@@ -58,9 +62,10 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>
     {
     public:
-        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
-        static void Construct(ObjectT* storage, ArchiveT& archive);
         static const ClassNameResolver classNameResolver;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
     };
 }
 
@@ -74,14 +79,14 @@ BOOST_AUTO_TEST_CASE(ManualConstruction)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -94,42 +99,21 @@ BOOST_AUTO_TEST_CASE(ManualConstruction)
     delete loaded;
 }
 
-BOOST_AUTO_TEST_CASE(Unowned_DoesNotConstruct)
-{
-    Base* saved = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
-
-    {
-        auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Unowning);
-    }
-
-    Base* loaded = nullptr;
-
-    {
-        auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Unowning);
-    }
-
-    BOOST_REQUIRE(loaded == nullptr);
-
-    delete saved;
-}
-
-BOOST_AUTO_TEST_CASE(Owned_DoesNotConstruct)
+BOOST_AUTO_TEST_CASE(DoesNotConstruct)
 {
     Base* saved = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
     Derived* savedCasted = dynamic_cast<Derived*>(saved);
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(saved, ::Inscription::Pointer::Owning);
+        outputArchive(saved);
     }
 
     Base* loaded = nullptr;
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loaded, ::Inscription::Pointer::Owning);
+        inputArchive(loaded);
     }
 
     Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
@@ -142,7 +126,7 @@ BOOST_AUTO_TEST_CASE(Owned_DoesNotConstruct)
     delete loaded;
 }
 
-BOOST_AUTO_TEST_CASE(OwnedLoad_CausesUnownedToBePopulated)
+BOOST_AUTO_TEST_CASE(Load_CausesOtherToBePopulated)
 {
     Base* savedOwned = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
     Derived* savedOwnedCasted = dynamic_cast<Derived*>(savedOwned);
@@ -152,8 +136,8 @@ BOOST_AUTO_TEST_CASE(OwnedLoad_CausesUnownedToBePopulated)
 
     {
         auto outputArchive = CreateRegistered<OutputArchive>();
-        outputArchive(savedUnowned, ::Inscription::Pointer::Unowning);
-        outputArchive(savedOwned, ::Inscription::Pointer::Owning);
+        outputArchive(savedUnowned);
+        outputArchive(savedOwned);
     }
 
     Base* loadedOwned = nullptr;
@@ -161,8 +145,8 @@ BOOST_AUTO_TEST_CASE(OwnedLoad_CausesUnownedToBePopulated)
 
     {
         auto inputArchive = CreateRegistered<InputArchive>();
-        inputArchive(loadedUnowned, ::Inscription::Pointer::Unowning);
-        inputArchive(loadedOwned, ::Inscription::Pointer::Owning);
+        inputArchive(loadedUnowned);
+        inputArchive(loadedOwned);
     }
 
     Derived* loadedOwnedCasted = dynamic_cast<Derived*>(loadedOwned);
@@ -188,6 +172,10 @@ namespace Inscription
         archive(object.baseValue);
     }
 
+    const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
+
     void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
@@ -195,7 +183,7 @@ namespace Inscription
         archive(object.derivedValue);
     }
 
-    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::Construct(
+    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ConstructImplementation(
         ObjectT* storage, ArchiveT& archive)
     {
         int baseValue;
@@ -206,8 +194,4 @@ namespace Inscription
 
         new (storage) ObjectT(baseValue, derivedValue);
     }
-
-    const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
 }

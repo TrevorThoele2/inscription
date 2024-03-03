@@ -8,8 +8,8 @@
 #include "TypeTracker.h"
 #include "SpecialObjectTrackingID.h"
 #include "SpecialTypeTrackingID.h"
+#include "ObjectTrackingContext.h"
 
-#include "Pointer.h"
 #include "PolymorphicManager.h"
 
 #include "NumericScribe.h"
@@ -27,114 +27,116 @@ namespace Inscription
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
-    public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
-        static void Scriven(ObjectT& object, ArchiveT& archive, Pointer pointerType);
-    public:
+
+        using BaseT::Scriven;
         using BaseT::Construct;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
+
+        using BaseT::DoBasicConstruction;
+    private:
+        void SaveImplementation(ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(ObjectT& object, ArchiveT& archive);
     private:
         using BareObject = std::remove_pointer_t<Object>;
-    private:
         using BareScribe = Scribe<BareObject, ArchiveT>;
-    private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive, Pointer pointerType);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive, Pointer pointerType);
+        BareScribe bareScribe;
     private:
         constexpr static bool shouldConstructPolymorphically = std::is_polymorphic_v<BareObject>;
 
-        static void SaveConstruction(
+        void SaveConstruction(
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            TrackingID typeID,
-            Pointer pointerType,
             std::true_type);
-        static void SaveConstruction(
+        void SaveConstruction(
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            TrackingID typeID,
-            Pointer pointerType,
             std::false_type);
-        static void LoadConstruction(
+        void LoadConstruction(
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            TrackingID typeID,
-            Pointer pointerType,
             std::true_type);
-        static void LoadConstruction(
+        void LoadConstruction(
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            TrackingID typeID,
-            Pointer pointerType,
             std::false_type);
-    private:
-        PointerScribe() = delete;
-        PointerScribe(const PointerScribe& arg) = delete;
-        PointerScribe& operator=(const PointerScribe& arg) = delete;
     private:
         static_assert(std::is_pointer_v<ObjectT>,
             "The Object given to a PointerScribe was not a pointer.");
     };
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive)
-    {
-        Scriven(object, archive, Pointer::Unowning);
-    }
-
-    template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive, Pointer pointerType)
+    void PointerScribe<Object, Archive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive, pointerType);
+            SaveImplementation(object, archive);
         else
-            LoadImplementation(object, archive, pointerType);
+            LoadImplementation(object, archive);
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::SaveImplementation(ObjectT& object, ArchiveT& archive, Pointer pointerType)
+    void PointerScribe<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
+    {
+        DoBasicConstruction(storage, archive);
+    }
+
+    template<class Object, class Archive>
+    void PointerScribe<Object, Archive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (object == nullptr)
         {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
             archive(SpecialObjectTrackingID::NULLPTR);
-            archive(SpecialTypeTrackingID::NULLPTR);
             return;
         }
 
         TrackingID objectID;
-        TrackingID typeID;
         
-        typeID = archive.typeTracker.Add(typeid(*object));
+        bool shouldSaveConstructionObject = true;
 
-        auto foundObjectID = archive.objectTracker.FindEntryID(object);
-        if (foundObjectID.IsValid())
-            objectID = *foundObjectID;
-        else
-            objectID = *archive.objectTracker.Add(object);
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            auto foundObjectID = archive.objectTracker.FindID(object);
+            if (foundObjectID.IsValid())
+            {
+                objectID = *foundObjectID;
+                shouldSaveConstructionObject = false;
+            }
+            else
+                objectID = *archive.objectTracker.Add(object);
+        }
 
-        archive(objectID);
-        archive(typeID);
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+            archive(objectID);
+        }
+
+        if (!shouldSaveConstructionObject || archive.objectTracker.HasSavedConstruction(objectID))
+            return;
+
+        archive.objectTracker.SignalSavedConstruction(objectID);
 
         SaveConstruction(
             object,
             archive,
             objectID,
-            typeID, 
-            pointerType,
             std::bool_constant<shouldConstructPolymorphically>{});
     }
 
     template<class Object, class Archive>
-    void PointerScribe<Object, Archive>::LoadImplementation(ObjectT& object, ArchiveT& archive, Pointer pointerType)
+    void PointerScribe<Object, Archive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
     {
         TrackingID objectID;
-        TrackingID typeID;
 
-        archive(objectID);
-        archive(typeID);
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+            archive(objectID);
+        }
 
         if (objectID == SpecialObjectTrackingID::NULLPTR)
         {
@@ -153,90 +155,91 @@ namespace Inscription
             object,
             archive,
             objectID,
-            typeID,
-            pointerType,
             std::bool_constant<shouldConstructPolymorphically>{});
     }
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::SaveConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, TrackingID typeID, Pointer pointerType, std::true_type)
+        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::true_type)
     {
-        auto className = archive.polymorphicManager.ClassNameFor(typeID, archive);
-        archive.TrackObjects(false);
-        archive(className);
-        archive.TrackObjects(true);
+        TrackingID typeID;
+        bool needsClassName = false;
+        auto type = std::type_index(typeid(*object));
 
-        bool hasSavedConstruction = archive.objectTracker.HasSavedConstruction(objectID);
-        if (pointerType != Pointer::Owning || hasSavedConstruction)
-            return;
+        {
+            auto foundTypeID = archive.typeTracker.FindID(type);
+            needsClassName = !foundTypeID.IsValid();
+            if (foundTypeID.IsValid())
+                typeID = *foundTypeID;
+            else
+                typeID = archive.typeTracker.Add(type);
+        }
+
+        {
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+            archive(typeID);
+            if (needsClassName)
+            {
+                auto className = archive.polymorphicManager.ClassNameFor(type);
+                archive(className);
+            }
+        }
 
         archive.polymorphicManager.SaveConstruction(object, archive);
-
-        archive.objectTracker.SignalSavedConstruction(objectID);
     }
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::SaveConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, TrackingID typeID, Pointer pointerType, std::false_type)
+        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::false_type)
     {
-        BareScribe::Scriven(*object, archive);
+        bareScribe.Scriven(*object, archive);
     }
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::LoadConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, TrackingID typeID, Pointer pointerType, std::true_type)
+        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::true_type)
     {
-        archive.TrackObjects(false);
-        ClassName className;
-        archive(className);
-        archive.TrackObjects(true);
+        TrackingID typeID;
+        std::type_index type = typeid(void*);
 
-        if (pointerType != Pointer::Owning)
         {
-            archive.polymorphicManager.CreateLookahead(className, objectID, archive);
-            object = reinterpret_cast<ObjectT>(archive.objectTracker.LookaheadStorage(objectID));
-            return;
+            ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+            archive(typeID);
+            auto foundType = archive.typeTracker.FindType(typeID);
+            if (!foundType.IsValid())
+            {
+                ClassName className;
+                archive(className);
+
+                type = archive.polymorphicManager.TypeFor(className);
+                archive.typeTracker.Add(type, typeID);
+            }
+            else
+                type = *foundType;
         }
 
-        auto storage = archive.objectTracker.LookaheadStorage(objectID);
-
-        bool hadLookahead = storage;
-
-        archive.polymorphicManager.ConstructFromLoad(storage, className, archive);
-
-        if (hadLookahead)
-            archive.objectTracker.MaterializeLookahead(objectID);
-
+        auto storage = archive.polymorphicManager.CreateStorage(type);
+        archive.objectTracker.Add(storage, objectID);
+        archive.polymorphicManager.ConstructFromLoad(storage, type, archive);
         object = reinterpret_cast<ObjectT>(storage);
     }
 
     template<class Object, class Archive>
     void PointerScribe<Object, Archive>::LoadConstruction(
-        ObjectT& object, ArchiveT& archive, TrackingID objectID, TrackingID typeID, Pointer pointerType, std::false_type)
+        ObjectT& object, ArchiveT& archive, TrackingID objectID, std::false_type)
     {
-        if (pointerType != Pointer::Owning)
-        {
-            archive.objectTracker.CreateLookahead(objectID, sizeof(BareObject));
-            object = reinterpret_cast<ObjectT>(archive.objectTracker.LookaheadStorage(objectID));
-            return;
-        }
-
-        auto storage = archive.objectTracker.LookaheadStorage(objectID);
-
-        bool hadLookahead = storage;
-        if (hadLookahead)
-            object = reinterpret_cast<ObjectT>(storage);
-        else
-            object = reinterpret_cast<ObjectT>(CreateStorage(sizeof(BareObject)));
-
-        BareScribe::Construct(object, archive);
-
-        if (hadLookahead)
-            archive.objectTracker.MaterializeLookahead(objectID);
+        auto storage = reinterpret_cast<BareObject*>(CreateStorage(sizeof(BareObject)));
+        bareScribe.Construct(storage, archive);
+        object = storage;
     }
 
     template<class Object, class Archive>
     class Scribe<Object*, Archive> : public PointerScribe<Object*, Archive>
     {};
+
+    template<class Object>
+    struct ObjectTrackingTraits<Object*, BinaryArchive>
+    {
+        static constexpr bool shouldTrack = false;
+    };
 }

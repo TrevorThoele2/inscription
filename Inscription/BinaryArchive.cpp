@@ -8,11 +8,21 @@ namespace Inscription
     BinaryArchive::~BinaryArchive()
     {}
 
+    void BinaryArchive::AttemptReplaceTrackedObject(void* here, void *newObject)
+    {
+        objectTracker.ReplaceObject(here, newObject);
+    }
+
     bool BinaryArchive::TrackObjects(bool set)
     {
         auto ret = objectTracker.IsActive();
-        objectTracker.SetActive(set);
+        objectTracker.Activate(set);
         return ret;
+    }
+
+    void BinaryArchive::TrackSavedConstruction(TrackingID trackingID)
+    {
+        objectTracker.SignalSavedConstruction(trackingID);
     }
 
     void BinaryArchive::CopyTrackersTo(BinaryArchive& scribe) const
@@ -67,14 +77,19 @@ namespace Inscription
         return static_cast<const InputBinaryArchive*>(this);
     }
 
-    const BinaryArchive::Signature& BinaryArchive::GetSignature() const
+    const BinaryArchive::Signature& BinaryArchive::ClientSignature() const
     {
-        return signature;
+        return clientSignature;
     }
 
-    Version BinaryArchive::GetVersion() const
+    Version BinaryArchive::ClientVersion() const
     {
-        return version;
+        return clientVersion;
+    }
+
+    Version BinaryArchive::InscriptionVersion() const
+    {
+        return inscriptionVersion;
     }
 
     void BinaryArchive::MovePositionToStart()
@@ -85,31 +100,32 @@ namespace Inscription
 
     BinaryArchive::BinaryArchive(
         Direction direction,
-        const Signature& signature,
-        Version version) :
+        const Signature& clientSignature,
+        Version clientVersion,
+        Version inscriptionVersion) :
 
-        direction(direction), signature(signature), version(version),
-        postHeaderPosition(0)
+        direction(direction), clientSignature(clientSignature), clientVersion(clientVersion),
+        inscriptionVersion(inscriptionVersion), postHeaderPosition(0)
     {}
 
     BinaryArchive::BinaryArchive(
         Direction direction,
-        const Signature& signature,
-        Version version,
+        const Signature& clientSignature,
+        Version clientVersion,
+        Version inscriptionVersion,
         TypeRegistrationContext typeRegistrationContext) :
 
-        direction(direction), signature(signature), version(version),
-        typeRegistrationContext(typeRegistrationContext),
-        postHeaderPosition(0)
+        direction(direction), clientSignature(clientSignature), clientVersion(clientVersion),
+        inscriptionVersion(inscriptionVersion), typeRegistrationContext(typeRegistrationContext), postHeaderPosition(0)
     {
         typeRegistrationContext.PushAll(*this);
     }
 
     BinaryArchive::BinaryArchive(BinaryArchive&& arg) :
         Archive(std::move(arg)),
-        direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
-        objectTracker(std::move(arg.objectTracker)), typeTracker(std::move(arg.typeTracker)),
-        polymorphicManager(std::move(arg.polymorphicManager)),
+        direction(arg.direction), clientSignature(std::move(arg.clientSignature)),
+        clientVersion(std::move(arg.clientVersion)), objectTracker(std::move(arg.objectTracker)),
+        typeTracker(std::move(arg.typeTracker)), polymorphicManager(std::move(arg.polymorphicManager)),
         typeRegistrationContext(std::move(arg.typeRegistrationContext)),
         postHeaderPosition(std::move(arg.postHeaderPosition))
     {}
@@ -117,8 +133,8 @@ namespace Inscription
     BinaryArchive& BinaryArchive::operator=(BinaryArchive&& arg)
     {
         Archive::operator=(std::move(arg));
-        signature = std::move(arg.signature);
-        version = std::move(arg.version);
+        clientSignature = std::move(arg.clientSignature);
+        clientVersion = std::move(arg.clientVersion);
         objectTracker = std::move(arg.objectTracker);
         typeTracker = std::move(arg.typeTracker);
         polymorphicManager = std::move(arg.polymorphicManager);

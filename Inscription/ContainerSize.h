@@ -9,8 +9,8 @@
 namespace Inscription
 {
 #ifndef INSCRIPTION_CONTAINER_SIZE_VALUE_T
-    typedef std::size_t ContainerSize;
+    using ContainerSize = std::size_t;
 #else
-    typedef INSCRIPTION_CONTAINER_SIZE_VALUE_T Value;
+    using Value = INSCRIPTION_CONTAINER_SIZE_VALUE_T;
 #endif
 }

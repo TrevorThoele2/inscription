@@ -17,7 +17,7 @@ namespace Inscription
 
         ClassName NameFor(ArchiveT& archive) const;
     private:
-        typedef std::function<ClassName(ArchiveT&)> RetrieveClassName;
+        using RetrieveClassName = std::function<ClassName(ArchiveT&)>;
         RetrieveClassName retriever;
     };
 
