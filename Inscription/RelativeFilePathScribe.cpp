@@ -4,10 +4,11 @@
 #include "BinaryArchive.h"
 
 #include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
 
 namespace Inscription
 {
-    void Scribe<::Chroma::RelativeFilePath, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<::Chroma::RelativeFilePath, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
         {

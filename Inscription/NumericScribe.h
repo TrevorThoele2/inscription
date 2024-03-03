@@ -20,10 +20,6 @@ namespace Inscription
     public:
         using BaseT::Construct;
     private:
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive, std::false_type isEnum);
-        static void SaveImplementation(ObjectT& object, ArchiveT& archive, std::true_type isEnum);
-        static void LoadImplementation(ObjectT& object, ArchiveT& archive);
-    private:
         constexpr static bool isEnum = std::is_enum_v<ObjectT>;
     private:
         NumericScribe() = delete;
@@ -31,35 +27,16 @@ namespace Inscription
         NumericScribe& operator=(const NumericScribe& arg) = delete;
     private:
         static_assert(std::is_arithmetic_v<ObjectT> || std::is_enum_v<ObjectT>,
-            "The Object given to a NumericScribe was not arithmetic or an enum.");
+            "The Object given to a NumericScribe was not arithmetic.");
     };
 
     template<class Object, class Archive>
     void NumericScribe<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive, std::bool_constant<isEnum>{});
+            archive.AsOutput()->Write(object);
         else
-            LoadImplementation(object, archive);
-    }
-
-    template<class Object, class Archive>
-    void NumericScribe<Object, Archive>::SaveImplementation(ObjectT& object, ArchiveT& archive, std::false_type isEnum)
-    {
-        archive.AsOutput()->Write(object);
-    }
-
-    template<class Object, class Archive>
-    void NumericScribe<Object, Archive>::SaveImplementation(ObjectT& object, ArchiveT& archive, std::true_type isEnum)
-    {
-        auto castedValue = static_cast<std::underlying_type_t<Object>>(object);
-        archive.AsOutput()->Write(castedValue);
-    }
-
-    template<class Object, class Archive>
-    void NumericScribe<Object, Archive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        archive.AsInput()->Read(object);
+            archive.AsInput()->Read(object);
     }
 
     template<class Archive>

@@ -8,6 +8,7 @@
 #include "TypeRegistrationContext.h"
 
 #include "Scribe.h"
+#include "TableData.h"
 
 #include "Direction.h"
 #include "Endian.h"
@@ -44,12 +45,15 @@ namespace Inscription
         void ReplaceTrackedObject(T& here, T& newObj);
         bool TrackObjects(bool set = true);
 
-        // A tracking section will hold all entries made. Later, you can clear the section out (removes the entries from tracking)
+        // A tracking section will hold all entries made.
+        // Later, you can clear the section out (removes the entries from tracking)
         void StartTrackingSection();
-        // A tracking section will hold all entries made. Later, you can clear the section out (removes the entries from tracking)
+        // A tracking section will hold all entries made.
+        // Later, you can clear the section out (removes the entries from tracking)
         // This does NOT destroy the section entries if the clear variable is false
         void StopTrackingSection(bool clear = false);
-        // A tracking section will hold all entries made. Later, you can clear the section out (removes the entries from tracking)
+        // A tracking section will hold all entries made.
+        // Later, you can clear the section out (removes the entries from tracking)
         // This WILL destroy the section entries, and keep the section active
         void ClearTrackingSection();
 
@@ -112,13 +116,6 @@ namespace Inscription
     private:
         TypeRegistrationContext typeRegistrationContext;
 
-        template<class T>
-        inline void EnsureTypeRegistered() const
-        {
-            if (!typeRegistrationContext.HasStored<T>())
-                throw RegisteredTypeNotFound(typeid(T));
-        }
-
         template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int> = 0>
         void RegisterTypeImpl();
         template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int> = 0>
@@ -147,7 +144,7 @@ namespace Inscription
     template<class T>
     void BinaryArchive::TrackObject(T* arg)
     {
-        objectTracker.Add(arg);
+        objectTracker.AttemptAdd(arg);
     }
 
     template<class T>
@@ -180,4 +177,6 @@ namespace Inscription
 
     template<class T>
     using BinaryScribe = Scribe<T, BinaryArchive>;
+    template<class Object>
+    using BinaryTableData = TableData<Object, BinaryArchive>;
 }

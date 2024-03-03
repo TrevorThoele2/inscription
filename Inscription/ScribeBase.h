@@ -38,8 +38,9 @@ namespace Inscription
     typename ScribeBase<Object, Archive>::ObjectT* ScribeBase<Object, Archive>::Construct(ArchiveT& archive)
     {
         static_assert(std::is_default_constructible_v<ObjectT>,
-            "Construction of this object requires a default constructor. Define it or override Construct for the particular Scribe.");
-        return ConstructImplementation(archive, std::bool_constant<!std::is_abstract_v<ObjectT> && std::is_default_constructible_v<ObjectT>>{});
+            "Construction of this object requires a default constructor. Define it or shadow Construct for the particular Scribe.");
+        return ConstructImplementation(archive,
+            std::bool_constant<!std::is_abstract_v<ObjectT> && std::is_default_constructible_v<ObjectT>>{});
     }
 
     template<class Object, class Archive>

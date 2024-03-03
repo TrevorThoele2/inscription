@@ -57,7 +57,9 @@ namespace Inscription
     template<class T>
     InputBinaryArchive& InputBinaryArchive::Read(T& object)
     {
-        static_assert(std::is_arithmetic_v<T>, "The T given to Read was not arithmetic.");
+        static_assert(
+            std::is_arithmetic_v<T> || std::is_same_v<T, Buffer>,
+            "The T given to Read was not arithmetic or a Buffer.");
 
 #ifdef INSCRIPTION_COMMON_NUMERICS
         ReadImpl(reinterpret_cast<typename NumericTraits<T>::Size&>(object));

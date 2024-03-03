@@ -20,7 +20,7 @@ namespace Inscription
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     private:
         template<unsigned int I>
         class UnpackTuple
@@ -49,7 +49,7 @@ namespace Inscription
     };
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>, BinaryArchive>::Scriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::tuple<Args...>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         UnpackTuple<sizeof...(Args)>::ScrivenGroup(object, archive);
     }

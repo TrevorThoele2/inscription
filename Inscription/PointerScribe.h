@@ -12,6 +12,7 @@
 #include "PolymorphicManager.h"
 
 #include "NumericScribe.h"
+#include "StringScribe.h"
 
 namespace Inscription
 {
@@ -114,10 +115,10 @@ namespace Inscription
             return;
         }
 
-        auto foundObject = archive.objectTracker.FindObject<Object>(objectID);
+        auto foundObject = archive.objectTracker.FindObject<BareObject>(objectID);
         if (foundObject)
         {
-            object = *foundObject;
+            object = foundObject;
             return;
         }
 

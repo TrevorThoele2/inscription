@@ -39,7 +39,7 @@ namespace Inscription
         template<class ObjectMemberT, class DataMemberT>
         AutoTableDataEntry(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
         template<class BaseT>
-        AutoTableDataEntry(Type<BaseT>);
+        AutoTableDataEntry(Type<BaseT> type);
         template<class BaseT>
         AutoTableDataEntry(BaseTableDataEntry<BaseT, ObjectT, ArchiveT>& entry);
     private:
@@ -67,6 +67,24 @@ namespace Inscription
             AutoImplementation(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember);
 
             AutoImplementation* Clone() const override;
+
+            void Scriven(TableT& table, ArchiveT& archive) override;
+            void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
+
+            void PullFromObject(TableT& table, ObjectT& object) override;
+            void PushToObject(TableT& table, ObjectT& object) override;
+        };
+
+        template<class T>
+        class AutoSameTypeImplementation : public Implementation
+        {
+        public:
+            T ObjectT::*objectMember;
+            T DataT::*dataMember;
+        public:
+            AutoSameTypeImplementation(T ObjectT::*objectMember, T DataT::*dataMember);
+
+            AutoSameTypeImplementation* Clone() const override;
 
             void Scriven(TableT& table, ArchiveT& archive) override;
             void ObjectScriven(TableT& table, ObjectT& object, ArchiveT& archive) override;
@@ -111,6 +129,18 @@ namespace Inscription
 
         using ImplementationPtr = std::unique_ptr<Implementation>;
         ImplementationPtr implementation;
+
+        template<class ObjectMemberT, class DataMemberT, std::enable_if_t<!std::is_same_v<ObjectMemberT, DataMemberT>, int> = 0>
+        static ImplementationPtr CreateImplementation(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember)
+        {
+            return ImplementationPtr(new AutoImplementation<ObjectMemberT, DataMemberT>(objectMember, dataMember));
+        }
+
+        template<class ObjectMemberT, class DataMemberT, std::enable_if_t<std::is_same_v<ObjectMemberT, DataMemberT>, int> = 0>
+        static ImplementationPtr CreateImplementation(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember)
+        {
+            return ImplementationPtr(new AutoSameTypeImplementation<ObjectMemberT>(objectMember, dataMember));
+        }
     };
 
     template<class Data, class Object, class Archive>
@@ -118,11 +148,6 @@ namespace Inscription
     AutoTableDataEntry<Data, Object, Archive> AutoTableDataEntry<Data, Object, Archive>::Auto(
         ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember)
     {
-        static_assert(
-            std::is_convertible_v<ObjectMemberT, DataMemberT> &&
-            std::is_convertible_v<DataMemberT, ObjectMemberT>,
-            "ObjectMemberT and DataMemberT must be convertible to each other.");
-
         return AutoTableDataEntry(objectMember, dataMember);
     }
 
@@ -195,12 +220,12 @@ namespace Inscription
     template<class Data, class Object, class Archive>
     template<class ObjectMemberT, class DataMemberT>
     AutoTableDataEntry<Data, Object, Archive>::AutoTableDataEntry(ObjectMemberT ObjectT::*objectMember, DataMemberT DataT::*dataMember) :
-        implementation(new AutoImplementation<ObjectMemberT, DataMemberT>(objectMember, dataMember))
+        implementation(CreateImplementation(objectMember, dataMember))
     {}
 
     template<class Data, class Object, class Archive>
     template<class BaseT>
-    AutoTableDataEntry<Data, Object, Archive>::AutoTableDataEntry(Type<BaseT>) :
+    AutoTableDataEntry<Data, Object, Archive>::AutoTableDataEntry(Type<BaseT> type) :
         implementation(new BaseImplementation<BaseT>())
     {}
 
@@ -249,7 +274,7 @@ namespace Inscription
     void AutoTableDataEntry<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PullFromObject(
         TableT& table, ObjectT& object)
     {
-        (table.data.*dataMember) = (object.*objectMember);
+        RemoveConst((table.data.*dataMember)) = DataMemberT((object.*objectMember));
     }
 
     template<class Data, class Object, class Archive>
@@ -257,7 +282,53 @@ namespace Inscription
     void AutoTableDataEntry<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::PushToObject(
         TableT& table, ObjectT& object)
     {
-        (object.*objectMember) = (table.data.*dataMember);
+        RemoveConst((object.*objectMember)) = ObjectMemberT((table.data.*dataMember));
+    }
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::AutoSameTypeImplementation(
+        T ObjectT::*objectMember, T DataT::*dataMember) :
+
+        objectMember(objectMember), dataMember(dataMember)
+    {}
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>*
+        AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::Clone() const
+    {
+        return new AutoSameTypeImplementation(*this);
+    }
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::Scriven(
+        TableT& table, ArchiveT& archive)
+    {
+        archive(table.data.*dataMember);
+    }
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::ObjectScriven(
+        TableT& table, ObjectT& object, ArchiveT& archive)
+    {}
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::PullFromObject(
+        TableT& table, ObjectT& object)
+    {
+        RemoveConst((table.data.*dataMember)) = (object.*objectMember);
+    }
+
+    template<class Data, class Object, class Archive>
+    template<class T>
+    void AutoTableDataEntry<Data, Object, Archive>::AutoSameTypeImplementation<T>::PushToObject(
+        TableT& table, ObjectT& object)
+    {
+        RemoveConst((object.*objectMember)) = (table.data.*dataMember);
     }
 
     template<class Data, class Object, class Archive>

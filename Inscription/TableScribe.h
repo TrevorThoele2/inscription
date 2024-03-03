@@ -20,15 +20,12 @@ namespace Inscription
         using ClassNameResolver = typename BaseScribeT::ClassNameResolver;
     public:
         template<class T>
-        using Base = BaseTableDataEntry<T, ObjectT, ArchiveT>;
-        template<class T>
         using ComposingScribe = typename BaseScribeT::template ComposingScribe<T>;
     public:
         static void Scriven(ObjectT& object, ArchiveT& archive);
         static void Construct(ObjectT*& object, ArchiveT& archive);
     public:
-        template<class Data = NullTableData>
-        using TableBase = TableBase<ObjectT, ArchiveT, Data>;
+        using TableBase = TableBase<ObjectT, ArchiveT>;
     private:
         TableScribe() = delete;
         TableScribe(const TableScribe& arg) = delete;

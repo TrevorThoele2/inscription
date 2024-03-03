@@ -265,6 +265,18 @@
     <ClInclude Include="RelativeFilePathScribe.h">
       <Filter>Header Files\Scribe\Types\Chroma</Filter>
     </ClInclude>
+    <ClInclude Include="BufferScribe.h">
+      <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumScribe.h">
+      <Filter>Header Files\Scribe\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TableData.h">
+      <Filter>Header Files\Scribe\Base\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableDataBase.h">
+      <Filter>Header Files\Scribe\Base\Table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -396,6 +408,9 @@
     <Filter Include="Header Files\Scribe\Base\Table\Entry">
       <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Types\Base">
+      <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
@@ -505,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="RelativeFilePathScribe.cpp">
       <Filter>Source Files\Types\Chroma</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferScribe.cpp">
+      <Filter>Source Files\Types\Base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

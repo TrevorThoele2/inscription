@@ -3,6 +3,7 @@
 #include <typeindex>
 
 #include "Scribe.h"
+#include "TableData.h"
 
 namespace Inscription
 {
@@ -14,10 +15,10 @@ namespace Inscription
         using ObjectT = Object;
         using ArchiveT = Archive;
     private:
-        using DerivedScribe = typename Scribe<Base, ArchiveT>;
+        using BaseScribe = typename Scribe<Base, ArchiveT>;
     public:
-        using TableT = typename DerivedScribe::Table;
-        using DataT = typename DerivedScribe::Data;
+        using TableT = typename BaseScribe::Table;
+        using DataT = typename TableData<BaseT, ArchiveT>;
     public:
         BaseTableDataEntry();
 

@@ -16,7 +16,7 @@ namespace Inscription
         public CompositeScribe<std::string, BinaryArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     private:
         static void SaveImplementation(ObjectT& object, ArchiveT& archive);
         static void LoadImplementation(ObjectT& object, ArchiveT& archive);
@@ -27,7 +27,7 @@ namespace Inscription
         public CompositeScribe<std::string, TextArchive>
     {
     public:
-        static void Scriven(ObjectT& object, ArchiveT& archive);
+        static void ScrivenImplementation(ObjectT& object, ArchiveT& archive);
     private:
         static void SaveImplementation(ObjectT& object, ArchiveT& archive);
         static void LoadImplementation(ObjectT& object, ArchiveT& archive);
