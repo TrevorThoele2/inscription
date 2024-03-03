@@ -18,6 +18,9 @@ namespace Inscription
         using ArchiveT = typename BaseT::ArchiveT;
     public:
         using ClassNameResolver = ClassNameResolver<ArchiveT>;
+    public:
+        template<class T>
+        using ComposingScribe = Scribe<T, ArchiveT>;
     protected:
         static ClassNameResolver CreateSingleNameResolver(const std::string& name);
     private:
