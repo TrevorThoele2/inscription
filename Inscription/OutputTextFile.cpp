@@ -5,7 +5,7 @@ namespace Inscription::File
 {
     OutputText::OutputText(const Path& path, bool append) : path(path)
     {
-        stream.exceptions(std::ios::failbit | std::ios::badbit);
+        stream.exceptions(std::ios::badbit);
         SanitizeStreamFailure([this, path, append]() {stream.open(path, append ? std::ios::out | std::ios::app : std::ios::out); }, path);
     }
 
