@@ -2,9 +2,11 @@
 
 namespace Inscription::File
 {
-    OutputBinary::OutputBinary(const Path& path) :
-        path(path), stream(path, std::ios::out | std::ios::binary)
-    {}
+    OutputBinary::OutputBinary(const Path& path) : path(path)
+    {
+        stream.exceptions(std::ios::failbit | std::ios::badbit);
+        SanitizeStreamFailure([this, path]() { stream.open(path, std::ios::out | std::ios::binary); }, path);
+    }
 
     OutputBinary::OutputBinary(OutputBinary&& arg) noexcept :
         path(std::move(arg.path)), stream(std::move(arg.stream))

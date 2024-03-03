@@ -6,15 +6,23 @@
 
 namespace Inscription::File
 {
+    inline std::string CurrentError()
+    {
+        std::string message;
+        message.resize(1024);
+        strerror_s(message.data(), message.size(), errno);
+        return message;
+    }
+
     inline void SanitizeStreamFailure(const std::function<void()>& function, const Path& path)
     {
         try
         {
             function();
         }
-        catch (std::system_error& error)
+        catch (std::system_error&)
         {
-            throw FileEncounteredError(error.code().message(), path);
+            throw FileEncounteredError(CurrentError(), path);
         }
     }
 
@@ -25,9 +33,9 @@ namespace Inscription::File
         {
             return function();
         }
-        catch (std::system_error& error)
+        catch (std::system_error&)
         {
-            throw FileEncounteredError(error.code().message(), path);
+            throw FileEncounteredError(CurrentError(), path);
         }
     }
 }
