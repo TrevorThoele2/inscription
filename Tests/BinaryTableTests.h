@@ -54,7 +54,7 @@ namespace Inscription
         public TableScribe<::BinaryTableFixture::Base, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table();

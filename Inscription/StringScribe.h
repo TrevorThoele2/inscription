@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "CompositeScribe.h"
+#include "TrackingScribe.h"
 
 #include "NumericScribe.h"
 
@@ -13,7 +13,7 @@ namespace Inscription
 
     template<>
     class Scribe<std::string, BinaryArchive> final :
-        public CompositeScribe<std::string, BinaryArchive>
+        public TrackingScribe<std::string, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
@@ -24,7 +24,7 @@ namespace Inscription
 
     template<>
     class Scribe<std::string, TextArchive> final :
-        public CompositeScribe<std::string, TextArchive>
+        public ScribeBase<std::string, TextArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;

@@ -1,7 +1,7 @@
 #include <catch.hpp>
 
+#include <Inscription/CompositeScribe.h>
 #include <Inscription/NumericScribe.h>
-#include <Inscription/PointerScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/ContainerSize.h>
 
@@ -53,13 +53,12 @@ public:
     };
 };
 
-BinaryPolymorphicListFixture::Base::~Base()
-{}
+BinaryPolymorphicListFixture::Base::~Base() = default;
 
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive> :
+    class Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive> final :
         public CompositeScribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>
     {
     protected:
@@ -67,7 +66,7 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive> :
+    class Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive> final :
         public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
     {
     public:

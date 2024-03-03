@@ -3,6 +3,9 @@
 #include "Scribe.h"
 #include "ScribeBase.h"
 
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+
 namespace Inscription
 {
     template<class Object, class Archive>
