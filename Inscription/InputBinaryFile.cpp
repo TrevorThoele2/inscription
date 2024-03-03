@@ -16,6 +16,9 @@ namespace Inscription
 
     void InputBinaryFile::ReadData(Buffer& buffer, size_t size)
     {
+        if (buffer.empty())
+            throw FileEncounteredError();
+
         stream.read(&buffer[0], size);
         if (FailedStream())
             throw FileEncounteredError();
