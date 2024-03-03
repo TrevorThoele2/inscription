@@ -52,6 +52,9 @@ namespace Inscription
         void StartSection();
         void StopSection();
         void ClearSection();
+
+        template<class T>
+        void Register();
     private:
         typedef TypeTable<Tracker> Table;
     private:
@@ -64,9 +67,6 @@ namespace Inscription
         TrackingEntry* FindEntry(ID id);
         template<class T>
         TrackingEntry* FindEntry(T* obj);
-    private:
-        template<class ScribeT>
-        friend class RegisteredTypes;
     };
 
     template<class T>
@@ -181,5 +181,11 @@ namespace Inscription
             return nullptr;
 
         return tableFound->Find(obj);
+    }
+
+    template<class T>
+    void TrackerMap::Register()
+    {
+        table.Add(Tracker(), typeid(T));
     }
 }

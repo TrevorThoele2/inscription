@@ -9,8 +9,23 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\BinarySerialization">
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{c8742a6c-ddf6-4fb2-abb3-f2ce409e2a80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Types">
+      <UniqueIdentifier>{dd87b852-2b1f-4399-888f-db0fdf2cdc7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Types\Containers">
+      <UniqueIdentifier>{01f8d13f-5b4f-40a3-84fa-2347aba3ce93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\BinarySerialization">
       <UniqueIdentifier>{a940f190-9296-424d-8392-cfb5cfe6c698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Fixtures">
+      <UniqueIdentifier>{d3adf734-b23f-4258-ae84-6f52e33b43d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Fixtures">
+      <UniqueIdentifier>{fec933a3-18fb-4992-aaf8-4c4ddc431078}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -18,13 +33,75 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BinarySerializationTests.cpp">
-      <Filter>Source Files\BinarySerialization</Filter>
+      <Filter>Source Files\Tests\BinarySerialization</Filter>
     </ClCompile>
     <ClCompile Include="PolymorphicBinarySerializationTests.cpp">
-      <Filter>Source Files\BinarySerialization</Filter>
+      <Filter>Source Files\Tests\BinarySerialization</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ArrayTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardListTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ListTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiMapTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiSetTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="QueueTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="SetTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="StackTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="UnorderedMapTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="UnorderedMultiMapTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="UnorderedSetTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="UnorderedMultisetTests.cpp">
+      <Filter>Source Files\Tests\Types\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryTests.cpp">
+      <Filter>Source Files\Tests\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="StringTests.cpp">
+      <Filter>Source Files\Tests\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="TupleTests.cpp">
+      <Filter>Source Files\Tests\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="ManualRegistrationPolymorphicBinarySerializationTests.cpp">
+      <Filter>Source Files\Tests\BinarySerialization</Filter>
+    </ClCompile>
+    <ClCompile Include="ListPolymorphicBinarySerializationTests.cpp">
+      <Filter>Source Files\Tests\BinarySerialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="InscriptionTests.runsettings" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinaryFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

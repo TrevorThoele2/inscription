@@ -1,41 +1,50 @@
 #include <boost/test/unit_test.hpp>
-#include <boost/test/data/test_case.hpp>
 
-#include <TestFramework/DataGeneration.h>
+#include "BinaryFixture.h"
 
-#include <Inscription/OutputBinaryScribe.h>
-#include <Inscription/InputBinaryScribe.h>
-#include <Inscription/BinaryConvenience.h>
-
-::TestFramework::DataGeneration dataGeneration;
-
-BOOST_AUTO_TEST_SUITE(BinarySerializationTests)
-
-class TestClass
+class BinarySerializationTestsFixture : public BinaryFixture
 {
 public:
-    TestClass(int value = 0);
+    ::TestFramework::DataGeneration dataGeneration;
 
-    int Value() const;
-private:
-    int value;
-private:
-    INSCRIPTION_BINARY_SERIALIZE_FUNCTION_DECLARE;
-    INSCRIPTION_ACCESS;
+    BinarySerializationTestsFixture()
+    {
+        typeRegistrationContext.RegisterType<TestClass>();
+    }
+
+    class TestClass
+    {
+    public:
+        TestClass(int value = 0) : value(value)
+        {}
+
+        int Value() const
+        {
+            return value;
+        }
+    private:
+        int value;
+    private:
+        INSCRIPTION_BINARY_SERIALIZE_FUNCTION
+        {
+            scribe(value);
+        }
+
+        INSCRIPTION_ACCESS;
+    };
+
+    TestClass CreateRandomTestClass()
+    {
+        return dataGeneration.Generator<TestClass>().RandomStack<int>();
+    }
+
+    TestClass* CreateRandomHeapTestClass()
+    {
+        return dataGeneration.Generator<TestClass>().RandomHeap<int>();
+    }
 };
 
-INSCRIPTION_BINARY_SERIALIZE_FUNCTION_DEFINE(TestClass)
-{
-    scribe(value);
-}
-
-TestClass::TestClass(int value) : value(value)
-{}
-
-int TestClass::Value() const
-{
-    return value;
-}
+BOOST_FIXTURE_TEST_SUITE(BinarySerializationTests, BinarySerializationTestsFixture)
 
 BOOST_AUTO_TEST_CASE(Integer_SavesAndLoads)
 {
@@ -50,7 +59,7 @@ BOOST_AUTO_TEST_CASE(Integer_SavesAndLoads)
     std::uint64_t uint64 = dataGeneration.Generator<std::uint64_t>().Random();
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.Save(int8);
         outputScribe.Save(int16);
         outputScribe.Save(int32);
@@ -73,7 +82,7 @@ BOOST_AUTO_TEST_CASE(Integer_SavesAndLoads)
     std::uint64_t n_uint64 = 0;
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.Load(n_int8);
         inputScribe.Load(n_int16);
         inputScribe.Load(n_int32);
@@ -102,7 +111,7 @@ BOOST_AUTO_TEST_CASE(FloatingPoint_SavesAndLoads)
     double d = dataGeneration.Generator<double>().Random();
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.Save(f);
         outputScribe.Save(d);
     }
@@ -111,7 +120,7 @@ BOOST_AUTO_TEST_CASE(FloatingPoint_SavesAndLoads)
     double n_d = 0.0;
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.Load(n_f);
         inputScribe.Load(n_d);
     }
@@ -122,17 +131,17 @@ BOOST_AUTO_TEST_CASE(FloatingPoint_SavesAndLoads)
 
 BOOST_AUTO_TEST_CASE(Class_SavesAndLoads)
 {
-    TestClass testClass(dataGeneration.Generator<int>().Random());
+    auto testClass = CreateRandomTestClass();
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.Save(testClass);
     }
 
     TestClass n_testClass(0);
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.Load(n_testClass);
     }
 
@@ -141,13 +150,11 @@ BOOST_AUTO_TEST_CASE(Class_SavesAndLoads)
 
 BOOST_AUTO_TEST_CASE(UnowningPointer_SavesAndLoads)
 {
-    ::Inscription::Scribe::RegisterType<TestClass>();
-
-    TestClass testClassFirst(dataGeneration.Generator<int>().Random());
-    TestClass testClassSecond(dataGeneration.Generator<int>().Random());
+    auto testClassFirst = CreateRandomTestClass();
+    auto testClassSecond = CreateRandomTestClass();
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.SaveUnowningPointer(&testClassFirst);
         outputScribe.Save(testClassFirst);
 
@@ -161,7 +168,7 @@ BOOST_AUTO_TEST_CASE(UnowningPointer_SavesAndLoads)
     TestClass n_testClassSecondBacking;
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.LoadUnowningPointer(n_testClassFirst);
         inputScribe.Load(n_testClassFirstBacking);
 
@@ -175,19 +182,17 @@ BOOST_AUTO_TEST_CASE(UnowningPointer_SavesAndLoads)
 
 BOOST_AUTO_TEST_CASE(OwningPointer_SavesAndLoads)
 {
-    ::Inscription::Scribe::RegisterType<TestClass>();
-
-    TestClass* testClass = new TestClass(dataGeneration.Generator<int>().Random());
+    auto testClass = CreateRandomHeapTestClass();
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.SaveOwningPointer(testClass);
     }
 
     TestClass* n_testClass;
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.LoadOwningPointer(n_testClass);
     }
 
@@ -199,16 +204,14 @@ BOOST_AUTO_TEST_CASE(OwningPointer_SavesAndLoads)
 
 BOOST_AUTO_TEST_CASE(OwningAndUnowningPointers_SavesAndLoads)
 {
-    ::Inscription::Scribe::RegisterType<TestClass>();
-
-    TestClass* testClassFirst = new TestClass(dataGeneration.Generator<int>().Random());
-    TestClass* testClassSecond = new TestClass(dataGeneration.Generator<int>().Random());
+    auto testClassFirst = CreateRandomHeapTestClass();
+    auto testClassSecond = CreateRandomHeapTestClass();
 
     TestClass* testClass_unowning_first = testClassFirst;
     TestClass* testClass_unowning_second = testClassSecond;
 
     {
-        ::Inscription::OutputBinaryScribe outputScribe("Test.dat", "testing", 0);
+        auto outputScribe = CreateRegistered<OutputScribe>();
         outputScribe.SaveUnowningPointer(testClass_unowning_first);
         outputScribe.SaveOwningPointer(testClassFirst);
 
@@ -223,7 +226,7 @@ BOOST_AUTO_TEST_CASE(OwningAndUnowningPointers_SavesAndLoads)
     TestClass* n_testClass_unowning_second;
 
     {
-        ::Inscription::InputBinaryScribe inputScribe("Test.dat", "testing");
+        auto inputScribe = CreateRegistered<InputScribe>();
         inputScribe.LoadUnowningPointer(n_testClass_unowning_first);
         inputScribe.LoadOwningPointer(n_testClassFirst);
 

@@ -9,21 +9,13 @@ namespace Inscription
     InputBinaryScribe::InputBinaryScribe(const Path& path, const Signature& signature) :
         BinaryScribe(Direction::INPUT, signature, 0), file(path)
     {
-        auto size = signature.size();
-        Signature loadSignature(size, '\000');
-        ContainerSize address = 0;
-        while (address < size)
-        {
-            Load(loadSignature[address]);
-            ++address;
-        }
+        InitialSetup();
+    }
 
-        if (loadSignature != signature)
-            throw InvalidSignature();
-
-        Load(version);
-        this->signature = loadSignature;
-        postHeaderPosition = TellStream();
+    InputBinaryScribe::InputBinaryScribe(const Path& path, const Signature& signature, const TypeRegistrationContext& typeRegistrationContext) :
+        BinaryScribe(Direction::INPUT, signature, 0, typeRegistrationContext), file(path)
+    {
+        InitialSetup();
     }
 
     InputBinaryScribe::InputBinaryScribe(InputBinaryScribe&& arg) :
@@ -57,5 +49,24 @@ namespace Inscription
     InputBinaryScribe::StreamPosition InputBinaryScribe::TellStream()
     {
         return file.TellStream();
+    }
+
+    void InputBinaryScribe::InitialSetup()
+    {
+        auto size = signature.size();
+        Signature loadSignature(size, '\000');
+        ContainerSize address = 0;
+        while (address < size)
+        {
+            Load(loadSignature[address]);
+            ++address;
+        }
+
+        if (loadSignature != signature)
+            throw InvalidSignature();
+
+        Load(version);
+        this->signature = loadSignature;
+        postHeaderPosition = TellStream();
     }
 }

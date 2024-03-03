@@ -177,12 +177,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Access.h" />
+    <ClInclude Include="BaseClassNotInTable.h" />
     <ClInclude Include="BaseClassTableEntryBase.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Assign.h" />
     <ClInclude Include="BinaryConvenience.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="FileEncounteredError.h" />
     <ClInclude Include="InputBinaryFile.h" />
     <ClInclude Include="InputBinaryScribe.h" />
     <ClInclude Include="InputSimpleFile.h" />
@@ -211,7 +213,6 @@
     <ClInclude Include="OutputSimpleFile.h" />
     <ClInclude Include="OutputTextScribe.h" />
     <ClInclude Include="RegisteredTypeNotFound.h" />
-    <ClInclude Include="RegisteredTypes.h" />
     <ClInclude Include="ScopedTrackingChanger.h" />
     <ClInclude Include="TableBase.h" />
     <ClInclude Include="BaseClassTableEntry.h" />
@@ -248,7 +249,8 @@
     <ClInclude Include="GettableTableEntry.h" />
     <ClInclude Include="InscripterTableEntry.h" />
     <ClInclude Include="OwningPointerTableEntry.h" />
-    <ClInclude Include="TypeRegisterableScribe.h" />
+    <ClInclude Include="TypeRegistrationContext.h" />
+    <ClInclude Include="UnopenableFile.h" />
     <ClInclude Include="UnowningPointerTableEntry.h" />
     <ClInclude Include="LinkableTableEntry.h" />
     <ClInclude Include="TableNotConstructed.h" />
@@ -274,6 +276,8 @@
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseClassNotInTable.cpp" />
+    <ClCompile Include="FileEncounteredError.cpp" />
     <ClCompile Include="InputBinaryFile.cpp" />
     <ClCompile Include="InputBinaryScribe.cpp" />
     <ClCompile Include="InputSimpleFile.cpp" />
@@ -295,9 +299,9 @@
     <ClCompile Include="ScopedTrackingChanger.cpp" />
     <ClCompile Include="Scribe.cpp" />
     <ClCompile Include="String.cpp" />
-    <ClCompile Include="TableNotConstructedException.cpp" />
-    <ClCompile Include="TableNotLinkedException.cpp" />
-    <ClCompile Include="TableVariableNotHereException.cpp" />
+    <ClCompile Include="TableNotConstructed.cpp" />
+    <ClCompile Include="TableNotLinked.cpp" />
+    <ClCompile Include="TableVariableNotHere.cpp" />
     <ClCompile Include="OutputTextFile.cpp" />
     <ClCompile Include="TextScribe.cpp" />
     <ClCompile Include="Tracker.cpp" />
@@ -305,7 +309,7 @@
     <ClCompile Include="TrackingEntry.cpp" />
     <ClCompile Include="TrackingLookaheadEntry.cpp" />
     <ClCompile Include="TrackingLookaheadGroup.cpp" />
-    <ClCompile Include="TypeRegisterableScribe.cpp" />
+    <ClCompile Include="UnopenableFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

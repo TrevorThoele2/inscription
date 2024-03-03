@@ -2,62 +2,52 @@
 
 #include <stack>
 
-#include "BinaryScribe.h"
-
 #include "ContainerSize.h"
 #include "ScopedConstructor.h"
 
 namespace Inscription
 {
-    namespace detail
+    template<class ScribeT, class T, class Container>
+    void Save(ScribeT& scribe, std::stack<T, Container>& obj)
     {
-        template<class T, class Container>
-        struct StackSaver : public std::stack<T, Container>
+        auto copied = obj;
+
+        std::stack<T, Container> reversed;
+        while (!copied.empty())
         {
-            void operator()(OutputBinaryScribe& scribe)
-            {
-                ContainerSize size(c.size());
-                scribe.Save(size);
-                for(auto loop = c.begin(); loop != c.end(); ++loop)
-                    scribe.Save(*loop);
-            }
-        };
+            auto& top = copied.top();
+            reversed.push(top);
+            copied.pop();
+        }
 
-        template<class T, class Container>
-        struct StackLoader : public std::stack<T, Container>
+        ContainerSize size(reversed.size());
+        scribe.Save(size);
+        while (!reversed.empty())
         {
-            void operator()(InputBinaryScribe& scribe)
-            {
-                typedef std::stack<T, Container> ContainerT;
-
-                ContainerSize size;
-                scribe.Load(size);
-
-                c.clear();
-                while(size-- > 0)
-                {
-                    ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
-                    push(std::move(constructor.GetMove()));
-                    scribe.ReplaceTrackedObject(*constructor.Get(), c.back());
-                }
-            }
-        };
+            auto& top = reversed.top();
+            scribe.Save(top);
+            reversed.pop();
+        }
     }
 
-    template<class T, class Container>
-    void Save(OutputBinaryScribe& scribe, std::stack<T, Container>& obj)
+    template<class ScribeT, class T, class Container>
+    void Load(ScribeT& scribe, std::stack<T, Container>& obj)
     {
-        static_cast<detail::StackSaver<T, Container>&>(obj)(scribe);
+        typedef std::stack<T, Container> ContainerT;
+
+        ContainerSize size;
+        scribe.Load(size);
+
+        while (size-- > 0)
+        {
+            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
+            obj.push(std::move(constructor.GetMove()));
+            scribe.ReplaceTrackedObject(*constructor.Get(), obj.top());
+        }
     }
 
-    template<class T, class Container>
-    void Load(InputBinaryScribe& scribe, std::stack<T, Container>& obj)
-    {
-        static_cast<detail::StackLoader<T, Container>&>(obj)(scribe);
-    }
-
-    template<class T, class Container>
-    void Serialize(BinaryScribe& scribe, std::stack<T, Container>& obj)
+    template<class ScribeT, class T, class Container>
+    void Serialize(ScribeT& scribe, std::stack<T, Container>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }

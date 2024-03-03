@@ -23,16 +23,12 @@ namespace Inscription
     class PointerOutput;
     template<class ScribeT>
     class PointerInput;
-    template<class ScribeT>
-    class RegisteredTypes;
 
     template<class ScribeT>
     class PointerManager
     {
     public:
-        typedef RegisteredTypes<ScribeT> RegisteredTypesT;
-    public:
-        PointerManager(Direction direction, RegisteredTypesT& registeredTypes);
+        PointerManager(Direction direction);
         PointerManager(PointerManager&& arg);
 
         PointerManager& operator=(PointerManager&& arg);
@@ -41,6 +37,9 @@ namespace Inscription
         void HandleOwning(T*& obj, ScribeT& scribe, TrackerMap& trackers);
         template<class T>
         void HandleUnowning(T*& obj, ScribeT& scribe, TrackerMap& trackers);
+
+        template<class T>
+        void Register(const ClassName& name);
     private:
         typedef PointerOutput<ScribeT> OutputDelegate;
         typedef PointerInput<ScribeT> InputDelegate;
@@ -48,17 +47,9 @@ namespace Inscription
         std::unique_ptr<PointerDelegate> delegate;
         Direction direction;
     private:
-        RegisteredTypesT* registeredTypes;
-    private:
         PointerManager(const PointerManager& arg) = delete;
         PointerManager& operator=(const PointerManager& arg) = delete;
     private:
         void Setup(Direction direction);
-
-        template<class T>
-        void Add(const ClassName& name);
-    private:
-        template<class ScribeU>
-        friend class RegisteredTypes;
     };
 }

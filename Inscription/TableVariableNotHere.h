@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Exception.h"
+#include <string>
 
 namespace Inscription
 {
     class TableVariableNotHere : public Exception
     {
     public:
-        TableVariableNotHere();
+        TableVariableNotHere(const std::string& name);
     };
 }

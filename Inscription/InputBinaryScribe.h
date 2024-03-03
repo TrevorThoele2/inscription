@@ -11,6 +11,7 @@ namespace Inscription
     {
     public:
         InputBinaryScribe(const Path& path, const Signature& signature);
+        InputBinaryScribe(const Path& path, const Signature& signature, const TypeRegistrationContext& typeRegistrationContext);
         InputBinaryScribe(InputBinaryScribe&& arg);
 
         InputBinaryScribe& operator=(InputBinaryScribe&& arg);
@@ -76,6 +77,8 @@ namespace Inscription
         inline void ReadImpl(Buffer& arg) override { ReadFromFile(arg); }
     private:
         InputBinaryFile file;
+    private:
+        void InitialSetup();
     private:
         template<class T>
         inline void ReadFromFile(T& arg)

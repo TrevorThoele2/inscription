@@ -2,7 +2,7 @@
 
 namespace Inscription
 {
-    RegisteredTypeNotFound::RegisteredTypeNotFound() :
-        Exception("Class type not registered.")
+    RegisteredTypeNotFound::RegisteredTypeNotFound(const std::type_index& type) :
+        Exception((std::string("Class type not registered. Class name expected: ") + type.name() + ".").c_str())
     {}
 }

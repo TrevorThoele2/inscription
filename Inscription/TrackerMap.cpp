@@ -1,7 +1,5 @@
 #include "TrackerMap.h"
 
-#include "RegisteredTypes.h"
-
 namespace Inscription
 {
     TrackerMap::TrackerMap() : active(true), usingSection(false)

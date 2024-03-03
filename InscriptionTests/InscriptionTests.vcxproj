@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Boost\boost_1_68_0\%24boost_installation_prefix\include\boost-1_68;C:\Users\Trevor\source\repos\TestFramework;C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Boost\boost_1_68_0\%24boost_installation_prefix\include\boost-1_68;C:\Users\Trevor\Documents\Programming Projects\TestFramework;C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Trevor\Documents\Programming Projects\Boost\boost_1_68_0\%24boost_installation_prefix\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,12 +123,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArrayTests.cpp" />
     <ClCompile Include="BinarySerializationTests.cpp" />
+    <ClCompile Include="ForwardListTests.cpp" />
+    <ClCompile Include="ListPolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="ListTests.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ManualRegistrationPolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="MapTests.cpp" />
+    <ClCompile Include="MemoryTests.cpp" />
+    <ClCompile Include="MultiMapTests.cpp" />
+    <ClCompile Include="MultiSetTests.cpp" />
     <ClCompile Include="PolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="QueueTests.cpp" />
+    <ClCompile Include="SetTests.cpp" />
+    <ClCompile Include="StackTests.cpp" />
+    <ClCompile Include="StringTests.cpp" />
+    <ClCompile Include="TupleTests.cpp" />
+    <ClCompile Include="UnorderedMapTests.cpp" />
+    <ClCompile Include="UnorderedMultiMapTests.cpp" />
+    <ClCompile Include="UnorderedMultisetTests.cpp" />
+    <ClCompile Include="UnorderedSetTests.cpp" />
+    <ClCompile Include="VectorTests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\source\repos\TestFramework\TestFramework\TestFramework.vcxproj">
+    <ProjectReference Include="..\..\TestFramework\TestFramework\TestFramework.vcxproj">
       <Project>{2cd5963b-8857-4af5-adef-9374aa1ba6ec}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Inscription\Inscription.vcxproj">
@@ -137,6 +156,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="InscriptionTests.runsettings" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinaryFixture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

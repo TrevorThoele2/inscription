@@ -8,11 +8,13 @@ namespace Inscription
     OutputBinaryScribe::OutputBinaryScribe(const Path& path, const Signature& signature, Version version) :
         BinaryScribe(Direction::OUTPUT, signature, version), file(path)
     {
-        for (auto& loop : signature)
-            Save(RemoveConst(loop));
+        InitialSetup();
+    }
 
-        (*this)(version);
-        postHeaderPosition = TellStream();
+    OutputBinaryScribe::OutputBinaryScribe(const Path& path, const Signature& signature, Version version, const TypeRegistrationContext& typeRegistrationContext) :
+        BinaryScribe(Direction::OUTPUT, signature, version, typeRegistrationContext), file(path)
+    {
+        InitialSetup();
     }
 
     OutputBinaryScribe::OutputBinaryScribe(OutputBinaryScribe&& arg) :
@@ -39,5 +41,14 @@ namespace Inscription
     OutputBinaryScribe::StreamPosition OutputBinaryScribe::TellStream()
     {
         return file.TellStream();
+    }
+
+    void OutputBinaryScribe::InitialSetup()
+    {
+        for (auto& loop : signature)
+            Save(RemoveConst(loop));
+
+        Save(version);
+        postHeaderPosition = TellStream();
     }
 }

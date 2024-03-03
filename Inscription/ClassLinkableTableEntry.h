@@ -15,8 +15,8 @@ namespace Inscription
         void Link(T& obj) override;
         void LinkMove(T&& obj) override;
     protected:
-        void SerializeImpl(Scribe& scribe, ClassT& obj) override;
-        void ConstructImpl(Scribe& scribe) override;
+        void SerializeImpl(ScribeT& scribe, ClassT& obj) override;
+        void ConstructImpl(ScribeT& scribe) override;
         bool IsLinked() const override;
     private:
         T *var;
@@ -51,13 +51,13 @@ namespace Inscription
     }
 
     template<class ScribeT, class ClassT, class T>
-    void ClassLinkableTableEntry<ScribeT, ClassT, T>::SerializeImpl(Scribe& scribe, ClassT& obj)
+    void ClassLinkableTableEntry<ScribeT, ClassT, T>::SerializeImpl(ScribeT& scribe, ClassT& obj)
     {
         scribe(*var);
     }
 
     template<class ScribeT, class ClassT, class T>
-    void ClassLinkableTableEntry<ScribeT, ClassT, T>::ConstructImpl(Scribe& scribe)
+    void ClassLinkableTableEntry<ScribeT, ClassT, T>::ConstructImpl(ScribeT& scribe)
     {
         if (var)
             scribe(*var);

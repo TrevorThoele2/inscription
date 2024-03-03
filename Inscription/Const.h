@@ -3,16 +3,20 @@
 namespace Inscription
 {
     template<class T>
-    struct IsConst : public std::false_type {};
+    struct IsConst : public std::false_type
+    {};
 
     template<class T>
-    struct IsConst<const T> : public std::true_type {};
+    struct IsConst<const T> : public std::true_type
+    {};
 
     template<class T>
-    struct IsConst<const T*> : public std::true_type {};
+    struct IsConst<const T*> : public std::true_type
+    {};
 
     template<class T>
-    struct IsConst<const T&> : public std::true_type {};
+    struct IsConst<const T&> : public std::true_type
+    {};
 
     template<class T>
     struct RemoveConstTrait

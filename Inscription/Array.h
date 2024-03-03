@@ -2,21 +2,19 @@
 
 #include <array>
 
-#include "BinaryScribe.h"
-
 #include "ScopedConstructor.h"
 
 namespace Inscription
 {
-    template<class T, std::size_t N>
-    void Save(OutputBinaryScribe& scribe, std::array<T, N>& obj)
+    template<class ScribeT, class T, std::size_t N>
+    void Save(ScribeT& scribe, std::array<T, N>& obj)
     {
         for (auto loop = obj.begin(); loop != obj.end(); ++loop)
             scribe.Save(*loop);
     }
 
-    template<class T, std::size_t N>
-    void Load(InputBinaryScribe& scribe, std::array<T, N>& obj)
+    template<class ScribeT, class T, std::size_t N>
+    void Load(ScribeT& scribe, std::array<T, N>& obj)
     {
         typedef std::array<T, N> ContainerT;
 
@@ -30,8 +28,8 @@ namespace Inscription
         }
     }
 
-    template<class T, std::size_t N>
-    void Serialize(BinaryScribe& scribe, std::array<T, N>& obj)
+    template<class ScribeT, class T, std::size_t N>
+    void Serialize(ScribeT& scribe, std::array<T, N>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }

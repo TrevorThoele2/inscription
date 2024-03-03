@@ -2,15 +2,13 @@
 
 #include <vector>
 
-#include "BinaryScribe.h"
-
 #include "ContainerSize.h"
 #include "ScopedConstructor.h"
 
 namespace Inscription
 {
-    template<class T, class Alloc>
-    void Save(OutputBinaryScribe& scribe, std::vector<T, Alloc>& obj)
+    template<class ScribeT, class T, class Alloc>
+    void Save(ScribeT& scribe, std::vector<T, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -18,8 +16,8 @@ namespace Inscription
             scribe.Save(*loop);
     }
 
-    template<class T, class Alloc>
-    void Load(InputBinaryScribe& scribe, std::vector<T, Alloc>& obj)
+    template<class ScribeT, class T, class Alloc>
+    void Load(ScribeT& scribe, std::vector<T, Alloc>& obj)
     {
         typedef std::vector<T, Alloc> ContainerT;
 
@@ -35,8 +33,8 @@ namespace Inscription
         }
     }
 
-    template<class T, class Alloc>
-    void Serialize(BinaryScribe& scribe, std::vector<T, Alloc>& obj)
+    template<class ScribeT, class T, class Alloc>
+    void Serialize(ScribeT& scribe, std::vector<T, Alloc>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }

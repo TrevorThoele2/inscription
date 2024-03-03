@@ -4,7 +4,9 @@
 
 #include "PointerManager.h"
 #include "TrackerMap.h"
+#include "TypeRegistrationContext.h"
 
+#include "Access.h"
 #include "Endian.h"
 #include "Const.h"
 #include "Enum.h"
@@ -17,12 +19,17 @@ namespace Inscription
     class OutputBinaryScribe;
     class InputBinaryScribe;
 
+    template<class T>
+    class Inscripter;
+
     class BinaryScribe : public Scribe
     {
     public:
         typedef std::string Signature;
 
         typedef unsigned long long StreamPosition;
+        
+        typedef TypeRegistrationContext<BinaryScribe> TypeRegistrationContext;
     public:
         virtual ~BinaryScribe() = 0;
     public:
@@ -82,13 +89,14 @@ namespace Inscription
         virtual StreamPosition TellStream() = 0;
     public:
         template<class T>
-        static void RegisterType();
+        void RegisterType();
     protected:
         Signature signature;
         Version version;
         StreamPosition postHeaderPosition;
     protected:
         BinaryScribe(Direction direction, const Signature& signature, Version version);
+        BinaryScribe(Direction direction, const Signature& signature, Version version, TypeRegistrationContext typeRegistrationContext);
         BinaryScribe(BinaryScribe&& arg);
 
         BinaryScribe& operator=(BinaryScribe&& arg);
@@ -182,8 +190,6 @@ namespace Inscription
         PointerManager<BinaryScribe> pointerManager;
         TrackerMap trackers;
     private:
-        static RegisteredTypes<BinaryScribe> registeredTypes;
-    private:
         BinaryScribe(const BinaryScribe& arg) = delete;
         BinaryScribe& operator=(const BinaryScribe& arg) = delete;
     private:
@@ -195,13 +201,20 @@ namespace Inscription
                 "A const object cannot be serialized. "
                 "You must remove const with const_cast, or call inscription::RemoveConst in Const.h.");
         }
+    private:
+        TypeRegistrationContext typeRegistrationContext;
 
         template<class T>
         inline void EnsureTypeRegistered() const
         {
-            if (!registeredTypes.Has<T>())
-                throw RegisteredTypeNotFound();
+            if (!typeRegistrationContext.HasStored<T>())
+                throw RegisteredTypeNotFound(typeid(T));
         }
+
+        template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int> = 0>
+        void RegisterTypeImpl();
+        template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int> = 0>
+        void RegisterTypeImpl();
     };
 
     template<class T>
@@ -214,8 +227,7 @@ namespace Inscription
     template<class T>
     BinaryScribe& BinaryScribe::OwningPointer(T*& arg)
     {
-        if (!registeredTypes.Has<T>())
-            throw RegisteredTypeNotFound();
+        EnsureTypeRegistered<T>();
 
         if (IsOutput())
             ProcessSaveOwningPointerImpl(arg);
@@ -228,8 +240,7 @@ namespace Inscription
     template<class T>
     BinaryScribe& BinaryScribe::UnowningPointer(T*& arg)
     {
-        if (!registeredTypes.Has<T>())
-            throw RegisteredTypeNotFound();
+        EnsureTypeRegistered<T>();
 
         if (IsOutput())
             ProcessSaveUnowningPointerImpl(arg);
@@ -254,7 +265,10 @@ namespace Inscription
     template<class T>
     void BinaryScribe::RegisterType()
     {
-        registeredTypes.Register<T>();
+        static_assert(std::is_class_v<T>, "A registered type must be a class type.");
+
+        typeRegistrationContext.RegisterType<T>();
+        RegisterTypeImpl<T>();
     }
 
     template<class T, typename std::enable_if<std::is_class<T>::value, int>::type>
@@ -445,6 +459,19 @@ namespace Inscription
     {
         CheckConst<T>();
         return static_cast<T>(ReadNumericImplementation<std::underlying_type<T>::type>());
+    }
+
+    template<class T, std::enable_if_t<!std::is_abstract_v<T> && std::is_polymorphic_v<T>, int>>
+    void BinaryScribe::RegisterTypeImpl()
+    {
+        pointerManager.Register<T>(Access::template InscripterT<T>::classNameResolver.NameFor(*this));
+        trackers.Register<T>();
+    }
+
+    template<class T, std::enable_if_t<std::is_abstract_v<T> || !std::is_polymorphic_v<T>, int>>
+    void BinaryScribe::RegisterTypeImpl()
+    {
+        trackers.Register<T>();
     }
 }
 

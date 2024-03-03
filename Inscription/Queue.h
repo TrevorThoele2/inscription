@@ -2,62 +2,44 @@
 
 #include <queue>
 
-#include "BinaryScribe.h"
-
 #include "ContainerSize.h"
 #include "ScopedConstructor.h"
 
 namespace Inscription
 {
-    namespace detail
+    template<class ScribeT, class T, class Container>
+    void Save(ScribeT& scribe, std::queue<T, Container>& obj)
     {
-        template<class T, class Container>
-        struct QueueSaver : public std::queue<T, Container>
+        auto copied = obj;
+
+        ContainerSize size(copied.size());
+        scribe.Save(size);
+        while (!copied.empty())
         {
-            void operator()(OutputBinaryScribe& scribe)
-            {
-                ContainerSize size(c.size());
-                scribe.Save(size);
-                for (auto loop = c.begin(); loop != c.end(); ++loop)
-                    scribe.Save(*loop);
-            }
-        };
+            auto& front = copied.front();
+            scribe.Save(front);
+            copied.pop();
+        }
+    }
 
-        template<class T, class Container>
-        struct QueueLoader : public std::queue<T, Container>
+    template<class ScribeT, class T, class Container>
+    void Load(ScribeT& scribe, std::queue<T, Container>& obj)
+    {
+        typedef std::queue<T, Container> ContainerT;
+
+        ContainerSize size;
+        scribe.Load(size);
+
+        while (size-- > 0)
         {
-            void operator()(InputBinaryScribe& scribe)
-            {
-                typedef std::queue<T, Container> ContainerT;
-
-                ContainerSize size;
-                scribe.Load(size);
-
-                c.clear();
-                while (size-- > 0)
-                {
-                    ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
-                    push(std::move(constructor.GetMove()));
-                    scribe.ReplaceTrackedObject(*constructor.Get(), c.back());
-                }
-            }
-        };
+            ScopedConstructor<typename ContainerT::value_type> constructor(scribe);
+            obj.push(std::move(constructor.GetMove()));
+            scribe.ReplaceTrackedObject(*constructor.Get(), obj.back());
+        }
     }
 
-    template<class T, class Container>
-    void Save(OutputBinaryScribe& scribe, std::queue<T, Container>& obj)
-    {
-        static_cast<detail::QueueSaver<T, Container>&>(obj)(scribe);
-    }
-
-    template<class T, class Container>
-    void Load(InputBinaryScribe& scribe, std::queue<T, Container>& obj)
-    {
-        static_cast<detail::QueueLoader<T, Container>&>(obj)(scribe);
-    }
-
-    template<class T, class Container>
-    void Serialize(BinaryScribe& scribe, std::queue<T, Container>& obj)
+    template<class ScribeT, class T, class Container>
+    void Serialize(ScribeT& scribe, std::queue<T, Container>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }

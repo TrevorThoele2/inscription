@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <string>
 
 namespace Inscription
 {
@@ -8,5 +9,6 @@ namespace Inscription
     {
     public:
         Exception(const char* message);
+        Exception(const std::string& message);
     };
 }

@@ -1,6 +1,9 @@
 #pragma once
 
+#include <string>
+
 #include "Scribe.h"
+#include "Direction.h"
 
 namespace Inscription
 {

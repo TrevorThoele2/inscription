@@ -2,16 +2,14 @@
 
 #include <unordered_map>
 
-#include "BinaryScribe.h"
-
 #include "ContainerSize.h"
 #include "ScopedConstructor.h"
 #include "Const.h"
 
 namespace Inscription
 {
-    template<class Key, class T, class Hash, class Pred, class Alloc>
-    void Save(OutputBinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
+    void Save(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
         ContainerSize size(obj.size());
         scribe.Save(size);
@@ -22,8 +20,8 @@ namespace Inscription
         }
     }
 
-    template<class Key, class T, class Hash, class Pred, class Alloc>
-    void Load(InputBinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
+    void Load(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
         typedef std::unordered_map<Key, T, Hash, Pred, Alloc> ContainerT;
 
@@ -45,8 +43,8 @@ namespace Inscription
         }
     }
 
-    template<class Key, class T, class Hash, class Pred, class Alloc>
-    void Serialize(BinaryScribe& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
+    template<class ScribeT, class Key, class T, class Hash, class Pred, class Alloc>
+    void Serialize(ScribeT& scribe, std::unordered_map<Key, T, Hash, Pred, Alloc>& obj)
     {
         (scribe.IsOutput()) ? Save(*scribe.AsOutput(), obj) : Load(*scribe.AsInput(), obj);
     }
