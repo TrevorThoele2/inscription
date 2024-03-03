@@ -82,6 +82,9 @@
     <ClCompile Include="TextTests.cpp">
       <Filter>Source Files\Tests\Text</Filter>
     </ClCompile>
+    <ClCompile Include="BinaryIntegrationTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextFixture.h">

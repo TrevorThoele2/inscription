@@ -78,7 +78,7 @@ namespace Inscription
         public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        static ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
@@ -87,7 +87,9 @@ namespace Inscription
         }
     };
 
-    Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
+    ClassName Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "MemoryDerived";
+    }
 }

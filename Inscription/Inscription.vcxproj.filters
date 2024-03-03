@@ -19,12 +19,6 @@
     <ClInclude Include="UndefAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClassNameResolver.h">
-      <Filter>Header Files\ClassName</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassName.h">
-      <Filter>Header Files\ClassName</Filter>
-    </ClInclude>
     <ClInclude Include="Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -274,6 +268,9 @@
     <ClInclude Include="NotOpenable.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
+    <ClInclude Include="ClassName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -371,9 +368,6 @@
     </Filter>
     <Filter Include="Source Files\Scribe">
       <UniqueIdentifier>{77864077-936b-4fb6-9985-97a286f7a838}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ClassName">
-      <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Types\Std">
       <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>

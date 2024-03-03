@@ -108,8 +108,7 @@ public:
     virtual ~TableConstructionBase() = 0;
 };
 
-BinaryTableFixture::TableConstructionBase::~TableConstructionBase()
-{}
+BinaryTableFixture::TableConstructionBase::~TableConstructionBase() = default;
 
 class BinaryTableFixture::TableConstructionDerived : public BinaryTableFixture::TableConstructionBase
 {
@@ -470,12 +469,6 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::Base, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
-    }
-
     Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::Table::Table()
     {
         MergeDataLinks
@@ -485,15 +478,11 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
+    ClassName Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "DefaultConstructionDerived";
     }
-
-    const Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("DefaultConstructionDerived");
 
     Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Table()
     {
@@ -504,15 +493,17 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::ConstructImplementation(
+    void Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::Table::Construct(
         ObjectT* storage, ArchiveT& archive)
     {
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    const Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
+    ClassName Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "CustomConstructionDerived";
+    }
 
     Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>::Table::Table()
     {
@@ -526,12 +517,6 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive)
     {
         archive(object.baseObjectScrivenValue);
-    }
-
-    void Scribe<::BinaryTableFixture::ObjectScrivenBase, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 
     Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::Table()
@@ -555,15 +540,11 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    void Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-
+    ClassName Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "ObjectScrivenDerived";
     }
-
-    const Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("ObjectScrivenDerived");
 
     Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>::Table::Table()
     {
@@ -571,12 +552,6 @@ namespace Inscription
         ({
             DataLink::Auto(&ObjectT::baseValue, &DataT::baseValue) }
         );
-    }
-
-    void Scribe<::BinaryTableFixture::TableConstructionBase, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 
     Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::Table::Table()
@@ -588,15 +563,11 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
+    ClassName Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "TableConstructionDerived";
     }
-
-    const Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("TableConstructionDerived");
 
     Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::Table::Table()
     {
@@ -607,15 +578,11 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
+    ClassName Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "UsingEntriesDerived";
     }
-
-    const Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("UsingEntriesDerived");
 
     Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::Table::Table()
     {
@@ -626,26 +593,16 @@ namespace Inscription
         );
     }
 
-    void Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
+    ClassName Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "UsingEntryPointerDerived";
     }
-
-    const Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("UsingEntryPointerDerived");
 
     Scribe<::BinaryTableFixture::NonDefault, BinaryArchive>::Table::Table()
     {
         MergeDataLinks({
             DataLink::Auto(&ObjectT::value, &DataT::value) }
         );
-    }
-
-    void Scribe<::BinaryTableFixture::NonDefault, BinaryArchive>::Table::ConstructImplementation(
-        ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 }

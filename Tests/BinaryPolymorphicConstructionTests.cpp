@@ -62,7 +62,7 @@ namespace Inscription
     public:
         static void Construct(ObjectT* storage, ArchiveT& archive);
 
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -181,9 +181,11 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
+    ClassName Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver(
+        const ArchiveT& archive
+    ) {
+        return "BinaryPolymorphicConstructionDerived";
+    }
 
     void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)

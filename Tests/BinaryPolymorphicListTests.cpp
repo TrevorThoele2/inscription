@@ -71,7 +71,7 @@ namespace Inscription
         public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
     {
     public:
-        static const ClassNameResolver classNameResolver;
+        static ClassName ClassNameResolver(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -148,9 +148,10 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    const Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
+    ClassName Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ClassNameResolver(const ArchiveT& archive)
+    {
+        return "CustomConstructionDerived";
+    }
 
     void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)

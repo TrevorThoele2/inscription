@@ -215,7 +215,6 @@
     <ClInclude Include="BinaryArchive.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ClassName.h" />
-    <ClInclude Include="ClassNameResolver.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="ContainerSize.h" />
     <ClInclude Include="Endian.h" />
