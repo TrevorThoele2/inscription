@@ -76,7 +76,7 @@
     <IncludePath>..\;..\..\testframework;..\..\chroma;..\..\externaldependencies\catch2;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\catch;..\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>..\;..\..\chroma;..\..\testframework;..\..\externaldependencies\catch2;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
