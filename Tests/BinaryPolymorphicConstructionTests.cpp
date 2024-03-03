@@ -8,8 +8,6 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
-#include <Inscription/BaseScriven.h>
-
 #include "BinaryFixture.h"
 
 class BinaryPolymorphicConstructionFixture : public BinaryFixture
@@ -178,7 +176,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
+        archive.BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object);
         archive(object.derivedValue);
     }
 }

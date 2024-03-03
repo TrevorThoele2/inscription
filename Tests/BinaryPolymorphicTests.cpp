@@ -5,7 +5,6 @@
 #include <Inscription/NumericScribe.h>
 #include <Inscription/PointerScribe.h>
 #include <Inscription/StringScribe.h>
-#include <Inscription/BaseScriven.h>
 
 #include "BinaryFixture.h"
 
@@ -256,7 +255,8 @@ SCENARIO_METHOD(BinaryPolymorphicFixture, "loading polymorphic pointers in binar
     }
 }
 
-SCENARIO_METHOD(
+SCENARIO_METHOD
+(
     BinaryPolymorphicFixture,
     "loading polymorphic objects with specific type handles",
     "[binary][pointer][polymorphic]"
@@ -494,6 +494,38 @@ SCENARIO_METHOD(
     }
 }
 
+SCENARIO_METHOD(BinaryPolymorphicFixture, "loading polymorphic references", "[binary][polymorphic][reference]")
+{
+    GIVEN("output archive")
+    {
+        const Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
+        const auto castedSaved = dynamic_cast<const Derived*>(saved);
+
+        {
+            auto outputArchive = CreateRegistered<::Inscription::OutputBinaryArchive>();
+            outputArchive(*saved);
+        }
+
+        WHEN("loading")
+        {
+            const Base* loaded = dataGeneration.RandomHeap<Derived>();
+            const auto castedLoaded = dynamic_cast<const Derived*>(loaded);
+
+            {
+                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                inputArchive(*loaded);
+            }
+
+            THEN("loaded is same as saved")
+            {
+                REQUIRE(castedLoaded != nullptr);
+                REQUIRE(castedLoaded->BaseValue() == castedSaved->BaseValue());
+                REQUIRE(castedLoaded->DerivedValue() == castedSaved->DerivedValue());
+            }
+        }
+    }
+}
+
 namespace Inscription
 {
     void Scribe<::BinaryPolymorphicFixture::Base, BinaryArchive>::ScrivenImplementation(
@@ -511,7 +543,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
+        archive.BaseScriven<::BinaryPolymorphicFixture::Base>(object);
         archive(object.derivedValue);
     }
 
@@ -534,7 +566,7 @@ namespace Inscription
     void Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
-        BaseScriven<::BinaryPolymorphicFixture::Base>(object, archive);
+        archive.BaseScriven<::BinaryPolymorphicFixture::Base>(object);
         archive(object.derivedValue);
     }
 }

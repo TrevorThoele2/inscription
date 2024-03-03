@@ -1,11 +1,10 @@
 #pragma once
 
 #include <unordered_map>
+#include <optional>
 
 #include "ObjectTrackerEntry.h"
 #include "TrackingID.h"
-
-#include "Optional.h"
 
 namespace Inscription
 {
@@ -25,15 +24,15 @@ namespace Inscription
         void Deactivate();
         [[nodiscard]] bool IsActive() const;
 
-        Optional<ID> Add(void* add);
-        Optional<ID> Add(void* add, ID id);
+        std::optional<ID> Add(void* add);
+        std::optional<ID> Add(void* add, ID id);
         void ReplaceObject(void* here, void* newObject);
 
         void SignalSavedConstruction(ID id);
         [[nodiscard]] bool HasSavedConstruction(ID id) const;
 
         void* FindObject(ID id);
-        Optional<ID> FindID(void* object);
+        std::optional<ID> FindID(void* object);
 
         void Clear();
     private:

@@ -37,24 +37,32 @@ namespace Inscription
     private:
         constexpr static bool shouldConstructPolymorphically = std::is_polymorphic_v<BareObject>;
 
-        void SaveConstruction(
+        void SaveConstruction
+        (
             ObjectT& object,
             ArchiveT& archive,
-            std::true_type);
-        void SaveConstruction(
+            std::true_type
+        );
+        void SaveConstruction
+        (
             ObjectT& object,
             ArchiveT& archive,
-            std::false_type);
-        void LoadConstruction(
+            std::false_type
+        );
+        void LoadConstruction
+        (
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            std::true_type);
-        void LoadConstruction(
+            std::true_type
+        );
+        void LoadConstruction
+        (
             ObjectT& object,
             ArchiveT& archive,
             TrackingID objectID,
-            std::false_type);
+            std::false_type
+        );
     private:
         static_assert(std::is_pointer_v<ObjectT>,
             "The Object given to a PointerScribe was not a pointer.");
@@ -86,7 +94,7 @@ namespace Inscription
         {
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
             auto foundObjectID = archive.objectTracker.FindID(object);
-            if (foundObjectID.IsValid())
+            if (foundObjectID.has_value())
             {
                 objectID = *foundObjectID;
                 shouldSaveConstructionObject = false;
@@ -135,7 +143,8 @@ namespace Inscription
             return;
         }
 
-        LoadConstruction(
+        LoadConstruction
+        (
             object,
             archive,
             objectID,
@@ -153,8 +162,8 @@ namespace Inscription
 
         {
             auto foundTypeID = archive.typeTracker.FindID(type);
-            needsTypeHandle = !foundTypeID.IsValid();
-            if (foundTypeID.IsValid())
+            needsTypeHandle = !foundTypeID.has_value();
+            if (foundTypeID.has_value())
                 typeID = *foundTypeID;
             else
                 typeID = archive.typeTracker.Add(type);
@@ -170,7 +179,7 @@ namespace Inscription
             }
         }
 
-        archive.polymorphicManager.SaveConstruction(object, archive);
+        archive.polymorphicManager.Save(object, archive);
     }
 
     template<class Object, class Archive>
@@ -191,7 +200,7 @@ namespace Inscription
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
             archive(typeID);
             auto foundType = archive.typeTracker.FindType(typeID);
-            if (!foundType.IsValid())
+            if (!foundType.has_value())
             {
                 TypeHandle typeHandle;
                 archive(typeHandle);
@@ -205,7 +214,7 @@ namespace Inscription
 
         auto storage = archive.polymorphicManager.CreateStorage(type);
         archive.objectTracker.Add(storage, objectID);
-        archive.polymorphicManager.ConstructFromLoad(storage, type, archive);
+        archive.polymorphicManager.Construct(storage, type, archive);
         object = reinterpret_cast<ObjectT>(storage);
     }
 

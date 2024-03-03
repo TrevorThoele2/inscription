@@ -30,14 +30,12 @@ namespace Inscription
 
         T& Get();
         const T& Get() const;
-
-        TableDataEntry* operator&();
     private:
         using Wrapped = T;
 
         bool constructedBytes = false;
         using Bytes = std::array<char, sizeof(T)>;
-        Bytes bytes;
+        Bytes bytes = {};
 
         void Edit(const T& arg);
         void Edit(T&& arg);
@@ -105,12 +103,6 @@ namespace Inscription
     const T& TableDataEntry<T>::Get() const
     {
         return reinterpret_cast<const T&>(*bytes.data());
-    }
-
-    template<class T>
-    auto TableDataEntry<T>::operator&() -> TableDataEntry*
-    {
-        return reinterpret_cast<T*>(bytes.data());
     }
 
     template<class T>

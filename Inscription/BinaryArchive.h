@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "Archive.h"
 
 #include "ObjectTracker.h"
@@ -36,9 +38,11 @@ namespace Inscription
         BinaryArchive& operator()(T& object);
         template<class T>
         BinaryArchive& operator()(T*& object);
+        template<class BaseT, class T>
+        BinaryArchive& BaseScriven(T& object);
     public:
         template<class T>
-        Optional<TrackingID> AttemptTrackObject(T* arg);
+        std::optional<TrackingID> AttemptTrackObject(T* arg);
         template<class T>
         void AttemptReplaceTrackedObject(T& here, T& newObject);
         void AttemptReplaceTrackedObject(void* here, void *newObject);
@@ -79,13 +83,15 @@ namespace Inscription
         Version inscriptionVersion;
         StreamPosition postHeaderPosition;
     protected:
-        BinaryArchive(
+        BinaryArchive
+        (
             Direction direction,
             const Signature& clientSignature,
             Version clientVersion,
             Version inscriptionVersion
         );
-        BinaryArchive(
+        BinaryArchive
+        (
             Direction direction,
             const Signature& clientSignature,
             Version clientVersion,
@@ -122,8 +128,18 @@ namespace Inscription
     template<class T>
     BinaryArchive& BinaryArchive::operator()(T& object)
     {
-        KnownScribe<typename RemoveConstTrait<T>::type> scribe;
-        scribe.Scriven(RemoveConst(object), *this);
+        using ObjectT = typename RemoveConstTrait<T>::type;
+        auto& useObject = RemoveConst(object);
+        const auto objectType = std::type_index(typeid(useObject));
+        const auto checkObjectType = std::type_index(typeid(ObjectT));
+        if (objectType == checkObjectType)
+        {
+            KnownScribe<ObjectT> scribe;
+            scribe.Scriven(useObject, *this);
+        }
+        else
+            polymorphicManager.Scriven(&useObject, objectType, *this);
+
         return *this;
     }
 
@@ -135,11 +151,19 @@ namespace Inscription
         return *this;
     }
 
+    template<class BaseT, class T>
+    BinaryArchive& BinaryArchive::BaseScriven(T& object)
+    {
+        KnownScribe<typename RemoveConstTrait<BaseT>::type> scribe;
+        scribe.Scriven(static_cast<BaseT&>(RemoveConst(object)), *this);
+        return *this;
+    }
+
     template<class T>
-    Optional<TrackingID> BinaryArchive::AttemptTrackObject(T* arg)
+    std::optional<TrackingID> BinaryArchive::AttemptTrackObject(T* arg)
     {
         if (!ObjectTrackingTraits<T, BinaryArchive>::shouldTrack)
-            return Optional<TrackingID>();
+            return {};
 
         return objectTracker.Add(arg);
     }

@@ -48,7 +48,7 @@ namespace Inscription
 
     bool TypeTracker::IsTypeIn(const Type& type) const
     {
-        return FindID(type).IsValid();
+        return FindID(type).has_value();
     }
 
     bool TypeTracker::IsIDIn(ID id) const
@@ -60,22 +60,22 @@ namespace Inscription
         return false;
     }
 
-    Optional<TypeTracker::ID> TypeTracker::FindID(const Type& type) const
+    std::optional<TypeTracker::ID> TypeTracker::FindID(const Type& type) const
     {
         for (auto& loop : entryList)
             if (loop.type == type)
-                return Optional<ID>(loop.id);
+                return { loop.id };
 
-        return Optional<ID>();
+        return {};
     }
 
-    Optional<TypeTracker::Type> TypeTracker::FindType(ID id) const
+    std::optional<TypeTracker::Type> TypeTracker::FindType(ID id) const
     {
         for (auto& loop : entryList)
             if (loop.id == id)
-                return Optional<Type>(loop.type);
+                return { loop.type };
 
-        return Optional<Type>();
+        return {};
     }
 
     TypeTracker::Entry* TypeTracker::FindEntry(ID id)
