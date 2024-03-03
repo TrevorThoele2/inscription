@@ -14,9 +14,9 @@ namespace Inscription
         return *this;
     }
 
-    void InputBinaryFile::ReadData(Buffer& buffer)
+    void InputBinaryFile::ReadData(Buffer& buffer, size_t size)
     {
-        stream.read(buffer.value, buffer.size);
+        stream.read(&buffer[0], size);
         if (FailedStream())
             throw FileEncounteredError();
     }

@@ -190,11 +190,10 @@
     <ClInclude Include="Assert.h" />
     <ClInclude Include="BaseScriven.h" />
     <ClInclude Include="BaseTableDataLink.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferScribe.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="EnumScribe.h" />
-    <ClInclude Include="FileName.h" />
-    <ClInclude Include="FileNameScribe.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
     <ClInclude Include="InputJumpTable.h" />
@@ -220,14 +219,12 @@
     <ClInclude Include="OptionalScribe.h" />
     <ClInclude Include="OutputBinaryFile.h" />
     <ClInclude Include="BinaryArchive.h" />
-    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="ContainerSize.h" />
     <ClInclude Include="Endian.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="ForwardListScribe.h" />
-    <ClInclude Include="RelativeFilePathScribe.h" />
     <ClInclude Include="Scribe.h" />
     <ClInclude Include="ScribeBase.h" />
     <ClInclude Include="OutputBinaryArchive.h" />
@@ -287,7 +284,6 @@
     <ClCompile Include="BaseClassNotInTable.cpp" />
     <ClCompile Include="BufferScribe.cpp" />
     <ClCompile Include="FileEncounteredError.cpp" />
-    <ClCompile Include="FileNameScribe.cpp" />
     <ClCompile Include="FilePathScribe.cpp" />
     <ClCompile Include="InputBinaryFile.cpp" />
     <ClCompile Include="InputBinaryArchive.cpp" />
@@ -298,7 +294,6 @@
     <ClCompile Include="ObjectTrackingContext.cpp" />
     <ClCompile Include="OutputBinaryFile.cpp" />
     <ClCompile Include="BinaryArchive.cpp" />
-    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Endian.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="OutputBinaryArchive.cpp" />
@@ -306,7 +301,6 @@
     <ClCompile Include="OutputTextArchive.cpp" />
     <ClCompile Include="InputTypeHandlesAlreadyRegistered.cpp" />
     <ClCompile Include="InputTypeHandleNotFound.cpp" />
-    <ClCompile Include="RelativeFilePathScribe.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="StreamPositionScribe.cpp" />
     <ClCompile Include="StringScribe.cpp" />

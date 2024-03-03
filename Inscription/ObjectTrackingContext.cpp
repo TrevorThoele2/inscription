@@ -5,7 +5,7 @@
 namespace Inscription
 {
     ObjectTrackingContext::ObjectTrackingContext(Type type, BinaryArchive& archive) :
-        archive(&archive), previousType(TypeFrom(archive.TrackObjects(BoolFrom(type))))
+        previousType(TypeFrom(archive.TrackObjects(BoolFrom(type)))), archive(&archive)
     {}
 
     ObjectTrackingContext::~ObjectTrackingContext()

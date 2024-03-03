@@ -1,4 +1,4 @@
-Copyright (c) 2016, Trevor Thoele
+Copyright (c) 2020, Trevor Thoele
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

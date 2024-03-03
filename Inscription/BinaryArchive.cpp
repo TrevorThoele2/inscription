@@ -90,10 +90,10 @@ namespace Inscription
         Direction direction,
         const Signature& clientSignature,
         Version clientVersion,
-        Version inscriptionVersion) :
-
-        direction(direction), clientSignature(clientSignature), clientVersion(clientVersion),
-        inscriptionVersion(inscriptionVersion), postHeaderPosition(0)
+        Version inscriptionVersion)
+        :
+        clientSignature(clientSignature), clientVersion(clientVersion), inscriptionVersion(inscriptionVersion),
+        postHeaderPosition(0), direction(direction)
     {}
 
     BinaryArchive::BinaryArchive(
