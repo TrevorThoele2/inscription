@@ -5,10 +5,10 @@ namespace Inscription
     InputTextFile::InputTextFile(const FilePath& path) : SimpleFile(path, std::ios::in)
     {}
 
-    InputTextFile::InputTextFile(InputTextFile&& arg) : SimpleFile(std::move(arg))
+    InputTextFile::InputTextFile(InputTextFile&& arg) noexcept : SimpleFile(std::move(arg))
     {}
 
-    InputTextFile& InputTextFile::operator=(InputTextFile&& arg)
+    InputTextFile& InputTextFile::operator=(InputTextFile&& arg) noexcept
     {
         SimpleFile::operator=(std::move(arg));
         return *this;
@@ -40,10 +40,8 @@ namespace Inscription
 
     std::string InputTextFile::ReadSize(size_t size)
     {
-        std::string string;
         char* buffer = nullptr;
         stream.get(buffer, size + 1);
-        string = buffer;
-        return string;
+        return std::string(buffer);
     }
 }

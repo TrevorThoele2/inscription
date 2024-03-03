@@ -11,7 +11,7 @@ namespace Inscription
         const Signature& signature) :
 
         BinaryArchive(
-            Direction::INPUT,
+            Direction::Input,
             signature,
             0,
             0),
@@ -26,7 +26,7 @@ namespace Inscription
         const TypeRegistrationContext& typeRegistrationContext) :
 
         BinaryArchive(
-            Direction::INPUT,
+            Direction::Input,
             signature,
             0,
             0,
@@ -36,11 +36,11 @@ namespace Inscription
         InitialSetup();
     }
 
-    InputBinaryArchive::InputBinaryArchive(InputBinaryArchive&& arg) :
+    InputBinaryArchive::InputBinaryArchive(InputBinaryArchive&& arg) noexcept :
         BinaryArchive(std::move(arg)), file(std::move(arg.file))
     {}
 
-    InputBinaryArchive& InputBinaryArchive::operator=(InputBinaryArchive&& arg)
+    InputBinaryArchive& InputBinaryArchive::operator=(InputBinaryArchive&& arg) noexcept
     {
         BinaryArchive::operator=(std::move(arg));
         file = std::move(arg.file);
@@ -59,7 +59,7 @@ namespace Inscription
 
     void InputBinaryArchive::InitialSetup()
     {
-        auto size = clientSignature.size();
+        const auto size = clientSignature.size();
         Signature loadedClientSignature(size, '\000');
         ContainerSize address = 0;
         while (address < size)

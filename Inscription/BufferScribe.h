@@ -8,11 +8,10 @@
 namespace Inscription
 {
     template<>
-    class Scribe<Buffer, BinaryArchive> : public ScribeBase<Buffer, BinaryArchive>
+    class Scribe<Buffer, BinaryArchive> final : public ScribeBase<Buffer, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
     };
 
     template<>

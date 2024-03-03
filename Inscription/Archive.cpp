@@ -2,16 +2,12 @@
 
 namespace Inscription
 {
-    Archive::~Archive()
+    Archive::~Archive() = default;
+
+    Archive::Archive(Archive&& arg) noexcept
     {}
 
-    Archive::Archive()
-    {}
-
-    Archive::Archive(Archive&& arg)
-    {}
-
-    Archive& Archive::operator=(Archive&& arg)
+    Archive& Archive::operator=(Archive&& arg) noexcept
     {
         return *this;
     }

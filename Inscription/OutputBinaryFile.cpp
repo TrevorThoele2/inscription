@@ -5,10 +5,10 @@ namespace Inscription
     OutputBinaryFile::OutputBinaryFile(const FilePath& path) : Stream(path, std::ios::out | std::ios::binary)
     {}
 
-    OutputBinaryFile::OutputBinaryFile(OutputBinaryFile&& arg) : Stream(std::move(arg))
+    OutputBinaryFile::OutputBinaryFile(OutputBinaryFile&& arg) noexcept : Stream(std::move(arg))
     {}
 
-    OutputBinaryFile& OutputBinaryFile::operator=(OutputBinaryFile&& arg)
+    OutputBinaryFile& OutputBinaryFile::operator=(OutputBinaryFile&& arg) noexcept
     {
         Stream::operator=(std::move(arg));
         return *this;
@@ -30,7 +30,7 @@ namespace Inscription
 
     OutputBinaryFile::StreamPosition OutputBinaryFile::TellStream()
     {
-        auto told = stream.tellp();
+        const auto told = stream.tellp();
         if (FailedStream())
             throw FileEncounteredError();
         return told;

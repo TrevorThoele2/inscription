@@ -8,20 +8,24 @@ namespace Inscription
     class InputTextArchive : public TextArchive
     {
     public:
-        InputTextArchive(const FilePath& path);
-        InputTextArchive(InputTextArchive&& arg);
+        explicit InputTextArchive(const FilePath& path);
+        InputTextArchive(const InputTextArchive& arg) = delete;
+        InputTextArchive(InputTextArchive&& arg) noexcept;
 
-        InputTextArchive& operator=(InputTextArchive&& arg);
+        ~InputTextArchive() = default;
+
+        InputTextArchive& operator=(const InputTextArchive& arg) = delete;
+        InputTextArchive& operator=(InputTextArchive&& arg) noexcept;
 
         InputTextArchive& ReadLine(std::string& arg);
         InputTextArchive& ReadLine(std::string& arg, char delimiter);
         InputTextArchive& ReadSize(std::string& arg, size_t size);
     protected:
-        inline void ReadImpl(std::string& arg) { ReadFromFile(arg); }
-        inline void ReadImpl(char& arg) { ReadFromFile(arg); }
-        inline void ReadLineImpl(std::string& arg) { ReadLineFromFile(arg); }
-        inline void ReadLineImpl(std::string& arg, char delimiter) { ReadLineFromFile(arg, delimiter); }
-        inline void ReadSizeImpl(std::string& arg, size_t size) { ReadSizeFromFile(arg, size); }
+        void ReadImpl(std::string& arg) { ReadFromFile(arg); }
+        void ReadImpl(char& arg) { ReadFromFile(arg); }
+        void ReadLineImpl(std::string& arg) { ReadLineFromFile(arg); }
+        void ReadLineImpl(std::string& arg, char delimiter) { ReadLineFromFile(arg, delimiter); }
+        void ReadSizeImpl(std::string& arg, size_t size) { ReadSizeFromFile(arg, size); }
     private:
         InputTextFile file;
     private:

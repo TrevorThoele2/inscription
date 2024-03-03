@@ -36,7 +36,7 @@ public:
 
 MemoryTestsFixture::Base::~Base() = default;
 
-TEST_CASE_METHOD(MemoryTestsFixture, "unique_ptr saves and loads through base class pointer")
+TEST_CASE_METHOD(MemoryTestsFixture, "std::unique_ptr")
 {
     std::unique_ptr<Base> saved(new Derived());
 
@@ -71,11 +71,6 @@ namespace Inscription
         {
             archive(object.baseValue);
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -89,11 +84,6 @@ namespace Inscription
         {
             BaseScriven<::MemoryTestsFixture::Base>(object, archive);
             archive(object.derivedValue);
-        }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
         }
     };
 

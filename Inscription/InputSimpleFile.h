@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 #include "SimpleFile.h"
 
 namespace Inscription
@@ -7,7 +9,7 @@ namespace Inscription
     class InputSimpleFile : public SimpleFile<std::ifstream>
     {
     public:
-        InputSimpleFile(const FilePath& path);
+        explicit InputSimpleFile(const FilePath& path);
 
         template<class T>
         InputSimpleFile& operator>>(T& var);

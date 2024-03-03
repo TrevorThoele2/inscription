@@ -91,7 +91,7 @@ namespace Inscription
         static void DataConstructionImplementation(ObjectT* storage, DataT& table)
         {
             static_assert(
-                false,
+                !Chroma::is_braces_constructible_v<T, const DataT&>,
                 "Basic table construction requires either a "
                 "default constructor or a constructor taking a (const DataT&) on ObjectT. "
 

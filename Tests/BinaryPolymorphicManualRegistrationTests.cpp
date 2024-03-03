@@ -91,10 +91,6 @@ namespace Inscription
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -105,10 +101,6 @@ namespace Inscription
         static const ClassNameResolver classNameResolver;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 }
 

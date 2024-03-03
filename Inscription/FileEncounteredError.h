@@ -4,7 +4,7 @@
 
 namespace Inscription
 {
-    class FileEncounteredError : public Exception
+    class FileEncounteredError final : public Exception
     {
     public:
         FileEncounteredError();

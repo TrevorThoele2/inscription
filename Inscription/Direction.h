@@ -4,7 +4,7 @@ namespace Inscription
 {
     enum class Direction
     {
-        OUTPUT,
-        INPUT
+        Output,
+        Input
     };
 }

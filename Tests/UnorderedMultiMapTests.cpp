@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
 #include <Inscription/UnorderedMultimapScribe.h>
-#include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
+#include <Inscription/NumericScribe.h>
 
 #include "BinaryFixture.h"
 
@@ -17,8 +17,8 @@ TEST_CASE_METHOD(UnorderedMultiMapTestsFixture, "std::unordered_multimap")
     {
         TestedObject saved;
 
-        const auto startingGroupKeys = dataGeneration.Generator<int>().RandomGroup(5);
-        const auto startingGroupValues = dataGeneration.Generator<std::string>().RandomGroup(5);
+        const auto startingGroupKeys = dataGeneration.RandomGroup<int>(5);
+        const auto startingGroupValues = dataGeneration.RandomGroup<std::string>(5);
 
         for (size_t i = 0; i < startingGroupKeys.size(); ++i)
         {

@@ -5,7 +5,6 @@
 #include "CompositeScribe.h"
 
 #include "ScopeConstructor.h"
-#include "Const.h"
 
 namespace Inscription
 {
@@ -21,25 +20,19 @@ namespace Inscription
         using typename BaseT::ArchiveT;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
-
-        using BaseT::DoBasicConstruction;
     private:
         template<unsigned int I>
         class UnpackTuple
         {
         public:
-            inline static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
+            static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
             {
                 ScrivenSingle(std::get<I - 1>(object), archive);
                 UnpackTuple<I - 1>::ScrivenGroup(object, archive);
             }
         private:
             template<class T>
-            inline static void ScrivenSingle(T& single, ArchiveT& archive)
+            static void ScrivenSingle(T& single, ArchiveT& archive)
             {
                 archive(single);
             }
@@ -49,7 +42,7 @@ namespace Inscription
         class UnpackTuple<0>
         {
         public:
-            inline static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
+            static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
             {}
         };
     };

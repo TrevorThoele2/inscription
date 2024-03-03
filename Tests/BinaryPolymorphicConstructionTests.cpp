@@ -53,10 +53,6 @@ namespace Inscription
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 
     template<>
@@ -64,10 +60,11 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>
     {
     public:
+        static void Construct(ObjectT* storage, ArchiveT& archive);
+
         static const ClassNameResolver classNameResolver;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
     };
 }
 
@@ -75,7 +72,7 @@ TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic const
 {
     SECTION("manual construction")
     {
-        Base* saved = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
+        Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
 
         {
@@ -102,7 +99,7 @@ TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic const
 
     SECTION("does not construct")
     {
-        Base* saved = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
+        Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
 
         {
@@ -129,7 +126,7 @@ TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic const
 
     SECTION("load causes other to be populated")
     {
-        Base* savedOwned = dataGeneration.Generator<Derived>().RandomHeap<int, std::string>();
+        Base* savedOwned = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedOwnedCasted = dynamic_cast<Derived*>(savedOwned);
 
         Base* savedUnowned = savedOwned;
@@ -172,18 +169,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver
-        Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::classNameResolver =
-        CreateSingleNameResolver("CustomConstructionDerived");
-
-    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
-        archive(object.derivedValue);
-    }
-
-    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ConstructImplementation(
+    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::Construct(
         ObjectT* storage, ArchiveT& archive)
     {
         int baseValue;
@@ -193,5 +179,16 @@ namespace Inscription
         archive(derivedValue);
 
         new (storage) ObjectT(baseValue, derivedValue);
+    }
+
+    const Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver
+        Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::classNameResolver =
+        CreateSingleNameResolver("CustomConstructionDerived");
+
+    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
+        archive(object.derivedValue);
     }
 }

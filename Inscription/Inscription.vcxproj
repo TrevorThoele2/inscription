@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -235,7 +235,6 @@
     <ClInclude Include="MemoryScribe.h" />
     <ClInclude Include="MultimapScribe.h" />
     <ClInclude Include="MultisetScribe.h" />
-    <ClInclude Include="NumericTraits.h" />
     <ClInclude Include="SpecialTypeTrackingID.h" />
     <ClInclude Include="PolymorphicTypeNotFound.h" />
     <ClInclude Include="QueueScribe.h" />
@@ -255,7 +254,7 @@
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />
-    <ClInclude Include="UnopenableFile.h" />
+    <ClInclude Include="NotOpenable.h" />
     <ClInclude Include="TableNotConstructed.h" />
     <ClInclude Include="TableNotLinked.h" />
     <ClInclude Include="TableVariableNotHere.h" />
@@ -310,7 +309,7 @@
     <ClCompile Include="ObjectTrackerEntry.cpp" />
     <ClCompile Include="TypeTracker.cpp" />
     <ClCompile Include="TypeTrackerEntry.cpp" />
-    <ClCompile Include="UnopenableFile.cpp" />
+    <ClCompile Include="NotOpenable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">

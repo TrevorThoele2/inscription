@@ -5,58 +5,46 @@
 
 namespace Inscription
 {
-    TextArchive::~TextArchive()
-    {}
+    TextArchive::~TextArchive() = default;
 
     bool TextArchive::IsOutput() const
     {
-        return direction == Direction::OUTPUT;
+        return direction == Direction::Output;
     }
 
     bool TextArchive::IsInput() const
     {
-        return direction == Direction::INPUT;
+        return direction == Direction::Input;
     }
 
     OutputTextArchive* TextArchive::AsOutput()
     {
-        if (!IsOutput())
-            return nullptr;
-
-        return static_cast<OutputTextArchive*>(this);
+        return dynamic_cast<OutputTextArchive*>(this);
     }
 
     InputTextArchive* TextArchive::AsInput()
     {
-        if (!IsInput())
-            return nullptr;
-
-        return static_cast<InputTextArchive*>(this);
+        return dynamic_cast<InputTextArchive*>(this);
     }
 
     const OutputTextArchive* TextArchive::AsOutput() const
     {
-        if (!IsOutput())
-            return nullptr;
-
-        return static_cast<const OutputTextArchive*>(this);
+        return dynamic_cast<const OutputTextArchive*>(this);
     }
 
     const InputTextArchive* TextArchive::AsInput() const
     {
-        if (!IsInput())
-            return nullptr;
-
-        return static_cast<const InputTextArchive*>(this);
+        return dynamic_cast<const InputTextArchive*>(this);
     }
 
     TextArchive::TextArchive(Direction direction) : direction(direction)
     {}
     
-    TextArchive::TextArchive(TextArchive&& arg) : Archive(std::move(arg)), direction(std::move(arg.direction))
+    TextArchive::TextArchive(TextArchive&& arg) noexcept :
+        Archive(std::move(arg)), direction(std::move(arg.direction))
     {}
 
-    TextArchive& TextArchive::operator=(TextArchive&& arg)
+    TextArchive& TextArchive::operator=(TextArchive&& arg) noexcept
     {
         Archive::operator=(std::move(arg));
         return *this;

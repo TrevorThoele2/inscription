@@ -9,9 +9,9 @@ class BinaryEnumFixture : public BinaryFixture
 public:
     enum Enum
     {
-        ONE,
-        TWO,
-        THREE
+        One,
+        Two,
+        Three
     };
 };
 
@@ -27,7 +27,7 @@ TEST_CASE_METHOD(BinaryEnumFixture, "binary enum")
 {
     SECTION("save")
     {
-        Enum saved = Enum::TWO;
+        Enum saved = Two;
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();

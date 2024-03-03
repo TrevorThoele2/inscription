@@ -16,12 +16,8 @@ namespace Inscription
         using ArchiveT = typename BaseT::ArchiveT;
     public:
         using BaseT::Scriven;
-        using BaseT::Construct;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
-
-        using BaseT::DoBasicConstruction;
     private:
         constexpr static bool isEnum = std::is_enum_v<ObjectT>;
     private:
@@ -44,11 +40,5 @@ namespace Inscription
             archive.AsInput()->Read(loaded);
             object = static_cast<Object>(loaded);
         }
-    }
-
-    template<class Object, class Archive>
-    void EnumScribe<Object, Archive>::ConstructImplementation(ObjectT* storage, ArchiveT& archive)
-    {
-        DoBasicConstruction(storage, archive);
     }
 }

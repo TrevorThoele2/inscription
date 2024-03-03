@@ -2,82 +2,83 @@
 
 #include "Scribe.h"
 #include "Storage.h"
+#include "Access.h"
 
 namespace Inscription
 {
-    template<class T>
+    template<class Object>
     class ScopeConstructor
     {
     public:
         template<class Archive>
-        ScopeConstructor(Archive& archive);
+        explicit ScopeConstructor(Archive& archive);
         ~ScopeConstructor();
 
-        T* operator->();
-        const T* operator->() const;
-        operator T*();
-        operator const T*() const;
+        Object* operator->();
+        const Object* operator->() const;
+        operator Object*();
+        operator const Object*() const;
 
-        T* Get();
-        const T* Get() const;
-        T&& GetMove();
+        Object* Get();
+        const Object* Get() const;
+        Object&& GetMove();
     private:
-        T* object;
+        Object* object;
     };
 
-    template<class T>
+    template<class Object>
     template<class Archive>
-    ScopeConstructor<T>::ScopeConstructor(Archive& archive) : object(nullptr)
+    ScopeConstructor<Object>::ScopeConstructor(Archive& archive) : object(nullptr)
     {
-        object = reinterpret_cast<T*>(CreateStorage(sizeof(T)));
-        Scribe<T, Archive> scribe;
-        scribe.Construct(object, archive);
+        object = reinterpret_cast<Object*>(CreateStorage(sizeof(Object)));
+        Scribe<Object, Archive> scribe;
+        Access::Construct(object, archive, scribe);
     }
 
-    template<class T>
-    ScopeConstructor<T>::~ScopeConstructor()
+    template<class Object>
+    ScopeConstructor<Object>::~ScopeConstructor()
     {
         delete object;
     }
 
-    template<class T>
-    T* ScopeConstructor<T>::operator->()
+    template<class Object>
+    Object* ScopeConstructor<Object>::operator->()
     {
         return object;
     }
 
-    template<class T>
-    const T* ScopeConstructor<T>::operator->() const
+    template<class Object>
+    const Object* ScopeConstructor<Object>::operator->() const
     {
         return object;
     }
 
-    template<class T>
-    ScopeConstructor<T>::operator T*()
+    template<class Object>
+    ScopeConstructor<Object>::operator Object*()
     {
         return object;
     }
 
-    template<class T>
-    ScopeConstructor<T>::operator const T*() const
+    template<class Object>
+    ScopeConstructor<Object>::operator const Object*() const
     {
         return object;
     }
 
-    template<class T>
-    T* ScopeConstructor<T>::Get()
+    template<class Object>
+    Object* ScopeConstructor<Object>::Get()
     {
         return object;
     }
 
-    template<class T>
-    const T* ScopeConstructor<T>::Get() const
+    template<class Object>
+    const Object* ScopeConstructor<Object>::Get() const
     {
         return object;
     }
 
-    template<class T>
-    T&& ScopeConstructor<T>::GetMove()
+    template<class Object>
+    Object&& ScopeConstructor<Object>::GetMove()
     {
         return std::move(*object);
     }

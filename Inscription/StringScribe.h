@@ -17,7 +17,6 @@ namespace Inscription
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override;
     private:
         void SaveImplementation(ObjectT& object, ArchiveT& archive);
         void LoadImplementation(ObjectT& object, ArchiveT& archive);

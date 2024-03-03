@@ -5,9 +5,9 @@
 
 namespace Inscription
 {
-    class UnopenableFile : public Exception
+    class NotOpenable final : public Exception
     {
     public:
-        UnopenableFile(const FilePath& path);
+        explicit NotOpenable(const FilePath& path);
     };
 }

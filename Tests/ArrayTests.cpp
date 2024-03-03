@@ -16,9 +16,7 @@ TEST_CASE_METHOD(ArrayTestsFixture, "std::array")
     {
         TestedObject saved;
 
-        const auto startingGroup = dataGeneration.Generator<int>().RandomGroup(5);
-
-        REQUIRE(saved.size() == startingGroup.size());
+        const auto startingGroup = dataGeneration.RandomGroup<int>(saved.size());
 
         for (size_t i = 0; i < startingGroup.size(); ++i)
             saved[i] = startingGroup[i];

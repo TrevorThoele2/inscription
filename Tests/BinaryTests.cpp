@@ -42,11 +42,6 @@ namespace Inscription
         {
             archive(object.value);
         }
-
-        void ConstructImplementation(ObjectT* storage, ArchiveT& archive) override
-        {
-            DoBasicConstruction(storage, archive);
-        }
     };
 }
 

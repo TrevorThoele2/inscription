@@ -11,11 +11,9 @@
 #include "Scribe.h"
 #include "TableData.h"
 
+#include "Version.h"
 #include "Direction.h"
-#include "Endian.h"
 #include "Const.h"
-#include "Buffer.h"
-#include "VerifyNonConst.h"
 
 namespace Inscription
 {
@@ -29,6 +27,9 @@ namespace Inscription
         using StreamPosition = unsigned long long;
         using TypeRegistrationContext = TypeRegistrationContext<BinaryArchive>;
     public:
+        BinaryArchive(const BinaryArchive& arg) = delete;
+        BinaryArchive& operator=(const BinaryArchive& arg) = delete;
+
         virtual ~BinaryArchive() = 0;
     public:
         template<class T>
@@ -53,17 +54,17 @@ namespace Inscription
         // Be sure that this archive will no longer need to handle pointers through tracking when calling this
         void MoveTrackersTo(BinaryArchive& target);
     public:
-        bool IsOutput() const;
-        bool IsInput() const;
+        [[nodiscard]] bool IsOutput() const;
+        [[nodiscard]] bool IsInput() const;
 
         OutputBinaryArchive* AsOutput();
         InputBinaryArchive* AsInput();
-        const OutputBinaryArchive* AsOutput() const;
-        const InputBinaryArchive* AsInput() const;
+        [[nodiscard]] const OutputBinaryArchive* AsOutput() const;
+        [[nodiscard]] const InputBinaryArchive* AsInput() const;
     public:
-        const Signature& ClientSignature() const;
-        Version ClientVersion() const;
-        Version InscriptionVersion() const;
+        [[nodiscard]] Signature ClientSignature() const;
+        [[nodiscard]] Version ClientVersion() const;
+        [[nodiscard]] Version InscriptionVersion() const;
 
         void MovePositionToStart();
 
@@ -82,16 +83,18 @@ namespace Inscription
             Direction direction,
             const Signature& clientSignature,
             Version clientVersion,
-            Version inscriptionVersion);
+            Version inscriptionVersion
+        );
         BinaryArchive(
             Direction direction,
             const Signature& clientSignature,
             Version clientVersion,
             Version inscriptionVersion,
-            TypeRegistrationContext typeRegistrationContext);
-        BinaryArchive(BinaryArchive&& arg);
+            TypeRegistrationContext typeRegistrationContext
+        );
+        BinaryArchive(BinaryArchive&& arg) noexcept;
 
-        BinaryArchive& operator=(BinaryArchive&& arg);
+        BinaryArchive& operator=(BinaryArchive&& arg) noexcept;
     private:
         template<class T>
         using KnownScribe = Scribe<T, BinaryArchive>;
@@ -102,9 +105,6 @@ namespace Inscription
         TypeTracker typeTracker;
 
         PolymorphicManager<BinaryArchive> polymorphicManager;
-    private:
-        BinaryArchive(const BinaryArchive& arg) = delete;
-        BinaryArchive& operator=(const BinaryArchive& arg) = delete;
     private:
         TypeRegistrationContext typeRegistrationContext;
 

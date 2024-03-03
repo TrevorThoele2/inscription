@@ -50,14 +50,11 @@ namespace Inscription
         using ClassNameResolver = ClassNameResolver<ArchiveT>;
     public:
         void Scriven(ObjectT& object, ArchiveT& archive) override;
-        void Construct(ObjectT* storage, ArchiveT& archive) override;
     protected:
         CompositeScribe() = default;
         CompositeScribe(const CompositeScribe& arg) = default;
 
         using BaseT::ScrivenImplementation;
-        using BaseT::ConstructImplementation;
-        using BaseT::DoBasicConstruction;
     protected:
         static ClassNameResolver CreateSingleNameResolver(const std::string& name);
     private:
@@ -77,19 +74,6 @@ namespace Inscription
         {
             ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
             ScrivenImplementation(object, archive);
-        }
-    }
-
-    template<class Object>
-    void CompositeScribe<Object, BinaryArchive>::Construct(ObjectT* storage, ArchiveT& archive)
-    {
-        {
-            archive.AttemptTrackObject(storage);
-        }
-
-        {
-            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
-            ConstructImplementation(storage, archive);
         }
     }
 

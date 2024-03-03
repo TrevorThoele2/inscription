@@ -10,10 +10,10 @@ namespace Inscription
         ResetWidth();
     }
 
-    OutputTextFile::OutputTextFile(OutputTextFile&& arg) : SimpleFile(std::move(arg))
+    OutputTextFile::OutputTextFile(OutputTextFile&& arg) noexcept : SimpleFile(std::move(arg))
     {}
 
-    OutputTextFile& OutputTextFile::operator=(OutputTextFile&& arg)
+    OutputTextFile& OutputTextFile::operator=(OutputTextFile&& arg) noexcept
     {
         SimpleFile::operator=(std::move(arg));
         return *this;

@@ -58,16 +58,10 @@
     <ClInclude Include="InputTextFile.h">
       <Filter>Header Files\File\Text</Filter>
     </ClInclude>
-    <ClInclude Include="NumericTraits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TypeRegistrationContext.h">
       <Filter>Header Files\RegisteredTypes</Filter>
     </ClInclude>
     <ClInclude Include="FileEncounteredError.h">
-      <Filter>Header Files\File</Filter>
-    </ClInclude>
-    <ClInclude Include="UnopenableFile.h">
       <Filter>Header Files\File</Filter>
     </ClInclude>
     <ClInclude Include="TableVariableNotHere.h">
@@ -277,6 +271,9 @@
     <ClInclude Include="TableDataEntry.h">
       <Filter>Header Files\Scribe\Base\Table\Entry</Filter>
     </ClInclude>
+    <ClInclude Include="NotOpenable.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -449,9 +446,6 @@
     <ClCompile Include="FileEncounteredError.cpp">
       <Filter>Source Files\File</Filter>
     </ClCompile>
-    <ClCompile Include="UnopenableFile.cpp">
-      <Filter>Source Files\File</Filter>
-    </ClCompile>
     <ClCompile Include="TableVariableNotHere.cpp">
       <Filter>Source Files\Scribe</Filter>
     </ClCompile>
@@ -517,6 +511,9 @@
     </ClCompile>
     <ClCompile Include="ObjectTrackingContext.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NotOpenable.cpp">
+      <Filter>Source Files\File</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

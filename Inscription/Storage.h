@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Inscription
 {
     inline std::uint8_t* CreateStorage(size_t size)

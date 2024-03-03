@@ -12,8 +12,8 @@ namespace Inscription
     {
     public:
         PolymorphicTypeNotFound();
-        PolymorphicTypeNotFound(const ClassName& className);
-        PolymorphicTypeNotFound(const std::type_index& type);
+        explicit PolymorphicTypeNotFound(const ClassName& className);
+        explicit PolymorphicTypeNotFound(const std::type_index& type);
     private:
         static std::string DefaultString();
     };
