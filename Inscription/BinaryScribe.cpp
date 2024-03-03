@@ -10,7 +10,8 @@ namespace Inscription
     BinaryScribeMarkerException::BinaryScribeMarkerException() : Exception("The marker in the file was not identical to the marker given. The file is either corrupt or not the right file type.")
     {}
 
-    BinaryScribe::BinaryScribe(const Path &path, const Marker &marker, Version version) : Scribe(Direction::OUTPUT), marker(marker), version(version), postHeaderPosition(0)
+    BinaryScribe::BinaryScribe(const Path& path, const Marker& marker, Version version) :
+        Scribe(Direction::OUTPUT), marker(marker), version(version), postHeaderPosition(0)
     {
         file.out = new BinaryOutputFile(path);
 
@@ -23,11 +24,11 @@ namespace Inscription
         postHeaderPosition = TellStream();
     }
 
-    BinaryScribe::BinaryScribe(const Path &path, const Marker &marker) : Scribe(Direction::INPUT), postHeaderPosition(0)
+    BinaryScribe::BinaryScribe(const Path& path, const Marker& marker) :
+        Scribe(Direction::INPUT), postHeaderPosition(0)
     {
         file.in = new BinaryInputFile(path);
 
-        // load the name
         Marker loadMarker;
         ContainerSize size;
         Load(size);
@@ -49,10 +50,12 @@ namespace Inscription
         postHeaderPosition = TellStream();
     }
 
-    BinaryScribe::BinaryScribe(BinaryScribe &&arg) : Scribe(std::move(arg)), file(std::move(arg.file)), marker(std::move(arg.marker)), version(std::move(arg.version)), postHeaderPosition(std::move(arg.postHeaderPosition))
+    BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
+        Scribe(std::move(arg)), file(std::move(arg.file)), marker(std::move(arg.marker)),
+        version(std::move(arg.version)), postHeaderPosition(std::move(arg.postHeaderPosition))
     {}
 
-    BinaryScribe& BinaryScribe::operator=(BinaryScribe &&arg)
+    BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
     {
         Scribe::operator=(std::move(arg));
         file = std::move(arg.file);
@@ -77,7 +80,7 @@ namespace Inscription
         return version;
     }
 
-    void BinaryScribe::SeekStream(StreamPos pos)
+    void BinaryScribe::SeekStream(StreamPosition pos)
     {
         switch (GetDirection())
         {
@@ -90,16 +93,15 @@ namespace Inscription
         }
     }
 
-    BinaryScribe::StreamPos BinaryScribe::TellStream()
+    BinaryScribe::StreamPosition BinaryScribe::TellStream()
     {
-        // Needs to end on the else, or suffer the wrath of COMPILER WARNINGS
         if (GetDirection() == Direction::OUTPUT)
             return file.out->TellStream();
         else
             return file.in->TellStream();
     }
 
-    BinaryScribe::StreamPos BinaryScribe::GetPostHeaderPosition() const
+    BinaryScribe::StreamPosition BinaryScribe::GetPostHeaderPosition() const
     {
         return postHeaderPosition;
     }

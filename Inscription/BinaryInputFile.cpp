@@ -11,12 +11,12 @@ namespace Inscription
         stream.read(buffer.value, buffer.size);
     }
 
-    void BinaryInputFile::SeekStream(StreamPos pos)
+    void BinaryInputFile::SeekStream(StreamPosition pos)
     {
         stream.seekg(pos);
     }
 
-    BinaryInputFile::StreamPos BinaryInputFile::TellStream()
+    BinaryInputFile::StreamPosition BinaryInputFile::TellStream()
     {
         return stream.tellg();
     }

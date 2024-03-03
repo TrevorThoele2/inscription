@@ -80,17 +80,17 @@ namespace Inscription
         SeekStream(GetPostHeaderPosition());
     }
 
-    Scribe::Scribe(Direction direction) : direction(direction), polyManager(direction)
+    Scribe::Scribe(Direction direction) : direction(direction), pointerManager(direction)
     {
-        polyManager.Fill(*this);
+        pointerManager.Fill(*this);
     }
 
-    Scribe::Scribe(Scribe &&arg) : polyManager(std::move(arg.polyManager)), direction(arg.direction), trackers(std::move(arg.trackers))
+    Scribe::Scribe(Scribe &&arg) : pointerManager(std::move(arg.pointerManager)), direction(arg.direction), trackers(std::move(arg.trackers))
     {}
 
     Scribe& Scribe::operator=(Scribe &&arg)
     {
-        polyManager = std::move(arg.polyManager);
+        pointerManager = std::move(arg.pointerManager);
         direction = arg.direction;
         trackers = std::move(arg.trackers);
         return *this;

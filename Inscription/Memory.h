@@ -8,14 +8,14 @@ namespace Inscription
     template<class T, class Delete>
     void Save(Scribe &scribe, const std::unique_ptr<T, Delete> &obj)
     {
-        scribe.Save(obj.get());
+        scribe.SaveOwningPointer(obj.get());
     }
 
     template<class T, class Delete>
     void Load(Scribe &scribe, std::unique_ptr<T, Delete> &obj)
     {
         T *ptr = nullptr;
-        scribe.Load(ptr);
+        scribe.LoadOwningPointer(ptr);
         obj.reset(ptr);
     }
 

@@ -7,64 +7,48 @@
 #include <unordered_set>
 
 #include "TrackerID.h"
-#include "TrackingTraits.h"
 #include "TypeTable.h"
 #include "Const.h"
 
+#include "RegisteredTypeNotFoundException.h"
+
 namespace Inscription
 {
-    namespace detail
-    {
-        // The definition is moved down below TrackingGroup
-        class TrackerInstancer
-        {
-        private:
-            template<class T>
-            struct Type
-            {
-                static Type instance;
-
-                Type()
-                {
-                    (void)this;
-                    TrackerInstancer::Instance().types.push_back(typeid(T));
-                }
-
-                Type(const Type &arg) = delete;
-                Type& operator=(const Type &arg) = delete;
-            };
-        private:
-            std::vector<std::type_index> types;
-
-            TrackerInstancer() { (void)this; }
-            TrackerInstancer(const TrackerInstancer &arg) = delete;
-            TrackerInstancer& operator=(const TrackerInstancer &arg) = delete;
-        public:
-            static TrackerInstancer& Instance();
-            template<class Group>
-            static void Push(Group &group);
-            template<class T>
-            static void Enable(std::true_type);
-            template<class T>
-            static void Enable(std::false_type) {}
-        };
-    }
-
     class TrackingEntry
     {
     public:
         typedef TrackerID ID;
-    private:
-        ID id;
-        void *obj;
+    public:
+        const ID id;
+        void* obj;
+        bool hasBeenSerialized;
     public:
         TrackingEntry();
         TrackingEntry(ID id, void *obj);
         TrackingEntry(const TrackingEntry &arg);
-        TrackingEntry& operator=(const TrackingEntry &arg);
-        ID GetID();
-        void* Get();
-        const void* Get() const;
+    };
+
+    class TrackingLookAheadEntry
+    {
+    public:
+        void** position;
+    public:
+        TrackingLookAheadEntry(void** position);
+    };
+
+    class TrackingLookAheadGroup
+    {
+    public:
+        typedef std::vector<TrackingLookAheadEntry> List;
+    public:
+        List list;
+    public:
+        TrackingLookAheadGroup() = default;
+        TrackingLookAheadGroup(const TrackingLookAheadGroup& arg) = default;
+        TrackingLookAheadGroup(TrackingLookAheadGroup&& arg);
+
+        TrackingLookAheadGroup& operator=(const TrackingLookAheadGroup& arg) = default;
+        TrackingLookAheadGroup& operator=(TrackingLookAheadGroup&& arg);
     };
 
     class Tracker
@@ -72,20 +56,6 @@ namespace Inscription
     public:
         typedef TrackerID ID;
         typedef TrackingEntry Entry;
-    private:
-        typedef std::unordered_map<ID, Entry> Map;
-        typedef typename Map::iterator iterator;
-
-        typedef std::unordered_map<const void*, iterator> Checker;
-        typedef std::unordered_map<const void*, iterator> Section;
-    private:
-        Map map;
-        Checker checker;
-
-        Section section;
-
-        std::pair<bool, Entry&> Add(ID id, void *add, bool section);
-        ID NextID() const;
     public:
         Tracker() = default;
         Tracker(const Tracker &arg) = default;
@@ -93,13 +63,43 @@ namespace Inscription
         Tracker& operator=(const Tracker &arg) = default;
         Tracker& operator=(Tracker &&arg);
 
-        std::pair<bool, Entry&> Add(void *add, bool section);
+        ID Add(void *add, bool section);
+        ID Add(void *add, bool section, ID id);
+        void AddLookAhead(void** position);
+
         void ReplaceObject(void *here, void *newObj, bool section);
-        Entry* Find(void *find);
+        Entry* Find(const void *find);
+        const Entry* Find(const void *find) const;
         Entry* Find(ID id);
+        const Entry* Find(ID id) const;
         void Clear();
 
         void ClearSection(bool deleteEntries);
+    private:
+        typedef std::unordered_map<ID, Entry> Map;
+        typedef typename Map::iterator iterator;
+        typedef typename Map::const_iterator const_iterator;
+
+        typedef TrackingLookAheadGroup LookAheadGroup;
+        typedef std::unordered_map<ID, LookAheadGroup> LookAheadMap;
+
+        typedef std::unordered_map<const void*, iterator> Checker;
+        typedef std::unordered_map<const void*, iterator> Section;
+    private:
+        Map map;
+        Checker checker;
+
+        LookAheadMap lookAheads;
+
+        Section section;
+    private:
+        bool IsTracking(const void* obj) const;
+    private:
+        void AddLookAhead(void** position, ID id);
+        LookAheadMap::iterator FindLookAheadList(ID id);
+        void LinkLookAheads(void* toObj, ID id);
+    private:
+        ID NextID() const;
     };
 
     class TrackerGroup
@@ -107,14 +107,6 @@ namespace Inscription
     public:
         typedef TrackerID ID;
         static constexpr ID nullID = 0;
-    private:
-        typedef TypeTable<Tracker> Table;
-        friend detail::TrackerInstancer;
-    private:
-        bool active;
-        Table table;
-
-        bool usingSection;
     public:
         TrackerGroup();
         TrackerGroup(const TrackerGroup &arg) = default;
@@ -124,20 +116,23 @@ namespace Inscription
         void SetActive(bool set = true);
         bool IsActive() const;
 
-        // Returns true in first if the entry is unique (hasn't been added previously)
         template<class T>
-        std::pair<bool, Tracker::Entry*> Add(T *add);
-        std::pair<bool, Tracker::Entry*> Add(void *add, const std::type_index &type, std::true_type);
-        std::pair<bool, Tracker::Entry*> Add(void *add, const std::type_index &type, std::false_type);
+        ID Add(T* add);
+        ID Add(void* add, const std::type_index& type);
+        template<class T>
+        void AddLookAhead(T** add);
+
+        template<class T>
+        void SignalSerialized(T* serialized);
+        template<class T>
+        bool HasBeenSerialized(T* serialized);
 
         template<class T>
         bool IsTypeInside() const;
         template<class T>
-        static void AttemptEnableSelectiveTracking();
+        T* FindObject(ID id);
         template<class T>
-        static void AttemptEnableAlwaysTracking();
-        template<class T>
-        T* Find(ID id);
+        ID FindID(T* obj);
         template<class T>
         void ReplaceObject(T &here, T &newObj);
 
@@ -146,18 +141,69 @@ namespace Inscription
         void StartSection();
         void StopSection();
         void ClearSection();
+    private:
+        typedef TypeTable<Tracker> Table;
+    private:
+        bool active;
+        Table table;
+
+        bool usingSection;
+    private:
+        template<class T>
+        TrackingEntry* FindEntry(ID id);
+        template<class T>
+        TrackingEntry* FindEntry(T* obj);
+    private:
+        friend class RegisteredTypes;
     };
 
     template<class T>
-    std::pair<bool, Tracker::Entry*> TrackerGroup::Add(T *add)
+    TrackerGroup::ID TrackerGroup::Add(T *add)
     {
-        AttemptEnableAlwaysTracking<T>();
-
         if (!add)
-            return std::pair<bool, Tracker::Entry*>(false, nullptr);
+            return nullID;
 
-        // Only add this object if the object's type trait is not set to never track
-        return Add(RemoveConst(add), typeid(*add), std::integral_constant<bool, TrackPointer<typename std::remove_cv<T>::type>::value != TRACK_NEVER>{});
+        if (!IsTypeInside<T>())
+            return nullID;
+
+        return Add(RemoveConst(add), typeid(*add));
+    }
+
+    template<class T>
+    void TrackerGroup::AddLookAhead(T** add)
+    {
+        if (!add)
+            return;
+
+        // Find the tracker
+        auto found = table.Find(typeid(T));
+        if (!found)
+            return;
+
+        if (!IsActive())
+            return;
+
+        found->AddLookAhead(reinterpret_cast<void**>(add));
+    }
+
+    template<class T>
+    void TrackerGroup::SignalSerialized(T* serialized)
+    {
+        auto found = FindEntry(serialized);
+        if (!found)
+            return;
+
+        found->hasBeenSerialized = true;
+    }
+
+    template<class T>
+    bool TrackerGroup::HasBeenSerialized(T* serialized)
+    {
+        auto found = FindEntry(serialized);
+        if (!found)
+            return false;
+
+        return found->hasBeenSerialized;
     }
 
     template<class T>
@@ -167,33 +213,29 @@ namespace Inscription
     }
 
     template<class T>
-    void TrackerGroup::AttemptEnableSelectiveTracking()
-    {
-        // Enable tracking if object's tracking trait is selectively and is not abstract
-        detail::TrackerInstancer::Enable<T>(std::integral_constant<bool, !std::is_abstract<T>::value && (TrackPointer<typename std::remove_cv<T>::type>::value == TRACK_SELECTIVELY)>::type());
-    }
-
-    template<class T>
-    void TrackerGroup::AttemptEnableAlwaysTracking()
-    {
-        detail::TrackerInstancer::Enable<typename std::remove_cv<T>::type>(std::integral_constant<bool, TrackPointer<typename std::remove_cv<T>::type>::value == TRACK_ALWAYS>::type());
-    }
-
-    template<class T>
-    T* TrackerGroup::Find(ID id)
+    T* TrackerGroup::FindObject(ID id)
     {
         if (id == nullID)
             return nullptr;
 
-        auto tableFound = table.Find(std::type_index(typeid(T)));
-        if (!tableFound)
-            return nullptr;
-
-        auto found = tableFound->Find(id);
+        auto found = FindEntry<T>(id);
         if (found)
-            return static_cast<T*>(found->Get());
+            return static_cast<T*>(found->obj);
         else
             return nullptr;
+    }
+
+    template<class T>
+    TrackerGroup::ID TrackerGroup::FindID(T* obj)
+    {
+        if (!obj)
+            return nullID;
+
+        auto found = FindEntry(obj);
+        if (found)
+            return found->id;
+        else
+            return nullID;
     }
 
     template<class T>
@@ -209,6 +251,26 @@ namespace Inscription
         tableFound->ReplaceObject(&here, &newObj, usingSection);
     }
 
+    template<class T>
+    TrackingEntry* TrackerGroup::FindEntry(ID id)
+    {
+        auto tableFound = table.Find(std::type_index(typeid(T)));
+        if (!tableFound)
+            return nullptr;
+
+        return tableFound->Find(id);
+    }
+
+    template<class T>
+    TrackingEntry* TrackerGroup::FindEntry(T* obj)
+    {
+        auto tableFound = table.Find(std::type_index(typeid(T)));
+        if (!tableFound)
+            return nullptr;
+
+        return tableFound->Find(obj);
+    }
+
     class Scribe;
     class TrackingChangerStack
     {
@@ -220,23 +282,4 @@ namespace Inscription
         TrackingChangerStack(Scribe &scribe, bool changeTo);
         ~TrackingChangerStack();
     };
-
-    namespace detail
-    {
-        template<class T>
-        TrackerInstancer::Type<T> TrackerInstancer::Type<T>::instance;
-
-        template<class Group>
-        void TrackerInstancer::Push(Group &group)
-        {
-            for (auto &loop : Instance().types)
-                group.table.Add(::Inscription::Tracker(), loop);
-        }
-
-        template<class T>
-        void TrackerInstancer::Enable(std::true_type)
-        {
-            Type<T>::instance;
-        }
-    }
 }

@@ -7,8 +7,6 @@
     #include <cstdint>
 #endif
 
-#include "TrackingTraits.h"
-
 namespace Inscription
 {
     class Scribe;
@@ -38,8 +36,4 @@ namespace Inscription
         ContainerSize operator--(int);
         ValueT Get() const;
     };
-
-    template<>
-    struct TrackPointer<ContainerSize>
-    { static constexpr TrackEnum value = TRACK_NEVER; };
 }

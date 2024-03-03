@@ -16,8 +16,8 @@ namespace Inscription
         template<class T>
         void WriteData(const T var);
 
-        void SeekStream(StreamPos pos);
-        StreamPos TellStream();
+        void SeekStream(StreamPosition pos);
+        StreamPosition TellStream();
     };
 
     template<class T>
