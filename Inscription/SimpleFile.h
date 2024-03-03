@@ -16,7 +16,7 @@ namespace Inscription
     public:
         virtual ~SimpleFile() = 0;
 
-        [[nodiscard]] bool IsAtEndOfFile() const;
+        [[nodiscard]] bool IsAtEndOfFile();
     protected:
         // This constructor will not open the stream automatically
         // Be sure to ChangeMode into something that actually makes sense
@@ -51,8 +51,8 @@ namespace Inscription
     SimpleFile<T>::~SimpleFile() = default;
 
     template<class T>
-    bool SimpleFile<T>::IsAtEndOfFile() const
+    bool SimpleFile<T>::IsAtEndOfFile()
     {
-        return this->stream.eof();
+        return this->stream.peek() == -1;
     }
 }

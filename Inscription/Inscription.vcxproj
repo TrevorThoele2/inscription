@@ -88,7 +88,7 @@
     <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Users\Trevor\Documents\wxWidgets\lib\vc_lib\mswud;C:\Users\Trevor\Documents\wxWidgets\include;C:\Users\Trevor\Documents\Ogg\Built\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\SailSerialization;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\GUI;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Engine;C:\Users\Trevor\Documents\Visual Studio 2013\Projects\Affecter;$(IncludePath)</IncludePath>
@@ -138,6 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
