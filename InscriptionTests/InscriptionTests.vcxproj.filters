@@ -30,6 +30,9 @@
     <Filter Include="Source Files\Tests\Text">
       <UniqueIdentifier>{267ab06a-6586-42ac-bc85-0cdf9feade2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tests\Tracking">
+      <UniqueIdentifier>{7a408f56-fe2c-42cb-8027-303acf5f4e05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -113,6 +116,9 @@
     <ClCompile Include="BinaryEnumTests.cpp">
       <Filter>Source Files\Tests\Binary</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectTrackingTests.cpp">
+      <Filter>Source Files\Tests\Tracking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="InscriptionTests.runsettings" />
@@ -122,6 +128,9 @@
       <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
     <ClInclude Include="TextFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralFixture.h">
       <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
   </ItemGroup>

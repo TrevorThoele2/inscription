@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GeneralFixture.h"
+
 #include <TestFramework/DataGeneration.h>
 
 #include <Inscription/OutputTextArchive.h>
@@ -7,11 +9,9 @@
 
 #include <Inscription/Access.h>
 
-class TextFixture
+class TextFixture : public GeneralFixture
 {
 public:
-    ::TestFramework::DataGeneration dataGeneration;
-
     using OutputArchive = ::Inscription::OutputTextArchive;
     using InputArchive = ::Inscription::InputTextArchive;
 

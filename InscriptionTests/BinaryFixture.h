@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TestFramework/DataGeneration.h>
+#include "GeneralFixture.h"
 
 #include <Inscription/TypeRegistrationContext.h>
 
@@ -9,11 +9,9 @@
 
 #include <Inscription/Access.h>
 
-class BinaryFixture
+class BinaryFixture : public GeneralFixture
 {
 public:
-    ::TestFramework::DataGeneration dataGeneration;
-
     using TypeRegistrationContext = ::Inscription::TypeRegistrationContext<::Inscription::BinaryArchive>;
     TypeRegistrationContext typeRegistrationContext;
 

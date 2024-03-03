@@ -9,6 +9,7 @@ namespace Inscription
     public:
         using ID = TrackingID;
         const ID id = 0;
+        bool hasSavedConstruction = false;
     public:
         virtual ~ObjectTrackerEntryBase() = 0;
 
@@ -17,5 +18,7 @@ namespace Inscription
         ObjectTrackerEntryBase() = default;
         ObjectTrackerEntryBase(ID id);
         ObjectTrackerEntryBase(const ObjectTrackerEntryBase& arg) = default;
+
+        ObjectTrackerEntryBase& operator=(const ObjectTrackerEntryBase& arg);
     };
 }

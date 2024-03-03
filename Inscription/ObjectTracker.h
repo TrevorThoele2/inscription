@@ -29,13 +29,18 @@ namespace Inscription
         bool IsActive() const;
 
         Optional<ID> Add(void* add);
-        Optional<ID> CreateLookahead(size_t memorySize);
+        Optional<ID> CreateLookahead(size_t storageSize);
+        Optional<ID> CreateLookahead(ID id, size_t storageSize);
 
-        void* LookaheadMemory(ID id);
-        void ActualizeLookahead(ID id);
+        void* LookaheadStorage(ID id);
+        void MaterializeLookahead(ID id);
+
+        void SignalSavedConstruction(ID id);
+        bool HasSavedConstruction(ID id) const;
 
         void* FindObject(ID id);
         Optional<ID> FindID(void* object);
+        Optional<ID> FindEntryID(void* object);
         void ReplaceObject(void* here, void* newObject);
 
         void Clear();

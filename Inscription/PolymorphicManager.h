@@ -5,9 +5,12 @@
 #include "ObjectTracker.h"
 #include "TypeTracker.h"
 
-#include "Memory.h"
+#include "Scribe.h"
+
+#include "Storage.h"
 #include "ClassName.h"
 #include "Type.h"
+#include "Const.h"
 
 #include "PolymorphicTypeNotFound.h"
 
@@ -22,6 +25,7 @@ namespace Inscription
         template<class T>
         void SaveConstruction(const T* object, ArchiveT& archive);
         void ConstructFromLoad(void*& storage, const ClassName& className, ArchiveT& archive);
+        void CreateLookahead(const ClassName& className, TrackingID objectID, ArchiveT& archive);
 
         ClassName ClassNameFor(TrackingID type, ArchiveT& archive);
 
@@ -39,9 +43,11 @@ namespace Inscription
 
             void SaveConstruction(const void* object, ArchiveT& archive);
             void ConstructFromLoad(void*& storage, ArchiveT& archive);
+            void CreateLookahead(TrackingID objectID, ArchiveT& archive);
         private:
             std::function<void(const void*, ArchiveT&)> _saveConstruction;
             std::function<void(void*&, ArchiveT&)> _constructFromLoad;
+            std::function<void(TrackingID, ArchiveT&)> _createLookahead;
         };
 
         typedef std::vector<Entry> EntryList;
@@ -75,6 +81,14 @@ namespace Inscription
     }
 
     template<class Archive>
+    void PolymorphicManager<Archive>::CreateLookahead(
+        const ClassName& className, TrackingID objectID, ArchiveT& archive)
+    {
+        auto found = FindRequiredEntry(className);
+        found->CreateLookahead(objectID, archive);
+    }
+
+    template<class Archive>
     ClassName PolymorphicManager<Archive>::ClassNameFor(TrackingID type, ArchiveT& archive)
     {
         auto found = FindRequiredEntry(type);
@@ -94,20 +108,27 @@ namespace Inscription
     PolymorphicManager<Archive>::Entry::Entry(const ClassName& className, TypeTracker& typeTracker, Type<T>) :
         className(className), typeID(typeTracker.Add<T>())
     {
-        using DerivedScribe = Scribe<typename RemoveConstTrait<T>::type, ArchiveT>;
+        using DerivedT = typename RemoveConstTrait<T>::type;
+        using DerivedScribe = Scribe<DerivedT, ArchiveT>;
 
         _saveConstruction = [](const void* object, ArchiveT& archive)
         {
-            auto castedObject = static_cast<const T*>(object);
+            auto castedObject = reinterpret_cast<const T*>(object);
             DerivedScribe::Scriven(RemoveConst(*castedObject), archive);
         };
 
         _constructFromLoad = [](void*& storage, ArchiveT& archive)
         {
             if (!storage)
-                storage = CreateStorage<T>();
+                storage = CreateStorage(sizeof(DerivedT));
 
-            DerivedScribe::Construct(reinterpret_cast<T*>(storage), archive);
+            DerivedT* object = reinterpret_cast<DerivedT*>(storage);
+            DerivedScribe::Construct(object, archive);
+        };
+
+        _createLookahead = [](TrackingID objectID, ArchiveT& archive)
+        {
+            archive.objectTracker.CreateLookahead(objectID, sizeof(DerivedT));
         };
     }
 
@@ -121,6 +142,12 @@ namespace Inscription
     void PolymorphicManager<Archive>::Entry::ConstructFromLoad(void*& storage, ArchiveT& archive)
     {
         return _constructFromLoad(storage, archive);
+    }
+
+    template<class Archive>
+    void PolymorphicManager<Archive>::Entry::CreateLookahead(TrackingID objectID, ArchiveT& archive)
+    {
+        return _createLookahead(objectID, archive);
     }
 
     template<class Archive>

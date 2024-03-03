@@ -271,9 +271,6 @@
     <ClInclude Include="Pointer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTrackerLookaheadEntry.h">
       <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
@@ -282,6 +279,9 @@
     </ClInclude>
     <ClInclude Include="ObjectTrackerEntryBase.h">
       <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

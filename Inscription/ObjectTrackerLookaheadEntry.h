@@ -7,12 +7,18 @@ namespace Inscription
     class ObjectTrackerLookaheadEntry : public ObjectTrackerEntryBase
     {
     public:
-        void* memory = nullptr;
-        size_t memorySize = 0;
+        std::uint8_t* storage = nullptr;
+        size_t storageSize = 0;
     public:
         ObjectTrackerLookaheadEntry() = default;
-        ObjectTrackerLookaheadEntry(ID id, void* memory, size_t memorySize);
+        ObjectTrackerLookaheadEntry(ID id, size_t storageSize);
         ObjectTrackerLookaheadEntry(const ObjectTrackerLookaheadEntry& arg);
+        ObjectTrackerLookaheadEntry(ObjectTrackerLookaheadEntry&& arg);
+
+        ObjectTrackerLookaheadEntry& operator=(const ObjectTrackerLookaheadEntry& arg);
+        ObjectTrackerLookaheadEntry& operator=(ObjectTrackerLookaheadEntry&& arg);
+
+        ~ObjectTrackerLookaheadEntry();
 
         ObjectTrackerLookaheadEntry* Clone() const override;
     };

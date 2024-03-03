@@ -10,13 +10,13 @@ namespace Inscription
     PolymorphicTypeNotFound::PolymorphicTypeNotFound(const ClassName& className) :
         Exception(
             DefaultString() +
-            "ClassName: " + className + ".")
+            " ClassName: " + className + ".")
     {}
 
     PolymorphicTypeNotFound::PolymorphicTypeNotFound(const std::type_index& type) :
         Exception(
             DefaultString() +
-            "Type: " + type.name() + ".")
+            " Type: " + type.name() + ".")
     {}
 
     std::string PolymorphicTypeNotFound::DefaultString()
