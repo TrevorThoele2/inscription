@@ -1,4 +1,5 @@
 #include <catch.hpp>
+#include <utility>
 
 #include "BinaryTableTests.h"
 
@@ -47,8 +48,8 @@ class BinaryTableFixture::CustomConstructionDerived : public Base
 public:
     std::string derivedValue;
 public:
-    CustomConstructionDerived(int baseValue, const std::string& derivedValue) :
-        Base(baseValue), derivedValue(derivedValue)
+    CustomConstructionDerived(int baseValue, std::string derivedValue) :
+        Base(baseValue), derivedValue(std::move(derivedValue))
     {}
 };
 
@@ -72,8 +73,8 @@ public:
     std::string derivedValue;
     long long derivedObjectScrivenValue = 0;
 public:
-    ObjectScrivenDerived(int baseValue, const std::string& derivedValue) :
-        ObjectScrivenBase(baseValue), derivedValue(derivedValue)
+    ObjectScrivenDerived(int baseValue, std::string derivedValue) :
+        ObjectScrivenBase(baseValue), derivedValue(std::move(derivedValue))
     {}
 };
 
@@ -85,8 +86,8 @@ public:
     DefaultConstructionDerived() : Base(0)
     {}
 
-    DefaultConstructionDerived(int baseValue, const std::string& derivedValue) :
-        Base(baseValue), derivedValue(derivedValue)
+    DefaultConstructionDerived(int baseValue, std::string derivedValue) :
+        Base(baseValue), derivedValue(std::move(derivedValue))
     {}
 };
 
@@ -108,13 +109,13 @@ public:
 
 BinaryTableFixture::TableConstructionBase::~TableConstructionBase() = default;
 
-class BinaryTableFixture::TableConstructionDerived : public BinaryTableFixture::TableConstructionBase
+class BinaryTableFixture::TableConstructionDerived : public TableConstructionBase
 {
 public:
     std::string derivedValue;
 public:
-    TableConstructionDerived(int baseValue, const std::string& derivedValue) :
-        TableConstructionBase(baseValue), derivedValue(derivedValue)
+    TableConstructionDerived(int baseValue, std::string derivedValue) :
+        TableConstructionBase(baseValue), derivedValue(std::move(derivedValue))
     {}
 
     TableConstructionDerived(const ::Inscription::BinaryTableData<TableConstructionDerived>& data) :
@@ -122,7 +123,7 @@ public:
     {}
 };
 
-class BinaryTableFixture::UsingEntriesDerived : public BinaryTableFixture::Base
+class BinaryTableFixture::UsingEntriesDerived : public Base
 {
 public:
     NonDefault derivedValue;
@@ -136,7 +137,7 @@ public:
     {}
 };
 
-class BinaryTableFixture::UsingEntryPointerDerived : public BinaryTableFixture::Base
+class BinaryTableFixture::UsingEntryPointerDerived : public Base
 {
 public:
     NonDefault* derivedValue;
@@ -158,7 +159,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 {
     GIVEN("saved default construction object")
     {
-        DefaultConstructionDerived saved = dataGeneration.RandomStack<DefaultConstructionDerived, int, std::string>();
+        auto saved = dataGeneration.RandomStack<DefaultConstructionDerived, int, std::string>();
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -185,7 +186,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     GIVEN("saved default construction pointer")
     {
         Base* saved = dataGeneration.RandomHeap<DefaultConstructionDerived, int, std::string>();
-        DefaultConstructionDerived* savedCasted = dynamic_cast<DefaultConstructionDerived*>(saved);
+        auto savedCasted = dynamic_cast<DefaultConstructionDerived*>(saved);
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -203,7 +204,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                DefaultConstructionDerived* loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
@@ -243,7 +244,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     GIVEN("saved custom construction pointer")
     {
         Base* saved = dataGeneration.RandomHeap<CustomConstructionDerived, int, std::string>();
-        CustomConstructionDerived* savedCasted = dynamic_cast<CustomConstructionDerived*>(saved);
+        auto savedCasted = dynamic_cast<CustomConstructionDerived*>(saved);
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -261,7 +262,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                CustomConstructionDerived* loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
@@ -274,7 +275,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
     GIVEN("saved table construction override object")
     {
-        TableConstructionDerived saved = dataGeneration.RandomStack<TableConstructionDerived, int, std::string>();
+        auto saved = dataGeneration.RandomStack<TableConstructionDerived, int, std::string>();
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -301,7 +302,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     SECTION("saved table construction override pointer")
     {
         TableConstructionBase* saved = dataGeneration.RandomHeap<TableConstructionDerived, int, std::string>();
-        TableConstructionDerived* savedCasted = dynamic_cast<TableConstructionDerived*>(saved);
+        auto savedCasted = dynamic_cast<TableConstructionDerived*>(saved);
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -319,7 +320,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                TableConstructionDerived* loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
@@ -363,7 +364,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     GIVEN("saved ObjectScriven overidden pointer")
     {
         ObjectScrivenBase* saved = dataGeneration.RandomHeap<ObjectScrivenDerived, int, std::string>();
-        ObjectScrivenDerived* savedCasted = dynamic_cast<ObjectScrivenDerived*>(saved);
+        auto savedCasted = dynamic_cast<ObjectScrivenDerived*>(saved);
 
         savedCasted->baseObjectScrivenValue = dataGeneration.Generator<short>().Random();
         savedCasted->derivedObjectScrivenValue = dataGeneration.Generator<long long>().Random();
@@ -384,7 +385,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                ObjectScrivenDerived* loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->baseObjectScrivenValue == savedCasted->baseObjectScrivenValue);
@@ -426,7 +427,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
     SECTION("saved object using entries through pointer")
     {
         Base* saved = dataGeneration.RandomHeap<UsingEntriesDerived, int, std::string>();
-        UsingEntriesDerived* savedCasted = dynamic_cast<UsingEntriesDerived*>(saved);
+        auto savedCasted = dynamic_cast<UsingEntriesDerived*>(saved);
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -444,7 +445,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                UsingEntriesDerived* loadedCasted = dynamic_cast<UsingEntriesDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<UsingEntriesDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
@@ -490,7 +491,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
         auto savedSource = dataGeneration.RandomStack<UsingEntriesDerived, int, std::string>();
 
         Base* saved = new UsingEntryPointerDerived(dataGeneration.Random<int>(), &savedSource.derivedValue);
-        UsingEntryPointerDerived* savedCasted = dynamic_cast<UsingEntryPointerDerived*>(saved);
+        auto savedCasted = dynamic_cast<UsingEntryPointerDerived*>(saved);
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
@@ -511,7 +512,7 @@ SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 
             THEN("is valid")
             {
-                UsingEntryPointerDerived* loadedCasted = dynamic_cast<UsingEntryPointerDerived*>(loaded);
+                auto loadedCasted = dynamic_cast<UsingEntryPointerDerived*>(loaded);
                 REQUIRE(loadedCasted != nullptr);
                 REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
                 REQUIRE(loadedCasted->derivedValue == &loadedSource.derivedValue);
