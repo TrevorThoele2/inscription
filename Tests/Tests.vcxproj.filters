@@ -97,6 +97,9 @@
     <ClCompile Include="ArchiveTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="VariantTests.cpp">
+      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextFixture.h">

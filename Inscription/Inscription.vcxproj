@@ -277,6 +277,7 @@
     <ClInclude Include="UnorderedMultimapScribe.h" />
     <ClInclude Include="UnorderedMultisetScribe.h" />
     <ClInclude Include="UnorderedSetScribe.h" />
+    <ClInclude Include="VariantScribe.h" />
     <ClInclude Include="VectorScribe.h" />
     <ClInclude Include="VerifyNonConst.h" />
     <ClInclude Include="Version.h" />
