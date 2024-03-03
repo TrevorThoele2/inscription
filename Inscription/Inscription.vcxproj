@@ -135,6 +135,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -187,7 +188,7 @@
     <ClInclude Include="ArrayScribe.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="BaseScriven.h" />
-    <ClInclude Include="BaseTableDataEntry.h" />
+    <ClInclude Include="BaseTableDataLink.h" />
     <ClInclude Include="BufferScribe.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="EnumScribe.h" />
@@ -249,8 +250,9 @@
     <ClInclude Include="TableBase.h" />
     <ClInclude Include="TableData.h" />
     <ClInclude Include="TableDataBase.h" />
+    <ClInclude Include="TableDataEntry.h" />
     <ClInclude Include="TableScribe.h" />
-    <ClInclude Include="AutoTableDataEntry.h" />
+    <ClInclude Include="AutoTableDataLink.h" />
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />

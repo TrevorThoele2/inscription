@@ -2,12 +2,11 @@
 
 #include <string>
 
-#include "Scribe.h"
-
 #include "BinaryArchive.h"
-#include "ObjectTrackingTraits.h"
 
 #include "VerifyNonConst.h"
+
+#include <Chroma/IsBracesConstructible.h>
 
 namespace Inscription
 {
@@ -18,6 +17,8 @@ namespace Inscription
         using ObjectT = Object;
         using ArchiveT = Archive;
     public:
+        virtual ~ScribeBase() = 0;
+    public:
         virtual void Scriven(ObjectT& object, ArchiveT& archive);
     protected:
         ScribeBase() = default;
@@ -27,6 +28,10 @@ namespace Inscription
     private:
         VERIFY_NON_CONST(ObjectT);
     };
+
+    template<class Object, class Archive>
+    ScribeBase<Object, Archive>::~ScribeBase()
+    {}
 
     template<class Object, class Archive>
     void ScribeBase<Object, Archive>::Scriven(ObjectT& object, ArchiveT& archive)
@@ -41,6 +46,8 @@ namespace Inscription
         using ObjectT = Object;
         using ArchiveT = BinaryArchive;
     public:
+        virtual ~ScribeBase() = default;
+    public:
         virtual void Scriven(ObjectT& object, ArchiveT& archive);
         virtual void Construct(ObjectT* storage, ArchiveT& archive);
     protected:
@@ -52,8 +59,18 @@ namespace Inscription
 
         void DoBasicConstruction(ObjectT* storage, ArchiveT& archive);
     private:
-        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive, std::true_type);
-        void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive, std::false_type);
+        template<
+            class U,
+            std::enable_if_t<!std::is_abstract_v<U> && ::Chroma::is_braces_default_constructible_v<U>, int> = 0>
+        void BasicConstructionImplementation(U* storage, ArchiveT& archive);
+        template<
+            class U,
+            std::enable_if_t<!std::is_abstract_v<U> && !::Chroma::is_braces_default_constructible_v<U>, int> = 0>
+        void BasicConstructionImplementation(U* storage, ArchiveT& archive);
+        template<
+            class U,
+            std::enable_if_t<std::is_abstract_v<U>, int> = 0>
+            void BasicConstructionImplementation(U* storage, ArchiveT& archive);
     private:
         VERIFY_NON_CONST(ObjectT);
     };
@@ -73,23 +90,34 @@ namespace Inscription
     template<class Object>
     void ScribeBase<Object, BinaryArchive>::DoBasicConstruction(ObjectT* storage, ArchiveT& archive)
     {
-        BasicConstructionImplementation(storage, archive,
-            std::bool_constant<!std::is_abstract_v<ObjectT> && std::is_default_constructible_v<ObjectT>>{});
+        BasicConstructionImplementation(storage, archive);
     }
 
     template<class Object>
-    void ScribeBase<Object, BinaryArchive>::BasicConstructionImplementation(
-        ObjectT* storage, ArchiveT& archive, std::true_type)
+    template<
+        class U,
+        std::enable_if_t<!std::is_abstract_v<U> && ::Chroma::is_braces_default_constructible_v<U>, int>>
+    void ScribeBase<Object, BinaryArchive>::BasicConstructionImplementation(U* storage, ArchiveT& archive)
     {
-        static_assert(std::is_default_constructible_v<ObjectT>,
-            "Basic construction of this object requires a default constructor. "
-            "Define it or override ConstructImplementation for this Scribe.");
-        new (storage) ObjectT();
+        new (storage) ObjectT{};
         Scriven(*storage, archive);
     }
 
     template<class Object>
-    void ScribeBase<Object, BinaryArchive>::BasicConstructionImplementation(
-        ObjectT* storage, ArchiveT& archive, std::false_type)
+    template<
+        class U,
+        std::enable_if_t<!std::is_abstract_v<U> && !::Chroma::is_braces_default_constructible_v<U>, int>>
+    void ScribeBase<Object, BinaryArchive>::BasicConstructionImplementation(U* storage, ArchiveT& archive)
+    {
+        static_assert(false,
+            "Basic construction of this object requires a default constructor. "
+            "Define it or override ConstructImplementation for this Scribe.");
+    }
+
+    template<class Object>
+    template<
+        class U,
+        std::enable_if_t<std::is_abstract_v<U>, int>>
+    void ScribeBase<Object, BinaryArchive>::BasicConstructionImplementation(U* storage, ArchiveT& archive)
     {}
 }

@@ -5,9 +5,11 @@
 
 #include "TableData.h"
 #include "TableDataBase.h"
-#include "AutoTableDataEntry.h"
+#include "AutoTableDataLink.h"
 
 #include "Scribe.h"
+
+#include <Chroma/IsBracesConstructible.h>
 
 namespace Inscription
 {
@@ -30,6 +32,10 @@ namespace Inscription
 
         void PushToObject(ObjectT& object, ArchiveT& archive);
         void PullFromObject(ObjectT& object, ArchiveT& archive);
+    public:
+        virtual ~TableBase() = 0;
+    protected:
+        TableBase() {};
     protected:
         virtual void ScrivenImplementation(ArchiveT& archive);
         virtual void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive);
@@ -38,26 +44,31 @@ namespace Inscription
         virtual void PushToObjectImplementation(ObjectT& object, ArchiveT& archive);
         virtual void PullFromObjectImplementation(ObjectT& object, ArchiveT& archive);
     protected:
-        using DataEntry = AutoTableDataEntry<TableBase, ObjectT, ArchiveT>;
-        using DataEntryList = std::vector<DataEntry>;
-        void AddDataEntry(DataEntry&& entry);
-        void MergeDataEntries(DataEntryList&& entries);
+        using DataLink = AutoTableDataLink<TableBase, ObjectT, ArchiveT>;
+        using DataLinkList = std::vector<DataLink>;
+        void AddDataLink(DataLink&& link);
+        void MergeDataLinks(DataLinkList&& links);
     protected:
         void DoBasicConstruction(ObjectT* storage, ArchiveT& archive);
     private:
-        DataEntryList dataEntryList;
+        DataLinkList dataEntryList;
     private:
         template<class T>
-        constexpr static bool shouldDefaultConstruct = !std::is_abstract_v<T> && std::is_default_constructible_v<T>;
+        constexpr static bool shouldDefaultConstruct =
+            !std::is_abstract_v<T> &&
+            ::Chroma::is_braces_default_constructible_v<T>;
         template<class T>
-        constexpr static bool shouldDataConstruct = !std::is_abstract_v<T> && !std::is_default_constructible_v<T>;
+        constexpr static bool shouldDataConstruct =
+            !std::is_abstract_v<T> &&
+            !::Chroma::is_braces_default_constructible_v<T>;
         template<class T>
-        constexpr static bool shouldIgnoreConstruct = std::is_abstract_v<T>;
+        constexpr static bool shouldIgnoreConstruct =
+            std::is_abstract_v<T>;
 
         template<class T, std::enable_if_t<shouldDefaultConstruct<T>, int> = 0>
         void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
         {
-            new (storage) ObjectT();
+            new (storage) ObjectT{};
         }
 
         template<class T, std::enable_if_t<shouldDataConstruct<T>, int> = 0>
@@ -70,13 +81,13 @@ namespace Inscription
         void BasicConstructionImplementation(ObjectT* storage, ArchiveT& archive)
         {}
 
-        template<class T, std::enable_if_t<std::is_constructible_v<T, const DataT&>, int> = 0>
+        template<class T, std::enable_if_t<Chroma::is_braces_constructible_v<T, const DataT&>, int> = 0>
         static void DataConstructionImplementation(ObjectT* storage, DataT& data)
         {
-            new (storage) ObjectT(data);
+            new (storage) ObjectT{ data };
         }
 
-        template<class T, std::enable_if_t<!std::is_constructible_v<T, const DataT&>, int> = 0>
+        template<class T, std::enable_if_t<!Chroma::is_braces_constructible_v<T, const DataT&>, int> = 0>
         static void DataConstructionImplementation(ObjectT* storage, DataT& table)
         {
             static_assert(
@@ -106,6 +117,8 @@ namespace Inscription
         for (auto& loop : dataEntryList)
             loop.ObjectScriven(*this, object, archive);
 
+        archive.AttemptTrackObject(&object);
+
         ObjectScrivenImplementation(object, archive);
     }
 
@@ -133,6 +146,10 @@ namespace Inscription
         PullFromObjectImplementation(object, archive);
     }
 
+    template <class Object, class Archive>
+    TableBase<Object, Archive>::~TableBase()
+    {}
+
     template<class Object, class Archive>
     void TableBase<Object, Archive>::ScrivenImplementation(
         ArchiveT& archive)
@@ -158,19 +175,19 @@ namespace Inscription
     {}
 
     template<class Object, class Archive>
-    void TableBase<Object, Archive>::AddDataEntry(DataEntry&& entry)
+    void TableBase<Object, Archive>::AddDataLink(DataLink&& link)
     {
-        dataEntryList.push_back(std::move(entry));
+        dataEntryList.push_back(std::move(link));
     }
 
     template<class Object, class Archive>
-    void TableBase<Object, Archive>::MergeDataEntries(DataEntryList&& entries)
+    void TableBase<Object, Archive>::MergeDataLinks(DataLinkList&& links)
     {
         dataEntryList.insert(
             dataEntryList.end(),
-            std::make_move_iterator(entries.begin()),
-            std::make_move_iterator(entries.end()));
-        entries.clear();
+            std::make_move_iterator(links.begin()),
+            std::make_move_iterator(links.end()));
+        links.clear();
     }
 
     template<class Object, class Archive>

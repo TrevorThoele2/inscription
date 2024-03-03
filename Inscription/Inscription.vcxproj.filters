@@ -238,14 +238,8 @@
     <ClInclude Include="TableBase.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
     </ClInclude>
-    <ClInclude Include="AutoTableDataEntry.h">
-      <Filter>Header Files\Scribe\Base\Table\Entry</Filter>
-    </ClInclude>
     <ClInclude Include="NullTableData.h">
       <Filter>Header Files\Scribe\Base\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseTableDataEntry.h">
-      <Filter>Header Files\Scribe\Base\Table\Entry</Filter>
     </ClInclude>
     <ClInclude Include="RelativeFilePathScribe.h">
       <Filter>Header Files\Scribe\Types\Chroma</Filter>
@@ -276,6 +270,15 @@
     </ClInclude>
     <ClInclude Include="ObjectTrackingTraits.h">
       <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoTableDataLink.h">
+      <Filter>Header Files\Scribe\Base\Table\Link</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTableDataLink.h">
+      <Filter>Header Files\Scribe\Base\Table\Link</Filter>
+    </ClInclude>
+    <ClInclude Include="TableDataEntry.h">
+      <Filter>Header Files\Scribe\Base\Table\Entry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -405,11 +408,14 @@
     <Filter Include="Header Files\Scribe\Base\Table">
       <UniqueIdentifier>{48b3ce0f-1150-4bbd-a964-f07481127ef6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scribe\Base\Table\Entry">
-      <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Types\Base">
       <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Base\Table\Link">
+      <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Base\Table\Entry">
+      <UniqueIdentifier>{1e4ca7dd-787d-4c6b-a2c2-3d2e7e3a0b34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
