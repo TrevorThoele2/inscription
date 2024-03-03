@@ -1,27 +1,26 @@
 #include <catch.hpp>
 
-#include <Inscription/TupleScribe.h>
-#include <Inscription/StringScribe.h>
+#include <Inscription/StreamPositionScribe.h>
 
 #include "BinaryFixture.h"
 
-class TupleTestsFixture : public BinaryFixture
+class StreamPositionFixture : public BinaryFixture
 {};
 
-SCENARIO_METHOD(TupleTestsFixture, "tuple loads after saving", "[binary][std][tuple]")
+SCENARIO_METHOD(StreamPositionFixture, "stream position loads after save", "[binary][std][streamposition]")
 {
-    using TestedObject = std::tuple<int, std::string, unsigned short>;
+    using TestedObject = Inscription::StreamPosition;
 
-    GIVEN("saved tuple")
+    GIVEN("saved stream position")
     {
-        auto saved = dataGeneration.RandomStack<TestedObject, int, std::string, unsigned short>();
+        auto saved = TestedObject(dataGeneration.Random<unsigned long long>());
 
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
             outputArchive(saved);
         }
 
-        WHEN("loading tuple")
+        WHEN("loading")
         {
             TestedObject loaded;
 

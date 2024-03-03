@@ -8,11 +8,11 @@
 class SetTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(SetTestsFixture, "std::set")
+SCENARIO_METHOD(SetTestsFixture, "loading set after saving", "[binary][container][set]")
 {
     using TestedObject = std::set<int>;
 
-    SECTION("save")
+    GIVEN("saved set")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(SetTestsFixture, "std::set")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             std::set<int> loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

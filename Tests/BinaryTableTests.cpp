@@ -40,8 +40,7 @@ public:
     virtual ~Base() = 0;
 };
 
-BinaryTableFixture::Base::~Base()
-{}
+BinaryTableFixture::Base::~Base() = default;
 
 class BinaryTableFixture::CustomConstructionDerived : public Base
 {
@@ -65,8 +64,7 @@ public:
     virtual ~ObjectScrivenBase() = 0;
 };
 
-BinaryTableFixture::ObjectScrivenBase::~ObjectScrivenBase()
-{}
+BinaryTableFixture::ObjectScrivenBase::~ObjectScrivenBase() = default;
 
 class BinaryTableFixture::ObjectScrivenDerived : public ObjectScrivenBase
 {
@@ -156,9 +154,9 @@ BinaryTableFixture::NonDefault::NonDefault(const ::Inscription::BinaryTableData<
     value(data.value)
 {}
 
-TEST_CASE_METHOD(BinaryTableFixture, "binary table")
+SCENARIO_METHOD(BinaryTableFixture, "loading binary table", "[binary][table]")
 {
-    SECTION("default construction serialization")
+    GIVEN("saved default construction object")
     {
         DefaultConstructionDerived saved = dataGeneration.RandomStack<DefaultConstructionDerived, int, std::string>();
 
@@ -167,18 +165,24 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        DefaultConstructionDerived loaded;
-
+        WHEN("loading default construction object")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
+            DefaultConstructionDerived loaded;
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.derivedValue == saved.derivedValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.derivedValue == saved.derivedValue);
+            }
+        }
     }
 
-    SECTION("DefaultConstruction construction")
+    GIVEN("saved default construction pointer")
     {
         Base* saved = dataGeneration.RandomHeap<DefaultConstructionDerived, int, std::string>();
         DefaultConstructionDerived* savedCasted = dynamic_cast<DefaultConstructionDerived*>(saved);
@@ -188,24 +192,29 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        Base* loaded = nullptr;
-
+        WHEN("loading default construction pointer")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                DefaultConstructionDerived* loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        DefaultConstructionDerived* loadedCasted = dynamic_cast<DefaultConstructionDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("CustomConstruction serialization")
+    GIVEN("saved custom construction object")
     {
         CustomConstructionDerived saved = dataGeneration.RandomStack<CustomConstructionDerived, int, std::string>();
 
@@ -214,18 +223,24 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        CustomConstructionDerived loaded(0, "");
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
+            CustomConstructionDerived loaded(0, "");
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.derivedValue == saved.derivedValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.derivedValue == saved.derivedValue);
+            }
+        }
     }
 
-    SECTION("CustomConstruction construction")
+    GIVEN("saved custom construction pointer")
     {
         Base* saved = dataGeneration.RandomHeap<CustomConstructionDerived, int, std::string>();
         CustomConstructionDerived* savedCasted = dynamic_cast<CustomConstructionDerived*>(saved);
@@ -235,24 +250,29 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        Base* loaded = nullptr;
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                CustomConstructionDerived* loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        CustomConstructionDerived* loadedCasted = dynamic_cast<CustomConstructionDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("TableConstruction serialization")
+    GIVEN("saved table construction override object")
     {
         TableConstructionDerived saved = dataGeneration.RandomStack<TableConstructionDerived, int, std::string>();
 
@@ -261,18 +281,24 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        TableConstructionDerived loaded(0, "");
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
+            TableConstructionDerived loaded(0, "");
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.derivedValue == saved.derivedValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.derivedValue == saved.derivedValue);
+            }
+        }
     }
 
-    SECTION("TableConstruction construction")
+    SECTION("saved table construction override pointer")
     {
         TableConstructionBase* saved = dataGeneration.RandomHeap<TableConstructionDerived, int, std::string>();
         TableConstructionDerived* savedCasted = dynamic_cast<TableConstructionDerived*>(saved);
@@ -282,24 +308,29 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        TableConstructionBase* loaded = nullptr;
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            TableConstructionBase* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                TableConstructionDerived* loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        TableConstructionDerived* loadedCasted = dynamic_cast<TableConstructionDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("ObjectScriven serialization")
+    GIVEN("saved ObjectScriven overidden object")
     {
         ObjectScrivenDerived saved = dataGeneration.RandomStack<ObjectScrivenDerived, int, std::string>();
         saved.baseObjectScrivenValue = dataGeneration.Generator<short>().Random();
@@ -310,20 +341,26 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        ObjectScrivenDerived loaded(0, "");
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
+            ObjectScrivenDerived loaded(0, "");
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.baseObjectScrivenValue == saved.baseObjectScrivenValue);
-        REQUIRE(loaded.derivedValue == saved.derivedValue);
-        REQUIRE(loaded.derivedObjectScrivenValue == saved.derivedObjectScrivenValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.baseObjectScrivenValue == saved.baseObjectScrivenValue);
+                REQUIRE(loaded.derivedValue == saved.derivedValue);
+                REQUIRE(loaded.derivedObjectScrivenValue == saved.derivedObjectScrivenValue);
+            }
+        }
     }
 
-    SECTION("ObjectScriven construction")
+    GIVEN("saved ObjectScriven overidden pointer")
     {
         ObjectScrivenBase* saved = dataGeneration.RandomHeap<ObjectScrivenDerived, int, std::string>();
         ObjectScrivenDerived* savedCasted = dynamic_cast<ObjectScrivenDerived*>(saved);
@@ -336,26 +373,31 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        ObjectScrivenBase* loaded = nullptr;
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            ObjectScrivenBase* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                ObjectScrivenDerived* loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->baseObjectScrivenValue == savedCasted->baseObjectScrivenValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+                REQUIRE(loadedCasted->derivedObjectScrivenValue == savedCasted->derivedObjectScrivenValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        ObjectScrivenDerived* loadedCasted = dynamic_cast<ObjectScrivenDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->baseObjectScrivenValue == savedCasted->baseObjectScrivenValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-        REQUIRE(loadedCasted->derivedObjectScrivenValue == savedCasted->derivedObjectScrivenValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("UsingEntries serialization")
+    GIVEN("saved object using entries")
     {
         UsingEntriesDerived saved = dataGeneration.RandomStack<UsingEntriesDerived, int, std::string>();
 
@@ -364,18 +406,24 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        UsingEntriesDerived loaded(0, "");
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
+            UsingEntriesDerived loaded(0, "");
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.derivedValue == saved.derivedValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.derivedValue == saved.derivedValue);
+            }
+        }
     }
 
-    SECTION("UsingEntries construction")
+    SECTION("saved object using entries through pointer")
     {
         Base* saved = dataGeneration.RandomHeap<UsingEntriesDerived, int, std::string>();
         UsingEntriesDerived* savedCasted = dynamic_cast<UsingEntriesDerived*>(saved);
@@ -385,24 +433,29 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        Base* loaded = nullptr;
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                UsingEntriesDerived* loadedCasted = dynamic_cast<UsingEntriesDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        UsingEntriesDerived* loadedCasted = dynamic_cast<UsingEntriesDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("UsingEntryPointer serialization")
+    SECTION("saved object with entries pointing to data represented through entries")
     {
         UsingEntriesDerived savedSource = dataGeneration.RandomStack<UsingEntriesDerived, int, std::string>();
         UsingEntryPointerDerived saved(dataGeneration.Random<int>(), &savedSource.derivedValue);
@@ -413,20 +466,26 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        UsingEntriesDerived loadedSource(0, "");
-        UsingEntryPointerDerived loaded(0, nullptr);
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedSource);
-            inputArchive(loaded);
-        }
+            UsingEntriesDerived loadedSource(0, "");
+            UsingEntryPointerDerived loaded(0, nullptr);
 
-        REQUIRE(loaded.baseValue == saved.baseValue);
-        REQUIRE(loaded.derivedValue == &loadedSource.derivedValue);
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedSource);
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                REQUIRE(loaded.baseValue == saved.baseValue);
+                REQUIRE(loaded.derivedValue == &loadedSource.derivedValue);
+            }
+        }
     }
 
-    SECTION("UsingEntryPointer construction")
+    SECTION("saved object with entries pointing to data represented through entries as pointer")
     {
         auto savedSource = dataGeneration.RandomStack<UsingEntriesDerived, int, std::string>();
 
@@ -439,23 +498,28 @@ TEST_CASE_METHOD(BinaryTableFixture, "binary table")
             outputArchive(saved);
         }
 
-        UsingEntriesDerived loadedSource(0, "");
-        Base* loaded = nullptr;
-
+        WHEN("loading")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedSource);
-            inputArchive(loaded);
+            UsingEntriesDerived loadedSource(0, "");
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedSource);
+                inputArchive(loaded);
+            }
+
+            THEN("is valid")
+            {
+                UsingEntryPointerDerived* loadedCasted = dynamic_cast<UsingEntryPointerDerived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == &loadedSource.derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        UsingEntryPointerDerived* loadedCasted = dynamic_cast<UsingEntryPointerDerived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == &loadedSource.derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 }
 
@@ -478,7 +542,7 @@ namespace Inscription
         );
     }
 
-    ClassName Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::DefaultConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "DefaultConstructionDerived";
@@ -499,7 +563,7 @@ namespace Inscription
         new (storage) ObjectT(data.base->baseValue, data.derivedValue);
     }
 
-    ClassName Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::CustomConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";
@@ -540,7 +604,7 @@ namespace Inscription
         archive(object.derivedObjectScrivenValue);
     }
 
-    ClassName Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::ObjectScrivenDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "ObjectScrivenDerived";
@@ -563,7 +627,7 @@ namespace Inscription
         );
     }
 
-    ClassName Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::TableConstructionDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "TableConstructionDerived";
@@ -578,7 +642,7 @@ namespace Inscription
         );
     }
 
-    ClassName Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::UsingEntriesDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "UsingEntriesDerived";
@@ -593,7 +657,7 @@ namespace Inscription
         );
     }
 
-    ClassName Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryTableFixture::UsingEntryPointerDerived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "UsingEntryPointerDerived";

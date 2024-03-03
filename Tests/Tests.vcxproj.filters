@@ -85,6 +85,12 @@
     <ClCompile Include="BinaryIntegrationTests.cpp">
       <Filter>Source Files\Tests\Binary</Filter>
     </ClCompile>
+    <ClCompile Include="JumpTableTests.cpp">
+      <Filter>Source Files\Tests\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamPositionTests.cpp">
+      <Filter>Source Files\Tests\Scribe\Types\Std</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextFixture.h">
@@ -136,6 +142,9 @@
     </Filter>
     <Filter Include="Header Files\Tests">
       <UniqueIdentifier>{f19a61c9-3e31-48e0-ab59-475669e03ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Jump">
+      <UniqueIdentifier>{748d051d-89e7-4ead-b511-40ef6c649e48}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -7,11 +7,11 @@
 class StringTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(StringTestsFixture, "std::string")
+SCENARIO_METHOD(StringTestsFixture, "string loads after save", "[binary][std][string]")
 {
     using TestedObject = std::string;
 
-    SECTION("save")
+    GIVEN("saved string")
     {
         auto saved = dataGeneration.Random<TestedObject>();
 
@@ -20,14 +20,17 @@ TEST_CASE_METHOD(StringTestsFixture, "std::string")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading string")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

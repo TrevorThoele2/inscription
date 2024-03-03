@@ -44,7 +44,7 @@ namespace Inscription
 {
     template<>
     struct TableData<::BinaryTableFixture::Base, BinaryArchive> :
-        public TableDataBase<::BinaryTableFixture::Base, BinaryArchive>
+        TableDataBase<::BinaryTableFixture::Base, BinaryArchive>
     {
         int baseValue;
     };
@@ -80,7 +80,7 @@ namespace Inscription
             Table();
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>
@@ -104,7 +104,7 @@ namespace Inscription
             void Construct(ObjectT* storage, ArchiveT& archive);
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>
@@ -151,7 +151,7 @@ namespace Inscription
             void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>
@@ -192,7 +192,7 @@ namespace Inscription
             Table();
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>
@@ -214,7 +214,7 @@ namespace Inscription
             Table();
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>
@@ -236,7 +236,7 @@ namespace Inscription
             Table();
         };
     public:
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     };
 
     template<>

@@ -196,8 +196,13 @@
     <ClInclude Include="FileNameScribe.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FilePathScribe.h" />
+    <ClInclude Include="InputJumpTable.h" />
+    <ClInclude Include="JumpHandle.h" />
+    <ClInclude Include="JumpSaver.h" />
+    <ClInclude Include="OutputJumpTable.h" />
     <ClInclude Include="ObjectTrackingContext.h" />
     <ClInclude Include="ObjectTrackingTraits.h" />
+    <ClInclude Include="ScribeHasRepresentedTypeHandles.h" />
     <ClInclude Include="Storage.h" />
     <ClInclude Include="NullTableData.h" />
     <ClInclude Include="NumericScribe.h" />
@@ -214,7 +219,7 @@
     <ClInclude Include="OutputBinaryFile.h" />
     <ClInclude Include="BinaryArchive.h" />
     <ClInclude Include="Buffer.h" />
-    <ClInclude Include="ClassName.h" />
+    <ClInclude Include="TypeHandle.h" />
     <ClInclude Include="Const.h" />
     <ClInclude Include="ContainerSize.h" />
     <ClInclude Include="Endian.h" />
@@ -235,7 +240,7 @@
     <ClInclude Include="MultimapScribe.h" />
     <ClInclude Include="MultisetScribe.h" />
     <ClInclude Include="SpecialTypeTrackingID.h" />
-    <ClInclude Include="PolymorphicTypeNotFound.h" />
+    <ClInclude Include="RepresentedTypeHandleNotFound.h" />
     <ClInclude Include="QueueScribe.h" />
     <ClInclude Include="Archive.h" />
     <ClInclude Include="SetScribe.h" />
@@ -243,6 +248,8 @@
     <ClInclude Include="StackScribe.h" />
     <ClInclude Include="ScopeConstructor.h" />
     <ClInclude Include="Stream.h" />
+    <ClInclude Include="StreamPosition.h" />
+    <ClInclude Include="StreamPositionScribe.h" />
     <ClInclude Include="StringScribe.h" />
     <ClInclude Include="TableBase.h" />
     <ClInclude Include="TableData.h" />
@@ -250,6 +257,7 @@
     <ClInclude Include="TableDataEntry.h" />
     <ClInclude Include="TableScribe.h" />
     <ClInclude Include="AutoTableDataLink.h" />
+    <ClInclude Include="RepresentedTypeHandlesAlreadyRegistered.h" />
     <ClInclude Include="TypeTracker.h" />
     <ClInclude Include="TypeTrackerEntry.h" />
     <ClInclude Include="TypeRegistrationContext.h" />
@@ -295,9 +303,11 @@
     <ClCompile Include="OutputBinaryArchive.cpp" />
     <ClCompile Include="OutputSimpleFile.cpp" />
     <ClCompile Include="OutputTextArchive.cpp" />
-    <ClCompile Include="PolymorphicTypeNotFound.cpp" />
+    <ClCompile Include="RepresentedTypeHandlesAlreadyRegistered.cpp" />
+    <ClCompile Include="RepresentedTypeHandleNotFound.cpp" />
     <ClCompile Include="RelativeFilePathScribe.cpp" />
     <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="StreamPositionScribe.cpp" />
     <ClCompile Include="StringScribe.cpp" />
     <ClCompile Include="TableNotConstructed.cpp" />
     <ClCompile Include="TableNotLinked.cpp" />

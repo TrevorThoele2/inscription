@@ -8,11 +8,11 @@
 class StackTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(StackTestsFixture, "std::stack")
+SCENARIO_METHOD(StackTestsFixture, "loading stack after saving", "[binary][container][stack]")
 {
     using TestedObject = std::stack<int>;
 
-    SECTION("save")
+    GIVEN("saved stack")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(StackTestsFixture, "std::stack")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

@@ -8,11 +8,11 @@
 class QueueTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(QueueTestsFixture, "std::queue")
+SCENARIO_METHOD(QueueTestsFixture, "loading queue after saving", "[binary][container][queue]")
 {
     using TestedObject = std::queue<int>;
 
-    SECTION("save")
+    GIVEN("saved queue")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(QueueTestsFixture, "std::queue")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

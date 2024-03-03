@@ -130,6 +130,7 @@
     <ClCompile Include="BinaryTableTests.cpp" />
     <ClCompile Include="ForwardListTests.cpp" />
     <ClCompile Include="BinaryPolymorphicListTests.cpp" />
+    <ClCompile Include="JumpTableTests.cpp" />
     <ClCompile Include="ListTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="BinaryPolymorphicManualRegistrationTests.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SetTests.cpp" />
     <ClCompile Include="StackTests.cpp" />
+    <ClCompile Include="StreamPositionTests.cpp" />
     <ClCompile Include="StringTests.cpp" />
     <ClCompile Include="TextTests.cpp" />
     <ClCompile Include="TupleTests.cpp" />

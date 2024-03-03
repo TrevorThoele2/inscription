@@ -8,11 +8,11 @@
 class VectorTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(VectorTestsFixture, "std::vector")
+SCENARIO_METHOD(VectorTestsFixture, "loading vector after saving", "[binary][container][vector]")
 {
     using TestedObject = std::vector<int>;
 
-    SECTION("save")
+    GIVEN("saved vector")
     {
         TestedObject saved;
 
@@ -25,15 +25,18 @@ TEST_CASE_METHOD(VectorTestsFixture, "std::vector")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

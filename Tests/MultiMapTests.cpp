@@ -9,11 +9,11 @@
 class MultiMapTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(MultiMapTestsFixture, "std::multimap")
+SCENARIO_METHOD(MultiMapTestsFixture, "loading multimap after saving", "[binary][container][multimap]")
 {
     using TestedObject = std::multimap<int, std::string>;
 
-    SECTION("save")
+    GIVEN("saved multimap")
     {
         TestedObject saved;
 
@@ -33,15 +33,18 @@ TEST_CASE_METHOD(MultiMapTestsFixture, "std::multimap")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

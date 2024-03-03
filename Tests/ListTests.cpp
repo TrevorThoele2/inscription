@@ -8,11 +8,11 @@
 class ListTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(ListTestsFixture, "std::list")
+SCENARIO_METHOD(ListTestsFixture, "loading list after saving", "[binary][container][list]")
 {
     using TestedObject = std::list<int>;
 
-    SECTION("save")
+    GIVEN("saved list")
     {
         TestedObject saved;
 
@@ -26,15 +26,18 @@ TEST_CASE_METHOD(ListTestsFixture, "std::list")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

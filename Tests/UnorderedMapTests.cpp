@@ -9,11 +9,11 @@
 class UnorderedMapTestsFixture : public BinaryFixture
 {};
 
-TEST_CASE_METHOD(UnorderedMapTestsFixture, "std::unordered_map")
+SCENARIO_METHOD(UnorderedMapTestsFixture, "loading unordered_map after saving", "[binary][container][unordered_map]")
 {
     using TestedObject = std::unordered_map<int, std::string>;
 
-    SECTION("save")
+    GIVEN("saved unordered_map")
     {
         TestedObject saved;
 
@@ -33,15 +33,18 @@ TEST_CASE_METHOD(UnorderedMapTestsFixture, "std::unordered_map")
             outputArchive(saved);
         }
 
-        SECTION("load")
+        WHEN("loading")
         {
             TestedObject loaded;
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive(loaded);
 
-            REQUIRE(!loaded.empty());
-            REQUIRE(loaded == saved);
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
         }
     }
 }

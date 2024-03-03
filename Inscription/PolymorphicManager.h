@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <algorithm>
 
 #include "ObjectTracker.h"
 
@@ -8,11 +9,14 @@
 #include "Access.h"
 
 #include "Storage.h"
-#include "ClassName.h"
 #include "Type.h"
+#include "TypeHandle.h"
 #include "Const.h"
 
-#include "PolymorphicTypeNotFound.h"
+#include "ScribeHasRepresentedTypeHandles.h"
+
+#include "RepresentedTypeHandleNotFound.h"
+#include "RepresentedTypeHandlesAlreadyRegistered.h"
 
 namespace Inscription
 {
@@ -21,16 +25,14 @@ namespace Inscription
     {
     public:
         using ArchiveT = Archive;
-
-        using Type = std::type_index;
     public:
         template<class T>
         void SaveConstruction(const T* object, ArchiveT& archive);
-        void ConstructFromLoad(void*& storage, const Type& type, ArchiveT& archive);
-        void* CreateStorage(const Type& type);
+        void ConstructFromLoad(void*& storage, const std::type_index& type, ArchiveT& archive);
+        void* CreateStorage(const std::type_index& type);
 
-        ClassName ClassNameFor(const Type& type);
-        Type TypeFor(const ClassName& className);
+        TypeHandle PrincipleTypeHandleFor(const std::type_index& type);
+        std::type_index TypeIndexFor(const TypeHandle& typeHandle);
 
         template<class T>
         void Register(ArchiveT& archive);
@@ -38,11 +40,12 @@ namespace Inscription
         class Entry
         {
         public:
-            const ClassName className;
-            const Type type;
+            const TypeHandle principleTypeHandle;
+            const std::vector<TypeHandle> representedTypeHandles;
+            const std::type_index typeIndex;
         public:
             template<class T>
-            Entry(const ClassName& className, ::Inscription::Type<T>);
+            Entry(TypeHandle principleTypeHandle, std::vector<TypeHandle> representedTypeHandles, Type<T>);
 
             void SaveConstruction(const void* object, ArchiveT& archive);
             void ConstructFromLoad(void*& storage, ArchiveT& archive);
@@ -58,25 +61,76 @@ namespace Inscription
         using EntryConstIterator = typename EntryList::const_iterator;
         EntryList entryList;
 
-        EntryIterator FindRequiredEntry(const ClassName& className);
-        EntryIterator FindRequiredEntry(const Type& type);
+        using RepresentedTypeHandles = std::vector<TypeHandle>;
+        RepresentedTypeHandles representedTypeHandles;
+
+        EntryIterator FindRequiredEntry(const TypeHandle& typeHandle);
+        EntryIterator FindRequiredEntry(const std::type_index& typeIndex);
     private:
         template<class T>
-        TrackingID RequiredTypeIDFor(const T* object, ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandleFor(Archive& archive)
+        {
+            using RegisteredScribe = Scribe<T, ArchiveT>;
+            return RegisteredScribe::PrincipleTypeHandle(archive);
+        }
+
+        template<class T, std::enable_if_t<scribe_has_represented_type_handles_v<T, Archive>, int> = 0>
+        static std::vector<TypeHandle> RepresentedTypeHandlesFor(Archive& archive)
+        {
+            using RegisteredScribe = Scribe<T, ArchiveT>;
+            auto principleTypeHandle = RegisteredScribe::PrincipleTypeHandle(archive);
+            auto representedTypeHandles = RegisteredScribe::RepresentedTypeHandles(archive);
+
+            {
+                std::vector<TypeHandle> duplicateTypeHandles;
+                for (auto& currentRepresented : representedTypeHandles)
+                {
+                    auto count = std::count(
+                        representedTypeHandles.begin(),
+                        representedTypeHandles.end(),
+                        currentRepresented);
+                    if (count > 1)
+                        duplicateTypeHandles.push_back(currentRepresented);
+                }
+
+                if (!duplicateTypeHandles.empty())
+                    throw RepresentedTypeHandlesAlreadyRegistered(duplicateTypeHandles);
+            }
+
+            auto isPrincipleIn = [principleTypeHandle](const TypeHandle& typeHandle)
+            {
+                return typeHandle == principleTypeHandle;
+            };
+
+            if (!std::any_of(representedTypeHandles.begin(), representedTypeHandles.end(), isPrincipleIn))
+                representedTypeHandles.push_back(principleTypeHandle);
+
+            return representedTypeHandles;
+        }
+
+        template<class T, std::enable_if_t<!scribe_has_represented_type_handles_v<T, Archive>, int> = 0>
+        static std::vector<TypeHandle> RepresentedTypeHandlesFor(Archive& archive)
+        {
+            using RegisteredScribe = Scribe<T, ArchiveT>;
+            return std::vector<TypeHandle> { RegisteredScribe::PrincipleTypeHandle(archive) };
+        }
+    private:
+        template<class T>
+        TrackingID RequiredTypeTrackingIDFor(const T* object, ArchiveT& archive);
     };
 
     template<class Archive>
     template<class T>
     void PolymorphicManager<Archive>::SaveConstruction(const T* object, ArchiveT& archive)
     {
-        auto typeID = RequiredTypeIDFor(object, archive);
+        auto typeID = RequiredTypeTrackingIDFor(object, archive);
         auto found = FindRequiredEntry(typeid(*RemoveConst(object)));
         found->SaveConstruction(object, archive);
     }
 
     template<class Archive>
     void PolymorphicManager<Archive>::ConstructFromLoad(
-        void*& storage, const Type& type, ArchiveT& archive)
+        void*& storage, const std::type_index& type, ArchiveT& archive)
     {
         auto found = FindRequiredEntry(type);
         found->ConstructFromLoad(storage, archive);
@@ -84,38 +138,61 @@ namespace Inscription
 
     template<class Archive>
     void* PolymorphicManager<Archive>::CreateStorage(
-        const Type& type)
+        const std::type_index& type)
     {
         auto found = FindRequiredEntry(type);
         return found->CreateStorage();
     }
 
     template<class Archive>
-    ClassName PolymorphicManager<Archive>::ClassNameFor(const Type& type)
+    TypeHandle PolymorphicManager<Archive>::PrincipleTypeHandleFor(const std::type_index& type)
     {
         auto found = FindRequiredEntry(type);
-        return found->className;
+        return found->principleTypeHandle;
     }
 
     template<class Archive>
-    auto PolymorphicManager<Archive>::TypeFor(const ClassName& className) -> Type
+    auto PolymorphicManager<Archive>::TypeIndexFor(const TypeHandle& typeHandle) -> std::type_index
     {
-        auto found = FindRequiredEntry(className);
-        return found->type;
+        auto found = FindRequiredEntry(typeHandle);
+        return found->typeIndex;
     }
 
     template<class Archive>
     template<class T>
     void PolymorphicManager<Archive>::Register(ArchiveT& archive)
     {
-        auto className = Scribe<T, ArchiveT>::ClassNameResolver(archive);
-        entryList.push_back(Entry(className, ::Inscription::Type<T>{}));
+        auto newRepresentedTypeHandles = RepresentedTypeHandlesFor<T>(archive);
+
+        std::vector<TypeHandle> duplicateTypeHandles;
+        for (auto& currentRepresented : representedTypeHandles)
+            for (auto& currentNewRepresented : newRepresentedTypeHandles)
+                if (currentNewRepresented == currentRepresented)
+                    duplicateTypeHandles.push_back(currentNewRepresented);
+
+        if (!duplicateTypeHandles.empty())
+            throw RepresentedTypeHandlesAlreadyRegistered(duplicateTypeHandles);
+
+        auto principleTypeHandle = PrincipleTypeHandleFor<T>(archive);
+        entryList.push_back(Entry(principleTypeHandle, newRepresentedTypeHandles, ::Inscription::Type<T>{}));
+        std::move
+        (
+            newRepresentedTypeHandles.begin(),
+            newRepresentedTypeHandles.end(),
+            std::back_inserter(representedTypeHandles)
+        );
     }
 
     template<class Archive>
     template<class T>
-    PolymorphicManager<Archive>::Entry::Entry(const ClassName& className, ::Inscription::Type<T>) :
-        className(className), type(typeid(T))
+    PolymorphicManager<Archive>::Entry::Entry(
+        TypeHandle principleTypeHandle,
+        std::vector<TypeHandle> representedTypeHandles,
+        Type<T>)
+        :
+        principleTypeHandle(std::move(principleTypeHandle)),
+        representedTypeHandles(std::move(representedTypeHandles)),
+        typeIndex(typeid(T))
     {
         using DerivedT = typename RemoveConstTrait<T>::type;
         using DerivedScribe = Scribe<DerivedT, ArchiveT>;
@@ -160,35 +237,39 @@ namespace Inscription
 
     template<class Archive>
     typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        const ClassName& className)
+        const TypeHandle& typeHandle)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
-            if (loop->className == className)
+        {
+            auto checkBegin = loop->representedTypeHandles.begin();
+            auto checkEnd = loop->representedTypeHandles.end();
+            if (std::find(checkBegin, checkEnd, typeHandle) != checkEnd)
                 return loop;
+        }
 
-        throw PolymorphicTypeNotFound(className);
+        throw RepresentedTypeHandleNotFound(typeHandle);
     }
 
     template<class Archive>
     typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        const Type& type)
+        const std::type_index& typeIndex)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
-            if (loop->type == type)
+            if (loop->typeIndex == typeIndex)
                 return loop;
 
-        throw PolymorphicTypeNotFound(type);
+        throw RepresentedTypeHandleNotFound(typeIndex);
     }
 
     template<class Archive>
     template<class T>
-    TrackingID PolymorphicManager<Archive>::RequiredTypeIDFor(const T* object, ArchiveT& archive)
+    TrackingID PolymorphicManager<Archive>::RequiredTypeTrackingIDFor(const T* object, ArchiveT& archive)
     {
         auto& type = typeid(*RemoveConst(object));
         auto found = archive.typeTracker.FindID(type);
         if (found.IsValid())
             return *found;
 
-        throw PolymorphicTypeNotFound(type);
+        throw RepresentedTypeHandleNotFound(type);
     }
 }

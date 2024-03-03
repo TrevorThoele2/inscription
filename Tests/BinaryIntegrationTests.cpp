@@ -6,6 +6,7 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/TupleScribe.h>
+#include <Inscription/StreamPositionScribe.h>
 
 #include <Inscription/ArrayScribe.h>
 #include <Inscription/ForwardListScribe.h>
@@ -38,7 +39,7 @@ public:
         explicit TestClass(int value = 0) : value(value)
         {}
 
-        int Value() const
+        [[nodiscard]] int Value() const
         {
             return value;
         }
@@ -63,9 +64,9 @@ namespace Inscription
     };
 }
 
-TEST_CASE_METHOD(BinaryIntegrationTestsFixture, "binary integration")
+SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "[binary][integration]")
 {
-    SECTION("every type saves and loads")
+    GIVEN("every type saved")
     {
         auto savedInt8 = dataGeneration.Random<std::int8_t>();
         auto savedInt16 = dataGeneration.Random<std::int16_t>();
@@ -182,6 +183,8 @@ TEST_CASE_METHOD(BinaryIntegrationTestsFixture, "binary integration")
             dataGeneration.Random<int>()
         };
 
+        auto savedStreamPosition = Inscription::StreamPosition(dataGeneration.Random<unsigned long long>());
+
         {
             auto outputArchive = CreateRegistered<OutputArchive>();
             outputArchive(savedInt8);
@@ -219,117 +222,131 @@ TEST_CASE_METHOD(BinaryIntegrationTestsFixture, "binary integration")
             outputArchive(savedUnorderedMultiSet);
             outputArchive(savedUnorderedSet);
             outputArchive(savedVector);
+
+            outputArchive(savedStreamPosition);
         }
 
-        std::int8_t loadedInt8 = 0;
-        std::int16_t loadedInt16 = 0;
-        auto loadedInt32 = 0;
-        std::int64_t loadedInt64 = 0;
-
-        std::uint8_t loadedUint8 = 0;
-        std::uint16_t loadedUint16 = 0;
-        std::uint32_t loadedUint32 = 0;
-        std::uint64_t loadedUint64 = 0;
-
-        float loadedFloat = 0;
-        double loadedDouble = 0;
-
-        TestClass loadedObject;
-        TestClass* loadedPointer = nullptr;
-        std::unique_ptr<TestClass> loadedUniquePtr;
-
-        std::string loadedString;
-
-        std::tuple<int, short, std::string> loadedTuple;
-
-        std::array<int, 3> loadedArray { 0, 0, 0 };
-        std::forward_list<int> loadedForwardList;
-        std::list<int> loadedList;
-        std::map<int, int> loadedMap;
-        std::multimap<int, int> loadedMultiMap;
-        std::multiset<int> loadedMultiSet;
-        std::queue<int> loadedQueue;
-        std::set<int> loadedSet;
-        std::stack<int> loadedStack;
-        std::unordered_map<int, int> loadedUnorderedMap;
-        std::unordered_multimap<int, int> loadedUnorderedMultiMap;
-        std::unordered_multiset<int> loadedUnorderedMultiSet;
-        std::unordered_set<int> loadedUnorderedSet;
-        std::vector<int> loadedVector;
-
+        WHEN("loading every type")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedInt8);
-            inputArchive(loadedInt16);
-            inputArchive(loadedInt32);
-            inputArchive(loadedInt64);
+            std::int8_t loadedInt8 = 0;
+            std::int16_t loadedInt16 = 0;
+            auto loadedInt32 = 0;
+            std::int64_t loadedInt64 = 0;
 
-            inputArchive(loadedUint8);
-            inputArchive(loadedUint16);
-            inputArchive(loadedUint32);
-            inputArchive(loadedUint64);
+            std::uint8_t loadedUint8 = 0;
+            std::uint16_t loadedUint16 = 0;
+            std::uint32_t loadedUint32 = 0;
+            std::uint64_t loadedUint64 = 0;
 
-            inputArchive(loadedFloat);
-            inputArchive(loadedDouble);
+            float loadedFloat = 0;
+            double loadedDouble = 0;
 
-            inputArchive(loadedObject);
-            inputArchive(loadedPointer);
-            inputArchive(loadedUniquePtr);
+            TestClass loadedObject;
+            TestClass* loadedPointer = nullptr;
+            std::unique_ptr<TestClass> loadedUniquePtr;
 
-            inputArchive(loadedString);
+            std::string loadedString;
 
-            inputArchive(loadedTuple);
+            std::tuple<int, short, std::string> loadedTuple;
 
-            inputArchive(loadedArray);
-            inputArchive(loadedForwardList);
-            inputArchive(loadedList);
-            inputArchive(loadedMap);
-            inputArchive(loadedMultiMap);
-            inputArchive(loadedMultiSet);
-            inputArchive(loadedQueue);
-            inputArchive(loadedSet);
-            inputArchive(loadedStack);
-            inputArchive(loadedUnorderedMap);
-            inputArchive(loadedUnorderedMultiMap);
-            inputArchive(loadedUnorderedMultiSet);
-            inputArchive(loadedUnorderedSet);
-            inputArchive(loadedVector);
+            std::array<int, 3> loadedArray{ 0, 0, 0 };
+            std::forward_list<int> loadedForwardList;
+            std::list<int> loadedList;
+            std::map<int, int> loadedMap;
+            std::multimap<int, int> loadedMultiMap;
+            std::multiset<int> loadedMultiSet;
+            std::queue<int> loadedQueue;
+            std::set<int> loadedSet;
+            std::stack<int> loadedStack;
+            std::unordered_map<int, int> loadedUnorderedMap;
+            std::unordered_multimap<int, int> loadedUnorderedMultiMap;
+            std::unordered_multiset<int> loadedUnorderedMultiSet;
+            std::unordered_set<int> loadedUnorderedSet;
+            std::vector<int> loadedVector;
+
+            Inscription::StreamPosition loadedStreamPosition;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedInt8);
+                inputArchive(loadedInt16);
+                inputArchive(loadedInt32);
+                inputArchive(loadedInt64);
+
+                inputArchive(loadedUint8);
+                inputArchive(loadedUint16);
+                inputArchive(loadedUint32);
+                inputArchive(loadedUint64);
+
+                inputArchive(loadedFloat);
+                inputArchive(loadedDouble);
+
+                inputArchive(loadedObject);
+                inputArchive(loadedPointer);
+                inputArchive(loadedUniquePtr);
+
+                inputArchive(loadedString);
+
+                inputArchive(loadedTuple);
+
+                inputArchive(loadedArray);
+                inputArchive(loadedForwardList);
+                inputArchive(loadedList);
+                inputArchive(loadedMap);
+                inputArchive(loadedMultiMap);
+                inputArchive(loadedMultiSet);
+                inputArchive(loadedQueue);
+                inputArchive(loadedSet);
+                inputArchive(loadedStack);
+                inputArchive(loadedUnorderedMap);
+                inputArchive(loadedUnorderedMultiMap);
+                inputArchive(loadedUnorderedMultiSet);
+                inputArchive(loadedUnorderedSet);
+                inputArchive(loadedVector);
+
+                inputArchive(loadedStreamPosition);
+            }
+
+            THEN("every loaded type is same as saved type")
+            {
+                REQUIRE(loadedInt8 == savedInt8);
+                REQUIRE(loadedInt16 == savedInt16);
+                REQUIRE(loadedInt32 == savedInt32);
+                REQUIRE(loadedInt64 == savedInt64);
+
+                REQUIRE(loadedUint8 == savedUint8);
+                REQUIRE(loadedUint16 == savedUint16);
+                REQUIRE(loadedUint32 == savedUint32);
+                REQUIRE(loadedUint64 == savedUint64);
+
+                REQUIRE(loadedFloat == savedFloat);
+                REQUIRE(loadedDouble == savedDouble);
+
+                REQUIRE(loadedObject.Value() == savedObject.Value());
+                REQUIRE(loadedPointer->Value() == savedPointer->Value());
+                REQUIRE(loadedUniquePtr->Value() == savedUniquePtr->Value());
+
+                REQUIRE(loadedString == savedString);
+
+                REQUIRE(loadedTuple == savedTuple);
+
+                REQUIRE(loadedArray == savedArray);
+                REQUIRE(loadedForwardList == savedForwardList);
+                REQUIRE(loadedList == savedList);
+                REQUIRE(loadedMap == savedMap);
+                REQUIRE(loadedMultiMap == savedMultiMap);
+                REQUIRE(loadedMultiSet == savedMultiSet);
+                REQUIRE(loadedQueue == savedQueue);
+                REQUIRE(loadedSet == savedSet);
+                REQUIRE(loadedStack == savedStack);
+                REQUIRE(loadedUnorderedMap == savedUnorderedMap);
+                REQUIRE(loadedUnorderedMultiMap == savedUnorderedMultiMap);
+                REQUIRE(loadedUnorderedMultiSet == savedUnorderedMultiSet);
+                REQUIRE(loadedUnorderedSet == savedUnorderedSet);
+                REQUIRE(loadedVector == savedVector);
+
+                REQUIRE(loadedStreamPosition == savedStreamPosition);
+            }
         }
-
-        REQUIRE(loadedInt8 == savedInt8);
-        REQUIRE(loadedInt16 == savedInt16);
-        REQUIRE(loadedInt32 == savedInt32);
-        REQUIRE(loadedInt64 == savedInt64);
-
-        REQUIRE(loadedUint8 == savedUint8);
-        REQUIRE(loadedUint16 == savedUint16);
-        REQUIRE(loadedUint32 == savedUint32);
-        REQUIRE(loadedUint64 == savedUint64);
-
-        REQUIRE(loadedFloat == savedFloat);
-        REQUIRE(loadedDouble == savedDouble);
-
-        REQUIRE(loadedObject.Value() == savedObject.Value());
-        REQUIRE(loadedPointer->Value() == savedPointer->Value());
-        REQUIRE(loadedUniquePtr->Value() == savedUniquePtr->Value());
-
-        REQUIRE(loadedString == savedString);
-
-        REQUIRE(loadedTuple == savedTuple);
-
-        REQUIRE(loadedArray == savedArray);
-        REQUIRE(loadedForwardList == savedForwardList);
-        REQUIRE(loadedList == savedList);
-        REQUIRE(loadedMap == savedMap);
-        REQUIRE(loadedMultiMap == savedMultiMap);
-        REQUIRE(loadedMultiSet == savedMultiSet);
-        REQUIRE(loadedQueue == savedQueue);
-        REQUIRE(loadedSet == savedSet);
-        REQUIRE(loadedStack == savedStack);
-        REQUIRE(loadedUnorderedMap == savedUnorderedMap);
-        REQUIRE(loadedUnorderedMultiMap == savedUnorderedMultiMap);
-        REQUIRE(loadedUnorderedMultiSet == savedUnorderedMultiSet);
-        REQUIRE(loadedUnorderedSet == savedUnorderedSet);
-        REQUIRE(loadedVector == savedVector);
     }
 }

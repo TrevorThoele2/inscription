@@ -1,4 +1,5 @@
 #include <catch.hpp>
+#include <utility>
 
 #include <Inscription/TableScribe.h>
 #include <Inscription/NumericScribe.h>
@@ -36,14 +37,13 @@ public:
     public:
         std::string derivedValue;
     public:
-        Derived(int baseValue, const std::string& derivedValue) :
-            Base(baseValue), derivedValue(derivedValue)
+        Derived(int baseValue, std::string derivedValue) :
+            Base(baseValue), derivedValue(std::move(derivedValue))
         {}
     };
 };
 
-BinaryPolymorphicConstructionFixture::Base::~Base()
-{}
+BinaryPolymorphicConstructionFixture::Base::~Base() = default;
 
 namespace Inscription
 {
@@ -62,15 +62,18 @@ namespace Inscription
     public:
         static void Construct(ObjectT* storage, ArchiveT& archive);
 
-        static ClassName ClassNameResolver(const ArchiveT& archive);
+        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
 }
 
-TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic construction")
-{
-    SECTION("manual construction")
+SCENARIO_METHOD(
+    BinaryPolymorphicConstructionFixture,
+    "loading polymorphic pointer in binary",
+    "[binary][pointer][polymorphic]"
+) {
+    GIVEN("saved construction-overidden pointer through base pointer")
     {
         Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedCasted = dynamic_cast<Derived*>(saved);
@@ -80,51 +83,30 @@ TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic const
             outputArchive(saved);
         }
 
-        Base* loaded = nullptr;
-
+        WHEN("loaded construction-overidden pointer through base pointer")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loaded);
+            }
+
+            Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
+
+            THEN("loaded pointer is valid")
+            {
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
+                REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
+
+                delete saved;
+                delete loaded;
+            }
         }
-
-        Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
-
-        REQUIRE(loadedCasted != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
     }
 
-    SECTION("does not construct")
-    {
-        Base* saved = dataGeneration.RandomHeap<Derived, int, std::string>();
-        Derived* savedCasted = dynamic_cast<Derived*>(saved);
-
-        {
-            auto outputArchive = CreateRegistered<OutputArchive>();
-            outputArchive(saved);
-        }
-
-        Base* loaded = nullptr;
-
-        {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loaded);
-        }
-
-        Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
-
-        REQUIRE(loaded != nullptr);
-        REQUIRE(loadedCasted->baseValue == savedCasted->baseValue);
-        REQUIRE(loadedCasted->derivedValue == savedCasted->derivedValue);
-
-        delete saved;
-        delete loaded;
-    }
-
-    SECTION("load causes other to be populated")
+    GIVEN("multiple polymorphic pointers saved")
     {
         Base* savedOwned = dataGeneration.RandomHeap<Derived, int, std::string>();
         Derived* savedOwnedCasted = dynamic_cast<Derived*>(savedOwned);
@@ -138,26 +120,32 @@ TEST_CASE_METHOD(BinaryPolymorphicConstructionFixture, "binary polymorphic const
             outputArchive(savedOwned);
         }
 
-        Base* loadedOwned = nullptr;
-        Base* loadedUnowned = nullptr;
-
+        WHEN("multiple polymorphic pointers loaded")
         {
-            auto inputArchive = CreateRegistered<InputArchive>();
-            inputArchive(loadedUnowned);
-            inputArchive(loadedOwned);
+            Base* loadedOwned = nullptr;
+            Base* loadedUnowned = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(loadedUnowned);
+                inputArchive(loadedOwned);
+            }
+
+            Derived* loadedOwnedCasted = dynamic_cast<Derived*>(loadedOwned);
+            Derived* loadedUnownedCasted = dynamic_cast<Derived*>(loadedUnowned);
+
+            THEN("every pointer is valid")
+            {
+                REQUIRE(loadedUnownedCasted != nullptr);
+                REQUIRE(loadedOwnedCasted != nullptr);
+                REQUIRE(loadedOwnedCasted == loadedUnownedCasted);
+                REQUIRE(loadedOwnedCasted->baseValue == savedOwnedCasted->baseValue);
+                REQUIRE(loadedOwnedCasted->derivedValue == savedOwnedCasted->derivedValue);
+
+                delete savedOwned;
+                delete loadedOwned;
+            }
         }
-
-        Derived* loadedOwnedCasted = dynamic_cast<Derived*>(loadedOwned);
-        Derived* loadedUnownedCasted = dynamic_cast<Derived*>(loadedUnowned);
-
-        REQUIRE(loadedUnownedCasted != nullptr);
-        REQUIRE(loadedOwnedCasted != nullptr);
-        REQUIRE(loadedOwnedCasted == loadedUnownedCasted);
-        REQUIRE(loadedOwnedCasted->baseValue == savedOwnedCasted->baseValue);
-        REQUIRE(loadedOwnedCasted->derivedValue == savedOwnedCasted->derivedValue);
-
-        delete savedOwned;
-        delete loadedOwned;
     }
 }
 
@@ -181,7 +169,7 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    ClassName Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ClassNameResolver(
+    TypeHandle Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::PrincipleTypeHandle(
         const ArchiveT& archive
     ) {
         return "BinaryPolymorphicConstructionDerived";
