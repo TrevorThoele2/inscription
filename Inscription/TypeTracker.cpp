@@ -11,12 +11,12 @@ namespace Inscription
         return *this;
     }
 
-    TypeTracker::ID TypeTracker::Add(const Type& type)
+    TypeTracker::ID TypeTracker::Add(const std::type_index& type)
     {
         return Add(type, NextID());
     }
 
-    TypeTracker::ID TypeTracker::Add(const Type& type, ID id)
+    TypeTracker::ID TypeTracker::Add(const std::type_index& type, ID id)
     {
         {
             for (auto& loop : entryList)
@@ -46,7 +46,7 @@ namespace Inscription
         return found->hasSavedConstruction;
     }
 
-    bool TypeTracker::IsTypeIn(const Type& type) const
+    bool TypeTracker::IsTypeIn(const std::type_index& type) const
     {
         return FindID(type).has_value();
     }
@@ -60,7 +60,7 @@ namespace Inscription
         return false;
     }
 
-    std::optional<TypeTracker::ID> TypeTracker::FindID(const Type& type) const
+    std::optional<TypeTracker::ID> TypeTracker::FindID(const std::type_index& type) const
     {
         for (auto& loop : entryList)
             if (loop.type == type)
@@ -69,7 +69,7 @@ namespace Inscription
         return {};
     }
 
-    std::optional<TypeTracker::Type> TypeTracker::FindType(ID id) const
+    std::optional<std::type_index> TypeTracker::FindType(ID id) const
     {
         for (auto& loop : entryList)
             if (loop.id == id)

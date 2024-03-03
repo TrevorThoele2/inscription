@@ -57,13 +57,13 @@ public:
     class GeneralDerived : public Base
     {
     public:
-        static ::Inscription::TypeHandle outputTypeHandle;
-        static std::vector<::Inscription::TypeHandle> inputTypeHandles;
+        static ::Inscription::Type outputType;
+        static std::vector<::Inscription::Type> inputTypes;
 
         static void Reset()
         {
-            outputTypeHandle = "GeneralDerived";
-            inputTypeHandles.clear();
+            outputType = "GeneralDerived";
+            inputTypes.clear();
         }
     public:
         explicit GeneralDerived(int baseValue = 0, std::string derivedValue = "") :
@@ -92,12 +92,12 @@ public:
 BinaryPolymorphicFixture::Base::~Base() = default;
 
 template<size_t differentiator>
-::Inscription::TypeHandle BinaryPolymorphicFixture::GeneralDerived<differentiator>::
-    outputTypeHandle = "GeneralDerived";
+::Inscription::Type BinaryPolymorphicFixture::GeneralDerived<differentiator>::
+    outputType = "GeneralDerived";
 
 template<size_t differentiator>
-std::vector<::Inscription::TypeHandle> BinaryPolymorphicFixture::GeneralDerived<differentiator>::
-    inputTypeHandles;
+std::vector<::Inscription::Type> BinaryPolymorphicFixture::GeneralDerived<differentiator>::
+    inputTypes;
 
 BinaryPolymorphicFixture::UnregisteredBase::~UnregisteredBase() = default;
 
@@ -116,7 +116,7 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>
     {
     public:
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -131,8 +131,8 @@ namespace Inscription
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
 
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
-        static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
+        static std::vector<Type> InputTypes(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -253,7 +253,7 @@ SCENARIO_METHOD
             THEN("throws error")
             {
                 UnregisteredBase* saved = dataGeneration.Generator<UnregisteredDerived>().RandomHeap();
-                REQUIRE_THROWS_AS(outputArchive(saved), ::Inscription::InputTypeHandleNotFound);
+                REQUIRE_THROWS_AS(outputArchive(saved), ::Inscription::InputTypeNotFound);
                 delete saved;
             }
         }
@@ -279,13 +279,13 @@ SCENARIO_METHOD
         auto castedSaved1 = dynamic_cast<Saved1*>(saved1.get());
         auto castedSaved2 = dynamic_cast<Saved2*>(saved2.get());
 
-        auto saved0OutputTypeHandle = "Saved0OutputTypeHandle";
-        auto saved1OutputTypeHandle = "Saved1OutputTypeHandle";
-        auto saved2OutputTypeHandle = "Saved2OutputTypeHandle";
+        auto saved0OutputType = "Saved0OutputType";
+        auto saved1OutputType = "Saved1OutputType";
+        auto saved2OutputType = "Saved2OutputType";
 
-        Saved0::outputTypeHandle = saved0OutputTypeHandle;
-        Saved1::outputTypeHandle = saved1OutputTypeHandle;
-        Saved2::outputTypeHandle = saved2OutputTypeHandle;
+        Saved0::outputType = saved0OutputType;
+        Saved1::outputType = saved1OutputType;
+        Saved2::outputType = saved2OutputType;
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "testing", 1);
@@ -310,27 +310,27 @@ SCENARIO_METHOD
 
             THEN("throws error")
             {
-                REQUIRE_THROWS_AS(inputArchive(loaded), ::Inscription::InputTypeHandleNotFound);
+                REQUIRE_THROWS_AS(inputArchive(loaded), ::Inscription::InputTypeNotFound);
             }
         }
 
         WHEN("loading pointer through different class with same output type handle")
         {
-            using SameOutputTypeHandle = GeneralDerived<0>;
-            SameOutputTypeHandle::outputTypeHandle = saved0OutputTypeHandle;
+            using SameOutputType = GeneralDerived<0>;
+            SameOutputType::outputType = saved0OutputType;
 
             std::unique_ptr<Base> loaded = nullptr;
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
                 inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<SameOutputTypeHandle>();
+                inputArchive.RegisterType<SameOutputType>();
                 inputArchive(loaded);
             }
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded = dynamic_cast<SameOutputTypeHandle*>(loaded.get());
+                auto castedLoaded = dynamic_cast<SameOutputType*>(loaded.get());
                 REQUIRE(castedLoaded != nullptr);
                 REQUIRE(loaded->BaseValue() == saved0->BaseValue());
                 REQUIRE(castedLoaded->DerivedValue() == castedSaved0->DerivedValue());
@@ -339,21 +339,21 @@ SCENARIO_METHOD
 
         WHEN("loading pointer through different class with saved output type handle in input type handles")
         {
-            using InInputTypeHandles = GeneralDerived<0>;
-            InInputTypeHandles::inputTypeHandles.emplace_back(saved0OutputTypeHandle);
+            using InInputTypes = GeneralDerived<0>;
+            InInputTypes::inputTypes.emplace_back(saved0OutputType);
 
             std::unique_ptr<Base> loaded = nullptr;
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
                 inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<InInputTypeHandles>();
+                inputArchive.RegisterType<InInputTypes>();
                 inputArchive(loaded);
             }
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded = dynamic_cast<InInputTypeHandles*>(loaded.get());
+                auto castedLoaded = dynamic_cast<InInputTypes*>(loaded.get());
                 REQUIRE(castedLoaded != nullptr);
                 REQUIRE(loaded->BaseValue() == saved0->BaseValue());
                 REQUIRE(castedLoaded->DerivedValue() == castedSaved0->DerivedValue());
@@ -362,10 +362,10 @@ SCENARIO_METHOD
 
         WHEN("loading multiple different output type handle classes through single input type")
         {
-            using InInputTypeHandles = GeneralDerived<0>;
-            InInputTypeHandles::inputTypeHandles.emplace_back(saved0OutputTypeHandle);
-            InInputTypeHandles::inputTypeHandles.emplace_back(saved1OutputTypeHandle);
-            InInputTypeHandles::inputTypeHandles.emplace_back(saved2OutputTypeHandle);
+            using InInputTypes = GeneralDerived<0>;
+            InInputTypes::inputTypes.emplace_back(saved0OutputType);
+            InInputTypes::inputTypes.emplace_back(saved1OutputType);
+            InInputTypes::inputTypes.emplace_back(saved2OutputType);
 
             std::unique_ptr<Base> loaded0 = nullptr;
             std::unique_ptr<Base> loaded1 = nullptr;
@@ -374,7 +374,7 @@ SCENARIO_METHOD
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
                 inputArchive.RegisterType<Base>();
-                inputArchive.RegisterType<InInputTypeHandles>();
+                inputArchive.RegisterType<InInputTypes>();
                 inputArchive(loaded0);
                 inputArchive(loaded1);
                 inputArchive(loaded2);
@@ -382,9 +382,9 @@ SCENARIO_METHOD
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded0 = dynamic_cast<InInputTypeHandles*>(loaded0.get());
-                auto castedLoaded1 = dynamic_cast<InInputTypeHandles*>(loaded1.get());
-                auto castedLoaded2 = dynamic_cast<InInputTypeHandles*>(loaded2.get());
+                auto castedLoaded0 = dynamic_cast<InInputTypes*>(loaded0.get());
+                auto castedLoaded1 = dynamic_cast<InInputTypes*>(loaded1.get());
+                auto castedLoaded2 = dynamic_cast<InInputTypes*>(loaded2.get());
                 REQUIRE(castedLoaded0 != nullptr);
                 REQUIRE(castedLoaded1 != nullptr);
                 REQUIRE(castedLoaded2 != nullptr);
@@ -404,12 +404,12 @@ SCENARIO_METHOD
 
         WHEN("registering same type handle in output and input handles on same type")
         {
-            ::Inscription::TypeHandle typeHandle(dataGeneration.Random<std::string>());
+            ::Inscription::Type type(dataGeneration.Random<std::string>());
 
             using Type = GeneralDerived<0>;
             Type::Reset();
-            Type::outputTypeHandle = typeHandle;
-            Type::inputTypeHandles.push_back(typeHandle);
+            Type::outputType = type;
+            Type::inputTypes.push_back(type);
 
             THEN("does not throw")
             {
@@ -419,81 +419,81 @@ SCENARIO_METHOD
 
         WHEN("registering same type handle in input handles on same type throws")
         {
-            ::Inscription::TypeHandle typeHandle(dataGeneration.Random<std::string>());
+            ::Inscription::Type type(dataGeneration.Random<std::string>());
 
             using Type = GeneralDerived<0>;
             Type::Reset();
-            Type::inputTypeHandles.push_back(typeHandle);
-            Type::inputTypeHandles.push_back(typeHandle);
+            Type::inputTypes.push_back(type);
+            Type::inputTypes.push_back(type);
 
             THEN("throws error")
             {
                 REQUIRE_THROWS_AS(
                     outputArchive.RegisterType<Type>(),
-                    ::Inscription::InputTypeHandlesAlreadyRegistered);
+                    ::Inscription::InputTypesAlreadyRegistered);
             }
         }
 
         WHEN("registering same type handle as output type handle in two separate types")
         {
-            ::Inscription::TypeHandle typeHandle(dataGeneration.Random<std::string>());
+            ::Inscription::Type type(dataGeneration.Random<std::string>());
 
             using Type0 = GeneralDerived<0>;
             Type0::Reset();
-            Type0::outputTypeHandle = typeHandle;
+            Type0::outputType = type;
 
             using Type1 = GeneralDerived<1>;
             Type1::Reset();
-            Type1::outputTypeHandle = typeHandle;
+            Type1::outputType = type;
 
             THEN("throws error on second register")
             {
                 REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
                     outputArchive.RegisterType<Type1>(),
-                    ::Inscription::InputTypeHandlesAlreadyRegistered);
+                    ::Inscription::InputTypesAlreadyRegistered);
             }
         }
 
         WHEN("registering same type handle as input type handles in two separate types")
         {
-            ::Inscription::TypeHandle typeHandle(dataGeneration.Random<std::string>());
+            ::Inscription::Type type(dataGeneration.Random<std::string>());
 
             using Type0 = GeneralDerived<0>;
             Type0::Reset();
-            Type0::inputTypeHandles.push_back(typeHandle);
+            Type0::inputTypes.push_back(type);
 
             using Type1 = GeneralDerived<1>;
             Type1::Reset();
-            Type1::inputTypeHandles.push_back(typeHandle);
+            Type1::inputTypes.push_back(type);
 
             THEN("throws error on second register")
             {
                 REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
                     outputArchive.RegisterType<Type1>(),
-                    ::Inscription::InputTypeHandlesAlreadyRegistered);
+                    ::Inscription::InputTypesAlreadyRegistered);
             }
         }
 
         WHEN("registering same type handle as output type handle and input type handle in two separate types")
         {
-            ::Inscription::TypeHandle typeHandle(dataGeneration.Random<std::string>());
+            ::Inscription::Type type(dataGeneration.Random<std::string>());
 
             using Type0 = GeneralDerived<0>;
             Type0::Reset();
-            Type0::outputTypeHandle = typeHandle;
+            Type0::outputType = type;
 
             using Type1 = GeneralDerived<1>;
             Type1::Reset();
-            Type1::inputTypeHandles.push_back(typeHandle);
+            Type1::inputTypes.push_back(type);
 
             THEN("throws error on second register")
             {
                 REQUIRE_NOTHROW(outputArchive.RegisterType<Type0>());
                 REQUIRE_THROWS_AS(
                     outputArchive.RegisterType<Type1>(),
-                    ::Inscription::InputTypeHandlesAlreadyRegistered);
+                    ::Inscription::InputTypesAlreadyRegistered);
             }
         }
     }
@@ -507,7 +507,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    TypeHandle Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryPolymorphicFixture::Derived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "BinaryPolymorphicDerived";
@@ -521,18 +521,18 @@ namespace Inscription
     }
 
     template<size_t differentiator>
-    TypeHandle Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::OutputType(
         const ArchiveT& archive)
     {
-        return ObjectT::outputTypeHandle;
+        return ObjectT::outputType;
     }
 
     template<size_t differentiator>
-    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::InputTypeHandles(
+    auto Scribe<::BinaryPolymorphicFixture::GeneralDerived<differentiator>, BinaryArchive>::InputTypes(
         const ArchiveT& archive)
-        -> std::vector<TypeHandle>
+        -> std::vector<Type>
     {
-        return ObjectT::inputTypeHandles;
+        return ObjectT::inputTypes;
     }
 
     template<size_t differentiator>

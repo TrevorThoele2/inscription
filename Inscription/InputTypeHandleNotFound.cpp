@@ -1,28 +1,28 @@
-#include "InputTypeHandleNotFound.h"
+#include "InputTypeNotFound.h"
 
 namespace Inscription
 {
-    InputTypeHandleNotFound::InputTypeHandleNotFound() :
+    InputTypeNotFound::InputTypeNotFound() :
         Exception(
             DefaultString())
     {}
 
-    InputTypeHandleNotFound::InputTypeHandleNotFound(const TypeHandle& typeHandle) :
+    InputTypeNotFound::InputTypeNotFound(const Type& type) :
         Exception(
             DefaultString() +
-            " TypeHandle: " + typeHandle + ".")
+            " Type: " + type + ".")
     {}
 
-    InputTypeHandleNotFound::InputTypeHandleNotFound(const std::type_index& type) :
+    InputTypeNotFound::InputTypeNotFound(const std::type_index& typeIndex) :
         Exception(
             DefaultString() +
-            " Type: " + type.name() + ".")
+            " Type: " + typeIndex.name() + ".")
     {}
 
-    std::string InputTypeHandleNotFound::DefaultString()
+    std::string InputTypeNotFound::DefaultString()
     {
         return std::string(
-            "An input type handle was not found in the PolymorphicManager. "
+            "An input type was not found in the PolymorphicManager. "
             "A type may not have been registered polymorphically.");
     }
 }

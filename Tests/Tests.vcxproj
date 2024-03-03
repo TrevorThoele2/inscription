@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Catch;C:\Users\Trevor\Documents\Programming Projects\TestFramework;C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Catch;C:\Users\Trevor\Documents\ProgrammingProjects\TestFramework;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,6 +141,7 @@
     <ClCompile Include="MultiSetTests.cpp" />
     <ClCompile Include="BinaryPolymorphicTests.cpp" />
     <ClCompile Include="BinaryPolymorphicConstructionTests.cpp" />
+    <ClCompile Include="OptionalTests.cpp" />
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SetTests.cpp" />
     <ClCompile Include="StackTests.cpp" />

@@ -85,7 +85,7 @@ namespace Inscription
         public CompositeScribe<::MemoryTestsFixture::Derived, BinaryArchive>
     {
     public:
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
@@ -94,7 +94,7 @@ namespace Inscription
         }
     };
 
-    TypeHandle Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::MemoryTestsFixture::Derived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "MemoryDerived";

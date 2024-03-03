@@ -8,12 +8,12 @@
 #include "Access.h"
 
 #include "Storage.h"
-#include "TypeHandle.h"
+#include "Type.h"
 #include "Const.h"
 
-#include "TypeHandlesFor.h"
-#include "InputTypeHandleNotFound.h"
-#include "InputTypeHandlesAlreadyRegistered.h"
+#include "TypesFor.h"
+#include "InputTypeNotFound.h"
+#include "InputTypesAlreadyRegistered.h"
 
 namespace Inscription
 {
@@ -23,16 +23,16 @@ namespace Inscription
     public:
         using ArchiveT = Archive;
     public:
-        void Scriven(void* object, const std::type_index& type, ArchiveT& archive);
+        void Scriven(void* object, const std::type_index& typeIndex, ArchiveT& archive);
         template<class T>
         void Save(const T* object, ArchiveT& archive);
-        void Save(void* object, const std::type_index& type, ArchiveT& archive);
-        void Load(void* object, const std::type_index& type, ArchiveT& archive);
-        void Construct(void*& storage, const std::type_index& type, ArchiveT& archive);
-        void* CreateStorage(const std::type_index& type);
+        void Save(void* object, const std::type_index& typeIndex, ArchiveT& archive);
+        void Load(void* object, const std::type_index& typeIndex, ArchiveT& archive);
+        void Construct(void*& storage, const std::type_index& typeIndex, ArchiveT& archive);
+        void* CreateStorage(const std::type_index& typeIndex);
 
-        TypeHandle OutputTypeHandleFor(const std::type_index& type);
-        std::type_index TypeIndexFor(const TypeHandle& typeHandle);
+        Type OutputTypeFor(const std::type_index& typeIndex);
+        std::type_index TypeIndexFor(const Type& type);
 
         template<class T>
         void Register(ArchiveT& archive);
@@ -40,8 +40,8 @@ namespace Inscription
         class Entry
         {
         public:
-            const TypeHandle outputTypeHandle;
-            const std::vector<TypeHandle> inputTypeHandles;
+            const Type outputType;
+            const std::vector<Type> inputTypes;
             const std::type_index typeIndex;
         public:
             virtual ~Entry() = 0;
@@ -53,8 +53,8 @@ namespace Inscription
         protected:
             Entry
             (
-                TypeHandle outputTypeHandle,
-                std::vector<TypeHandle> inputTypeHandles,
+                Type outputType,
+                std::vector<Type> inputTypes,
                 std::type_index typeIndex
             );
         };
@@ -63,7 +63,7 @@ namespace Inscription
         class EntryDerived : public Entry
         {
         public:
-            EntryDerived(TypeHandle outputTypeHandles, std::vector<TypeHandle> inputTypeHandles);
+            EntryDerived(Type outputType, std::vector<Type> inputTypes);
 
             void Save(const void* object, ArchiveT& archive) override;
             void Load(void* object, ArchiveT& archive) override;
@@ -80,10 +80,10 @@ namespace Inscription
         using EntryConstIterator = typename EntryList::const_iterator;
         EntryList entryList;
 
-        using InputTypeHandles = std::vector<TypeHandle>;
-        InputTypeHandles inputTypeHandles;
+        using InputTypes = std::vector<Type>;
+        InputTypes inputTypes;
 
-        EntryIterator FindRequiredEntry(const TypeHandle& typeHandle);
+        EntryIterator FindRequiredEntry(const Type& type);
         EntryIterator FindRequiredEntry(const std::type_index& typeIndex);
     private:
         template<class T>
@@ -91,12 +91,12 @@ namespace Inscription
     };
 
     template<class Archive>
-    void PolymorphicManager<Archive>::Scriven(void* object, const std::type_index& type, ArchiveT& archive)
+    void PolymorphicManager<Archive>::Scriven(void* object, const std::type_index& typeIndex, ArchiveT& archive)
     {
         if (archive.IsOutput())
-            Save(object, type, archive);
+            Save(object, typeIndex, archive);
         else
-            Load(object, type, archive);
+            Load(object, typeIndex, archive);
     }
 
     template<class Archive>
@@ -109,46 +109,46 @@ namespace Inscription
     }
 
     template<class Archive>
-    void PolymorphicManager<Archive>::Save(void* object, const std::type_index& type, ArchiveT& archive)
+    void PolymorphicManager<Archive>::Save(void* object, const std::type_index& typeIndex, ArchiveT& archive)
     {
-        auto found = FindRequiredEntry(type);
+        auto found = FindRequiredEntry(typeIndex);
         (*found)->Save(object, archive);
     }
 
     template<class Archive>
-    void PolymorphicManager<Archive>::Load(void* object, const std::type_index& type, ArchiveT& archive)
+    void PolymorphicManager<Archive>::Load(void* object, const std::type_index& typeIndex, ArchiveT& archive)
     {
-        auto found = FindRequiredEntry(type);
+        auto found = FindRequiredEntry(typeIndex);
         (*found)->Load(object, archive);
     }
 
     template<class Archive>
     void PolymorphicManager<Archive>::Construct(
-        void*& storage, const std::type_index& type, ArchiveT& archive)
+        void*& storage, const std::type_index& typeIndex, ArchiveT& archive)
     {
-        auto found = FindRequiredEntry(type);
+        auto found = FindRequiredEntry(typeIndex);
         (*found)->Construct(storage, archive);
     }
 
     template<class Archive>
     void* PolymorphicManager<Archive>::CreateStorage(
-        const std::type_index& type)
+        const std::type_index& typeIndex)
     {
-        auto found = FindRequiredEntry(type);
+        auto found = FindRequiredEntry(typeIndex);
         return (*found)->CreateStorage();
     }
 
     template<class Archive>
-    TypeHandle PolymorphicManager<Archive>::OutputTypeHandleFor(const std::type_index& type)
+    Type PolymorphicManager<Archive>::OutputTypeFor(const std::type_index& typeIndex)
     {
-        auto found = FindRequiredEntry(type);
-        return (*found)->outputTypeHandle;
+        auto found = FindRequiredEntry(typeIndex);
+        return (*found)->outputType;
     }
 
     template<class Archive>
-    auto PolymorphicManager<Archive>::TypeIndexFor(const TypeHandle& typeHandle) -> std::type_index
+    auto PolymorphicManager<Archive>::TypeIndexFor(const Type& type) -> std::type_index
     {
-        auto found = FindRequiredEntry(typeHandle);
+        auto found = FindRequiredEntry(type);
         return (*found)->typeIndex;
     }
 
@@ -156,24 +156,24 @@ namespace Inscription
     template<class T>
     void PolymorphicManager<Archive>::Register(ArchiveT& archive)
     {
-        auto newInputTypeHandles = InputTypeHandlesFor<T>(archive);
+        auto newInputTypes = InputTypesFor<T>(archive);
 
-        std::vector<TypeHandle> duplicateTypeHandles;
-        for (auto& currentInput : inputTypeHandles)
-            for (auto& currentNewInput : newInputTypeHandles)
+        std::vector<Type> duplicateTypes;
+        for (auto& currentInput : inputTypes)
+            for (auto& currentNewInput : newInputTypes)
                 if (currentNewInput == currentInput)
-                    duplicateTypeHandles.push_back(currentNewInput);
+                    duplicateTypes.push_back(currentNewInput);
 
-        if (!duplicateTypeHandles.empty())
-            throw InputTypeHandlesAlreadyRegistered(duplicateTypeHandles);
+        if (!duplicateTypes.empty())
+            throw InputTypesAlreadyRegistered(duplicateTypes);
 
-        auto outputTypeHandle = ::Inscription::OutputTypeHandleFor<T>(archive);
-        entryList.push_back(std::make_unique<EntryDerived<T>>(outputTypeHandle, newInputTypeHandles));
+        auto outputType = ::Inscription::OutputTypeFor<T>(archive);
+        entryList.push_back(std::make_unique<EntryDerived<T>>(outputType, newInputTypes));
         std::move
         (
-            newInputTypeHandles.begin(),
-            newInputTypeHandles.end(),
-            std::back_inserter(inputTypeHandles)
+            newInputTypes.begin(),
+            newInputTypes.end(),
+            std::back_inserter(inputTypes)
         );
     }
 
@@ -183,21 +183,21 @@ namespace Inscription
     template<class Archive>
     PolymorphicManager<Archive>::Entry::Entry
     (
-        TypeHandle outputTypeHandle,
-        std::vector<TypeHandle> inputTypeHandles,
+        Type outputType,
+        std::vector<Type> inputTypes,
         std::type_index typeIndex
     ) :
-        outputTypeHandle(outputTypeHandle), inputTypeHandles(inputTypeHandles), typeIndex(typeIndex)
+        outputType(outputType), inputTypes(inputTypes), typeIndex(typeIndex)
     {}
 
     template<class Archive>
     template<class T>
     PolymorphicManager<Archive>::EntryDerived<T>::EntryDerived
     (
-        TypeHandle outputTypeHandles,
-        std::vector<TypeHandle> inputTypeHandles
+        Type outputType,
+        std::vector<Type> inputTypes
     ) :
-        Entry(outputTypeHandles, inputTypeHandles, typeid(T))
+        Entry(outputType, inputTypes, typeid(T))
     {}
 
     template<class Archive>
@@ -236,17 +236,17 @@ namespace Inscription
 
     template<class Archive>
     typename PolymorphicManager<Archive>::EntryIterator PolymorphicManager<Archive>::FindRequiredEntry(
-        const TypeHandle& typeHandle)
+        const Type& type)
     {
         for (auto loop = entryList.begin(); loop != entryList.end(); ++loop)
         {
-            auto checkBegin = (*loop)->inputTypeHandles.begin();
-            auto checkEnd = (*loop)->inputTypeHandles.end();
-            if (std::find(checkBegin, checkEnd, typeHandle) != checkEnd)
+            auto checkBegin = (*loop)->inputTypes.begin();
+            auto checkEnd = (*loop)->inputTypes.end();
+            if (std::find(checkBegin, checkEnd, type) != checkEnd)
                 return loop;
         }
 
-        throw InputTypeHandleNotFound(typeHandle);
+        throw InputTypeNotFound(type);
     }
 
     template<class Archive>
@@ -257,7 +257,7 @@ namespace Inscription
             if ((*loop)->typeIndex == typeIndex)
                 return loop;
 
-        throw InputTypeHandleNotFound(typeIndex);
+        throw InputTypeNotFound(typeIndex);
     }
 
     template<class Archive>
@@ -269,6 +269,6 @@ namespace Inscription
         if (found.has_value())
             return *found;
 
-        throw InputTypeHandleNotFound(type);
+        throw InputTypeNotFound(type);
     }
 }

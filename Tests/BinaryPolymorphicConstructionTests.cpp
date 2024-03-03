@@ -61,7 +61,7 @@ namespace Inscription
     public:
         static void Construct(ObjectT* storage, ArchiveT& archive);
 
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -168,7 +168,7 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    TypeHandle Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "BinaryPolymorphicConstructionDerived";

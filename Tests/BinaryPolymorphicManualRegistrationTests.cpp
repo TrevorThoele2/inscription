@@ -97,7 +97,7 @@ namespace Inscription
         CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
     {
     public:
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
@@ -150,7 +150,7 @@ namespace Inscription
         archive(object.baseValue);
     }
 
-    TypeHandle Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::OutputTypeHandle(
+    Type Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::OutputType(
         const ArchiveT& archive
     ) {
         return "CustomConstructionDerived";

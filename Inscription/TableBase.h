@@ -19,7 +19,7 @@ namespace Inscription
         using ArchiveT = Archive;
     public:
         using DataT = TableData<ObjectT, ArchiveT>;
-        DataT data;
+        DataT data = {};
     public:
         template<class T>
         using ComposingScribe = Scribe<T, ArchiveT>;
@@ -32,7 +32,7 @@ namespace Inscription
     public:
         virtual ~TableBase() = 0;
     protected:
-        TableBase() {};
+        TableBase() = default;
     protected:
         virtual void ScrivenImplementation(ArchiveT& archive);
         virtual void ObjectScrivenImplementation(ObjectT& object, ArchiveT& archive);
@@ -47,7 +47,7 @@ namespace Inscription
     private:
         DataLinkList dataEntryList;
     private:
-        template<class Object, class Archive>
+        template<class T, class U>
         friend class TableScribe;
     };
 
@@ -90,8 +90,7 @@ namespace Inscription
     }
 
     template <class Object, class Archive>
-    TableBase<Object, Archive>::~TableBase()
-    {}
+    TableBase<Object, Archive>::~TableBase() = default;
 
     template<class Object, class Archive>
     void TableBase<Object, Archive>::ScrivenImplementation(
