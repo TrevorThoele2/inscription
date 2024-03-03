@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Access.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Const.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ContainerSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Convenience.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Direction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inscripter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Numeric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StackConstructor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryScribe.h">
+      <Filter>Header Files\Scribes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scribe.h">
+      <Filter>Header Files\Scribes</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryInputFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryOutputFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tuple.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardList.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Multimap.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiset.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Set.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Stack.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMap.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMultimap.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMultiset.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedSet.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackerID.h">
+      <Filter>Header Files\Tracking</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracking.h">
+      <Filter>Header Files\Tracking</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackingTraits.h">
+      <Filter>Header Files\Tracking</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="PolymorphicID.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Polymorphic.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="PolymorphicDefinitions.h">
+      <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Array.h">
+      <Filter>Header Files\Types\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UndefAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InscripterBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6e9ea269-e5f5-4da8-9376-5c6bc541410d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{aae2e419-d92b-41fc-9673-61fdebbe78f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribes">
+      <UniqueIdentifier>{1c7926d8-bc53-4c3b-bf6e-bad708f92962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Files">
+      <UniqueIdentifier>{c5548924-765d-4850-ac7a-e14bf3ba6cc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types">
+      <UniqueIdentifier>{b579cb2a-9bba-4f1c-8df4-1605548a70af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types\Containers">
+      <UniqueIdentifier>{a916ce06-9c94-42e8-a93b-26626c159528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tracking">
+      <UniqueIdentifier>{bc0ace39-c741-4690-a87e-8143d975203b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Polymorphic">
+      <UniqueIdentifier>{a110410e-fbd2-45b5-bdb6-258ce6c08af2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BinaryInputFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryOutputFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryScribe.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassName.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ContainerSize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Endian.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Polymorphic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scribe.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
