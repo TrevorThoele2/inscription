@@ -64,6 +64,9 @@ namespace Inscription::File
                 stream.clear();
                 stream.seekg(startPosition, std::ios_base::beg);
 
+                if (useSize == 0)
+                    return std::string();
+
                 std::string buffer;
                 buffer.resize(static_cast<size_t>(useSize));
 
