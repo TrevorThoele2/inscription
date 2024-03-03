@@ -1,6 +1,7 @@
 #include <catch.hpp>
 
 #include <Inscription/NumericScribe.h>
+#include <Inscription/BufferScribe.h>
 
 #include "BinaryFixture.h"
 
@@ -133,6 +134,28 @@ SCENARIO_METHOD(BinaryTestsFixture, "loading basics in binary", "[binary]")
             THEN("is valid")
             {
                 REQUIRE(loadedTestClass == savedTestClass);
+            }
+        }
+    }
+
+    GIVEN("saved empty")
+    {
+        {
+            auto outputArchive = CreateRegistered<OutputArchive>();
+        }
+
+        THEN("loading empty buffer")
+        {
+            Inscription::Buffer buffer;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive(buffer);
+            }
+
+            THEN("buffer is still empty")
+            {
+                REQUIRE(buffer.value.empty());
             }
         }
     }

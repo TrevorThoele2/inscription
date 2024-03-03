@@ -24,8 +24,13 @@ namespace Inscription::File
         SanitizeStreamFailure(
             [this, &buffer, size]()
             {
-                buffer.resize(size);
-                stream.read(&buffer[0], size);
+                if (size > 0)
+                {
+                    buffer.resize(size);
+                    stream.read(&buffer[0], size);
+                }
+                else
+                    buffer = {};
             },
             path);
     }
