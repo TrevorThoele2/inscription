@@ -29,11 +29,19 @@ SCENARIO_METHOD(ArchiveTestsFixture, "user contexts")
             }
         }
 
-        WHEN("adding user context")
+        WHEN("removing user context")
+        {
+            THEN("does not throw exception")
+            {
+                REQUIRE_NOTHROW(archive.RemoveUserContext<std::string>());
+            }
+        }
+
+        WHEN("emplacing user context")
         {
             auto string = dataGeneration.Random<std::string>();
 
-            archive.UserContext(&string);
+            archive.EmplaceUserContext(&string);
 
             THEN("retrieving that user context gives valid pointer")
             {
@@ -47,6 +55,18 @@ SCENARIO_METHOD(ArchiveTestsFixture, "user contexts")
                 auto retrieved = archive.UserContext<int>();
 
                 REQUIRE(retrieved == nullptr);
+            }
+
+            WHEN("removing user context")
+            {
+                archive.RemoveUserContext<std::string>();
+
+                THEN("retrieving user context in old archive gives nullptr")
+                {
+                    auto retrieved = archive.UserContext<std::string>();
+
+                    REQUIRE(retrieved == nullptr);
+                }
             }
 
             WHEN("move constructing archive")

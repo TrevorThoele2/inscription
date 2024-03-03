@@ -4,6 +4,9 @@
 
 #include "ObjectTrackingContext.h"
 
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+
 namespace Inscription
 {
     template<class Object, class Archive>
