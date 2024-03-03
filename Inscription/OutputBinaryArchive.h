@@ -19,8 +19,10 @@ namespace Inscription
         template<class T>
         OutputBinaryArchive& Write(T& object);
     public:
-        void SeekStream(StreamPosition position) override;
-        StreamPosition TellStream() override;
+        void SeekStreamFromCurrent(StreamPosition position) override;
+        void SeekStreamFromBegin(StreamPosition offset = 0) override;
+        void SeekStreamFromEnd(StreamPosition offset = 0) override;
+        [[nodiscard]] StreamPosition CurrentStreamPosition() override;
     protected:
         void WriteImpl(bool arg) { WriteToFile(arg); }
         void WriteImpl(signed char arg) { WriteToFile(arg); }

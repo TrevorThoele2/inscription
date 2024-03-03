@@ -8,6 +8,7 @@
 #include "TableData.h"
 #include "Direction.h"
 #include "TypeManager.h"
+#include "StreamPosition.h"
 
 namespace Inscription
 {
@@ -19,7 +20,7 @@ namespace Inscription
     private:
         using Types = TypeManager<BinaryArchive>;
     public:
-        using StreamPosition = unsigned long long;
+        using StreamPosition = StreamPosition;
         using TypeRegistrationContext = Types::TypeRegistrationContext;
     public:
         Types types;
@@ -42,8 +43,10 @@ namespace Inscription
         [[nodiscard]] const OutputBinaryArchive* AsOutput() const;
         [[nodiscard]] const InputBinaryArchive* AsInput() const;
     public:
-        virtual void SeekStream(StreamPosition position) = 0;
-        virtual StreamPosition TellStream() = 0;
+        virtual void SeekStreamFromCurrent(StreamPosition offset) = 0;
+        virtual void SeekStreamFromBegin(StreamPosition offset = 0) = 0;
+        virtual void SeekStreamFromEnd(StreamPosition offset = 0) = 0;
+        virtual StreamPosition CurrentStreamPosition() = 0;
     protected:
         BinaryArchive(Direction direction);
         BinaryArchive(Direction direction, TypeRegistrationContext typeRegistrationContext);

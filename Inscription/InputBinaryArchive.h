@@ -10,6 +10,8 @@ namespace Inscription
     class InputBinaryArchive final : public BinaryArchive
     {
     public:
+        using SizeT = std::streamsize;
+    public:
         InputBinaryArchive(const FilePath& path);
         InputBinaryArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
         InputBinaryArchive(InputBinaryArchive&& arg) noexcept;
@@ -19,8 +21,11 @@ namespace Inscription
         template<class T>
         InputBinaryArchive& Read(T& object);
     public:
-        void SeekStream(StreamPosition position) override;
-        StreamPosition TellStream() override;
+        void SeekStreamFromCurrent(StreamPosition offset) override;
+        void SeekStreamFromBegin(StreamPosition offset = 0) override;
+        void SeekStreamFromEnd(StreamPosition offset = 0) override;
+        [[nodiscard]] StreamPosition CurrentStreamPosition() override;
+        [[nodiscard]] SizeT Size();
     protected:
         void ReadImpl(bool& arg) { ReadFromFile(arg); }
         void ReadImpl(signed char& arg) { ReadFromFile(arg); }
@@ -36,7 +41,7 @@ namespace Inscription
         void ReadImpl(unsigned long long&  arg) { ReadFromFile(arg); }
         void ReadImpl(float& arg) { ReadFromFile(arg); }
         void ReadImpl(double& arg) { ReadFromFile(arg); }
-        void ReadImpl(Buffer& arg) { ReadFromFile(arg); }
+        void ReadImpl(Buffer& arg) { file.ReadData(arg, arg.size()); }
     private:
         InputBinaryFile file;
     private:

@@ -16,7 +16,7 @@ namespace Inscription
         using StreamT = T;
         using StreamPosition = StreamPosition;
         using OffsetPosition = StreamPosition;
-        using SizeT = StreamPosition;
+        using SizeT = std::streamsize;
     public:
         Stream() = delete;
         Stream(const Stream& arg) = delete;

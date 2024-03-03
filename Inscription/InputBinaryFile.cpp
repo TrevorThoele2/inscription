@@ -21,9 +21,23 @@ namespace Inscription
             throw FileEncounteredError();
     }
 
-    void InputBinaryFile::SeekStream(StreamPosition position)
+    void InputBinaryFile::SeekStream(StreamPosition offset)
     {
-        stream.seekg(position);
+        stream.seekg(offset);
+        if (FailedStream())
+            throw FileEncounteredError();
+    }
+
+    void InputBinaryFile::SeekStreamFromBegin(StreamPosition offset)
+    {
+        stream.seekg(offset, std::ifstream::beg);
+        if (FailedStream())
+            throw FileEncounteredError();
+    }
+
+    void InputBinaryFile::SeekStreamFromEnd(StreamPosition offset)
+    {
+        stream.seekg(offset, std::ifstream::end);
         if (FailedStream())
             throw FileEncounteredError();
     }
@@ -34,5 +48,15 @@ namespace Inscription
         if (FailedStream())
             throw FileEncounteredError();
         return told;
+    }
+
+    auto InputBinaryFile::Size() -> SizeT
+    {
+        const auto currentPosition = TellStream();
+        stream.ignore(std::numeric_limits<SizeT>::max());
+        const auto size = stream.gcount();
+        stream.clear();
+        SeekStream(currentPosition);
+        return size;
     }
 }

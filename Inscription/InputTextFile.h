@@ -22,6 +22,6 @@ namespace Inscription
         std::string ReadSize(size_t size);
 
         void SeekStream(StreamPosition position);
-        StreamPosition TellStream();
+        [[nodiscard]] StreamPosition TellStream();
     };
 }

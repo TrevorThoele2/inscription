@@ -10,17 +10,22 @@ namespace Inscription
         stream.read(var, size);
     }
 
-    void InputSimpleFile::Seek(StreamPosition position)
+    void InputSimpleFile::SeekPositionFromCurrent(StreamPosition offset)
     {
-        stream.seekg(position);
+        stream.seekg(offset);
     }
 
-    void InputSimpleFile::Seek(OffsetPosition position, std::ios_base::seekdir direction)
+    void InputSimpleFile::SeekPositionFromBegin(OffsetPosition offset)
     {
-        stream.seekg(position, direction);
+        stream.seekg(offset, std::ios::beg);
     }
 
-    auto InputSimpleFile::Tell() -> StreamPosition
+    void InputSimpleFile::SeekPositionFromEnd(OffsetPosition offset)
+    {
+        stream.seekg(offset, std::ios::end);
+    }
+
+    auto InputSimpleFile::CurrentPosition() -> StreamPosition
     {
         return stream.tellg();
     }

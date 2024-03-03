@@ -17,14 +17,16 @@ namespace Inscription
 
         void WriteData(const Buffer& buffer);
         template<class T>
-        void WriteData(const T var);
+        void WriteData(T var);
 
-        void SeekStream(StreamPosition position);
-        StreamPosition TellStream();
+        void SeekStreamFromCurrent(StreamPosition offset);
+        void SeekStreamFromBegin(StreamPosition offset = 0);
+        void SeekStreamFromEnd(StreamPosition offset = 0);
+        [[nodiscard]] StreamPosition TellStream();
     };
 
     template<class T>
-    void OutputBinaryFile::WriteData(const T var)
+    void OutputBinaryFile::WriteData(T var)
     {
         stream.write(reinterpret_cast<const char*>(&var), sizeof(var));
         if (FailedStream())

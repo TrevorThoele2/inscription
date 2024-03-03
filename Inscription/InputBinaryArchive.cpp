@@ -27,13 +27,28 @@ namespace Inscription
         return *this;
     }
 
-    void InputBinaryArchive::SeekStream(StreamPosition position)
+    void InputBinaryArchive::SeekStreamFromCurrent(StreamPosition offset)
     {
-        file.SeekStream(position);
+        file.SeekStream(offset);
     }
 
-    InputBinaryArchive::StreamPosition InputBinaryArchive::TellStream()
+    void InputBinaryArchive::SeekStreamFromBegin(StreamPosition offset)
+    {
+        file.SeekStreamFromBegin(offset);
+    }
+
+    void InputBinaryArchive::SeekStreamFromEnd(StreamPosition offset)
+    {
+        file.SeekStreamFromEnd(offset);
+    }
+
+    InputBinaryArchive::StreamPosition InputBinaryArchive::CurrentStreamPosition()
     {
         return file.TellStream();
+    }
+
+    auto InputBinaryArchive::Size() -> SizeT
+    {
+        return file.Size();
     }
 }

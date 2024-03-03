@@ -40,9 +40,22 @@ namespace Inscription
 
     std::string InputTextFile::ReadSize(size_t size)
     {
-        char* buffer = nullptr;
-        stream.get(buffer, size + 1);
-        return std::string(buffer);
+        const auto startPosition = stream.tellg();
+
+        stream.seekg(0, std::ios::end);
+        const auto fileSize = stream.tellg();
+
+        stream.seekg(startPosition + StreamPosition(size));
+        const auto endPosition = std::min(stream.tellg(), fileSize);
+        const auto useSize = endPosition - startPosition;
+        stream.seekg(startPosition);
+
+        std::string buffer;
+        buffer.resize(static_cast<size_t>(useSize));
+
+        stream.get(&buffer[0], useSize);
+
+        return buffer;
     }
 
     void InputTextFile::SeekStream(StreamPosition position)

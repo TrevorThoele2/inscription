@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <iterator>
 
 #include "ObjectTracker.h"
 

@@ -19,8 +19,11 @@ namespace Inscription
         template<class T>
         void ReadData(T& var);
 
-        void SeekStream(StreamPosition position);
-        StreamPosition TellStream();
+        void SeekStream(StreamPosition offset);
+        void SeekStreamFromBegin(StreamPosition offset = 0);
+        void SeekStreamFromEnd(StreamPosition offset = 0);
+        [[nodiscard]] StreamPosition TellStream();
+        [[nodiscard]] SizeT Size();
     };
 
     template<class T>
