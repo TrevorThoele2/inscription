@@ -57,12 +57,45 @@ SCENARIO_METHOD(JumpTableFixture, "loading jump table", "[jumptable]")
                 }
             }
 
+            THEN("all objects constructible through function")
+            {
+                auto function = [](::Inscription::InputBinaryArchive& archive) -> int
+                {
+                    int i;
+                    archive(i);
+                    return i;
+                };
+
+                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
+                {
+                    auto object = loadedJumpTable.ConstructObject(function, savedIntegerIDs[loop], inputArchive);
+                    REQUIRE(object == savedIntegerValues[loop]);
+                }
+            }
+
             THEN("all objects fillable")
             {
                 for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
                 {
                     int object;
                     loadedJumpTable.FillObject(object, savedIntegerIDs[loop], inputArchive);
+                    REQUIRE(object == savedIntegerValues[loop]);
+                }
+            }
+
+            THEN("all objects fillable through function")
+            {
+                auto function = [](::Inscription::InputBinaryArchive& archive) -> int
+                {
+                    int i;
+                    archive(i);
+                    return i;
+                };
+
+                for (size_t loop = 0; loop < savedIntegerIDs.size(); ++loop)
+                {
+                    int object;
+                    loadedJumpTable.FillObject(function, object, savedIntegerIDs[loop], inputArchive);
                     REQUIRE(object == savedIntegerValues[loop]);
                 }
             }

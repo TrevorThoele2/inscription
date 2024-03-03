@@ -6,10 +6,11 @@
 
 namespace Inscription
 {
-    InputBinaryArchive::InputBinaryArchive(
+    InputBinaryArchive::InputBinaryArchive
+    (
         const FilePath& path,
-        const Signature& signature) :
-
+        const Signature& signature
+    ) :
         BinaryArchive(
             Direction::Input,
             signature,
@@ -20,11 +21,12 @@ namespace Inscription
         InitialSetup();
     }
 
-    InputBinaryArchive::InputBinaryArchive(
+    InputBinaryArchive::InputBinaryArchive
+    (
         const FilePath& path,
         const Signature& signature,
-        const TypeRegistrationContext& typeRegistrationContext) :
-
+        const TypeRegistrationContext& typeRegistrationContext
+    ) :
         BinaryArchive(
             Direction::Input,
             signature,

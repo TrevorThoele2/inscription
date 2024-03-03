@@ -155,8 +155,12 @@ namespace Inscription
     };
 }
 
-SCENARIO_METHOD(BinaryPolymorphicFixture, "loading polymorphic pointers in binary", "[binary][pointer][polymorphic]")
-{
+SCENARIO_METHOD
+(
+    BinaryPolymorphicFixture,
+    "loading polymorphic pointers in binary",
+    "[binary][pointer][polymorphic]"
+) {
     GIVEN("saved null polymorphic pointer as base")
     {
         Base* saved = nullptr;
@@ -217,13 +221,34 @@ SCENARIO_METHOD(BinaryPolymorphicFixture, "loading polymorphic pointers in binar
             outputArchive(saved);
         }
 
-        THEN("loading pointer")
+        WHEN("loading pointer")
         {
             Base* loaded = nullptr;
 
             {
                 auto inputArchive = CreateRegistered<InputArchive>();
                 inputArchive(loaded);
+            }
+
+            THEN("loaded pointer is valid")
+            {
+                Derived* loadedCasted = dynamic_cast<Derived*>(loaded);
+                REQUIRE(loadedCasted != nullptr);
+                REQUIRE(loadedCasted->BaseValue() == savedCasted->BaseValue());
+                REQUIRE(loadedCasted->DerivedValue() == savedCasted->DerivedValue());
+
+                delete saved;
+                delete loaded;
+            }
+        }
+
+        WHEN("constructing manually through input archive")
+        {
+            Base* loaded = nullptr;
+
+            {
+                auto inputArchive = CreateRegistered<InputArchive>();
+                inputArchive.Construct(loaded, typeid(Derived));
             }
 
             THEN("loaded pointer is valid")
@@ -267,12 +292,12 @@ SCENARIO_METHOD
         using Saved1 = GeneralDerived<1>;
         using Saved2 = GeneralDerived<2>;
 
-        Base* saved0 = dataGeneration.RandomHeap<Saved0, int, std::string>();
-        Base* saved1 = dataGeneration.RandomHeap<Saved1, int, std::string>();
-        Base* saved2 = dataGeneration.RandomHeap<Saved2, int, std::string>();
-        auto castedSaved0 = dynamic_cast<Saved0*>(saved0);
-        auto castedSaved1 = dynamic_cast<Saved1*>(saved1);
-        auto castedSaved2 = dynamic_cast<Saved2*>(saved2);
+        auto saved0 = std::unique_ptr<Base>(dataGeneration.RandomHeap<Saved0, int, std::string>());
+        auto saved1 = std::unique_ptr<Base>(dataGeneration.RandomHeap<Saved1, int, std::string>());
+        auto saved2 = std::unique_ptr<Base>(dataGeneration.RandomHeap<Saved2, int, std::string>());
+        auto castedSaved0 = dynamic_cast<Saved0*>(saved0.get());
+        auto castedSaved1 = dynamic_cast<Saved1*>(saved1.get());
+        auto castedSaved2 = dynamic_cast<Saved2*>(saved2.get());
 
         auto saved0PrincipleTypeHandle = "Saved0PrincipleTypeHandle";
         auto saved1PrincipleTypeHandle = "Saved1PrincipleTypeHandle";
@@ -314,7 +339,7 @@ SCENARIO_METHOD
             using SamePrincipleTypeHandle = GeneralDerived<0>;
             SamePrincipleTypeHandle::principleTypeHandle = saved0PrincipleTypeHandle;
 
-            Base* loaded = nullptr;
+            std::unique_ptr<Base> loaded = nullptr;
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
@@ -325,7 +350,7 @@ SCENARIO_METHOD
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded = dynamic_cast<SamePrincipleTypeHandle*>(loaded);
+                auto castedLoaded = dynamic_cast<SamePrincipleTypeHandle*>(loaded.get());
                 REQUIRE(castedLoaded != nullptr);
                 REQUIRE(loaded->BaseValue() == saved0->BaseValue());
                 REQUIRE(castedLoaded->DerivedValue() == castedSaved0->DerivedValue());
@@ -337,7 +362,7 @@ SCENARIO_METHOD
             using InRepresentedTypeHandles = GeneralDerived<0>;
             InRepresentedTypeHandles::representedTypeHandles.emplace_back(saved0PrincipleTypeHandle);
 
-            Base* loaded = nullptr;
+            std::unique_ptr<Base> loaded = nullptr;
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
@@ -348,7 +373,7 @@ SCENARIO_METHOD
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded = dynamic_cast<InRepresentedTypeHandles*>(loaded);
+                auto castedLoaded = dynamic_cast<InRepresentedTypeHandles*>(loaded.get());
                 REQUIRE(castedLoaded != nullptr);
                 REQUIRE(loaded->BaseValue() == saved0->BaseValue());
                 REQUIRE(castedLoaded->DerivedValue() == castedSaved0->DerivedValue());
@@ -362,9 +387,9 @@ SCENARIO_METHOD
             InRepresentedTypeHandles::representedTypeHandles.emplace_back(saved1PrincipleTypeHandle);
             InRepresentedTypeHandles::representedTypeHandles.emplace_back(saved2PrincipleTypeHandle);
 
-            Base* loaded0 = nullptr;
-            Base* loaded1 = nullptr;
-            Base* loaded2 = nullptr;
+            std::unique_ptr<Base> loaded0 = nullptr;
+            std::unique_ptr<Base> loaded1 = nullptr;
+            std::unique_ptr<Base> loaded2 = nullptr;
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "testing");
@@ -377,9 +402,9 @@ SCENARIO_METHOD
 
             THEN("loaded pointer is same as saved")
             {
-                auto castedLoaded0 = dynamic_cast<InRepresentedTypeHandles*>(loaded0);
-                auto castedLoaded1 = dynamic_cast<InRepresentedTypeHandles*>(loaded1);
-                auto castedLoaded2 = dynamic_cast<InRepresentedTypeHandles*>(loaded2);
+                auto castedLoaded0 = dynamic_cast<InRepresentedTypeHandles*>(loaded0.get());
+                auto castedLoaded1 = dynamic_cast<InRepresentedTypeHandles*>(loaded1.get());
+                auto castedLoaded2 = dynamic_cast<InRepresentedTypeHandles*>(loaded2.get());
                 REQUIRE(castedLoaded0 != nullptr);
                 REQUIRE(castedLoaded1 != nullptr);
                 REQUIRE(castedLoaded2 != nullptr);
@@ -521,6 +546,9 @@ SCENARIO_METHOD(BinaryPolymorphicFixture, "loading polymorphic references", "[bi
                 REQUIRE(castedLoaded != nullptr);
                 REQUIRE(castedLoaded->BaseValue() == castedSaved->BaseValue());
                 REQUIRE(castedLoaded->DerivedValue() == castedSaved->DerivedValue());
+
+                delete saved;
+                delete loaded;
             }
         }
     }

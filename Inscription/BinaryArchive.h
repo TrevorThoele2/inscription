@@ -101,6 +101,9 @@ namespace Inscription
         BinaryArchive(BinaryArchive&& arg) noexcept;
 
         BinaryArchive& operator=(BinaryArchive&& arg) noexcept;
+    protected:
+        template<class T>
+        void DoConstruct(T*& object, const std::type_index& type);
     private:
         template<class T>
         using KnownScribe = Scribe<T, BinaryArchive>;
@@ -175,6 +178,14 @@ namespace Inscription
             return;
 
         objectTracker.ReplaceObject(&here, &newObject);
+    }
+
+    template<class T>
+    void BinaryArchive::DoConstruct(T*& object, const std::type_index& type)
+    {
+        auto storage = polymorphicManager.CreateStorage(type);
+        polymorphicManager.Construct(storage, type, *this);
+        object = reinterpret_cast<T*>(storage);
     }
 
     template<class T>
