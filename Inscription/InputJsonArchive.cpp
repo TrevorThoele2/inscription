@@ -71,10 +71,10 @@ namespace Inscription
         return static_cast<bool>(OptionalItem(name, *readCollection));
     }
 
-    void InputJsonArchive::StartList(const std::string& name, ContainerSize& size)
+    ContainerSize InputJsonArchive::StartList(const std::string& name)
     {
         StartCollection<List>(name, readCollection);
-        size = readCollection->Size();
+        return readCollection->Size();
     }
 
     void InputJsonArchive::EndList()
@@ -128,54 +128,73 @@ namespace Inscription
     auto InputJsonArchive::List::Read(const std::string& read) -> ReadResult
     {
         std::string valueElement;
+        auto readingString = false;
+        auto escapeNext = false;
         for(size_t i = 0; i < read.size(); ++i)
         {
             const auto character = read[i];
 
-            switch(character)
+            if (escapeNext)
             {
-            case '{':
-            {
-                if (!valueElement.empty())
-                    throw JsonParseError();
-
-                auto created = std::make_unique<Object>(this);
-                const auto collection = created.get();
-                items.push_back(std::move(created));
-                return { collection, i + 1 };
+                valueElement += character;
+                escapeNext = false;
             }
-            case '[':
+            else if (character == '\\')
+                escapeNext = true;
+            else if (character == '\"')
             {
-                if (!valueElement.empty())
-                    throw JsonParseError();
-
-                auto created = std::make_unique<List>(this);
-                const auto collection = created.get();
-                items.push_back(std::move(created));
-                return { collection, i + 1 };
+                valueElement += character;
+                readingString = !readingString;
             }
-            case ']':
+            else if (readingString)
+                valueElement += character;
+            else
             {
-                if (!valueElement.empty())
+                switch (character)
                 {
+                case '{':
+                {
+                    if (!valueElement.empty())
+                        throw JsonParseError();
+
+                    auto created = std::make_unique<Object>(this);
+                    const auto collection = created.get();
+                    items.push_back(std::move(created));
+                    return { collection, i + 1 };
+                }
+                case '[':
+                {
+                    if (!valueElement.empty())
+                        throw JsonParseError();
+
+                    auto created = std::make_unique<List>(this);
+                    const auto collection = created.get();
+                    items.push_back(std::move(created));
+                    return { collection, i + 1 };
+                }
+                case ']':
+                {
+                    if (!valueElement.empty())
+                    {
+                        auto created = std::make_unique<Value>(valueElement);
+                        items.push_back(std::move(created));
+                    }
+
+                    return { nullptr, i + 1 };
+                }
+                case ',':
+                {
+                    if (valueElement.empty())
+                        throw JsonParseError();
+
                     auto created = std::make_unique<Value>(valueElement);
                     items.push_back(std::move(created));
+                    valueElement = "";
+                    break;
                 }
-
-                return { nullptr, i + 1 };
-            }
-            case ',':
-            {
-                if (valueElement.empty())
-                    throw JsonParseError();
-
-                auto created = std::make_unique<Value>(valueElement);
-                items.push_back(std::move(created));
-                valueElement = "";
-                break;
-            }
-            default:
-                valueElement += character;
+                default:
+                    valueElement += character;
+                }
             }
         }
 

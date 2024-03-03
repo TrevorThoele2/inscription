@@ -2,153 +2,113 @@
 
 #include <unordered_map>
 
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
 
 #include "ContainerSize.h"
 #include "ScopeConstructor.h"
-#include "Const.h"
+
+#include "OutputBinaryArchive.h"
+#include "InputBinaryArchive.h"
+#include "OutputJsonArchive.h"
+#include "InputJsonArchive.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
     template<class Key, class T, class Hash, class Predicate, class Allocator>
-    class Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive> final :
-        public ObjectScribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive>
+    class Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>> final
     {
-    private:
-        using BaseT = ObjectScribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive>;
     public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        using ObjectT = std::unordered_multimap<Key, T, Hash, Predicate, Allocator>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     };
 
     template<class Key, class T, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive);
-        else
-            LoadImplementation(object, archive);
-    }
-
-    template<class Key, class T, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::SaveImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        ContainerSize size(object.size());
-        archive(size);
-        for (auto loop = object.begin(); loop != object.end(); ++loop)
         {
-            archive(loop->first);
-            archive(loop->second);
-        }
-    }
-
-    template<class Key, class T, class Hash, class Predicate, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, BinaryArchive>::LoadImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        ContainerSize size;
-        archive(size);
-
-        object.clear();
-        while (size-- > 0)
-        {
-            ScopeConstructor<typename ObjectT::key_type> key(archive);
-            ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
-
-            auto emplaced = object.emplace(std::move(*key.Get()), std::move(mapped.GetMove()));
-            if (object.count(*key.Get()) == 1)
+            ContainerSize size(object.size());
+            archive(size);
+            for (auto loop = object.begin(); loop != object.end(); ++loop)
             {
-                archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced->first));
-                archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced->second);
+                archive(loop->first);
+                archive(loop->second);
+            }
+        }
+        else
+        {
+            ContainerSize size;
+            archive(size);
+
+            object.clear();
+            while (size-- > 0)
+            {
+                ScopeConstructor<typename ObjectT::key_type> key(archive);
+                ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
+
+                auto emplaced = object.emplace(std::move(*key.Get()), std::move(mapped.GetMove()));
+                if (object.count(*key.Get()) == 1)
+                {
+                    archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced->first));
+                    archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced->second);
+                }
             }
         }
     }
 
-    class JsonArchive;
-
-    template<class Key, class T, class Hash, class Allocator>
-    class Scribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive> final :
-        public ObjectScribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive>
-    {
-    private:
-        using BaseT = ObjectScribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive>;
-    public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-    };
-
-    template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    template<class Key, class T, class Hash, class Predicate, class Allocator>
+    void Scribe<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(name, object, archive);
-        else
-            LoadImplementation(name, object, archive);
-    }
-
-    template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive>::SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        auto outputArchive = archive.AsOutput();
-
-        outputArchive->StartList(name);
-        for (auto loop = object.begin(); loop != object.end(); ++loop)
         {
-            outputArchive->StartList("");
-            archive("", loop->first);
-            archive("", loop->second);
+            auto outputArchive = archive.AsOutput();
+
+            outputArchive->StartList(name);
+            for (auto loop = object.begin(); loop != object.end(); ++loop)
+            {
+                outputArchive->StartList("");
+                archive("", loop->first);
+                archive("", loop->second);
+                outputArchive->EndList();
+            }
             outputArchive->EndList();
         }
-        outputArchive->EndList();
-    }
-
-    template<class Key, class T, class Hash, class Allocator>
-    void Scribe<std::unordered_multimap<Key, T, Hash, Allocator>, JsonArchive>::LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
-    {
-        object.clear();
-
-        auto inputArchive = archive.AsInput();
-
-        ContainerSize size = 0;
-
-        inputArchive->StartList(name, size);
-
-        while (size-- > 0)
+        else
         {
-            ContainerSize innerSize;
-            inputArchive->StartList("", innerSize);
+            object.clear();
 
-            ScopeConstructor<typename ObjectT::key_type> key(archive);
-            ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
+            auto inputArchive = archive.AsInput();
 
-            auto emplaced = object.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
-            if (object.count(*key.Get()) == 1)
+            auto size = inputArchive->StartList(name);
+
+            while (size-- > 0)
             {
-                archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced->first));
-                archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced->second);
+                inputArchive->StartList("");
+
+                ScopeConstructor<typename ObjectT::key_type> key(archive);
+                ScopeConstructor<typename ObjectT::mapped_type> mapped(archive);
+
+                auto emplaced = object.emplace(std::move(key.GetMove()), std::move(mapped.GetMove()));
+                if (object.count(*key.Get()) == 1)
+                {
+                    archive.types.AttemptReplaceTrackedObject(*key.Get(), RemoveConst(emplaced->first));
+                    archive.types.AttemptReplaceTrackedObject(*mapped.Get(), emplaced->second);
+                }
+
+                inputArchive->EndList();
             }
 
             inputArchive->EndList();
         }
-
-        inputArchive->EndList();
     }
+
+    template<class Key, class T, class Hash, class Predicate, class Allocator, class Archive>
+    struct ScribeTraits<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>, Archive>
+    {
+        using Category = TrackingScribeCategory<std::unordered_multimap<Key, T, Hash, Predicate, Allocator>>;
+    };
 }

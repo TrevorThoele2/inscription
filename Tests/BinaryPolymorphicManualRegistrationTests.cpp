@@ -1,11 +1,11 @@
 #include <catch.hpp>
 
-#include <Inscription/CompositeScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
+#include <Inscription/PointerScribe.h>
 #include <Inscription/NumericScribe.h>
 #include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
-#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicManualRegistrationFixture : public BinaryFixture
 {
@@ -85,21 +85,35 @@ BinaryPolymorphicManualRegistrationFixture::Base::~Base() = default;
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive> : public
-        CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>
+    class Scribe<BinaryPolymorphicManualRegistrationFixture::Base>
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = BinaryPolymorphicManualRegistrationFixture::Base;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Base, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicManualRegistrationFixture::Base>;
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive> : public
-        CompositeScribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>
+    class Scribe<BinaryPolymorphicManualRegistrationFixture::Derived> final
     {
     public:
-        static Type OutputType(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = BinaryPolymorphicManualRegistrationFixture::Derived;
+    public:
+        static Type OutputType(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicManualRegistrationFixture::Derived, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicManualRegistrationFixture::Derived>;
     };
 }
 
@@ -144,20 +158,17 @@ SCENARIO_METHOD(
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Base, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicManualRegistrationFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         archive(object.baseValue);
     }
 
-    Type Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::OutputType(const BinaryArchive& archive)
+    {
         return "CustomConstructionDerived";
     }
 
-    void Scribe<::BinaryPolymorphicManualRegistrationFixture::Derived, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicManualRegistrationFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         BaseScriven<::BinaryPolymorphicManualRegistrationFixture::Base>(object, archive);
         archive(object.derivedValue);

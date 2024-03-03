@@ -14,7 +14,7 @@ namespace Inscription
     struct scribe_has_input_types<
         T,
         Archive,
-        std::void_t<decltype(Scribe<T, Archive>::InputTypes(std::declval<const Archive&>()))>
+        std::void_t<decltype(Scribe<T>::InputTypes(std::declval<const Archive&>()))>
     >
         : std::true_type
     {};

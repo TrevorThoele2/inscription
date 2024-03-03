@@ -1,14 +1,14 @@
 #include <catch.hpp>
 #include <utility>
 
-#include <Inscription/TableScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
+#include <Inscription/TableScribeCategory.h>
 #include <Inscription/NumericScribe.h>
 
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
-#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicConstructionFixture : public BinaryFixture
 {
@@ -46,23 +46,37 @@ BinaryPolymorphicConstructionFixture::Base::~Base() = default;
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive>
+    class Scribe<BinaryPolymorphicConstructionFixture::Base> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = BinaryPolymorphicConstructionFixture::Base;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Base, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicConstructionFixture::Base>;
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive> final : public
-        CompositeScribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>
+    class Scribe<BinaryPolymorphicConstructionFixture::Derived> final
     {
     public:
-        static void Construct(ObjectT* storage, ArchiveT& archive);
+        using ObjectT = BinaryPolymorphicConstructionFixture::Derived;
+    public:
+        static void Construct(ObjectT* storage, BinaryArchive& archive);
 
-        static Type OutputType(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        static Type OutputType(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicConstructionFixture::Derived, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicConstructionFixture::Derived>;
     };
 }
 
@@ -149,14 +163,12 @@ SCENARIO_METHOD(
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicConstructionFixture::Base, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<::BinaryPolymorphicConstructionFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         archive(object.baseValue);
     }
 
-    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::Construct(
-        ObjectT* storage, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Construct(ObjectT* storage, BinaryArchive& archive)
     {
         int baseValue;
         archive(baseValue);
@@ -167,14 +179,12 @@ namespace Inscription
         new (storage) ObjectT(baseValue, derivedValue);
     }
 
-    Type Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::OutputType(
-        const ArchiveT& archive
-    ) {
+    Type Scribe<BinaryPolymorphicConstructionFixture::Derived>::OutputType(const BinaryArchive& archive)
+    {
         return "BinaryPolymorphicConstructionDerived";
     }
 
-    void Scribe<::BinaryPolymorphicConstructionFixture::Derived, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicConstructionFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         BaseScriven<::BinaryPolymorphicConstructionFixture::Base>(object, archive);
         archive(object.derivedValue);

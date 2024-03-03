@@ -2,39 +2,37 @@
 
 #include <tuple>
 
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
 
 #include "ScopeConstructor.h"
+
+#include "OutputJsonArchive.h"
+#include "InputJsonArchive.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
-    template<class... Args>
-    class Scribe<std::tuple<Args...>, BinaryArchive> : public ObjectScribe<std::tuple<Args...>, BinaryArchive>
+    namespace detail
     {
-    private:
-        using BaseT = ScribeBase<std::tuple<Args...>, BinaryArchive>;
-    public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
         template<unsigned int I>
         class UnpackTuple
         {
         public:
-            static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
+            template<class... Args>
+            static void Scriven(std::tuple<Args...>& object, BinaryArchive& archive)
             {
-                ScrivenSingle(std::get<I - 1>(object), archive);
-                UnpackTuple<I - 1>::ScrivenGroup(object, archive);
+                auto& value = std::get<I - 1>(object);
+                archive(value);
+                UnpackTuple<I - 1>::Scriven(object, archive);
             }
-        private:
-            template<class T>
-            static void ScrivenSingle(T& single, ArchiveT& archive)
+
+            template<class... Args>
+            static void Scriven(std::tuple<Args...>& object, JsonArchive& archive)
             {
-                archive(single);
+                auto& value = std::get<I - 1>(object);
+                archive("", value);
+                UnpackTuple<I - 1>::Scriven(object, archive);
             }
         };
 
@@ -42,14 +40,54 @@ namespace Inscription
         class UnpackTuple<0>
         {
         public:
-            static void ScrivenGroup(ObjectT& object, ArchiveT& archive)
+            template<class... Args>
+            static void Scriven(std::tuple<Args...>&, BinaryArchive&)
+            {}
+
+            template<class... Args>
+            static void Scriven(std::tuple<Args...>&, JsonArchive&)
             {}
         };
+    }
+
+    template<class... Args>
+    class Scribe<std::tuple<Args...>> final
+    {
+    public:
+        using ObjectT = std::tuple<Args...>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     };
 
     template<class... Args>
-    void Scribe<std::tuple<Args...>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::tuple<Args...>>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
-        UnpackTuple<sizeof...(Args)>::ScrivenGroup(object, archive);
+        detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
     }
+
+    template<class... Args>
+    void Scribe<std::tuple<Args...>>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto output = archive.AsOutput();
+            output->StartList(name);
+            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
+            output->EndList();
+        }
+        else
+        {
+            auto input = archive.AsInput();
+            input->StartList(name);
+            detail::UnpackTuple<sizeof...(Args)>::Scriven(object, archive);
+            input->EndList();
+        }
+    }
+
+    template<class... Args, class Archive>
+    struct ScribeTraits<std::tuple<Args...>, Archive>
+    {
+        using Category = TrackingScribeCategory<std::tuple<Args...>>;
+    };
 }

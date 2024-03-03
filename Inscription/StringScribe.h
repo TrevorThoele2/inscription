@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "TrackingScribe.h"
+#include "TrackingScribeCategory.h"
 
 #include "NumericScribe.h"
 
@@ -12,35 +12,19 @@ namespace Inscription
     class TextArchive;
 
     template<>
-    class Scribe<std::string, BinaryArchive> final :
-        public TrackingScribe<std::string, BinaryArchive>
+    class Scribe<std::string> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    public:
+        using ObjectT = std::string;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, TextArchive& archive);
     };
 
-    template<>
-    class Scribe<std::string, JsonArchive> final :
-        public TrackingScribe<std::string, JsonArchive>
+    template<class Archive>
+    struct ScribeTraits<std::string, Archive>
     {
-    protected:
-        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
-    };
-
-    template<>
-    class Scribe<std::string, TextArchive> final :
-        public ScribeBase<std::string, TextArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        using Category = TrackingScribeCategory<std::string>;
     };
 }

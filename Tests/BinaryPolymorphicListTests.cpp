@@ -1,12 +1,12 @@
 #include <catch.hpp>
 
-#include <Inscription/CompositeScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
 #include <Inscription/NumericScribe.h>
+#include <Inscription/PointerScribe.h>
 #include <Inscription/StringScribe.h>
 #include <Inscription/ContainerSize.h>
 
 #include "BinaryFixture.h"
-#include "Inscription/BaseScriven.h"
 
 class BinaryPolymorphicListFixture : public BinaryFixture
 {
@@ -58,21 +58,35 @@ BinaryPolymorphicListFixture::Base::~Base() = default;
 namespace Inscription
 {
     template<>
-    class Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive> final :
-        public CompositeScribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>
+    class Scribe<BinaryPolymorphicListFixture::Base> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = BinaryPolymorphicListFixture::Base;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicListFixture::Base, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicListFixture::Base>;
     };
 
     template<>
-    class Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive> final :
-        public CompositeScribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>
+    class Scribe<BinaryPolymorphicListFixture::Derived> final
     {
     public:
-        static Type OutputType(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = BinaryPolymorphicListFixture::Derived;
+    public:
+        static Type OutputType(const BinaryArchive& archive);
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<BinaryPolymorphicListFixture::Derived, Archive> final
+    {
+        using Category = CompositeScribeCategory<BinaryPolymorphicListFixture::Derived>;
     };
 }
 
@@ -151,21 +165,19 @@ SCENARIO_METHOD
 
 namespace Inscription
 {
-    void Scribe<::BinaryPolymorphicListFixture::Base, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicListFixture::Base>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         archive(object.baseValue);
     }
 
-    Type Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::OutputType(const ArchiveT& archive)
+    Type Scribe<BinaryPolymorphicListFixture::Derived>::OutputType(const BinaryArchive& archive)
     {
         return "CustomConstructionDerived";
     }
 
-    void Scribe<::BinaryPolymorphicListFixture::Derived, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
+    void Scribe<BinaryPolymorphicListFixture::Derived>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
-        BaseScriven<::BinaryPolymorphicListFixture::Base>(object, archive);
+        BaseScriven<BinaryPolymorphicListFixture::Base>(object, archive);
         archive(object.derivedValue);
     }
 }

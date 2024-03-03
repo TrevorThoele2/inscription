@@ -1,20 +1,24 @@
 #pragma once
 
 #include "StreamPosition.h"
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
     template<>
-    class Scribe<StreamPosition, BinaryArchive> final :
-        public ObjectScribe<StreamPosition, BinaryArchive>
+    class Scribe<StreamPosition> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+    public:
+        using ObjectT = StreamPosition;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<StreamPosition, Archive>
+    {
+        using Category = TrackingScribeCategory<StreamPosition>;
     };
 }

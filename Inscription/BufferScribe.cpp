@@ -5,7 +5,7 @@
 
 namespace Inscription
 {
-    void Scribe<Buffer, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<Buffer>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
             archive.AsOutput()->Write(object);

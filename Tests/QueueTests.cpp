@@ -105,6 +105,25 @@ SCENARIO_METHOD(QueueBinaryTestsFixture, "loading queue after saving binary", "[
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.push(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested queues")
@@ -254,6 +273,25 @@ SCENARIO_METHOD(QueueJsonTestsFixture, "loading queue after saving json", "[json
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("queue", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.push(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("queue", loaded);

@@ -105,6 +105,25 @@ SCENARIO_METHOD(MultiSetBinaryTestsFixture, "loading multiset after saving binar
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested multisets")
@@ -242,6 +261,25 @@ SCENARIO_METHOD(MultiSetJsonTestsFixture, "loading multiset after saving json", 
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("multiset", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("multiset", loaded);

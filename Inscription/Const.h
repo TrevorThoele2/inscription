@@ -3,66 +3,72 @@
 namespace Inscription
 {
     template<class T>
-    struct IsConst : std::false_type
+    struct is_const : std::false_type
     {};
 
     template<class T>
-    struct IsConst<const T> : std::true_type
+    struct is_const<const T> : std::true_type
     {};
 
     template<class T>
-    struct IsConst<const T*> : std::true_type
+    struct is_const<const T*> : std::true_type
     {};
 
     template<class T>
-    struct IsConst<const T&> : std::true_type
+    struct is_const<const T&> : std::true_type
     {};
 
     template<class T>
-    struct RemoveConstTrait
+    static constexpr bool is_const_v = is_const<T>::type;
+
+    template<class T>
+    struct remove_const
     {
         using type = T;
     };
 
     template<class T>
-    struct RemoveConstTrait<const T>
+    struct remove_const<const T>
     {
         using type = T;
     };
 
     template<class T>
-    struct RemoveConstTrait<const T*>
+    struct remove_const<const T*>
     {
         using type = T*;
     };
 
     template<class T>
-    struct RemoveConstTrait<T* const>
+    struct remove_const<T* const>
     {
         using type = T*;
     };
 
     template<class T>
-    struct RemoveConstTrait<const T* const>
+    struct remove_const<const T* const>
     {
         using type = T*;
     };
 
     template<class T>
-    struct RemoveConstTrait<const T&>
+    struct remove_const<const T&>
     {
         using type = T&;
     };
 
     template<class T>
-    typename RemoveConstTrait<T>::type&& RemoveConst(T&& object)
+    using remove_const_t = typename remove_const<T>::type;
+
+    template<class T>
+    remove_const_t<T>& RemoveConst(T& object)
     {
-        return const_cast<typename RemoveConstTrait<T>::type&&>(object);
+        return const_cast<remove_const_t<T>&>(object);
     }
 
     template<class T>
-    typename RemoveConstTrait<T>::type& RemoveConst(T& object)
+    remove_const_t<T>&& RemoveConst(T&& object)
     {
-        return const_cast<typename RemoveConstTrait<T>::type&>(object);
+        return const_cast<remove_const_t<T>&&>(object);
     }
 }

@@ -105,6 +105,25 @@ SCENARIO_METHOD(StackBinaryTestsFixture, "loading stack after saving binary", "[
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved nested stacks")
@@ -254,6 +273,25 @@ SCENARIO_METHOD(StackJsonTestsFixture, "loading stack after saving json", "[json
         WHEN("loading")
         {
             Integers loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("stack", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            Integers loaded;
+
+            const auto occupiedGroup = dataGeneration.RandomGroup<int>(5);
+
+            for (auto& loop : occupiedGroup)
+                loaded.emplace(loop);
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("stack", loaded);

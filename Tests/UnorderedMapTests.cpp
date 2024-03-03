@@ -116,6 +116,31 @@ SCENARIO_METHOD(UnorderedMapBinaryTestsFixture, "loading unordered_map after sav
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            IntegerToStrings loaded;
+
+            const auto occupiedGroupKeys = dataGeneration.RandomGroup<int>(5);
+            const auto occupiedGroupValues = dataGeneration.RandomGroup<std::string>(5);
+
+            for (size_t i = 0; i < occupiedGroupKeys.size(); ++i)
+            {
+                const auto key = occupiedGroupKeys[i];
+                const auto value = occupiedGroupValues[i];
+
+                loaded.emplace(key, value);
+            }
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved unordered_map with objects")
@@ -237,6 +262,31 @@ SCENARIO_METHOD(UnorderedMapJsonTestsFixture, "loading unordered_map after savin
         WHEN("loading")
         {
             IntegerToStrings loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("unordered_map", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            IntegerToStrings loaded;
+
+            const auto occupiedGroupKeys = dataGeneration.RandomGroup<int>(5);
+            const auto occupiedGroupValues = dataGeneration.RandomGroup<std::string>(5);
+
+            for (size_t i = 0; i < occupiedGroupKeys.size(); ++i)
+            {
+                const auto key = occupiedGroupKeys[i];
+                const auto value = occupiedGroupValues[i];
+
+                loaded.emplace(key, value);
+            }
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("unordered_map", loaded);

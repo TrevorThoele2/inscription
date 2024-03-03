@@ -2,7 +2,6 @@
 
 #include <array>
 
-#include "ScribeBase.h"
 #include "Access.h"
 #include "ArrayScribe.h"
 
@@ -127,22 +126,24 @@ namespace Inscription
     }
 
     template<class T>
-    class Scribe<TableDataEntry<T>, BinaryArchive> : public ScribeBase<TableDataEntry<T>, BinaryArchive>
+    class Scribe<TableDataEntry<T>>
     {
-    private:
-        using BaseT = ScribeBase<TableDataEntry<T>, BinaryArchive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        using ObjectT = TableDataEntry<T>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             archive(object.Get());
+        }
+
+        void Scriven(ObjectT& object, JsonArchive& archive)
+        {
+            archive("object", object.Get());
         }
     };
    
     template<class T, class Archive>
-    struct ObjectTrackingTraits<TableDataEntry<T>, Archive>
+    struct ScribeTraits<TableDataEntry<T>, Archive>
     {
         static constexpr bool shouldTrack = false;
     };

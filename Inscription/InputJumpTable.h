@@ -7,7 +7,7 @@
 #include "ContainerSize.h"
 
 #include "StreamPosition.h"
-#include "CompositeScribe.h"
+#include "CompositeScribeCategory.h"
 #include "StreamPositionScribe.h"
 
 namespace Inscription
@@ -115,20 +115,16 @@ namespace Inscription
             });
     }
 
-    template<class ID, class Object, class Archive>
-    class Scribe<InputJumpTable<ID, Object>, Archive> :
-        public CompositeScribe<InputJumpTable<ID, Object>, Archive>
+    template<class ID, class Object>
+    class Scribe<InputJumpTable<ID, Object>>
     {
-    private:
-        using BaseT = CompositeScribe<InputJumpTable<ID, Object>, Archive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
+        using ObjectT = InputJumpTable<ID, Object>;
     private:
         using Handle = typename ObjectT::Handle;
         using ArchivePosition = StreamPosition;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive)
         {
             ContainerSize size;
             archive(size);
@@ -142,7 +138,7 @@ namespace Inscription
             archive.SeekStream(postTablePosition);
         }
     private:
-        void LoadJump(ObjectT& object, ArchiveT& archive)
+        void LoadJump(ObjectT& object, BinaryArchive& archive)
         {
             ArchivePosition jumpPosition = 0;
             ID id{};
@@ -152,5 +148,11 @@ namespace Inscription
 
             object.handles.push_back(Handle{ id, jumpPosition });
         }
+    };
+
+    template<class ID, class Object>
+    struct ScribeTraits<InputJumpTable<ID, Object>, BinaryArchive> final
+    {
+        using Category = CompositeScribeCategory<InputJumpTable<ID, Object>>;
     };
 }

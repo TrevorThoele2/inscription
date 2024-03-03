@@ -119,6 +119,31 @@ SCENARIO_METHOD(
                 REQUIRE(loaded == saved);
             }
         }
+
+        WHEN("loading over occupied container")
+        {
+            IntegerToStrings loaded;
+
+            const auto occupiedGroupKeys = dataGeneration.RandomGroup<int>(5);
+            const auto occupiedGroupValues = dataGeneration.RandomGroup<std::string>(5);
+
+            for (size_t i = 0; i < occupiedGroupKeys.size(); ++i)
+            {
+                const auto key = occupiedGroupKeys[i];
+                const auto value = occupiedGroupValues[i];
+
+                loaded.emplace(key, value);
+            }
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive(loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
     }
 
     GIVEN("saved unordered_multimap with objects")
@@ -240,6 +265,31 @@ SCENARIO_METHOD(UnorderedMultiMapJsonTestsFixture, "loading unordered_multimap a
         WHEN("loading")
         {
             IntegerToStrings loaded;
+
+            auto inputArchive = CreateRegistered<InputArchive>();
+            inputArchive("unordered_multimap", loaded);
+
+            THEN("is same as saved")
+            {
+                REQUIRE(!loaded.empty());
+                REQUIRE(loaded == saved);
+            }
+        }
+
+        WHEN("loading over occupied container")
+        {
+            IntegerToStrings loaded;
+
+            const auto occupiedGroupKeys = dataGeneration.RandomGroup<int>(5);
+            const auto occupiedGroupValues = dataGeneration.RandomGroup<std::string>(5);
+
+            for (size_t i = 0; i < occupiedGroupKeys.size(); ++i)
+            {
+                const auto key = occupiedGroupKeys[i];
+                const auto value = occupiedGroupValues[i];
+
+                loaded.emplace(key, value);
+            }
 
             auto inputArchive = CreateRegistered<InputArchive>();
             inputArchive("unordered_multimap", loaded);

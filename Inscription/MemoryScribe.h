@@ -2,51 +2,41 @@
 
 #include <memory>
 
-#include "ObjectScribe.h"
+#include "TrackingScribeCategory.h"
+#include "PointerScribe.h"
 
 namespace Inscription
 {
     class BinaryArchive;
 
     template<class T, class Deleter>
-    class Scribe<std::unique_ptr<T, Deleter>, BinaryArchive> final :
-        public ObjectScribe<std::unique_ptr<T, Deleter>, BinaryArchive>
+    class Scribe<std::unique_ptr<T, Deleter>> final
     {
-    private:
-        using BaseT = ObjectScribe<std::unique_ptr<T, Deleter>, BinaryArchive>;
     public:
-        using typename BaseT::ObjectT;
-        using typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    private:
-        void SaveImplementation(ObjectT& object, ArchiveT& archive);
-        void LoadImplementation(ObjectT& object, ArchiveT& archive);
+        using ObjectT = std::unique_ptr<T, Deleter>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
     };
 
     template<class T, class Deleter>
-    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<std::unique_ptr<T, Deleter>>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         if (archive.IsOutput())
-            SaveImplementation(object, archive);
+        {
+            T* saved = object.get();
+            archive(saved);
+        }
         else
-            LoadImplementation(object, archive);
+        {
+            T* loaded = nullptr;
+            archive(loaded);
+            object.reset(loaded);
+        }
     }
 
-    template<class T, class Deleter>
-    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::SaveImplementation(ObjectT& object, ArchiveT& archive)
+    template<class T, class Deleter, class Archive>
+    struct ScribeTraits<std::unique_ptr<T, Deleter>, Archive>
     {
-        T* saved = object.get();
-        archive(saved);
-    }
-
-    template<class T, class Deleter>
-    void Scribe<std::unique_ptr<T, Deleter>, BinaryArchive>::LoadImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        T* loaded = nullptr;
-        archive(loaded);
-        object.reset(loaded);
-    }
+        using Category = TrackingScribeCategory<std::unique_ptr<T, Deleter>>;
+    };
 }

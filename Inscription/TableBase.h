@@ -22,7 +22,7 @@ namespace Inscription
         DataT data = {};
     public:
         template<class T>
-        using ComposingScribe = Scribe<T, ArchiveT>;
+        using ComposingScribe = Scribe<T>;
     public:
         void Scriven(ArchiveT& archive);
         void ObjectScriven(ObjectT& object, ArchiveT& archive);
@@ -45,7 +45,7 @@ namespace Inscription
         void AddDataLink(DataLink&& link);
         void MergeDataLinks(DataLinkList&& links);
     private:
-        DataLinkList dataEntryList;
+        DataLinkList dataEntryList{};
     private:
         template<class T, class U>
         friend class TableScribe;

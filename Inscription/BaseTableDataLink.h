@@ -13,7 +13,7 @@ namespace Inscription
         using ObjectT = Object;
         using ArchiveT = Archive;
     private:
-        using BaseScribe = Scribe<Base, ArchiveT>;
+        using BaseScribe = Scribe<Base>;
     public:
         using TableT = typename BaseScribe::Table;
         using DataT = TableData<BaseT, ArchiveT>;

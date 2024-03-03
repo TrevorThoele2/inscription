@@ -118,15 +118,6 @@
     <ClInclude Include="Access.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TableScribe.h">
-      <Filter>Header Files\Scribe\Base\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="NumericScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
     <ClInclude Include="MemoryScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
@@ -185,22 +176,16 @@
       <Filter>Header Files\Stream</Filter>
     </ClInclude>
     <ClInclude Include="TableBase.h">
-      <Filter>Header Files\Scribe\Base\Table</Filter>
+      <Filter>Header Files\Scribe\Table</Filter>
     </ClInclude>
     <ClInclude Include="NullTableData.h">
-      <Filter>Header Files\Scribe\Base\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="BufferScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="EnumScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
+      <Filter>Header Files\Scribe\Table</Filter>
     </ClInclude>
     <ClInclude Include="TableData.h">
-      <Filter>Header Files\Scribe\Base\Table</Filter>
+      <Filter>Header Files\Scribe\Table</Filter>
     </ClInclude>
     <ClInclude Include="TableDataBase.h">
-      <Filter>Header Files\Scribe\Base\Table</Filter>
+      <Filter>Header Files\Scribe\Table</Filter>
     </ClInclude>
     <ClInclude Include="ObjectTrackerEntry.h">
       <Filter>Header Files\Tracking\Objects</Filter>
@@ -208,23 +193,17 @@
     <ClInclude Include="Storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScribeBase.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTrackingContext.h">
       <Filter>Header Files\Tracking\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectTrackingTraits.h">
-      <Filter>Header Files\Tracking\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="AutoTableDataLink.h">
-      <Filter>Header Files\Scribe\Base\Table\Link</Filter>
+      <Filter>Header Files\Scribe\Table\Link</Filter>
     </ClInclude>
     <ClInclude Include="BaseTableDataLink.h">
-      <Filter>Header Files\Scribe\Base\Table\Link</Filter>
+      <Filter>Header Files\Scribe\Table\Link</Filter>
     </ClInclude>
     <ClInclude Include="TableDataEntry.h">
-      <Filter>Header Files\Scribe\Base\Table\Entry</Filter>
+      <Filter>Header Files\Scribe\Table\Entry</Filter>
     </ClInclude>
     <ClInclude Include="NotOpenable.h">
       <Filter>Header Files\File</Filter>
@@ -244,12 +223,6 @@
     <ClInclude Include="OptionalScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScriven.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NullScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
     <ClInclude Include="TypeIdentity.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -267,12 +240,6 @@
     </ClInclude>
     <ClInclude Include="ScribeHasInputTypes.h">
       <Filter>Header Files\Polymorphic</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackingScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="PointerScribe.h">
-      <Filter>Header Files\Scribe\Base</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Header Files</Filter>
@@ -298,8 +265,50 @@
     <ClInclude Include="JsonParseError.h">
       <Filter>Header Files\Archive\Json</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectScribe.h">
+    <ClInclude Include="ScribeTraits.h">
       <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="ShouldTrack.h">
+      <Filter>Header Files\Tracking\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackingScribeCategory.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="NullScribeCategory.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumScribeCategory.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeScribeCategory.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferScribe.h">
+      <Filter>Header Files\Scribe\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="NumericScribe.h">
+      <Filter>Header Files\Scribe\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="HasCategoryTrait.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScribeCategory.h">
+      <Filter>Header Files\Scribe\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerScribe.h">
+      <Filter>Header Files\Scribe\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="RequiresScribe.h">
+      <Filter>Header Files\Scribe\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrivenDispatch.h">
+      <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstructDispatch.h">
+      <Filter>Header Files\Scribe</Filter>
+    </ClInclude>
+    <ClInclude Include="ScribeHasOutputType.h">
+      <Filter>Header Files\Polymorphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -408,18 +417,6 @@
     <Filter Include="Header Files\Scribe\Types\Std\Containers">
       <UniqueIdentifier>{a916ce06-9c94-42e8-a93b-26626c159528}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scribe\Base">
-      <UniqueIdentifier>{5641c513-6962-4cea-b837-11f91c61015c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scribe\Base\Table">
-      <UniqueIdentifier>{48b3ce0f-1150-4bbd-a964-f07481127ef6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scribe\Base\Table\Link">
-      <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Scribe\Base\Table\Entry">
-      <UniqueIdentifier>{1e4ca7dd-787d-4c6b-a2c2-3d2e7e3a0b34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Jump">
       <UniqueIdentifier>{b6b52590-0b6b-4284-b97d-cbec603f3a73}</UniqueIdentifier>
     </Filter>
@@ -432,9 +429,6 @@
     <Filter Include="Source Files\Scribe\Types\Std">
       <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scribe\Types\Base">
-      <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Archive\Json">
       <UniqueIdentifier>{db441b5d-57f2-44d1-b660-9f3a842eb6dd}</UniqueIdentifier>
     </Filter>
@@ -443,6 +437,24 @@
     </Filter>
     <Filter Include="Source Files\Type">
       <UniqueIdentifier>{fd2aefa9-04db-408b-aa54-428df515884b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Category">
+      <UniqueIdentifier>{5641c513-6962-4cea-b837-11f91c61015c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Types\Category">
+      <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scribe\Table">
+      <UniqueIdentifier>{37aeff9a-86c7-4975-8b37-bec680588ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Table">
+      <UniqueIdentifier>{48b3ce0f-1150-4bbd-a964-f07481127ef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Table\Link">
+      <UniqueIdentifier>{1e24104c-d323-4f29-a18d-56f1970fe0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scribe\Table\Entry">
+      <UniqueIdentifier>{1e4ca7dd-787d-4c6b-a2c2-3d2e7e3a0b34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -472,18 +484,6 @@
     </ClCompile>
     <ClCompile Include="FileEncounteredError.cpp">
       <Filter>Source Files\File</Filter>
-    </ClCompile>
-    <ClCompile Include="TableVariableNotHere.cpp">
-      <Filter>Source Files\Scribe</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseClassNotInTable.cpp">
-      <Filter>Source Files\Scribe</Filter>
-    </ClCompile>
-    <ClCompile Include="TableNotConstructed.cpp">
-      <Filter>Source Files\Scribe</Filter>
-    </ClCompile>
-    <ClCompile Include="TableNotLinked.cpp">
-      <Filter>Source Files\Scribe</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTracker.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
@@ -517,9 +517,6 @@
     </ClCompile>
     <ClCompile Include="StringScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
-    </ClCompile>
-    <ClCompile Include="BufferScribe.cpp">
-      <Filter>Source Files\Scribe\Types\Base</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTrackerEntry.cpp">
       <Filter>Source Files\Tracking\Object</Filter>
@@ -556,6 +553,21 @@
     </ClCompile>
     <ClCompile Include="JsonParseError.cpp">
       <Filter>Source Files\Archive\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferScribe.cpp">
+      <Filter>Source Files\Scribe</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseClassNotInTable.cpp">
+      <Filter>Source Files\Scribe\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotLinked.cpp">
+      <Filter>Source Files\Scribe\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableNotConstructed.cpp">
+      <Filter>Source Files\Scribe\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableVariableNotHere.cpp">
+      <Filter>Source Files\Scribe\Table</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
