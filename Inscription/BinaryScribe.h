@@ -362,36 +362,42 @@ namespace Inscription
     template<class T, typename std::enable_if<std::is_class<T>::value, int>::type>
     void BinaryScribe::ProcessSave(T& arg)
     {
+        CheckConst<T>();
         Process(arg);
     }
 
     template<class T, typename std::enable_if<!std::is_class<T>::value, int>::type>
     void BinaryScribe::ProcessSave(T& arg)
     {
+        CheckConst<T>();
         WriteNumericImplementation(arg);
     }
 
     template<class T>
     void BinaryScribe::ProcessSave(T*& arg)
     {
+        CheckConst<T>();
         ProcessSavePointerImpl(arg);
     }
 
     template<class T, typename std::enable_if<std::is_class<T>::value, int>::type>
     void BinaryScribe::ProcessLoad(T& arg)
     {
+        CheckConst<T>();
         Process(arg);
     }
 
     template<class T, typename std::enable_if<!std::is_class<T>::value, int>::type>
     void BinaryScribe::ProcessLoad(T& arg)
     {
+        CheckConst<T>();
         ReadNumericImplementation(arg);
     }
 
     template<class T>
     void BinaryScribe::ProcessLoad(T*& arg)
     {
+        CheckConst<T>();
         ProcessLoadPointerImpl(arg);
     }
 
@@ -447,6 +453,7 @@ namespace Inscription
     void BinaryScribe::WriteNumericImplementation(T arg)
     {
         static_assert(std::is_arithmetic<T>::value, "WriteNumeric was called with a non-numeric argument.");
+        CheckConst<T>();
 
         if (!IsLittleEndian())
             ByteSwap(arg);
@@ -461,6 +468,7 @@ namespace Inscription
     template<class T, typename std::enable_if<std::is_enum<T>::value, int>::type>
     void BinaryScribe::WriteNumericImplementation(T arg)
     {
+        CheckConst<T>();
         WriteNumericImplementation(CastEnumToUnderlying(arg));
     }
 
@@ -468,6 +476,7 @@ namespace Inscription
     void BinaryScribe::ReadNumericImplementation(T& arg)
     {
         static_assert(std::is_arithmetic<T>::value, "ReadNumeric was called with a non-numeric argument.");
+        CheckConst<T>();
 
 #ifdef INSCRIPTION_COMMON_NUMERICS
         ReadImpl(reinterpret_cast<typename NumericTraits<T>::Size&>(arg));
@@ -482,6 +491,7 @@ namespace Inscription
     template<class T, typename std::enable_if<std::is_enum<T>::value, int>::type>
     void BinaryScribe::ReadNumericImplementation(T& arg)
     {
+        CheckConst<T>();
         ReadNumericImplementation(CastEnumToUnderlyingRef(arg));
     }
 
@@ -489,6 +499,7 @@ namespace Inscription
     T BinaryScribe::ReadNumericImplementation()
     {
         static_assert(std::is_arithmetic<T>::value, "ReadNumeric was called with a non-numeric argument.");
+        CheckConst<T>();
 
         T obj;
 
@@ -507,6 +518,7 @@ namespace Inscription
     template<class T, typename std::enable_if<std::is_enum<T>::value, int>::type>
     T BinaryScribe::ReadNumericImplementation()
     {
+        CheckConst<T>();
         return static_cast<T>(ReadNumericImplementation<std::underlying_type<T>::type>());
     }
 }

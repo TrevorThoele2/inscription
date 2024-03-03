@@ -1,8 +1,8 @@
-#include "TableVariableNotHereException.h"
+#include "TableVariableNotHere.h"
 
 namespace Inscription
 {
-    TableVariableNotHereException::TableVariableNotHereException() :
+    TableVariableNotHere::TableVariableNotHere() :
         Exception("This variable was not inside of this table.")
     {}
 }

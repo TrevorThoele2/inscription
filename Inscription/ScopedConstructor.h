@@ -2,13 +2,12 @@
 
 namespace Inscription
 {
-    class Scribe;
-
     template<class T>
     class ScopedConstructor
     {
     public:
-        ScopedConstructor(Scribe& scribe);
+        template<class ScribeT>
+        ScopedConstructor(ScribeT& scribe);
         ~ScopedConstructor();
 
         T* operator->();
@@ -24,7 +23,8 @@ namespace Inscription
     };
 
     template<class T>
-    ScopedConstructor<T>::ScopedConstructor(Scribe& scribe) : obj(nullptr)
+    template<class ScribeT>
+    ScopedConstructor<T>::ScopedConstructor(ScribeT& scribe) : obj(nullptr)
     {
         Construct(scribe, obj);
     }

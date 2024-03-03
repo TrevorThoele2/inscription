@@ -28,7 +28,7 @@ namespace Inscription
         void ReplaceObject(void* here, void* newObj, bool section);
 
         Entry* Find(const void* find);
-        const Entry* Find(const void *find) const;
+        const Entry* Find(const void* find) const;
         Entry* Find(ID id);
         const Entry* Find(ID id) const;
 

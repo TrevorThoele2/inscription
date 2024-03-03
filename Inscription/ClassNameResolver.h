@@ -6,20 +6,27 @@
 
 namespace Inscription
 {
-    class Scribe;
+    template<class ScribeT>
     class ClassNameResolver
     {
     public:
-        template<class Func>
-        ClassNameResolver(Func func);
+        template<class Function>
+        ClassNameResolver(Function function);
 
-        ClassName NameFor(Scribe &scribe) const;
+        ClassName NameFor(ScribeT& scribe) const;
     private:
-        typedef std::function<ClassName(Scribe&)> Underlying;
-        Underlying underlying;
+        typedef std::function<ClassName(ScribeT&)> RetrieveClassName;
+        RetrieveClassName retriever;
     };
 
-    template<class Func>
-    ClassNameResolver::ClassNameResolver(Func func) : underlying(func)
+    template<class ScribeT>
+    template<class Function>
+    ClassNameResolver<ScribeT>::ClassNameResolver(Function function) : retriever(function)
     {}
+
+    template<class ScribeT>
+    ClassName ClassNameResolver<ScribeT>::NameFor(ScribeT& scribe) const
+    {
+        return retriever(scribe);
+    }
 }

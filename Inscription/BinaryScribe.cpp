@@ -87,14 +87,18 @@ namespace Inscription
         direction(direction), signature(signature), version(version),
         pointerManager(direction),
         postHeaderPosition(0)
-    {}
+    {
+        pointerManager.Fill(*this);
+    }
 
     BinaryScribe::BinaryScribe(BinaryScribe&& arg) :
         Scribe(std::move(arg)),
         direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
         pointerManager(arg.direction),
         postHeaderPosition(std::move(arg.postHeaderPosition))
-    {}
+    {
+        pointerManager.Fill(*this);
+    }
 
     BinaryScribe& BinaryScribe::operator=(BinaryScribe&& arg)
     {
