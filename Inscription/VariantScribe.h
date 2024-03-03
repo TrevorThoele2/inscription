@@ -2,7 +2,7 @@
 
 #include <variant>
 
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 #include "ScopeConstructor.h"
 
@@ -11,7 +11,7 @@ namespace Inscription
     class BinaryArchive;
 
     template<class... Args>
-    class Scribe<std::variant<Args...>, BinaryArchive> : public CompositeScribe<std::variant<Args...>, BinaryArchive>
+    class Scribe<std::variant<Args...>, BinaryArchive> : public ObjectScribe<std::variant<Args...>, BinaryArchive>
     {
     private:
         using BaseT = ScribeBase<std::variant<Args...>, BinaryArchive>;

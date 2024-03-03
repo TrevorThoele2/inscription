@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 #include "ScopeConstructor.h"
 
@@ -12,10 +12,10 @@ namespace Inscription
 
     template<class T, size_t N>
     class Scribe<std::array<T, N>, BinaryArchive> final :
-        public CompositeScribe<std::array<T, N>, BinaryArchive>
+        public ObjectScribe<std::array<T, N>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<std::array<T, N>, BinaryArchive>;
+        using BaseT = ObjectScribe<std::array<T, N>, BinaryArchive>;
     public:
         using typename BaseT::ObjectT;
         using typename BaseT::ArchiveT;
@@ -52,8 +52,69 @@ namespace Inscription
         {
             ScopeConstructor<typename ObjectT::value_type> constructor(archive);
             object[count] = std::move(constructor.GetMove());
-            archive.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
+            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.back());
             ++count;
         }
+    }
+
+    class JsonArchive;
+
+    template<class T, size_t N>
+    class Scribe<std::array<T, N>, JsonArchive> final :
+        public ObjectScribe<std::array<T, N>, JsonArchive>
+    {
+    private:
+        using BaseT = ObjectScribe<std::array<T, N>, JsonArchive>;
+    public:
+        using typename BaseT::ObjectT;
+        using typename BaseT::ArchiveT;
+
+        using BaseT::Scriven;
+    protected:
+        void ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive) override;
+    private:
+        void SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+        void LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive);
+    };
+
+    template<class T, size_t N>
+    void Scribe<std::array<T, N>, JsonArchive>::ScrivenImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        if (archive.IsOutput())
+            SaveImplementation(name, object, archive);
+        else
+            LoadImplementation(name, object, archive);
+    }
+
+    template<class T, size_t N>
+    void Scribe<std::array<T, N>, JsonArchive>::SaveImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        auto outputArchive = archive.AsOutput();
+
+        outputArchive->StartList(name);
+        for (auto loop = object.begin(); loop != object.end(); ++loop)
+            archive("", *loop);
+        outputArchive->EndList();
+    }
+
+    template<class T, size_t N>
+    void Scribe<std::array<T, N>, JsonArchive>::LoadImplementation(const std::string& name, ObjectT& object, ArchiveT& archive)
+    {
+        auto inputArchive = archive.AsInput();
+
+        ContainerSize size = 0;
+
+        inputArchive->StartList(name, size);
+
+        auto i = 0;
+        while (size-- > 0)
+        {
+            ScopeConstructor<typename ObjectT::value_type> constructor(archive);
+            object[i] = std::move(constructor.GetMove());
+            archive.types.AttemptReplaceTrackedObject(*constructor.Get(), object.front());
+            ++i;
+        }
+
+        inputArchive->EndList();
     }
 }

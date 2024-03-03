@@ -7,20 +7,11 @@
 
 namespace Inscription
 {
-    class InputBinaryArchive : public BinaryArchive
+    class InputBinaryArchive final : public BinaryArchive
     {
     public:
-        InputBinaryArchive
-        (
-            const FilePath& path,
-            const Signature& signature
-        );
-        InputBinaryArchive
-        (
-            const FilePath& path,
-            const Signature& signature,
-            const TypeRegistrationContext& typeRegistrationContext
-        );
+        InputBinaryArchive(const FilePath& path);
+        InputBinaryArchive(const FilePath& path, const TypeRegistrationContext& typeRegistrationContext);
         InputBinaryArchive(InputBinaryArchive&& arg) noexcept;
 
         InputBinaryArchive& operator=(InputBinaryArchive&& arg) noexcept;
@@ -48,8 +39,6 @@ namespace Inscription
         void ReadImpl(Buffer& arg) { ReadFromFile(arg); }
     private:
         InputBinaryFile file;
-    private:
-        void InitialSetup();
     private:
         template<class T>
         void ReadFromFile(T& arg)

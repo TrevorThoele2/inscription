@@ -132,7 +132,7 @@ namespace Inscription
     template<class T>
     void TypeRegistrationContext<Archive>::Entry<T>::PushTo(Archive& archive) const
     {
-        archive.template RegisterType<T>();
+        archive.types.template RegisterType<T>();
     }
 
     template<class Archive>

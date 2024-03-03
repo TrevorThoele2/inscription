@@ -5,5 +5,5 @@
 class GeneralFixture
 {
 public:
-    ::TestFramework::DataGeneration dataGeneration;
+    TestFramework::DataGeneration dataGeneration;
 };

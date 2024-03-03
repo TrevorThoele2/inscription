@@ -25,6 +25,8 @@
 
 #include "BinaryFixture.h"
 
+#include "TestClass.h"
+
 class BinaryIntegrationTestsFixture : public BinaryFixture
 {
 public:
@@ -32,37 +34,7 @@ public:
     {
         typeRegistrationContext.RegisterType<TestClass>();
     }
-
-    class TestClass
-    {
-    public:
-        explicit TestClass(int value = 0) : value(value)
-        {}
-
-        [[nodiscard]] int Value() const
-        {
-            return value;
-        }
-    private:
-        int value;
-    private:
-        INSCRIPTION_ACCESS;
-    };
 };
-
-namespace Inscription
-{
-    template<>
-    class Scribe<::BinaryIntegrationTestsFixture::TestClass, BinaryArchive> final :
-        public CompositeScribe<::BinaryIntegrationTestsFixture::TestClass, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.value);
-        }
-    };
-}
 
 SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "[binary][integration]")
 {
@@ -81,9 +53,9 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
         auto savedFloat = dataGeneration.Random<float>();
         auto savedDouble = dataGeneration.Random<double>();
 
-        auto savedObject = dataGeneration.RandomStack<TestClass, int>();
+        auto savedObject = dataGeneration.RandomStack<TestClass, int, std::string>();
         auto savedPointer = &savedObject;
-        auto savedUniquePtr = std::unique_ptr<TestClass>(dataGeneration.RandomHeap<TestClass, int>());
+        auto savedUniquePtr = std::unique_ptr<TestClass>(dataGeneration.RandomHeap<TestClass, int, std::string>());
 
         auto savedString = dataGeneration.Random<std::string>();
 
@@ -330,9 +302,11 @@ SCENARIO_METHOD(BinaryIntegrationTestsFixture, "loading every type in binary", "
                 REQUIRE(loadedFloat == savedFloat);
                 REQUIRE(loadedDouble == savedDouble);
 
-                REQUIRE(loadedObject.Value() == savedObject.Value());
-                REQUIRE(loadedPointer->Value() == savedPointer->Value());
-                REQUIRE(loadedUniquePtr->Value() == savedUniquePtr->Value());
+                REQUIRE(loadedObject == savedObject);
+                REQUIRE(loadedPointer->integer == savedPointer->integer);
+                REQUIRE(loadedPointer->string == savedPointer->string);
+                REQUIRE(loadedUniquePtr->integer == savedUniquePtr->integer);
+                REQUIRE(loadedUniquePtr->string == savedUniquePtr->string);
 
                 REQUIRE(loadedString == savedString);
 

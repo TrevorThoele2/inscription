@@ -23,7 +23,7 @@ namespace Inscription
     {};
 }
 
-SCENARIO_METHOD(BinaryEnumFixture, "loading binary enum", "[binary][enum]")
+SCENARIO_METHOD(BinaryEnumFixture, "loading enum after saving binary", "[binary][enum]")
 {
     GIVEN("saved enum")
     {

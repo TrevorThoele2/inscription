@@ -7,7 +7,7 @@
 
 namespace Inscription
 {
-    class InputTypeNotFound : public Exception
+    class InputTypeNotFound final : public Exception
     {
     public:
         InputTypeNotFound();

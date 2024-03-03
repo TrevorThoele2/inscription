@@ -79,10 +79,10 @@ namespace Inscription
         > static void Construct(Object* storage, Archive& archive, Scribe<Object, Archive>& scribe)
         {
             {
-                archive.AttemptTrackObject(storage);
+                archive.types.AttemptTrackObject(storage);
             }
 
-            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            auto trackingContext = ObjectTrackingContext::Active(archive.types);
             scribe.Construct(storage, archive);
         }
 
@@ -96,12 +96,31 @@ namespace Inscription
         > static void Construct(Object* storage, Archive& archive, Scribe<Object, Archive>& scribe)
         {
             {
-                archive.AttemptTrackObject(storage);
+                archive.types.AttemptTrackObject(storage);
             }
 
-            ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+            auto trackingContext = ObjectTrackingContext::Active(archive.types);
             new (storage) Object{};
             scribe.Scriven(*storage, archive);
+        }
+
+        template<
+            class Object,
+            class Archive,
+            std::enable_if_t<
+            !std::is_abstract_v<Object> && is_braces_default_constructible_v<Object>
+            && !scribe_has_custom_construct_v<Object, Archive>,
+            int> = 0
+        > static void ConstructWithName(
+            const std::string& name, Object* storage, Archive& archive, Scribe<Object, Archive>& scribe)
+        {
+            {
+                archive.types.AttemptTrackObject(storage);
+            }
+
+            auto trackingContext = ObjectTrackingContext::Active(archive.types);
+            new (storage) Object{};
+            scribe.Scriven(name, *storage, archive);
         }
 
         template<

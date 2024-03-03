@@ -66,7 +66,7 @@ namespace Inscription
         for (auto& loop : dataEntryList)
             loop.ObjectScriven(*this, object, archive);
 
-        archive.AttemptTrackObject(&object);
+        archive.types.AttemptTrackObject(&object);
 
         ObjectScrivenImplementation(object, archive);
     }

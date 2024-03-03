@@ -12,18 +12,18 @@
 class BinaryFixture : public GeneralFixture
 {
 public:
-    using TypeRegistrationContext = ::Inscription::TypeRegistrationContext<::Inscription::BinaryArchive>;
+    using TypeRegistrationContext = Inscription::TypeRegistrationContext<Inscription::BinaryArchive>;
     TypeRegistrationContext typeRegistrationContext;
 
-    using OutputArchive = ::Inscription::OutputBinaryArchive;
-    using InputArchive = ::Inscription::InputBinaryArchive;
+    using OutputArchive = Inscription::OutputBinaryArchive;
+    using InputArchive = Inscription::InputBinaryArchive;
 
     template<class T>
-    T CreateRegistered() const;
+    [[nodiscard]] T CreateRegistered() const;
     template<>
-    OutputArchive CreateRegistered() const;
+    [[nodiscard]] OutputArchive CreateRegistered() const;
     template<>
-    InputArchive CreateRegistered() const;
+    [[nodiscard]] InputArchive CreateRegistered() const;
 };
 
 template<class T>
@@ -33,13 +33,13 @@ T BinaryFixture::CreateRegistered() const
 }
 
 template<>
-BinaryFixture::OutputArchive BinaryFixture::CreateRegistered() const
+auto BinaryFixture::CreateRegistered() const -> OutputArchive
 {
-    return OutputArchive("Test.dat", "testing", 1, typeRegistrationContext);
+    return OutputArchive("Test.dat", typeRegistrationContext);
 }
 
 template<>
-BinaryFixture::InputArchive BinaryFixture::CreateRegistered() const
+auto BinaryFixture::CreateRegistered() const -> InputArchive
 {
-    return InputArchive("Test.dat", "testing", typeRegistrationContext);
+    return InputArchive("Test.dat", typeRegistrationContext);
 }

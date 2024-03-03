@@ -1,7 +1,7 @@
 #pragma once
 
 #include "StreamPosition.h"
-#include "CompositeScribe.h"
+#include "ObjectScribe.h"
 
 namespace Inscription
 {
@@ -9,7 +9,7 @@ namespace Inscription
 
     template<>
     class Scribe<StreamPosition, BinaryArchive> final :
-        public CompositeScribe<StreamPosition, BinaryArchive>
+        public ObjectScribe<StreamPosition, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;

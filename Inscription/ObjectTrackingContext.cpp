@@ -1,25 +1,35 @@
 #include "ObjectTrackingContext.h"
 
-#include "BinaryArchive.h"
+#include "TypeManager.h"
 
 namespace Inscription
 {
-    ObjectTrackingContext::ObjectTrackingContext(Type type, BinaryArchive& archive) :
-        previousType(TypeFrom(archive.TrackObjects(BoolFrom(type)))), archive(&archive)
-    {}
+    ObjectTrackingContext ObjectTrackingContext::Active(TypeManagerBase& typeManager)
+    {
+        return ObjectTrackingContext(Type::Active, typeManager);
+    }
+
+    ObjectTrackingContext ObjectTrackingContext::Inactive(TypeManagerBase& typeManager)
+    {
+        return ObjectTrackingContext(Type::Inactive, typeManager);
+    }
 
     ObjectTrackingContext::~ObjectTrackingContext()
     {
-        archive->TrackObjects(BoolFrom(previousType));
+        typeManager->TrackObjects(BoolFrom(previousType));
     }
+
+    ObjectTrackingContext::ObjectTrackingContext(Type type, TypeManagerBase& typeManager) :
+        previousType(TypeFrom(typeManager.TrackObjects(BoolFrom(type)))), typeManager(&typeManager)
+    {}
 
     bool ObjectTrackingContext::BoolFrom(Type type)
     {
-        return (type == Active) ? true : false;
+        return type == Type::Active ? true : false;
     }
 
     auto ObjectTrackingContext::TypeFrom(bool b) -> Type
     {
-        return (b) ? Active : Inactive;
+        return b ? Type::Active : Type::Inactive;
     }
 }

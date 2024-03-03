@@ -5,7 +5,7 @@
 
 namespace Inscription
 {
-    class OutputTextFile : public SimpleFile<std::ofstream>
+    class OutputTextFile final : public SimpleFile<std::ofstream>
     {
     public:
         using Width = std::streamsize;
@@ -16,7 +16,7 @@ namespace Inscription
         OutputTextFile& operator=(OutputTextFile&& arg) noexcept;
 
         void WriteData(const std::string& string);
-        void WriteData(const char character);
+        void WriteData(char character);
 
         void ClearFile();
 
@@ -28,8 +28,11 @@ namespace Inscription
         // If the string is lower than this, it'll fill with the fill character.
         void SetWidth(Width set);
         void ResetWidth();
+
+        void SeekStream(StreamPosition position);
+        StreamPosition TellStream();
     private:
-        char fillCharacter;
-        Width width;
+        char fillCharacter = ' ';
+        Width width = 0;
     };
 }

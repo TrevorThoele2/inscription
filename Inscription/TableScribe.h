@@ -44,13 +44,13 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
         void DoScriven(T& object, A& archive)
         {
             {
-                auto trackingID = archive.AttemptTrackObject(&object);
+                auto trackingID = archive.types.AttemptTrackObject(&object);
                 if (trackingID.has_value())
-                    archive.TrackSavedConstruction(*trackingID);
+                    archive.types.TrackSavedConstruction(*trackingID);
             }
 
             {
-                ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+                auto trackingContext = ObjectTrackingContext::Active(archive.types);
                 using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
 
                 TableT table;
@@ -79,11 +79,11 @@ static_assert(scribe_has_table<ObjectT, ArchiveT>::value, "TableScribe's require
         void DoConstruct(T* storage, A& archive)
         {
             {
-                archive.AttemptTrackObject(storage);
+                archive.types.AttemptTrackObject(storage);
             }
 
             {
-                ObjectTrackingContext trackingContext(ObjectTrackingContext::Active, archive);
+                auto trackingContext = ObjectTrackingContext::Active(archive.types);
                 using TableT = typename Scribe<ObjectT, ArchiveT>::Table;
 
                 TableT table;

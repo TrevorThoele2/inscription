@@ -267,7 +267,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::Scriven(
         TableT& table, ArchiveT& archive)
     {
-        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         archive(table.data.*dataMember);
     }
 
@@ -276,7 +276,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoImplementation<ObjectMemberT, DataMemberT>::ObjectScriven(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        archive.AttemptTrackObject(&RemoveConst(object.*objectMember));
+        archive.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
     }
 
     template<class Data, class Object, class Archive>
@@ -316,7 +316,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::Scriven(
         TableT& table, ArchiveT& archive)
     {
-        ObjectTrackingContext trackingContext(ObjectTrackingContext::Inactive, archive);
+        auto trackingContext = ObjectTrackingContext::Inactive(archive.types);
         archive(table.data.*dataMember);
     }
 
@@ -325,7 +325,7 @@ namespace Inscription
     void AutoTableDataLink<Data, Object, Archive>::AutoSameTypeImplementation<T>::ObjectScriven(
         TableT& table, ObjectT& object, ArchiveT& archive)
     {
-        archive.AttemptTrackObject(&RemoveConst(object.*objectMember));
+        archive.types.AttemptTrackObject(&RemoveConst(object.*objectMember));
     }
 
     template<class Data, class Object, class Archive>

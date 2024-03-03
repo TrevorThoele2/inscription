@@ -25,9 +25,6 @@
     <ClInclude Include="OutputBinaryFile.h">
       <Filter>Header Files\File\Binary</Filter>
     </ClInclude>
-    <ClInclude Include="InvalidSignature.h">
-      <Filter>Header Files\Exception</Filter>
-    </ClInclude>
     <ClInclude Include="Exception.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
@@ -244,9 +241,6 @@
     <ClInclude Include="StreamPositionScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
-    <ClInclude Include="TypeMap.h">
-      <Filter>Header Files\Type</Filter>
-    </ClInclude>
     <ClInclude Include="OptionalScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
     </ClInclude>
@@ -288,6 +282,24 @@
     </ClInclude>
     <ClInclude Include="VariantScribe.h">
       <Filter>Header Files\Scribe\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonArchive.h">
+      <Filter>Header Files\Archive\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="InputJsonArchive.h">
+      <Filter>Header Files\Archive\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputJsonArchive.h">
+      <Filter>Header Files\Archive\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeManager.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonParseError.h">
+      <Filter>Header Files\Archive\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectScribe.h">
+      <Filter>Header Files\Scribe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -423,6 +435,15 @@
     <Filter Include="Source Files\Scribe\Types\Base">
       <UniqueIdentifier>{7da83639-2cfe-4f20-89ce-e51fb1b0d3c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Archive\Json">
+      <UniqueIdentifier>{db441b5d-57f2-44d1-b660-9f3a842eb6dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Archive\Json">
+      <UniqueIdentifier>{aaf80b7f-1b58-4adc-be88-7e0affe82db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Type">
+      <UniqueIdentifier>{fd2aefa9-04db-408b-aa54-428df515884b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
@@ -433,9 +454,6 @@
     </ClCompile>
     <ClCompile Include="OutputBinaryFile.cpp">
       <Filter>Source Files\File\Binary</Filter>
-    </ClCompile>
-    <ClCompile Include="InvalidSignature.cpp">
-      <Filter>Source Files\Exception</Filter>
     </ClCompile>
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files\Exception</Filter>
@@ -515,14 +533,29 @@
     <ClCompile Include="StreamPositionScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
     </ClCompile>
-    <ClCompile Include="InputTypeHandleNotFound.cpp">
-      <Filter>Source Files\Polymorphic</Filter>
-    </ClCompile>
-    <ClCompile Include="InputTypeHandlesAlreadyRegistered.cpp">
-      <Filter>Source Files\Polymorphic</Filter>
-    </ClCompile>
     <ClCompile Include="FilePathScribe.cpp">
       <Filter>Source Files\Scribe\Types\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonArchive.cpp">
+      <Filter>Source Files\Archive\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="InputJsonArchive.cpp">
+      <Filter>Source Files\Archive\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputJsonArchive.cpp">
+      <Filter>Source Files\Archive\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeManager.cpp">
+      <Filter>Source Files\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="InputTypeNotFound.cpp">
+      <Filter>Source Files\Polymorphic</Filter>
+    </ClCompile>
+    <ClCompile Include="InputTypesAlreadyRegistered.cpp">
+      <Filter>Source Files\Polymorphic</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonParseError.cpp">
+      <Filter>Source Files\Archive\Json</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
