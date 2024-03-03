@@ -3,8 +3,6 @@
 #include "TextArchive.h"
 #include "OutputTextFile.h"
 
-#include "InvalidArchiveDirection.h"
-
 namespace Inscription
 {
     class OutputTextArchive : public TextArchive

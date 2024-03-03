@@ -209,7 +209,6 @@
     <ClInclude Include="InputTextFile.h" />
     <ClInclude Include="InputTextArchive.h" />
     <ClInclude Include="InvalidSignature.h" />
-    <ClInclude Include="InvalidArchiveDirection.h" />
     <ClInclude Include="Optional.h" />
     <ClInclude Include="OptionalScribe.h" />
     <ClInclude Include="OutputBinaryFile.h" />
@@ -289,7 +288,6 @@
     <ClCompile Include="InputTextFile.cpp" />
     <ClCompile Include="InputTextArchive.cpp" />
     <ClCompile Include="InvalidSignature.cpp" />
-    <ClCompile Include="InvalidArchiveDirection.cpp" />
     <ClCompile Include="ObjectTrackingContext.cpp" />
     <ClCompile Include="OutputBinaryFile.cpp" />
     <ClCompile Include="BinaryArchive.cpp" />
