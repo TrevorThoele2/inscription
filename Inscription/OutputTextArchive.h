@@ -3,8 +3,6 @@
 #include "TextArchive.h"
 #include "OutputTextFile.h"
 
-#include "Path.h"
-
 #include "InvalidArchiveDirection.h"
 
 namespace Inscription
@@ -12,16 +10,16 @@ namespace Inscription
     class OutputTextArchive : public TextArchive
     {
     public:
-        OutputTextArchive(const Path& path, bool append = false);
-    protected:
-        inline void WriteImpl(const std::string& arg) override { WriteToFile(arg); }
-        inline void WriteImpl(const char arg) override { WriteToFile(arg); }
+        OutputTextArchive(const FilePath& path, bool append = false);
+        OutputTextArchive(OutputTextArchive&& arg);
 
-        inline void ReadImpl(std::string& arg) override { ThrowInvalidDirection(); }
-        inline void ReadImpl(char& arg) override { ThrowInvalidDirection(); }
-        inline void ReadLineImpl(std::string& arg) override { ThrowInvalidDirection(); }
-        inline void ReadLineImpl(std::string& arg, char delimiter) override { ThrowInvalidDirection(); }
-        inline void ReadSizeImpl(std::string& arg, size_t size) override { ThrowInvalidDirection(); }
+        OutputTextArchive& operator=(OutputTextArchive&& arg);
+
+        OutputTextArchive& Write(const std::string& arg);
+        OutputTextArchive& Write(const char arg);
+    protected:
+        inline void WriteImpl(const std::string& arg) { WriteToFile(arg); }
+        inline void WriteImpl(const char arg) { WriteToFile(arg); }
     private:
         OutputTextFile file;
     private:
@@ -30,7 +28,5 @@ namespace Inscription
         {
             file.WriteData(arg);
         }
-
-        inline void ThrowInvalidDirection() { throw InvalidArchiveDirection(); }
     };
 }

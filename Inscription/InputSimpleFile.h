@@ -7,7 +7,7 @@ namespace Inscription
     class InputSimpleFile : public SimpleFile<std::ifstream>
     {
     public:
-        InputSimpleFile(const Path& path);
+        InputSimpleFile(const FilePath& path);
 
         template<class T>
         InputSimpleFile& operator>>(T& var);

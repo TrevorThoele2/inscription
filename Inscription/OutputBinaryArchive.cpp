@@ -5,13 +5,22 @@
 
 namespace Inscription
 {
-    OutputBinaryArchive::OutputBinaryArchive(const Path& path, const Signature& signature, Version version) :
+    OutputBinaryArchive::OutputBinaryArchive(
+        const FilePath& path,
+        const Signature& signature,
+        Version version) :
+
         BinaryArchive(Direction::OUTPUT, signature, version), file(path)
     {
         InitialSetup();
     }
 
-    OutputBinaryArchive::OutputBinaryArchive(const Path& path, const Signature& signature, Version version, const TypeRegistrationContext& typeRegistrationContext) :
+    OutputBinaryArchive::OutputBinaryArchive(
+        const FilePath& path,
+        const Signature& signature,
+        Version version,
+        const TypeRegistrationContext& typeRegistrationContext) :
+
         BinaryArchive(Direction::OUTPUT, signature, version, typeRegistrationContext), file(path)
     {
         InitialSetup();

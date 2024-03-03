@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/String.h>
+#include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
 

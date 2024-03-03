@@ -7,10 +7,11 @@
 #include "PolymorphicManager.h"
 #include "TypeRegistrationContext.h"
 
+#include "Scribe.h"
+
 #include "Direction.h"
 #include "Endian.h"
 #include "Const.h"
-#include "Enum.h"
 #include "Buffer.h"
 #include "VerifyNonConst.h"
 
@@ -20,9 +21,6 @@ namespace Inscription
 {
     class OutputBinaryArchive;
     class InputBinaryArchive;
-
-    template<class T>
-    class Translator;
 
     class BinaryArchive : public Archive
     {
@@ -86,8 +84,15 @@ namespace Inscription
         Version version;
         StreamPosition postHeaderPosition;
     protected:
-        BinaryArchive(Direction direction, const Signature& signature, Version version);
-        BinaryArchive(Direction direction, const Signature& signature, Version version, TypeRegistrationContext typeRegistrationContext);
+        BinaryArchive(
+            Direction direction,
+            const Signature& signature,
+            Version version);
+        BinaryArchive(
+            Direction direction,
+            const Signature& signature,
+            Version version,
+            TypeRegistrationContext typeRegistrationContext);
         BinaryArchive(BinaryArchive&& arg);
 
         BinaryArchive& operator=(BinaryArchive&& arg);

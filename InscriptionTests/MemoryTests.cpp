@@ -1,9 +1,9 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/Memory.h>
-#include <Inscription/Numeric.h>
-#include <Inscription/String.h>
-#include <Inscription/Pointer.h>
+#include <Inscription/MemoryScribe.h>
+#include <Inscription/NumericScribe.h>
+#include <Inscription/StringScribe.h>
+#include <Inscription/PointerScribe.h>
 
 #include "BinaryFixture.h"
 

@@ -18,25 +18,22 @@
     <Filter Include="Source Files\Tests\Types\Containers">
       <UniqueIdentifier>{01f8d13f-5b4f-40a3-84fa-2347aba3ce93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tests\BinarySerialization">
-      <UniqueIdentifier>{a940f190-9296-424d-8392-cfb5cfe6c698}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Fixtures">
       <UniqueIdentifier>{d3adf734-b23f-4258-ae84-6f52e33b43d7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Fixtures">
       <UniqueIdentifier>{fec933a3-18fb-4992-aaf8-4c4ddc431078}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tests\Binary">
+      <UniqueIdentifier>{a940f190-9296-424d-8392-cfb5cfe6c698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Text">
+      <UniqueIdentifier>{267ab06a-6586-42ac-bc85-0cdf9feade2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BinarySerializationTests.cpp">
-      <Filter>Source Files\Tests\BinarySerialization</Filter>
-    </ClCompile>
-    <ClCompile Include="PolymorphicBinarySerializationTests.cpp">
-      <Filter>Source Files\Tests\BinarySerialization</Filter>
     </ClCompile>
     <ClCompile Include="VectorTests.cpp">
       <Filter>Source Files\Tests\Types\Containers</Filter>
@@ -89,11 +86,26 @@
     <ClCompile Include="TupleTests.cpp">
       <Filter>Source Files\Tests\Types</Filter>
     </ClCompile>
-    <ClCompile Include="ManualRegistrationPolymorphicBinarySerializationTests.cpp">
-      <Filter>Source Files\Tests\BinarySerialization</Filter>
+    <ClCompile Include="BinaryTableTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
     </ClCompile>
-    <ClCompile Include="ListPolymorphicBinarySerializationTests.cpp">
-      <Filter>Source Files\Tests\BinarySerialization</Filter>
+    <ClCompile Include="BinaryTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicManualRegistrationTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicListTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryPolymorphicConstructionTests.cpp">
+      <Filter>Source Files\Tests\Binary</Filter>
+    </ClCompile>
+    <ClCompile Include="TextTests.cpp">
+      <Filter>Source Files\Tests\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="TextFixture.h">
       <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
   </ItemGroup>

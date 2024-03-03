@@ -13,12 +13,12 @@ namespace Inscription
     Buffer::Buffer(SizeT size, T value) : size(size), value(value)
     {}
 
-    Buffer::Buffer(const Buffer &arg) : size(arg.size), value(new char[arg.size])
+    Buffer::Buffer(const Buffer& arg) : size(arg.size), value(new char[arg.size])
     {
         memcpy(value, arg.value, size);
     }
 
-    Buffer::Buffer(Buffer &&arg) : size(std::move(arg.size)), value(std::move(arg.value))
+    Buffer::Buffer(Buffer&& arg) : size(std::move(arg.size)), value(std::move(arg.value))
     {
         arg.size = 0;
         arg.value = nullptr;
@@ -30,7 +30,7 @@ namespace Inscription
             delete[] value;
     }
 
-    Buffer& Buffer::operator=(const Buffer &arg)
+    Buffer& Buffer::operator=(const Buffer& arg)
     {
         size = arg.size;
         value = new char[size];
@@ -38,7 +38,7 @@ namespace Inscription
         return *this;
     }
 
-    Buffer& Buffer::operator=(Buffer &&arg)
+    Buffer& Buffer::operator=(Buffer&& arg)
     {
         size = std::move(arg.size);
         value = std::move(arg.value);
@@ -47,12 +47,12 @@ namespace Inscription
         return *this;
     }
 
-    bool Buffer::operator==(const Buffer &arg) const
+    bool Buffer::operator==(const Buffer& arg) const
     {
         return size == arg.size && value == arg.value;
     }
 
-    bool Buffer::operator!=(const Buffer &arg) const
+    bool Buffer::operator!=(const Buffer& arg) const
     {
         return !(*this == arg);
     }

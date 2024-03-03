@@ -101,12 +101,21 @@ namespace Inscription
         SeekStream(postHeaderPosition);
     }
 
-    BinaryArchive::BinaryArchive(Direction direction, const Signature& signature, Version version) :
+    BinaryArchive::BinaryArchive(
+        Direction direction,
+        const Signature& signature,
+        Version version) :
+
         direction(direction), signature(signature), version(version),
         postHeaderPosition(0)
     {}
 
-    BinaryArchive::BinaryArchive(Direction direction, const Signature& signature, Version version, TypeRegistrationContext typeRegistrationContext) :
+    BinaryArchive::BinaryArchive(
+        Direction direction,
+        const Signature& signature,
+        Version version,
+        TypeRegistrationContext typeRegistrationContext) :
+
         direction(direction), signature(signature), version(version),
         typeRegistrationContext(typeRegistrationContext),
         postHeaderPosition(0)
@@ -117,7 +126,8 @@ namespace Inscription
     BinaryArchive::BinaryArchive(BinaryArchive&& arg) :
         Archive(std::move(arg)),
         direction(arg.direction), signature(std::move(arg.signature)), version(std::move(arg.version)),
-        objectTracker(std::move(arg.objectTracker)), typeTracker(std::move(arg.typeTracker)), polymorphicManager(std::move(arg.polymorphicManager)),
+        objectTracker(std::move(arg.objectTracker)), typeTracker(std::move(arg.typeTracker)),
+        polymorphicManager(std::move(arg.polymorphicManager)),
         typeRegistrationContext(std::move(arg.typeRegistrationContext)),
         postHeaderPosition(std::move(arg.postHeaderPosition))
     {}

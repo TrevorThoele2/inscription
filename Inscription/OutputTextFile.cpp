@@ -3,11 +3,20 @@
 
 namespace Inscription
 {
-    OutputTextFile::OutputTextFile(const Path& path, bool append) :
+    OutputTextFile::OutputTextFile(const FilePath& path, bool append) :
         SimpleFile(path, (!append) ? std::ios::out : std::ios::out | std::ios::app)
     {
         ResetFillCharacter();
         ResetWidth();
+    }
+
+    OutputTextFile::OutputTextFile(OutputTextFile&& arg) : SimpleFile(std::move(arg))
+    {}
+
+    OutputTextFile& OutputTextFile::operator=(OutputTextFile&& arg)
+    {
+        SimpleFile::operator=(std::move(arg));
+        return *this;
     }
 
     void OutputTextFile::WriteData(const std::string& string)

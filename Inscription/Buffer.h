@@ -16,13 +16,13 @@ namespace Inscription
         Buffer(SizeT size);
         // Takes ownership of the value
         Buffer(SizeT size, T value);
-        Buffer(const Buffer &arg);
-        Buffer(Buffer &&arg);
+        Buffer(const Buffer& arg);
+        Buffer(Buffer&& arg);
         ~Buffer();
-        Buffer& operator=(const Buffer &arg);
-        Buffer& operator=(Buffer &&arg);
-        bool operator==(const Buffer &arg) const;
-        bool operator!=(const Buffer &arg) const;
+        Buffer& operator=(const Buffer& arg);
+        Buffer& operator=(Buffer&& arg);
+        bool operator==(const Buffer& arg) const;
+        bool operator!=(const Buffer& arg) const;
         explicit operator bool() const;
 
         // Takes ownership of the value

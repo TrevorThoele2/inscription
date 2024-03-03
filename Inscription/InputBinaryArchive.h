@@ -10,14 +10,19 @@ namespace Inscription
     class InputBinaryArchive : public BinaryArchive
     {
     public:
-        InputBinaryArchive(const Path& path, const Signature& signature);
-        InputBinaryArchive(const Path& path, const Signature& signature, const TypeRegistrationContext& typeRegistrationContext);
+        InputBinaryArchive(
+            const FilePath& path,
+            const Signature& signature);
+        InputBinaryArchive(
+            const FilePath& path,
+            const Signature& signature,
+            const TypeRegistrationContext& typeRegistrationContext);
         InputBinaryArchive(InputBinaryArchive&& arg);
 
         InputBinaryArchive& operator=(InputBinaryArchive&& arg);
 
         template<class T>
-        InputBinaryArchive& ReadNumeric(T& object);
+        InputBinaryArchive& Read(T& object);
     public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
@@ -50,9 +55,9 @@ namespace Inscription
     };
 
     template<class T>
-    InputBinaryArchive& InputBinaryArchive::ReadNumeric(T& object)
+    InputBinaryArchive& InputBinaryArchive::Read(T& object)
     {
-        static_assert(std::is_arithmetic_v<T>, "The T given to ReadNumeric was not arithmetic.");
+        static_assert(std::is_arithmetic_v<T>, "The T given to Read was not arithmetic.");
 
 #ifdef INSCRIPTION_COMMON_NUMERICS
         ReadImpl(reinterpret_cast<typename NumericTraits<T>::Size&>(object));

@@ -10,7 +10,7 @@ namespace Inscription
     class InputBinaryFile : public Stream<std::ifstream>
     {
     public:
-        InputBinaryFile(const Path& path);
+        InputBinaryFile(const FilePath& path);
         InputBinaryFile(InputBinaryFile&& arg);
 
         InputBinaryFile& operator=(InputBinaryFile&& arg);

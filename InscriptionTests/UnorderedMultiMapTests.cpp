@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
-#include <Inscription/UnorderedMultimap.h>
-#include <Inscription/Numeric.h>
-#include <Inscription/String.h>
+#include <Inscription/UnorderedMultimapScribe.h>
+#include <Inscription/NumericScribe.h>
+#include <Inscription/StringScribe.h>
 
 #include "BinaryFixture.h"
 

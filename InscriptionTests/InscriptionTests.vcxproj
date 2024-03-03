@@ -124,21 +124,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArrayTests.cpp" />
-    <ClCompile Include="BinarySerializationTests.cpp" />
+    <ClCompile Include="BinaryTests.cpp" />
+    <ClCompile Include="BinaryTableTests.cpp" />
     <ClCompile Include="ForwardListTests.cpp" />
-    <ClCompile Include="ListPolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="BinaryPolymorphicListTests.cpp" />
     <ClCompile Include="ListTests.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ManualRegistrationPolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="BinaryPolymorphicManualRegistrationTests.cpp" />
     <ClCompile Include="MapTests.cpp" />
     <ClCompile Include="MemoryTests.cpp" />
     <ClCompile Include="MultiMapTests.cpp" />
     <ClCompile Include="MultiSetTests.cpp" />
-    <ClCompile Include="PolymorphicBinarySerializationTests.cpp" />
+    <ClCompile Include="BinaryPolymorphicTests.cpp" />
+    <ClCompile Include="BinaryPolymorphicConstructionTests.cpp" />
     <ClCompile Include="QueueTests.cpp" />
     <ClCompile Include="SetTests.cpp" />
     <ClCompile Include="StackTests.cpp" />
     <ClCompile Include="StringTests.cpp" />
+    <ClCompile Include="TextTests.cpp" />
     <ClCompile Include="TupleTests.cpp" />
     <ClCompile Include="UnorderedMapTests.cpp" />
     <ClCompile Include="UnorderedMultiMapTests.cpp" />
@@ -159,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryFixture.h" />
+    <ClInclude Include="TextFixture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

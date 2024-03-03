@@ -7,59 +7,8 @@
     <ClInclude Include="Endian.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Path.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Stream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ForwardList.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Multimap.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Multiset.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Queue.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Set.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Stack.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedMap.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedMultimap.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedMultiset.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedSet.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Array.h">
-      <Filter>Header Files\Types\Std\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Header Files</Filter>
@@ -68,9 +17,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UndefAssert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IsDefaultConstructible.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassNameResolver.h">
@@ -217,29 +163,104 @@
     <ClInclude Include="Access.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Pointer.h">
-      <Filter>Header Files\Types\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="Numeric.h">
-      <Filter>Header Files\Types\Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="Tuple.h">
-      <Filter>Header Files\Types\Std</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>Header Files\Types\Std</Filter>
-    </ClInclude>
-    <ClInclude Include="Optional.h">
-      <Filter>Header Files\Types\Std</Filter>
-    </ClInclude>
-    <ClInclude Include="String.h">
-      <Filter>Header Files\Types\Std</Filter>
-    </ClInclude>
-    <ClInclude Include="Composite.h">
-      <Filter>Header Files\Types\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="PolymorphicTypeNotFound.h">
       <Filter>Header Files\Polymorphic</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScribe.h">
+      <Filter>Header Files\Types\Basic\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeScribe.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="NumericScribe.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="PointerScribe.h">
+      <Filter>Header Files\Types\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Header Files\Types\Basic\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableBase.h">
+      <Filter>Header Files\Types\Basic\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="TableData.h">
+      <Filter>Header Files\Types\Basic\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoTableDataEntry.h">
+      <Filter>Header Files\Types\Basic\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryScribe.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="StringScribe.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="TupleScribe.h">
+      <Filter>Header Files\Types\Std</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardListScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ListScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="MapScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="MultimapScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="MultisetScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="QueueScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="SetScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="StackScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMapScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMultimapScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedMultisetScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedSetScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorScribe.h">
+      <Filter>Header Files\Types\Std\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Optional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionalScribe.h">
+      <Filter>Header Files\Types\Chroma</Filter>
+    </ClInclude>
+    <ClInclude Include="FileNameScribe.h">
+      <Filter>Header Files\Types\Chroma</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePathScribe.h">
+      <Filter>Header Files\Types\Chroma</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePath.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="FileName.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream.h">
+      <Filter>Header Files\Stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +375,21 @@
     <Filter Include="Header Files\ClassName">
       <UniqueIdentifier>{49abd94f-bb29-4aaa-a574-5c862138fcd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Types\Basic\Table">
+      <UniqueIdentifier>{48b3ce0f-1150-4bbd-a964-f07481127ef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types\Chroma">
+      <UniqueIdentifier>{e2741f3e-fdab-4852-90ca-e7ee27f81873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Types\Std">
+      <UniqueIdentifier>{f07728fe-6e76-4a28-ab6f-fcc8f464857b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Types\Chroma">
+      <UniqueIdentifier>{cbed75a5-ec9f-40be-8cdc-150dc12d1153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Stream">
+      <UniqueIdentifier>{8e4d3200-1027-424a-8260-0612e5ca2386}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Endian.cpp">
@@ -388,9 +424,6 @@
     </ClCompile>
     <ClCompile Include="OutputTextFile.cpp">
       <Filter>Source Files\File\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="String.cpp">
-      <Filter>Source Files\Types</Filter>
     </ClCompile>
     <ClCompile Include="FileEncounteredError.cpp">
       <Filter>Source Files\File</Filter>
@@ -454,6 +487,15 @@
     </ClCompile>
     <ClCompile Include="PolymorphicTypeNotFound.cpp">
       <Filter>Source Files\Polymorphic</Filter>
+    </ClCompile>
+    <ClCompile Include="StringScribe.cpp">
+      <Filter>Source Files\Types\Std</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePathScribe.cpp">
+      <Filter>Source Files\Types\Chroma</Filter>
+    </ClCompile>
+    <ClCompile Include="FileNameScribe.cpp">
+      <Filter>Source Files\Types\Chroma</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

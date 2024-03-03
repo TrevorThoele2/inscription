@@ -10,14 +10,21 @@ namespace Inscription
     class OutputBinaryArchive : public BinaryArchive
     {
     public:
-        OutputBinaryArchive(const Path& path, const Signature& signature, Version version);
-        OutputBinaryArchive(const Path& path, const Signature& signature, Version version, const TypeRegistrationContext& typeRegistrationContext);
+        OutputBinaryArchive(
+            const FilePath& path,
+            const Signature& signature,
+            Version version);
+        OutputBinaryArchive(
+            const FilePath& path,
+            const Signature& signature,
+            Version version,
+            const TypeRegistrationContext& typeRegistrationContext);
         OutputBinaryArchive(OutputBinaryArchive&& arg);
 
         OutputBinaryArchive& operator=(OutputBinaryArchive&& arg);
 
         template<class T>
-        OutputBinaryArchive& WriteNumeric(T& object);
+        OutputBinaryArchive& Write(T& object);
     public:
         void SeekStream(StreamPosition position) override;
         StreamPosition TellStream() override;
@@ -50,9 +57,9 @@ namespace Inscription
     };
 
     template<class T>
-    OutputBinaryArchive& OutputBinaryArchive::WriteNumeric(T& object)
+    OutputBinaryArchive& OutputBinaryArchive::Write(T& object)
     {
-        static_assert(std::is_arithmetic_v<T>, "The T given to WriteNumeric was not arithmetic.");
+        static_assert(std::is_arithmetic_v<T>, "The T given to Write was not arithmetic.");
 
         if (!IsLittleEndian())
             ByteSwap(object);

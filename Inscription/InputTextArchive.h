@@ -10,40 +10,34 @@ namespace Inscription
     class InputTextArchive : public TextArchive
     {
     public:
-        InputTextArchive(const Path& path);
-    protected:
-        inline void WriteImpl(const std::string& arg) override { ThrowInvalidDirection(); }
-        inline void WriteImpl(const char arg) override { ThrowInvalidDirection(); }
+        InputTextArchive(const FilePath& path);
+        InputTextArchive(InputTextArchive&& arg);
 
-        inline void ReadImpl(std::string& arg) override { ReadFromFile(arg); }
-        inline void ReadImpl(char& arg) override { ReadFromFile(arg); }
-        inline void ReadLineImpl(std::string& arg) override { ReadLineFromFile(arg); }
-        inline void ReadLineImpl(std::string& arg, char delimiter) override { ReadLineFromFile(arg, delimiter); }
-        inline void ReadSizeImpl(std::string& arg, size_t size) override { ReadSizeFromFile(arg, size); }
+        InputTextArchive& operator=(InputTextArchive&& arg);
+
+        InputTextArchive& ReadLine(std::string& arg);
+        InputTextArchive& ReadLine(std::string& arg, char delimiter);
+        InputTextArchive& ReadSize(std::string& arg, size_t size);
+    protected:
+        inline void ReadImpl(std::string& arg) { ReadFromFile(arg); }
+        inline void ReadImpl(char& arg) { ReadFromFile(arg); }
+        inline void ReadLineImpl(std::string& arg) { ReadLineFromFile(arg); }
+        inline void ReadLineImpl(std::string& arg, char delimiter) { ReadLineFromFile(arg, delimiter); }
+        inline void ReadSizeImpl(std::string& arg, size_t size) { ReadSizeFromFile(arg, size); }
     private:
         InputTextFile file;
     private:
         template<class T>
-        inline void ReadFromFile(T& arg)
-        {
-            file.ReadData(arg);
-        }
+        void ReadFromFile(T& arg);
 
-        inline void ReadLineFromFile(std::string& arg)
-        {
-            arg = file.ReadLine();
-        }
-
-        inline void ReadLineFromFile(std::string& arg, char delimiter)
-        {
-            arg = file.ReadLine(delimiter);
-        }
-
-        inline void ReadSizeFromFile(std::string& arg, size_t size)
-        {
-            arg = file.ReadSize(size);
-        }
-
-        inline void ThrowInvalidDirection() { throw InvalidArchiveDirection(); }
+        void ReadLineFromFile(std::string& arg);
+        void ReadLineFromFile(std::string& arg, char delimiter);
+        void ReadSizeFromFile(std::string& arg, size_t size);
     };
+
+    template<class T>
+    void InputTextArchive::ReadFromFile(T& arg)
+    {
+        file.ReadData(arg);
+    }
 }

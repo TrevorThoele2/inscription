@@ -2,7 +2,7 @@
 
 namespace Inscription
 {
-    InputBinaryFile::InputBinaryFile(const Path& path) : Stream(path, std::ios::in | std::ios::binary)
+    InputBinaryFile::InputBinaryFile(const FilePath& path) : Stream(path, std::ios::in | std::ios::binary)
     {}
 
     InputBinaryFile::InputBinaryFile(InputBinaryFile&& arg) : Stream(std::move(arg))
